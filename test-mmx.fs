@@ -1,0 +1,84 @@
+\ MMX test
+
+CREATE MEMQ  8 ALLOT
+CREATE MEMD  4 ALLOT
+
+
+\ 64 bit move
+CODE aaa
+      MEMQ #) MM0 PLDQ
+      NOP NOP NOP NOP
+      NEXT
+END-CODE
+     
+
+CODE bbb
+      MM1 MEMQ #) PSTQ
+      NOP NOP NOP NOP
+      NEXT
+END-CODE
+     
+
+CODE ccc
+     DI ) MM0 PLDQ
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE ddd
+     MM0 DI ) PSTQ
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE eee
+     MM0 MM1 MOVQ
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+\ 32 bit move
+CODE fff
+     MEMD #) MM2 PLDD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE ggg
+     MM3 MEMD #) PSTD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE hhh
+     DI ) MM0 PLDD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE iii
+     MM0 DI ) PSTD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE jjj
+     AX MM2 PLDD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+
+
+CODE kkk
+     MM3 AX PSTD
+     NOP NOP NOP NOP 
+     NEXT
+END-CODE
+

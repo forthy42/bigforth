@@ -1,0 +1,237 @@
+# bigforth makefile
+
+DATE= $$(date '+%d%b%Y' | tr '[A-Z]' '[a-z]')
+SRCREV=2.1.3
+MINOSREV=1.1.3
+BINREV=$(SRCREV)
+PATREV=1.0.1
+EWOODREV=1.0.2
+ESHMREV=1.0.2
+DOCREV=obsolete
+
+package =
+prefix = $(package)@prefix@
+
+TEXI2DVI = texi2dvi
+DVI2PS	= dvips -Z
+TEXI2HTML = texi2html
+MAKEINFO = makeinfo
+
+INSTDIR = $(prefix)/lib/bigforth
+BININSTDIR = $(prefix)/bin
+CC = @CC@ @ARCHFLAGS@
+CP = cp
+MV = mv
+EXE = @EXEEXT@
+CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' @EXTFLAGS@
+LDLIBS = @LIBS@
+SHELL = /bin/sh
+LIB	= $$(if [ "$$(ldd bigforth | grep libc | cut -f2 | cut -f1 -d' ')" = libc.so.5 ]; then echo -n libc5; else echo -n glibc; fi)
+LIBDIST	= $$(if [ "$$(ldd bigforth/bigforth | grep libc | cut -f2 | cut -f1 -d' ')" = libc.so.5 ]; then echo -n libc5; else echo -n glibc; fi)
+
+WARNING	= 
+#WARNING = warning on
+
+BYE	= cr bye
+SAVE	= ' .blk is .status warning on savesystem
+XSAVE	= warning on savesystem
+
+OBJS	= bigforth.o xbigforth.o linker.o
+SOURCE	= bigforth.c linker.S
+KERNSRC	= forth.fb target.fb
+SYSSRC	= assem486.fb stream.fb errore.fs hash.fs fileint.fb \
+	  strings.fs savemod.fb tasker.fb vt100key.fs disass.fb \
+	  tools.fb except.fs sedit.fb struct.fs lambda.fs idle.fs \
+	  startup.fb ftast.fb environ.fs version.h minos-version.h
+XCSRC	= x.fs glconst.fs
+XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
+	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
+	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
+	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
+	  xbigforth.cnf xft-font.fs imlib.fs Estyle.fs
+
+all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi
+
+version.h:	Makefile.in
+	echo '"'$(SRCREV)'"' >$@
+
+minos-version.h:	Makefile.in
+	echo '"'$(MINOSREV)'"' >$@
+
+%.o:	%.c version.h
+	$(CC) $(CFLAGS) -c $<
+
+xbigforth.o:	bigforth.c version.h minos-version.h
+	$(CC) $(CFLAGS) -DMINOS -c $< -o $@
+
+%.o:	%.S
+	$(CC) -c $<
+
+bigforth$(EXE): bigforth.o linker.o
+	$(CC) $(CFLAGS) bigforth.o linker.o $(LDLIBS) -o bigforth
+	strip bigforth$(EXE)
+
+forthker$(EXE): bigforth$(EXE)
+	$(CP) $< $@
+
+xbigforth$(EXE): xbigforth.o linker.o
+	$(CC) $(CFLAGS) @WINDOWS@ xbigforth.o linker.o $(LDLIBS) -o $@
+	strip $@
+
+scr2str$(EXE) str2scr$(EXE):	scr2str.c
+	$(CC) $(CFLAGS) $< -o scr2str$(EXE)
+	ln -s scr2str$(EXE) str2scr$(EXE)
+
+forthker.fi: $(KERNSRC)
+	-@$(MV) $@ $@~
+	./bigforth -e ": $(LIB) ; include forth.fb save-target forthker $(BYE)"
+
+bigforth.fi: forthker.fi $(SYSSRC)
+	-@$(MV) $@ $@~
+	./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
+
+xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) bigforth.cnf
+	-@$(MV) $@ $@~
+	./bigforth -e "$(WARNING) use x.fs use glconst.fs use float.fb include startx.fb $(XSAVE) xbigforth $(BYE)"
+
+xconst.fm: $(XCSRC) forthker.fi $(SYSSRC)
+	-@$(MV) $@ $@~
+	./bigforth -e "$(WARNING) include x.fs m' xconst savemod xconst $(BYE)"
+
+glconst.fm: $(XCSRC) forthker.fi $(SYSSRC)
+	-@$(MV) $@ $@~
+	./bigforth -e "$(WARNING) use x.fs include glconst.fs m' glconst savemod glconst $(BYE)"
+
+float.fm: float.fb forthker.fi $(SYSSRC)
+	-@$(MV) $@ $@~
+	./bigforth -e "$(WARNING) use x.fs use glconst.fs include float.fb m' float savemod float $(BYE)"
+
+CPYDIST = bigforth/{README,COPYING,CREDITS}
+
+DOSDIST = bigforth/{forthker,bigforth,xbigforth}$(EXE) bigforth/{forthker,bigforth}.fi bigforth/{version.h,minos-version.h}
+
+DOCDIST = bigforth/help/{*.html,[a-z]*.gif,*.jpg,*.sh} bigforth/doc/bigforth.texi
+
+ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
+
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,{,x}bigforth.cnf}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
+
+DRAGONDIST = bigforth/pattern/dragon{,-head,-wing,-claw}.png \
+	bigforth/pattern/{bark,normal-w1,back,focus}.ppm
+
+PATDIST = bigforth/pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm \
+
+EDIST1 =	bigforth/Estyle/wood/{Makefile,*.inc} \
+	bigforth/Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.{pov,png} bigforth/Estyle-wood.fs
+
+EDIST2 =	bigforth/Estyle/ShinyMetal/* bigforth/Estyle-ShinyMetal.fs
+
+COMPRESS = j
+COMPSUB = .bz2
+TAR = tar -$(COMPRESS)chf
+#COMPRESS = z
+#COMPSUB = .gz
+
+docdist:	all
+	cd ..; $(TAR) bigforth/bigforth-doc-"$(DOCREV)".tar$(COMPSUB) $(DOCDIST)
+
+srcdist:
+	cd ..; $(TAR) bigforth/bigforth-"$(SRCREV)".tar$(COMPSUB) $(SRCDIST) $(CPYDIST)
+
+patdist:	all
+	cd ..; $(TAR) bigforth/bigforth-pattern-"$(PATREV)".tar$(COMPSUB) $(PATDIST)
+
+edist1:		all
+	cd ..; $(TAR) bigforth/bigforth-edata-wood-"$(EWOODREV)".tar$(COMPSUB) $(EDIST1)
+
+edist2:		all
+	cd ..; $(TAR) bigforth/bigforth-edata-ShinyMetal-"$(ESHMREV)".tar$(COMPSUB) $(EDIST2)
+
+dist:	all docdist srcdist patdist edist1 edist2
+
+dist-files:
+	@echo $(SRCDIST) $(DOCDIST) $(CPYDIST) $(DOSDIST)
+
+INSTDIRS = pattern icons help src Estyle Estyle/wood Estyle/ShinyMetal
+
+install:	all
+	@install -d $(BININSTDIR)
+	@install -d $(INSTDIR)
+	@for i in $(INSTDIRS); do install -d $(INSTDIR)/$$i; done
+	@install -m 644 {forthker,bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
+	@install -m 644 {bigforth,xbigforth}.cnf $(INSTDIR)
+	@install -m 755 {forthker,bigforth,xbigforth} $(BININSTDIR)
+	@install -m 644 {BUGS,ToDo,README,COPYING,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
+	@install -m 644 icons/*.png $(INSTDIR)/icons
+	@install -m 644 pattern/dragon{,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
+	@if [ -d help ]; then install -m 644 help/{*.html,[a-z]*.gif,*.jpg,*.sh} $(INSTDIR)/help; fi
+	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm pattern/dragon.ppm $(INSTDIR)/pattern; fi
+	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(INSTDIR)/Estyle/wood; fi
+	@if [ -d Estyle/ShinyMetal ]; then install -m 644 Estyle/ShinyMetal/* $(INSTDIR)/Estyle/ShinyMetal; fi
+
+configure:	configure.in
+		autoconf
+
+config.status:	configure
+		if [ -f config.status ]; \
+		then ./config.status --recheck; \
+		else ./configure; fi
+
+Makefile:	Makefile.in config.status
+		CONFIG_FILES="$@" ./config.status
+
+xbigforth.cnf:	xbigforth.cnf.in config.status
+		CONFIG_FILES="$@" ./config.status
+
+bigforth.cnf:	bigforth.cnf.in config.status
+		CONFIG_FILES="$@" ./config.status
+
+# This is the documentation part, and is not ready yet
+
+doc/bigforth.dvi doc/bigforth.fns:	bigforth.texi
+		cd doc; $(TEXI2DVI) bigforth.texi
+
+doc/bigforth.ps:	doc/bigforth.dvi
+		$(DVI2PS) doc/bigforth.dvi -o $@
+
+doc/bigforth.info doc/bigforth.info-*: bigforth.texi
+		-cd doc; $(MAKEINFO) bigforth.texi
+
+doc/bigforth.txt:	bigforth.texi
+		-cd doc; $(MAKEINFO) --no-headers --no-split bigforth.texi >bigforth.txt
+
+info:		doc/bigforth.info
+
+ps:		doc/bigforth.ps
+
+html:		doc/bigforth.texi
+		-$(RMTREE) html
+		-mkdir html
+		cd html; $(TEXI2HTML) -menu -split_node ../doc/bigforth.texi
+
+doc:		doc/bigforth.ps html doc/bigforth.txt
+
+# make debian
+bigforth.deb:	all
+	-rm -rf debian
+	mkdir debian
+	make package=debian install
+	(cd debian; find * -name '*' -exec md5sum '{}' ';') >md5sums
+	echo "Package: bigforth" >control
+	echo "Version: $(SRCREV)" >>control
+	echo "Section: programming" >>control
+	echo "Priority: optional" >>control
+	echo "Architecture: i386" >>control
+	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>control
+	echo "Description: bigFORTH+MINOS" >>control
+	echo " bigFORTH is a native code Forth. It is available for Linux and" >>control
+	echo " Windows 95/98/NT under GPL. The most striking feature is the" >>control
+	echo " graphical user interface MINOS (GUI in Forth) and the form editor" >>control
+	echo " Theseus (Theseus is still beta)." >>control
+	mkdir debian/DEBIAN
+	cp control debian/DEBIAN
+	cp md5sums debian/DEBIAN
+	dpkg-deb --build debian
+	mv debian.deb bigforth_$(SRCREV)_i386.deb
+	rm -rf control md5sums debian
+

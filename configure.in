@@ -1,0 +1,31 @@
+dln this is a really minimal autoconf file
+
+AC_INIT(bigforth.c)
+AC_CANONICAL_HOST
+AC_PROG_CC
+
+case "$host_os" in
+	*win32|cygwin)
+		EXTFLAGS="-mno-cygwin"
+		WINDOWS="-mwindows"
+		ARCHFLAGS=""
+		;;
+	*)
+		EXTFLAGS=""
+		WINDOWS=""
+		ARCHFLAGS=""
+		;;
+esac
+
+case "$host_cpu" in
+	*x86_64*)
+		ARCHFLAGS="-m32"
+		;;
+esac
+
+AC_CHECK_LIB(dl,dlopen)
+AC_SUBST(EXTFLAGS)
+AC_SUBST(ARCHFLAGS)
+AC_SUBST(WINDOWS)
+
+AC_OUTPUT(Makefile bigforth.cnf xbigforth.cnf)
