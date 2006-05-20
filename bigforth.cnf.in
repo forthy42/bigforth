@@ -1,0 +1,8 @@
+\ bigFORTH config file - customize!                    31may95py
+
+\ system path, : removes previous pathes
+Path :.:@prefix@/lib/bigforth/src:@prefix@/lib/bigforth
+
+\ preferred base
+\ hex
+decimal
