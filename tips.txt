@@ -1,0 +1,13 @@
+Type Tab to expand a word
+ed <filename> opens the editor
+include <filename> reads a file
+: defines new words
+Type bye to exit
+bigFORTH is case-insensitive
+vocs lists all available vocabularies
+order lists the current search order
+words lists the words of the topmost vocabulary (can be many)
+.s prints what's on the stack
+see <word> tries to decompile a word
+If you know another tip, send me a note
+Type ``next tip'' to go through the tip list again

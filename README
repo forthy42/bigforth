@@ -1,0 +1,88 @@
+This is a small introduction to MINOS pre-beta. It's not intented as
+manual, it just helps you to see MINOS work.
+
+MINOS and bigFORTH are copyrighted work, (c) 1996-2002 by Bernd
+Paysan. You may copy MINOS under the GPL version 2 (see file COPYING),
+with the restriction that you must add your name to the CREDITS file,
+if you changed things. You can get the official distributions from
+
+http://www.jwdt.com/~paysan/bigforth.html
+http://bigforth.sourceforge.net/
+
+If you want to get bigFORTH/MINOS for Linux, get
+
+http://www.jwdt.com/~paysan/bigforth-<version>.tar.bz2
+
+or one of the mirrors at Sourceforge
+
+Get also bigforth-pattern-<version>.tar.bz2 if you want background
+styles, and bigforth-edata-<style>-<version>.tar.bz2 for Enlightenment
+styles (scaled pixmaps).
+
+To install MINOS, unpack all packages into a directory of your
+choise. MINOS will unpack into a subdirectory called "bigforth". cd to
+that directory, and type "make install". This will install bigFORTH in
+the /usr/local hierarchy. Source and data files are in
+/usr/local/lib/bigforth and subdirectories, the executables in
+/usr/local/bin. You find configure files in
+/usr/local/lib/bigforth/*.cnf, copy them to your homedirectory to
+adjust pathes.
+
+If you want to run bigFORTH from another directory, edit the Makefile
+variable INSTDIR and BININSTDIR, and remake the system (type "rm
+bigforth; make"). You still have to adjust the pathes in the *.cnf
+files.
+
+If you want to run MINOS on Windows 95/NT, get
+
+http://www.jwdt.com/~paysan/bigforth-<version>.exe
+
+or one of the mirrors at Sourceforge
+
+and double-click on that file. This is a self-extracting archive, that
+installs as other Windows programs.
+
+
+
+MINOS consists of two parts: a widget library (also called MINOS), and
+an editor, the tool to master MINOS, called Theseus. To load MINOS,
+start "xbigforth" and click on "Theseus" in the "File" menu.
+
+This opens Theseus. To arrange objects, MINOS uses a box&glue
+model. Each dialog starts with a box (usually a vertical box, vbox,
+you can change this with the "horizontal" button in the box
+inspector); add all the widgets you want there. To navigate within the
+boxes (one box is the current box), use the four cursor buttons in the
+icon bar, or click on the box.
+
+The top three icons select the editing mode: Text/Code/Name, Cut/Paste
+and Try. The four icons below change the appending order of new
+objects: First in the current box, last in the current box, before the
+current object, after the current object. The three lower icons allow
+you to load, save and execute the current form. Another "designer
+open" in the dialog window opens another incarnation of Theseus.
+
+There is a help file, which explains a bit more detailed how to use
+Theseus. You can view the help with your favourite HTML browser, set
+the shell variable BROWSER accordingly. Default is
+"netscape". "kdehelp" works fine, too.
+
+MINOS isn't finished, so don't expect everything to work.
+
+To see some of MINOS features, type "include testwidgets.str" in the
+dialog window, or "include gears.m gears open".
+
+
+
+Known problems:
+
+If you get errors like "Bus Error" or so, type .except (and return),
+and look at the instruction's address. If it's in a library, update
+it. Start xbigforth and type "cat /proc/<xbigforth's pid>/maps" from
+the shell prompt to find out where the librarys are mapped, type
+"modules" from the xbigforth prompt to find out where bigFORTH mappes
+it's own modules. This eases my job if you report me a bug.
+
+More informations about MINOS can be found in the article
+
+http://www.jwdt.com/~paysan/minos-eng.ps.gz

@@ -1,0 +1,19 @@
+        This is the beginning of a credits-file of people that have
+        contributed to the MINOS project.  It is sorted by name, and
+        formatted in a format that allows for easy grepping and
+        beautification by scripts.  The fields are: name (N), email (E),
+        web-address (W), PGP key ID and fingerprint (P), description (D)
+        and snail-mail address (S). 
+	Thanks,
+
+			Bernd Paysan
+
+----------
+
+N: Bernd Paysan
+E: bernd.paysan@gmx.de
+D: Original MINOS hacker, bigFORTH hacker
+S: Stockmannstr. 14
+S: D-81477 München
+S: Germany
+P: 1024/382CA8ED 1C 0D 4D 0C 69 00 40 1E  04 BD 96 A3 7B DF 05 B1

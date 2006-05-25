@@ -1,0 +1,7 @@
+#!/bin/bash
+
+file=${1%.xpm}
+
+convert $file.xpm $file.ppm
+mv $file.ppm $file.icn
+xbigforth xpmtopbm.fs -e "s\" $file.xpm\" xpm2pbm bye" >>$file.icn

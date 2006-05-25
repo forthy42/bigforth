@@ -1,0 +1,46 @@
+Known Bugs
+
+This file lists the known bugs in bigFORTH, MINOS, and Theseus. Many
+bugs are only known in the Windows version.
+
+This file is organized as Emacs outline
+
+* bigFORTH
+
+** Windows 95/NT
+
+Doesn't trace
+
+* Theseus
+
+** all
+
+hline doesn't work, beamer not ready for prime time.
+
+* MINOS
+
+** Windows
+
+Doesn't support pixmap background -- fix possible for 98/NT
+
+Doesn't support Enlightenment styles -- no fix intended
+
+** Linux
+
+Has problems with coordinates outside 16 bit range -- mostly fixed
+
+* SQL access
+
+** Windows
+
+Doesn't work (would require recoding of libpq to ODBC)
+
+* Midi access
+
+** Windows
+
+Doesn't work (would require recoding to multimedia library)
+
+** Linux
+
+Doesn't work with ALSA

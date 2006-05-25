@@ -1,0 +1,30 @@
+-*- outline -*-
+
+This file describes all the things left to do on bigFORTH/MINOS. The list
+is not complete, so you should add topics you miss or refine existing
+topics. If you are working on a topic, add your name to the right of
+the topic. If you have completed the work, remove the topic.
+
+This an emacs outline. Use '*' to create topics.
+
+*OS Interface
+
+*MINOS
+**combined class bag/abag: allows to freely position objects within,
+includes raise/lower to move object orders around
+**Colored terminal? vt100 emulation to pipe output from a shell command
+to the terminal widget?
+**Cache GCs to improve performance
+**Use subwindows for viewports (does it pay off?)
+
+*File Selector
+**Allow different methods to obtain file listings (e.g. FTP).
+
+*Theseus
+**Provide action hooks to components, to allow to defer component actions.
+
+*Documentation
+LaTeX files
+**Convert the current HTML help to LaTeX (mostly done)
+**Describe the class structure, the methods, etc.
+**More examples in the tutorial part
