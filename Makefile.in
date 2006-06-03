@@ -225,7 +225,7 @@ bigforth.deb:	all
 	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>control
 	echo "Description: bigFORTH+MINOS" >>control
 	echo " bigFORTH is a native code Forth. It is available for Linux and" >>control
-	echo " Windows 95/98/NT under GPL. The most striking feature is the" >>control
+	echo " Windows 2000/XP under GPL. The most striking feature is the" >>control
 	echo " graphical user interface MINOS (GUI in Forth) and the form editor" >>control
 	echo " Theseus (Theseus is still beta)." >>control
 	mkdir debian/DEBIAN
