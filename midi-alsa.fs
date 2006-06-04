@@ -21,6 +21,43 @@ cell time_ns
 40 data        /* event data... */
 } snd_seq_event
 
+
+struct{
+        cell client                     /* client number to inquire */
+        cell type                       /* client type */
+        1 name 63 \                     /* client name */
+        cell filter                     /* filter flags */
+        1 multicast_filter 7 \          /* multicast filter bitmap */
+        1 event_filter 31 \             /* event filter bitmap */
+        cell num_ports                  /* RO: number of ports */
+        cell event_lost                 /* number of lost events */
+        64 \                            /* for future use */
+} snd_seq_client_info
+
+struct{
+        1 client   1 port               /* client/port numbers */
+        1 name 63 \                     /* port name */
+        cell capability                 /* port capability bits */
+        cell type                       /* port type bits */
+        cell midi_channels              /* channels per MIDI port */
+        cell midi_voices                /* voices per MIDI port */
+        cell synth_voices               /* voices per SYNTH port */
+
+        cell read_use                   /* R/O: subscribers for output (from thi
+s port) */
+        cell write_use                  /* R/O: subscribers for input (to this p
+ort) */
+
+        cell kernel                     /* reserved for kernel use (must be NULL
+) */
+        cell flags                      /* misc. conditioning */
+        1 time_queue                    /* queue # for timestamping */
+        59 \                            /* for future use */
+} snd_seq_port_info
+
+Create cinfo  sizeof snd_seq_client_info allot
+Create pinfo  sizeof snd_seq_port_info allot
+	    
 library libasound libasound.so.2
 
 legacy off
@@ -45,6 +82,10 @@ libasound event_output_buffer int int
  (int) snd_seq_event_output_buffer ( handle ev -- f )
 libasound drain_output int
  (int) snd_seq_drain_output ( handle -- f )
+libasound query_next_client int int
+ (int) snd_seq_query_next_client ( handle info -- f )
+libasound query_next_port int int
+ (int) snd_seq_query_next_port ( handle info -- f )
 
 libasound queue_tempo_sizeof
  (int) snd_seq_queue_tempo_sizeof ( -- size )
@@ -61,6 +102,9 @@ libasound get_queue_tempo int int int
 
 also memory
 
+&17 Value wavetable
+&00 Value waveport
+
 midi-player implements
   Create ev     here sizeof snd_seq_event dup allot erase
   Create _tempo here queue_tempo_sizeof   dup allot erase
@@ -75,7 +119,29 @@ midi-player implements
   : sync seq @ drain_output drop sync-wait ;
   : create-port ( -- ) seq @ 0" Midi player" $63 2
     create_simple_port port ! ;
-  : connect-seq seq @ port @ 65 0 connect_to drop ;
+  : connect-seq seq @ port @ wavetable waveport connect_to drop ;
+  : hex. ( -- )  base push hex . ;
+  : list-ports ( -- )  cinfo @ pinfo c! -1 pinfo 1+ c!
+      BEGIN  seq @ pinfo query_next_port  0= WHILE
+	      pinfo snd_seq_port_info client c@ .
+	      pinfo snd_seq_port_info port c@ . ."  '" 
+	      pinfo snd_seq_port_info name >len type ." ' "
+	      pinfo snd_seq_port_info capability @ hex.
+	      pinfo snd_seq_port_info type @ hex.
+	      pinfo snd_seq_port_info type @ 4 and
+	      wavetable 0= waveport 0= and and IF
+		  pinfo snd_seq_port_info client c@ to wavetable
+		  pinfo snd_seq_port_info port c@ to waveport
+		  '* emit
+	      THEN cr
+      REPEAT ;
+  : list-clients ( -- )  cinfo off  0 to wavetable  0 to waveport
+      BEGIN  seq @ cinfo query_next_client  0= WHILE
+	      cinfo snd_seq_client_info client ?
+	      cinfo snd_seq_client_info num_ports ?
+	      cinfo snd_seq_client_info name >len type cr
+	      list-ports
+      REPEAT ;
   : set-ev-header ( command -- )
               [ ev snd_seq_event type      ] ALiteral c!
       port @  [ ev snd_seq_event source 1+ ] ALiteral c!
@@ -91,7 +157,7 @@ midi-player implements
   : seq-open ( -- )
       open-seq create-port
       alloc-queue set-name 64k-buffer
-      connect-seq ;
+      list-clients connect-seq ;
   : seq-close ( -- ) seq @ close drop seq off ;
 
 \ Timer and tempo                                      06jul02py
