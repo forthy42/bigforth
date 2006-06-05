@@ -128,7 +128,7 @@ midi-player implements
 	      pinfo snd_seq_port_info name >len type ." ' "
 	      pinfo snd_seq_port_info capability @ hex.
 	      pinfo snd_seq_port_info type @ hex.
-	      pinfo snd_seq_port_info type @ 4 and
+	      pinfo snd_seq_port_info type @ 4 and \ general MIDI
 	      wavetable 0= waveport 0= and and IF
 		  pinfo snd_seq_port_info client c@ to wavetable
 		  pinfo snd_seq_port_info port c@ to waveport
