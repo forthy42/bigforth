@@ -33,6 +33,7 @@ base !
 6 Constant VMIN
 
 also DOS also
+legacy on
 2 libc tcgetattr tcgetattr
 3 libc tcsetattr tcsetattr
 2 libc tcflow tcflow
