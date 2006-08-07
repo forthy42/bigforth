@@ -198,8 +198,7 @@ Variable tail-time
       matrix>  pi !.2 f* roll-right >matrix
       pi/2 down !.4 !.4 !.2 scale-xyz leg matrix>
       !-.1 !0 !0 forward-xyz !.66 claw } ;
-  F : dragon-body ( t0 s t3 s t1 s t3 s t2 s n -- ) >r
-      2over !text
+  F : dragon-body ( t0 s t3 s t1 s t3 s t2 s t4 s n -- ) >r !text
       time' fsin !.1 f* !0 !0 forward-xyz
       pi f2* !.2 f- r@ 1- fm/ set-dphi
       r@ 4 + open-path
@@ -242,8 +241,8 @@ Create front_specular   !&.7   f>fs dup , dup , , #1 ,
 endwith
 
 : draw-dragon ( o alx aly alz pitch bend roll zoom
-               shade sx sy sz t0 t1 t2 t3 -- )
-{ alx aly alz alp alb alr zoom speed shade sx sy sz t0 t1 t2 t3 |
+               shade sx sy sz t0 t1 t2 t3 t4 -- )
+{ alx aly alz alp alb alr zoom speed shade sx sy sz t0 t1 t2 t3 t4 |
     glcanvas with
         .sky sf@+ sf@+ sf@+ sf@ glClearColor
         !2.8 !200 w @ h @ 3d-turtle new  3d-turtle with
@@ -282,11 +281,12 @@ endwith
 
             !.01 sx fm* !.01 sy fm* !.01 sz fm* scale-xyz
 
-            t0 t1 t2 t3 1 switch-text  shade 7 and 0=
-            t0 t1 t2 t3 0 switch-text  over
-            t0 t1 t2 t3 3 switch-text  over
-            t0 t1 t2 t3 3 switch-text  over
-            t0 t1 t2 t3 2 switch-text  over
+            t3  shade 7 and 0=
+            t4  over
+            t0  over
+            t1  over
+            t2  over
+            t1  over
 
             test-list 0< IF  1 glGenLists TO test-list  THEN
 

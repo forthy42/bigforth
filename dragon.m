@@ -29,6 +29,7 @@ cell var scale-z
 cell var shade
 cell var shade1
 cell var texture
+cell var back-texture
 cell var head-texture
 cell var wing-texture
 cell var claw-texture ( [varend] ) 
@@ -87,16 +88,19 @@ dragon implements
   dragon-task @ 0= IF
       foo off
       gldragon with
-          4 3d-turtle textures  2over 2over
+          5 3d-turtle textures  5 0 DO 4 pick  LOOP
           3d-turtle set-texture
           S" pattern/dragon.png"       3d-turtle load-texture
+          3d-turtle set-texture
+          S" pattern/dragon-back.png"  3d-turtle load-texture
           3d-turtle set-texture
           S" pattern/dragon-head.png"  3d-turtle load-texture
           3d-turtle set-texture
           S" pattern/dragon-wing.png"  3d-turtle load-texture
           3d-turtle set-texture
           S" pattern/dragon-claw.png"  3d-turtle load-texture
-      endwith  texture ! head-texture ! wing-texture ! claw-texture !
+      endwith
+      texture ! back-texture ! head-texture ! wing-texture ! claw-texture !
       make-dragon-task  THEN
   timer@ dup last-time @ -
   speed @ &20 */ tail-time +! last-time !
@@ -105,7 +109,7 @@ dragon implements
   alphapitch @ alphabend @ alpharoll @
   zoom @ tail-time @ shade @ 0 max shade1 @ or
   scale-x @ scale-y @ scale-z @
-  texture @ head-texture @ wing-texture @ claw-texture @
+  texture @ back-texture @ head-texture @ wing-texture @ claw-texture @
   draw-dragon ;
 : dispose
   dragon-task @  IF  self dpy cleanup pause dragon-task off  THEN

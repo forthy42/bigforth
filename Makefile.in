@@ -116,7 +116,7 @@ ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
 
 SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,{,x}bigforth.cnf}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
 
-DRAGONDIST = bigforth/pattern/dragon{,-head,-wing,-claw}.png \
+DRAGONDIST = bigforth/pattern/dragon{,-back,-head,-wing,-claw}.png \
 	bigforth/pattern/{bark,normal-w1,back,focus}.ppm
 
 PATDIST = bigforth/pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm \
