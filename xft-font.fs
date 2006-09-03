@@ -110,7 +110,14 @@ struct{
 
 also minos
 
-Variable xft-draw
+Variable xft-draw'
+
+displays implements
+    : dispose  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+	:: dispose ;
+class;
+
+definitions minos
 
 X-font class Xft-font
     method add-font
@@ -140,13 +147,6 @@ how:
             dup cfix >r 8 >> dup cfix >r 8 >> cfix r> r>
             [ xft-color XftColor color XRenderColor red ] ALiteral w!+ w!+ w!
         endwith ;
-    : set-draw ( win dpy -- )
-        xft-draw @ 0= IF
-            swap screen xrc vis @
-            screen xrc cmap @ XftDrawCreate xft-draw !
-        ELSE
-	    drop xft-draw @ swap XftDrawChange
-        THEN ;
     : scan-within ( addr u -- addr' ) over + >r
         dup  BEGIN  nip dup r@ u<  WHILE
             dup xc@+ extra-code 2@ within  UNTIL
@@ -168,19 +168,24 @@ how:
     : draw ( addr u x y dpy -- ) { addr u x y dpy }
         color @ $FF and dpy set-color
         dpy displays with
-            drawable rot drop clip-r @
-        endwith >r set-draw
-        xft-draw @ r> XftDrawSetClip drop 0
+            drawable rot drop
+            xft-draw @ 0= IF
+		swap xrc vis @
+		xrc cmap @ XftDrawCreate xft-draw !
+	    ELSE
+		2drop
+	    THEN
+	    xft-draw @ dup clip-r @ XftDrawSetClip drop
+        endwith xft-draw' ! 0
         BEGIN
             1+  addr u  scan-within >r
-            xft-draw @ xft-color id @ x y ascent @ +
+            xft-draw' @ xft-color id @ x y ascent @ +
             addr r@ over - XftDrawString
             screen xrc dpy @ id @ addr r@ over - text_r XftTextExtents
             text_r XGlyphInfo xOff w@ x + to x
             addr u r> addr - /string to u to addr  swap-id
         u 0<= UNTIL
-        1 and IF  swap-id  THEN
-        xft-draw @ screen xwin @ XftDrawChange ;
+        1 and IF  swap-id  THEN ;
 class;
 
 : xft-new-font  Xft-font new ;

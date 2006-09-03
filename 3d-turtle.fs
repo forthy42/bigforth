@@ -790,23 +790,29 @@ class;
         r@ XImage width @
         r> XImage height @ ;
     : text-texture ( addr u font-object -- text-o )
-        xft-draw push xft-draw off
 	1 textures dup >r set-texture
         font with 2dup size 2swap 2over
 	    >2** swap >2** swap 2swap 2over
 	    8 -rot pixmap new >r
             $10 color !
-            r@ displays with xrc dpy @ xwin @ endwith
-\ fixme!!! xft-font needs to know about pixmaps itself!
+	    r@ displays with xrc dpy @ xwin @ xft-draw @ endwith
+	    xft-draw' !
+	\ fixme!!! xft-font needs to know about pixmaps itself!
 	    xft-font self @ class? IF
-		8 XftDrawCreateAlpha xft-draw !  THEN
+		8 XftDrawCreateAlpha
+		r@ displays with  xft-draw !  endwith
+	    ELSE
+		r@ displays with  xft-draw off  endwith
+	    THEN
             r@ displays with xywh $10 box endwith
             0 0 r@ draw r>
-        endwith ( greymap )
+	    dup displays with
+	       xft-draw @ ?dup IF  XftDrawDestroy  THEN
+	       xft-draw' @ xft-draw !  endwith
+	    endwith ( greymap )
         pixmap with get dispose endwith
         dup >r map>addrwh
         create-mipmap1 r> XDestroyImage drop
-	xft-draw @ ?dup IF  XftDrawDestroy  THEN
         r> 3d-text new ;
     previous previous
 [THEN]
