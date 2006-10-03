@@ -190,3 +190,6 @@ Variable >>string
     swap 2dup >>string $@ drop -rot move
     >>string $off  0 to >>ptr  0 to <<ptr ;
 : >>next ( -- addr u ) <<ptr end$ over - ;
+: s//  ]] BEGIN [[ ; immediate
+: //g  ]] WHILE >>next REPEAT end$ [[
+    s" " ]] SLiteral << >>string@ rot drop [[ ; immediate
