@@ -1,8 +1,8 @@
 # bigforth makefile
 
 DATE= $$(date '+%d%b%Y' | tr '[A-Z]' '[a-z]')
-SRCREV=2.1.3
-MINOSREV=1.1.3
+SRCREV=@PACKAGE_VERSION@
+MINOSREV=1.1.4
 BINREV=$(SRCREV)
 PATREV=1.0.1
 EWOODREV=1.0.2
@@ -11,14 +11,18 @@ DOCREV=obsolete
 
 package =
 prefix = $(package)@prefix@
+exec_prefix = @exec_prefix@
+libdir = $(package)@libdir@/bigforth
+srcdir = $(package)$(libdir)/src
+bindir = $(package)@bindir@
 
 TEXI2DVI = texi2dvi
 DVI2PS	= dvips -Z
 TEXI2HTML = texi2html
 MAKEINFO = makeinfo
 
-INSTDIR = $(prefix)/lib/bigforth
-BININSTDIR = $(prefix)/bin
+INSTDIR = $(libdir)
+BININSTDIR = $(bindir)
 CC = @CC@ @ARCHFLAGS@
 CP = cp
 MV = mv
@@ -50,7 +54,10 @@ XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
 	  xbigforth.cnf xft-font.fs imlib.fs Estyle.fs
 
-all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi
+all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
+
+ok:	xbigforth.fi xbigforth$(EXE)
+	@xbigforth -e '." *** bigFORTH build successful ***" cr bye'
 
 version.h:	Makefile.in
 	echo '"'$(SRCREV)'"' >$@
@@ -86,9 +93,9 @@ forthker.fi: $(KERNSRC)
 	-@$(MV) $@ $@~
 	./bigforth -e ": $(LIB) ; include forth.fb save-target forthker $(BYE)"
 
-bigforth.fi: forthker.fi $(SYSSRC)
+bigforth.fi: forthker.fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
-	./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
+	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
 
 xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) bigforth.cnf
 	-@$(MV) $@ $@~

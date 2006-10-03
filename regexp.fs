@@ -54,9 +54,12 @@ charclass any    0 $FF ..char #lf -char
 
 \ A word for string comparison
 
-: $= ( addr1 addr2 u -- f )  tuck compare ;
-: ,=" ( addr u -- ) tuck ]] dup SLiteral $= ?LEAVE Literal + noop [[ ;
-: =" ( <string>" -- )  '" parse ,=" ; immediate
+\ : $= ( addr1 addr2 u -- f )  tuck compare ;
+\ : ,=" ( addr u -- ) tuck ]] dup SLiteral $= ?LEAVE Literal + noop [[ ;
+\ : =" ( <string>" -- )  '" parse ,=" ; immediate
+: =" '" parse bounds ?DO
+	]] count [[ I c@ ]] Literal <> ?LEAVE [[
+    LOOP ; immediate
 
 \ loop stack
 
@@ -169,3 +172,21 @@ Variable varsmax
   DOES> ( -- addr u ) @ 2@ tuck - ;
 : \:s ( n -- ) 0 ?DO  I \:  LOOP ;
 9 \:s \1 \2 \3 \4 \5 \6 \7 \8 \9
+
+\ replacements
+
+0 Value >>ptr
+0 Value <<ptr
+Variable >>string
+: >>  ( addr -- addr )  dup to >>ptr ;
+: << ( run-addr addr u -- run-addr )
+    <<ptr 0= IF  start$ to <<ptr  THEN
+    >>string @ 0= IF  s" " >>string $!  THEN
+    <<ptr >>ptr over - >>string $+!
+    >>string $+! dup to <<ptr ;
+: <<"  '" parse postpone SLiteral postpone << ; immediate
+: >>string@ ( -- addr u )
+    >>string $@len dup allocate throw
+    swap 2dup >>string $@ drop -rot move
+    >>string $off  0 to >>ptr  0 to <<ptr ;
+: >>next ( -- addr u ) <<ptr end$ over - ;

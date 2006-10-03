@@ -78,7 +78,7 @@ FVariable oldgauss !0 oldgauss f!
 	fdup d1 f* fswap d2 f* { f: x1 f: x2 |
 	x1 f* dup element x df!
 	x1 f* dup element y df!
-	f**2 x2 f*     element z df! }
+	( f**2 ) x2 f*     element z df! }
     LOOP } ;
 
 \ units: million meters, earth masses
@@ -240,7 +240,7 @@ Variable dirsens  dirsens on
   pause LOOP ;
 
 : set-masses ( n dp sf -- )  >r >r init-stars
-    star# swap &100 */ -4 and dup >r !1 !.33 set-bulge
+    star# swap &100 */ -4 and dup >r !3.5 fdup ( !1 !.33 ) set-bulge
     r> star# !.3 !2.25 !.2 r> !.01 fm* r> !.01 fm* set-spiral ;
 
 &30 &40 &100 set-masses

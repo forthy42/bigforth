@@ -1,10 +1,14 @@
-This is a small introduction to MINOS pre-beta. It's not intented as
-manual, it just helps you to see MINOS work.
+bigFORTH is a fast x86 implementation of the ANS Forth language. It
+comes with a GUI, MINOS, and an embedded screen and stream file
+editor. It also works nice with Emacs, using gforth.el from Gforth. It
+offers a number of nice features, like history, input completion,
+backtraces, a decompiler, object oriented extensions and so on.
 
-MINOS and bigFORTH are copyrighted work, (c) 1996-2002 by Bernd
-Paysan. You may copy MINOS under the GPL version 2 (see file COPYING),
-with the restriction that you must add your name to the CREDITS file,
-if you changed things. You can get the official distributions from
+bigFORTH is a native code compiler. bigFORTH is distributed under the
+GNU General Public license (see COPYING). Please add yourself to the
+CREDITS file if you change something and redistribute.
+
+You can get the official distributions from
 
 http://www.jwdt.com/~paysan/bigforth.html
 http://bigforth.sourceforge.net/
@@ -19,21 +23,24 @@ Get also bigforth-pattern-<version>.tar.bz2 if you want background
 styles, and bigforth-edata-<style>-<version>.tar.bz2 for Enlightenment
 styles (scaled pixmaps).
 
-To install MINOS, unpack all packages into a directory of your
-choise. MINOS will unpack into a subdirectory called "bigforth". cd to
-that directory, and type "make install". This will install bigFORTH in
-the /usr/local hierarchy. Source and data files are in
-/usr/local/lib/bigforth and subdirectories, the executables in
-/usr/local/bin. You find configure files in
-/usr/local/lib/bigforth/*.cnf, copy them to your homedirectory to
-adjust pathes.
+To install bigFORTH, unpack all packages into a directory of your
+choise, cd into the generated subdirectory bigforth-<version> and type
+in
 
-If you want to run bigFORTH from another directory, edit the Makefile
-variable INSTDIR and BININSTDIR, and remake the system (type "rm
-bigforth; make"). You still have to adjust the pathes in the *.cnf
-files.
+./configure
+make
+make install
 
-If you want to run MINOS on Windows 95/NT, get
+the latter with the appropriate rights to write into the install
+directory. configure accepts the usual options of a GNU autoconf
+configure, such as --prefix=<install-path>. Default is /usr/local.
+
+You'll see some ignored errors on the first make, when the compiler
+tries to backup generated bigFORTH images - these images haven't been
+generated. You can ignore these errors.
+
+
+If you want to run MINOS on Windows 2k/XP, get
 
 http://www.jwdt.com/~paysan/bigforth-<version>.exe
 
@@ -42,6 +49,12 @@ or one of the mirrors at Sourceforge
 and double-click on that file. This is a self-extracting archive, that
 installs as other Windows programs.
 
+
+If you have a Debian system, you can also get
+
+http://www.jwdt.com/~paysan/bigforth-<version>.deb
+
+and install it with dpkg.
 
 
 MINOS consists of two parts: a widget library (also called MINOS), and
@@ -67,21 +80,9 @@ Theseus. You can view the help with your favourite HTML browser, set
 the shell variable BROWSER accordingly. Default is
 "netscape". "kdehelp" works fine, too.
 
-MINOS isn't finished, so don't expect everything to work.
-
-To see some of MINOS features, type "include testwidgets.str" in the
+To see some of MINOS features, type "include testwidgets.fs" in the
 dialog window, or "include gears.m gears open".
 
-
-
-Known problems:
-
-If you get errors like "Bus Error" or so, type .except (and return),
-and look at the instruction's address. If it's in a library, update
-it. Start xbigforth and type "cat /proc/<xbigforth's pid>/maps" from
-the shell prompt to find out where the librarys are mapped, type
-"modules" from the xbigforth prompt to find out where bigFORTH mappes
-it's own modules. This eases my job if you report me a bug.
 
 More informations about MINOS can be found in the article
 
