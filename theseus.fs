@@ -52,6 +52,12 @@ how:
         x @ y @ h @ + x @ w @ + y @ 0 dpy line ;
 class;
 
+: new-code ( addr u content -- o )
+    codeedit new
+    codeedit with c/l cols ! add-lines
+        0 0 at ^
+    endwith ;
+
 \ link list
 
 links implements
@@ -176,8 +182,30 @@ forward dispose-box
 widget ptr edit-string
 widget ptr code-string
 widget ptr code2-string
+widget ptr code-label
+widget ptr code2-label
 widget ptr name-string
     
+infotextfield class infocodefield
+    codeedit ptr code-lines
+    cell var ^content
+  how:
+    : init ( act xxx addr2 u2 -- )
+ 	rot ^content !
+	text-label new dup bind info
+	0 1 *fill 2dup glue new
+	2 vabox new
+	^content @ HLock
+	get ^content @ new-code dup bind code-lines
+	dup F bind code-string
+	^content @ HUnLock
+	1 habox new -2 borderbox
+	0 1 *fill 2dup glue new
+ 	3 super super super init ;
+    : assign ( addr u -- )  ^content @ $! ;
+    : get ( -- addr u )  ^content @ $@ ;
+class;
+
 : minos-design ( o -- o )
     hxrtsizer new 2 hasbox new
     vxrtsizer new 2 vasbox new

@@ -464,12 +464,6 @@ how:
     : post-dump base push hex ."  $" get 0 .r  ."  setup-edit " ;
 class;
 
-: new-code ( addr u content -- o )
-    codeedit new
-    codeedit with $40 cols ! add-lines
-        0 0 at ^
-    endwith ;
-
 string-des class action-des
 public:
     method assign-tip
@@ -625,7 +619,7 @@ how:
     : assign-tip ( addr u -- )  tooltip-string $! ;
     : tooltip-field ( -- o )
         0 ST[ text@ cur toggle with assign-tip endwith ]ST
-        get-tip s" Tooltip:" infotextfield new ;
+	get-tip s" Tooltip:" infotextfield new ;
     : edit-field ( -- o )
         ^ F cur bind toggle
         0 TN[ 0 typ ]T[ [ toggle-on$  0 typ$ ] SLiteral code-string text!
@@ -641,11 +635,9 @@ how:
                         [ toggle-off$ 3 typ$ ] SLiteral code2-string text! ]TN
             s" Toggle-State" rbutton new
         cur back with 2fill endwith 5 hartbox new
-        0 ST[ text@ cur toggle get 2swap 2drop cur toggle assign ]ST
-        get >r >r toggle-on$ typ @ typ$ infotextfield new
+        content toggle-on$ typ @ typ$ infocodefield new
         dup F bind code-string
-        0 ST[ text@ cur toggle get 2drop 2swap cur toggle assign ]ST
-        r> r> toggle-off$ typ @ typ$ infotextfield new
+        content2 toggle-off$ typ @ typ$ infocodefield new
         dup F bind code2-string
         tooltip-field
         4 vabox new vskip ;
