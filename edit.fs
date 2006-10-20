@@ -4,7 +4,7 @@
 eingebundener Streamfile-Editor.
 
 Seine Features:
-   * Volle Tastaturkomptibilität
+   * Volle Tastaturkomptibilitaet
    * Views aus dem Editor (auch auf im Screenfile definierte 
      Woerter)
 Seine Nachteile:
