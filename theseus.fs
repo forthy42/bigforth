@@ -1649,7 +1649,7 @@ designer implements
         screen self new dup F bind cur op!
         term self bind callwind
         designer-menu
-        backing new D[ classes ]D
+        classes
         modes
         1 1 viewport new DS[
             ^ cur bind pane
