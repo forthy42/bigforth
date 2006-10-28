@@ -214,7 +214,7 @@ static char bigforth_header[] =
 #ifdef _WIN32
   "\353\137"
 #ifdef MINOS
-  "\063"
+  "\062"
 #else
   "\042"
 #endif
