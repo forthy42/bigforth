@@ -18,25 +18,25 @@ $80 Value maxascii
     \ dup $C2 u< abort" malformed character"
     $7F and  $40 >r
     BEGIN   dup r@ and  WHILE  r@ xor
-	    6 lshift r> 5 lshift >r >r count
-\	    dup $C0 and $80 <> abort" malformed character"
-	    $3F and r> or
+            6 lshift r> 5 lshift >r >r count
+\           dup $C0 and $80 <> abort" malformed character"
+            $3F and r> or
     REPEAT  rdrop ;
 
 : xc!+ ( xc xcaddr -- xcaddr' )
     over maxascii u< IF  tuck c! 1+  EXIT  THEN \ special case ASCII
     >r 0 swap  $3F
     BEGIN  2dup u>  WHILE
-	    2/ >r  dup $3F and $80 or swap 6 rshift r>
+            2/ >r  dup $3F and $80 or swap 6 rshift r>
     REPEAT  $7F xor 2* or  r>
     BEGIN   over $80 u>= WHILE  tuck c! 1+  REPEAT  nip ;
 
 : xc!+? ( xc xcaddr u -- xcaddr' u' )
     >r over xc-size r@ over u< IF ( xc xc-addr1 len r: u1 )
-	\ not enough space
-	drop nip r> false
+        \ not enough space
+        drop nip r> false
     ELSE
-	>r xc!+ r> r> swap - true
+        >r xc!+ r> r> swap - true
     THEN ;
 
 \ scan to next/previous character
@@ -56,30 +56,34 @@ $80 Value maxascii
     PCkey dup maxascii u< ?EXIT  \ special case ASCII
     $7F and  $40 >r
     BEGIN  dup r@ and  WHILE  r@ xor
-	    6 lshift r> 5 lshift >r >r PCkey
-\	    dup $C0 and $80 <> abort" malformed character"
-	    $3F and r> or
+            6 lshift r> 5 lshift >r >r PCkey
+\           dup $C0 and $80 <> abort" malformed character"
+            $3F and r> or
     REPEAT  rdrop ;
 
 : xemit ( u -- )
     dup maxascii u< IF  PCemit  EXIT  THEN \ special case ASCII
     0 swap  $3F
     BEGIN  2dup u>  WHILE
-	    2/ >r  dup $3F and $80 or swap 6 rshift r>
+            2/ >r  dup $3F and $80 or swap 6 rshift r>
     REPEAT  $7F xor 2* or
     BEGIN   dup $80 u>= WHILE  PCemit  REPEAT  drop ;
 
 \ utf size
 
+[IFUNDEF] wcwidth
+   : wcwidth ( xc -- n )  drop 1 ;
+[THEN]
+
 also dos
 
 : xc-display-width ( addr u -- n )
     0 -rot bounds ?DO
-	I xc@+ swap >r wcwidth +
-	r> I - +LOOP ;
+        I xc@+ swap >r wcwidth +
+        r> I - +LOOP ;
 
 previous
-	
+        
 \ input editor
 
 2variable 'cursave
@@ -131,8 +135,8 @@ previous
 
 : xckill-expand ( max span addr pos1 -- max span addr pos2 )
     prefix-found cell+ @ ?dup IF  >r
-	r@ - >string over r@ + -rot move
-	rot r@ - -rot .all r> spaces .rest THEN ;
+        r@ - >string over r@ + -rot move
+        rot r@ - -rot .all r> spaces .rest THEN ;
 
 : xctab-expand ( max span addr pos1 -- max span addr pos2 0 )
     key? IF  #tab (xcins) 0  EXIT  THEN
@@ -140,8 +144,8 @@ previous
     search-prefix  tib-full?
     IF    7 emit  2drop  0 0 prefix-found 2!
     ELSE  dup >r
-	2>r >string r@ + 2r> 2swap insert
-	r@ + rot r> + -rot
+        2>r >string r@ + 2r> 2swap insert
+        r@ + rot r> + -rot
     THEN
     prefix-found @ IF  bl (xcins)  THEN  0 ;
 
@@ -187,9 +191,9 @@ export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
 also DOS
 : utf-8-coding
     s" LC_ALL" env$ 2dup d0= IF  2drop
-	s" LC_CTYPE" env$ 2dup d0= IF  2drop
-	    s" LANG" env$ 2dup d0= IF  2drop
-		$100 to maxascii  EXIT  THEN THEN THEN
+        s" LC_CTYPE" env$ 2dup d0= IF  2drop
+            s" LANG" env$ 2dup d0= IF  2drop
+                $100 to maxascii  EXIT  THEN THEN THEN
     s" UTF-8" search nip nip 0= IF  $100 to maxascii  THEN ;
 
 cold:  utf-8-io  utf-8-coding ;
