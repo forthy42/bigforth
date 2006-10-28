@@ -2,7 +2,7 @@
 
 Module win32api
 
-DOS also
+forth also DOS also
 
 \ lib: kernel kernel32
 \ library user32 user32
@@ -846,5 +846,7 @@ $FFFF  Constant HWND_BROADCAST
     0  Constant HWND_TOP
    -1  Constant HWND_TOPMOST
     0  Constant HWND_DESKTOP
+
+toss
 
 Module;
