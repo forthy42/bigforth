@@ -4,7 +4,10 @@ memory also dos also
 \needs float import float
 \needs glconst | import glconst
 \needs xconst  | import xconst
-float also glconst also x11 also opengl also
+float also glconst also
+[IFDEF] x11  x11 also [THEN]
+[IFDEF] win32  win32 also [THEN]
+opengl also
 
 [IFDEF] win32
 :noname  ['] noop noop-act 1 1 1 1  glcanvas new  glcanvas with
@@ -784,7 +787,7 @@ class;
 
 \ text drawing                                       23jul2005py
 
-[IFDEF] pixmap also xconst also xft
+[IFDEF] xft  also xconst also xft
     : map>addrwh ( image -- addr w h ) >r
         r@ XImage data @
         r@ XImage width @

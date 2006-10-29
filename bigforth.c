@@ -216,7 +216,7 @@ static char bigforth_header[] =
 #ifdef MINOS
   "\062"
 #else
-  "\042"
+  "\041"
 #endif
   "ANS bigFORTH 386-Win32 rev. "
 #include "version.h"

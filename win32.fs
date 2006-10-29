@@ -2,7 +2,7 @@
 
 Module win32api
 
-forth also DOS also
+DOS also forth also
 
 \ lib: kernel kernel32
 \ library user32 user32
@@ -105,7 +105,6 @@ library gdi32 gdi32
 6 gdi32 CreateDIBitmap CreateDIBitmap ( usage bmi binit winit 
         bmih hdc -- bitmap )
 2 gdi32 GetDeviceCaps GetDeviceCaps ( index hdc -- n )
-toss
 1 gdi32 DeleteDC DeleteDC ( dc -- flag )
 4 gdi32 SetPixel SetPixel ( color y x dc -- color )
 3 gdi32 PolylineTo PolylineTo ( n *point dc -- bool )
@@ -847,6 +846,6 @@ $FFFF  Constant HWND_BROADCAST
    -1  Constant HWND_TOPMOST
     0  Constant HWND_DESKTOP
 
-toss
+toss toss
 
 Module;

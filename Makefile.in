@@ -57,7 +57,7 @@ XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
 all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
 
 ok:	xbigforth.fi xbigforth$(EXE)
-	@xbigforth -e '." *** bigFORTH build successful ***" cr bye'
+	@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
 
 version.h:	Makefile.in
 	echo '"'$(SRCREV)'"' >$@
