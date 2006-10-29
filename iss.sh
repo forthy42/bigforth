@@ -38,14 +38,14 @@ Name: "{app}\doc"
 [Files]
 ; Parameter quick reference:
 ;   "Source filename", "Dest. filename", Copy mode, Flags
-$((cd ..; eval ls $(cd bigforth; make dist-files)) | grep -v start32.scr | sed \
+$((cd ..; eval ls $(cd bigforth; make dist-files)) | sed \
   -e 's#/#\\#g' \
   -e 's#^bigforth\\\(README\)$#Source: "\1.txt"; DestDir:"{app}"; Flags: isreadme#g' \
   -e 's,^bigforth\\\(..*\)\\\([^\\]*\)$,Source: "\1\\\2"; DestDir: "{app}\\\1",g' \
   -e 's#^bigforth\\\(.*\)$#Source: "\1"; DestDir: "{app}"#g' \
-  | grep -v 'xbigforth\.sys' | grep -v 'float.bfm' | sort -u)
-Source: "makewin.bsh"; DestDir: "{app}"
-Source: "makeload.bsh"; DestDir: "{app}"
+  -e 's#\(icons\\.*\)\.png#\1.icn#g' \
+  -e 's#\(pattern\\.*\)\.png#\1.ppm#g' \
+  | grep -v 'icons\\edit..*\.icn' | sort -u)
 
 [Icons]
 ; Parameter quick reference:
@@ -65,8 +65,9 @@ Name: "{group}\Uninstall bigFORTH"; Filename: "{uninstallexe}"
 ;   "Root key", "Subkey", "Value name", Data type, "Data", Flags
 
 [Run]
+Filename: "{app}\forthker.exe"; Workingdir: "{app}"; Parameters: "include starup.fb ' .blk is .status warning on savesystem bigforth bye"
 Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ;. include float.fb m' float savemod float bye"
-Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use float.fb path ;. include startx.fb savesystem xbigforth bye"
+Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use float.fb path ;. include startx.fb warning on savesystem xbigforth bye"
 Filename: "{app}\xbigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ';{app};.' include adjust.m"
 
 [UninstallDelete]
