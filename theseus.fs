@@ -18,11 +18,11 @@ include theseus-classes.fs
 
 \ icons
 
-ficon: test-icon icons/computer.png"
-ficon: on-icon icons/mini-exclam.png"
-ficon: off-icon icons/mini-cross.png"
-ficon: minos-icon icons/minos.png"
-ficon: minos-win icons/minos1+.png"
+ficon: test-icon icons/computer"
+ficon: on-icon icons/mini-exclam"
+ficon: off-icon icons/mini-cross"
+ficon: minos-icon icons/minos"
+ficon: minos-win icons/minos1+"
 ' dir-icon Alias res-icon
 ' diro-icon Alias resopen-icon
 
@@ -191,17 +191,17 @@ infotextfield class infocodefield
     cell var ^content
   how:
     : init ( act xxx addr2 u2 -- )
- 	rot ^content !
-	text-label new dup bind info
-	0 1 *fill 2dup glue new
-	2 vabox new
-	^content @ HLock
-	get ^content @ new-code dup bind code-lines
-	dup F bind code-string
-	^content @ HUnLock
-	1 habox new -2 borderbox
-	0 1 *fill 2dup glue new
- 	3 super super super init ;
+        rot ^content !
+        text-label new dup bind info
+        0 1 *fill 2dup glue new
+        2 vabox new
+        ^content @ HLock
+        get ^content @ new-code dup bind code-lines
+        dup F bind code-string
+        ^content @ HUnLock
+        1 habox new -2 borderbox
+        0 1 *fill 2dup glue new
+        3 super super super init ;
     : assign ( addr u -- )  ^content @ $! ;
     : get ( -- addr u )  ^content @ $@ ;
 class;
@@ -448,11 +448,11 @@ resource:dialog implements
         res-icon resopen-icon toggleicon new
 
         s" Vars:" s" Edit Variables"
-        var-content icon" icons/vars.png" edit-box
+        var-content icon" icons/vars" edit-box
         bind var-edit bind var-box
 
         s" Methods:" s" Edit Methods"
-        methods-content icon" icons/code.png" edit-box
+        methods-content icon" icons/code" edit-box
         bind methods-edit bind methods-box
 
         TV[ ^ shown changed ]T[ changed ]TV shown on
@@ -497,7 +497,7 @@ resource:dialog implements
              menu-icon with menu-frame popup endwith ?menu-call
              r> with dispose endwith
            ]S TT" Dialog Menu"
-           icon" icons/menu.png" icon-but new dup bind menu-icon
+           icon" icons/menu" icon-but new dup bind menu-icon
 
         5 hatbox new hfixbox
         0 ST[ ]ST s" No Title" s" Title:" infotextfield new
@@ -611,6 +611,9 @@ resource:menu-window implements
             ."   : modal-open screen self new >o show stop o> ;" cr
             ." class;" cr
         THEN ;
+    : .default ( -- )
+        default $@ dup 0= IF  2drop ." 0"  EXIT  THEN
+        type ."  self" ;
     : dump-implementation ( -- )
         name-field get nip 0<> IF
             implementation-file $@?
@@ -1518,16 +1521,16 @@ Variable auto-save-file
 : append-modes ( -- o )
    0 false T[ ['] addfirst F IS +object ['] cur-box-dpy F IS cur-dpy ][ ]T
                TT" Add first in box"
-               icon" icons/head.png"        flipicon new
+               icon" icons/head"        flipicon new
    0 true  T[ ['] addlast  F IS +object ['] cur-box-dpy F IS cur-dpy ][ ]T
                TT" Add last in box"
-               icon" icons/tail.png"        flipicon new
+               icon" icons/tail"        flipicon new
    0 false T[ ['] addbefore F IS +object ['] cur-obj-dpy F IS cur-dpy ][ ]T
                TT" Add before current object"
-               icon" icons/before.png"        flipicon new
+               icon" icons/before"        flipicon new
    0 false T[ ['] addafter  F IS +object ['] cur-obj-dpy F IS cur-dpy ][ ]T
                TT" Add after current object"
-               icon" icons/after.png"        flipicon new
+               icon" icons/after"        flipicon new
    4 varbox new vfixbox ;
 
 : navigation ( -- o )
@@ -1548,16 +1551,16 @@ Variable auto-save-file
 : file-io ( -- o )
    0 ['] load-minos simple new
           TT" Load file..."
-          icon" icons/load.png"        icon-but new
+          icon" icons/load"        icon-but new
    0 ['] save-minos simple new
           TT" Save"
-          icon" icons/save.png"        icon-but new
+          icon" icons/save"        icon-but new
    0 ['] run-minos  simple new
           TT" Run application"
-          icon" icons/run.png"        icon-but new
+          icon" icons/run"        icon-but new
    0 ['] mod-minos  simple new
           TT" Save as module"
-          icon" icons/mod.png"        icon-but new
+          icon" icons/mod"        icon-but new
    4 vabox new vfixbox ;
 
 : modes ( -- o )

@@ -348,8 +348,7 @@ $00BB0226 Value :fixand
     } ;
 [THEN]
 
-: read-icn ( addr u -- pixmap1 pixmap2 w h )
-    r/o open-file throw >r
+: read-icn ( fd -- pixmap1 pixmap2 w h ) >r
     scratch dup $100 r@ read-line throw drop
     2dup S" P6" compare 0= IF  2drop r@ read-P6 2drop
         scratch dup $100 2dup erase r@ read-line throw drop  THEN
@@ -357,8 +356,7 @@ $00BB0226 Value :fixand
         2over 2over fix-color EXIT  THEN
     2drop r> close-file true abort" Unsupported format" throw ;
 
-: read-ppm ( addr u -- pixmap1 0 w h )
-    r/o open-file throw >r
+: read-ppm ( fd -- pixmap1 0 w h ) >r
     scratch dup $100 r@ read-line throw drop
     S" P6" compare 0=
     IF  r@ read-P6 0 -rot
@@ -382,28 +380,35 @@ Create Xpmattribs sizeof XpmAttributes allot
     $8000 Xpmattribs XpmAttributes blue_closeness !
     1 Xpmattribs XpmAttributes alloc_close_colors ! ;
 
-: read-xpm ( addr u -- pixmap1 pixmap2 w h )
-    makec$ set-attrib
+: read-xpm ( fd -- pixmap1 pixmap2 w h )
+    dup >r filename set-attrib
     >r 0 sp@ >r 0 sp@ >r Xpmattribs r> r> r>
     screen xwin @ screen xrc dpy @ XpmReadFileToPixmap drop
     Xpmattribs XpmAttributes width @
-    Xpmattribs XpmAttributes height @ ;
+    Xpmattribs XpmAttributes height @
+    r> close-file throw ;
 [THEN]
 
 \ read icons                                           30jul97py
 
-: suffix? ( addr1 u1 addr2 u2 -- flag )
-    2swap dup 3 pick - 0max /string compare 0= ;
+Variable icon-base
+
+: suffix? ( addr1 u1 addr2 u2 -- addr1 u1 false / fd true )
+    2over 2over 2swap dup 3 pick - 0max /string compare 0=
+    IF  2drop r/o open-file throw  true  EXIT  THEN
+    2over icon-base $! icon-base $+!
+    icon-base $@ r/o open-file 0=
+    IF  nip nip  true  ELSE  drop false  THEN ;
 
 : (read-icon ( addr u -- pixmap1 pixmap2 w h )
-    2dup s" .icn" suffix? IF  read-icn  EXIT  THEN
-[IFDEF] x11
-    2dup s" .xpm" suffix? IF  read-xpm  EXIT  THEN
-[THEN]
-    2dup s" .ppm" suffix? IF  read-ppm  EXIT  THEN
 [IFDEF] read-png
-    2dup s" .png" suffix? IF  read-png  EXIT  THEN
+    s" .png" suffix? IF  read-png  EXIT  THEN
 [THEN]
+    s" .icn" suffix? IF  read-icn  EXIT  THEN
+[IFDEF] x11
+    s" .xpm" suffix? IF  read-xpm  EXIT  THEN
+[THEN]
+    s" .ppm" suffix? IF  read-ppm  EXIT  THEN
     true abort" Unknown icon file format" ;
 
 Patch read-icon

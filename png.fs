@@ -10,9 +10,9 @@ newpng [IF]
 [ELSE]
     s" libpng.so.3" getlib 0<> to png3
     png3 [IF]
-	library libpng libpng.so.3 0 ,
+        library libpng libpng.so.3 0 ,
     [ELSE]
-	library libpng libpng.so.2 0 ,
+        library libpng libpng.so.2 0 ,
     [THEN]
 [THEN]
 
@@ -21,7 +21,7 @@ newpng [IF]
     true to png3 s" libpng12.so.0" getlib 0<> to newpng
     newpng IF  s" libpng12.so.0"
     ELSE  s" libpng.so.3" getlib 0<> to png3
-	png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
+        png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
     & libpng 4 cells + place ;
 
 legacy off
@@ -95,8 +95,7 @@ DOS
 
 $0095 Value pngflags
 
-: read-png-image ( addr u -- addr w h color_type )
-    r/o open-file throw >r
+: read-png-image ( fd -- addr w h color_type ) >r
     r@ filehandle @ _dup 0" r" fdopen dup
     init-png >r r@ rot png_init_io
     r@ over pngflags 0 png_read_png
@@ -122,14 +121,14 @@ $18 w, \ alpha
 $FF w,
 0 ,    \ colormap - dummy
 
-: read-png ( addr u -- pixmap mask w h )
+: read-png ( fd -- pixmap mask w h )
     read-png-image 4 and IF
         screen xrc dpy @ { img w h dpy |
-	$20 h w screen xwin @ dpy XCreatePixmap
-	ARGB32 @ 0= IF
-	    dpy $7FE ARGB32 0 XRenderFindFormat
-	    ARGB32 $20 move  THEN
-	ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture { pixmap rgba32 mpict |
+        $20 h w screen xwin @ dpy XCreatePixmap
+        ARGB32 @ 0= IF
+            dpy $7FE ARGB32 0 XRenderFindFormat
+            ARGB32 $20 move  THEN
+        ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture { pixmap rgba32 mpict |
         w 4* $20 h w img 0 ZPixmap $20 dpy dup DefaultScreen DefaultVisual dpy
         XCreateImage  0 0 pixmap dpy XCreateGC { ximg gc |
         h w 0 0 0 0 ximg gc pixmap dpy XPutImage drop

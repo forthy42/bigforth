@@ -72,7 +72,7 @@ menu-title0 self vfixbox drop
 0 ' .button simple new s" Button 4"   button : button4
 \ 0 ' .button simple new s" Button 5"   button : button5
 
-ficon: printer-icon ./icons/printer.png"
+ficon: printer-icon ./icons/printer"
 0 ' .button simple new printer-icon s" Printer-Icon" big-icon : button5
 
 [IFUNDEF] win32s
@@ -266,10 +266,10 @@ box2: self 1 habox : box2
 1 1 vviewport : view1
 \ view1 noback off
 
-ficon: exclam-icon ./icons/mini-exclam.png"
-ficon: cross-icon ./icons/mini-cross.png"
-ficon: ball-icon ./icons/red-dot.png"
-ficon: rball-icon ./icons/green-dot.png"
+ficon: exclam-icon ./icons/mini-exclam"
+ficon: cross-icon ./icons/mini-cross"
+ficon: ball-icon ./icons/red-dot"
+ficon: rball-icon ./icons/green-dot"
 
 : noop-sw 0 ['] noop dup toggle new ;
 

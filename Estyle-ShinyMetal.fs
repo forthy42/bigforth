@@ -47,11 +47,8 @@ Eicon: button-f Estyle/ShinyMetal/bar_horizontal_2.png"
 Eicon: button-d Estyle/ShinyMetal/bar_horizontal_1.png"
 Eicon: button-p Estyle/ShinyMetal/bar_horizontal_3.png"
 
-button implements
-    : e-draw ( x y w h icon -- )
-        Eicon-pixmap with draw-at endwith dpy mask ;
-    : e-button ( m -- ) >r xywh r> e-draw ;
-    : e-choise ( -- m )
+button with
+  F : e-choise ( -- m )
         color @ $FF and 1 =
         IF    push?
             IF    button-p
@@ -60,6 +57,12 @@ button implements
             IF    button-p
             ELSE  button-d  THEN
         THEN  ;
+  F : e-draw ( x y w h icon -- )
+        Eicon-pixmap with draw-at endwith dpy mask ;
+  F : e-button ( m -- ) >r xywh r> e-draw ;
+endwith
+
+button implements
     : draw ( -- )
       xywh defocuscol @ @ dpy box
       e-choise e-button
@@ -124,8 +127,8 @@ Eicon: tbutton-dl- Estyle/ShinyMetal/button_off_1.png"
 Eicon: tbutton-pl+ Estyle/ShinyMetal/button_kill_3.png"
 Eicon: tbutton-pl- Estyle/ShinyMetal/button_off_3.png"
 
-tbutton implements
-    : e-tchoise ( -- l+ l- ms r )
+tbutton with
+  F : e-tchoise ( -- l+ l- ms r )
         color @ $FF and 1 =
         IF    push?
             IF    tbutton-pl+ tbutton-pl- button-p
@@ -134,11 +137,14 @@ tbutton implements
             IF    tbutton-dl+ tbutton-dl- button-d
             ELSE  tbutton-dl+ tbutton-dl- button-d  THEN
         THEN  ;
-    : e-tbutton ( l+ l- ms -- )
+  F : e-tbutton ( l+ l- ms -- )
       { l+ l- ms |
         xywh ms e-draw
         x @ y @ h @ h @ xS xywh-
         callback fetch IF  l+  ELSE  l-  THEN e-draw } ;
+endwith
+
+tbutton implements
     : draw ( -- )
 \       xywh defocuscol @ @ dpy box
         e-tchoise e-tbutton

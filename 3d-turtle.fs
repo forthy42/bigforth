@@ -750,9 +750,9 @@ class;
                      w4 2* +LOOP  drop
                  w 2/  h 2/  over 4*  n 1+  false
              ELSE  true  THEN  }  UNTIL ;
-    : load-texture-ppm ( addr u -- )
+    : load-texture-ppm ( fd -- )
 ?texture [IF]
-      r/o open-file throw >r
+      >r
       scratch $100 r@ read-line throw 2drop
       scratch $100
       BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#
@@ -763,9 +763,9 @@ class;
       2dup * 3 * dup NewPtr tuck swap r@ read-file throw drop
       r> close-file throw ( w h addr )
       -rot over2 over2 over2 * 3* <>.24 create-mipmap3 DisposPtr
-[ELSE]  2drop  [THEN] ;
+[ELSE]  close-file throw  [THEN] ;
 [IFDEF] has-png
-    : load-texture-png ( addr u -- )
+    : load-texture-png ( fd -- )
 \       & pngflags push $0015 to pngflags
         read-png-image 4 and IF
             create-mipmap4
@@ -774,10 +774,10 @@ class;
         THEN  DisposPtr ;
 [THEN]
     : load-texture ( addr u -- )
-         2dup s" .ppm" suffix? IF  load-texture-ppm  EXIT  THEN
 [IFDEF] has-png
-         2dup s" .png" suffix? IF  load-texture-png  EXIT  THEN
+         s" .png" suffix? IF  load-texture-png  EXIT  THEN
 [ELSE]
+         s" .ppm" suffix? IF  load-texture-ppm  EXIT  THEN
 	 2drop
 [THEN]
 ;

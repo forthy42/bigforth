@@ -33,7 +33,7 @@ $00 bgcol ImColor g !
 $FF bgcol ImColor b !
 
 : (read-imicon ( addr u -- image )
-  2dup s" .icn" suffix? IF  read-icn  pause  EXIT  THEN
+  s" .icn" suffix? IF  read-icn  pause  EXIT  THEN
   dup 1+ NewPtr dup >r place r@ c>0"
   r@ >path.file
   screen xrc imdata @ ImlibLoadImage

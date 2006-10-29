@@ -89,13 +89,13 @@ dragon implements
       gldragon with
           4 3d-turtle textures  2over 2over
           3d-turtle set-texture
-          S" pattern/dragon.png"       3d-turtle load-texture
+          S" pattern/dragon"       3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-head.png"  3d-turtle load-texture
+          S" pattern/dragon-head"  3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-wing.png"  3d-turtle load-texture
+          S" pattern/dragon-wing"  3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-claw.png"  3d-turtle load-texture
+          S" pattern/dragon-claw"  3d-turtle load-texture
       endwith  texture ! head-texture ! wing-texture ! claw-texture !
       make-dragon-task  THEN
   timer@ dup last-time @ -

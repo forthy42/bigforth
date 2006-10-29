@@ -53,15 +53,15 @@ Eicon: button-sl Estyle/wood/button-sl.png"
 Eicon: button-sms Estyle/wood/button-sms.png"
 Eicon: button-sr Estyle/wood/button-sr.png"
 
-button implements
-    : e-draw ( x y w h icon -- )
+button with
+  F : e-draw ( x y w h icon -- )
         Eicon-pixmap with draw-at endwith dpy mask ;
-    : e-button ( l ms r -- )
+  F : e-button ( l ms r -- )
       { l ms r |
         x @ y @ h @ 2/ w @ 2/ min h @ l e-draw
         x @ h @ 2/ w @ 2/ min + y @ w @ h @ -2 and w @ -2 and min - h @ ms e-draw
         x @ w @ h @ 2/ w @ 2/ min - + y @ h @ 2/ w @ 2/ min h @ r e-draw } ;
-    : e-choise ( -- l ms r )
+  F : e-choise ( -- l ms r )
         color @ $FF and 1 =
         IF    push?
             IF    button-pl button-pms button-pr
@@ -69,7 +69,10 @@ button implements
         ELSE  push?
             IF    button-sl button-sms button-sr
             ELSE  button-dl button-dms button-dr  THEN
-        THEN  ;
+	THEN  ;
+endwith
+
+button implements
     : draw ( -- )
       xywh defocuscol @ @ dpy box
       e-choise e-button
@@ -147,8 +150,8 @@ Eicon: tbutton-pl- Estyle/wood/tbutton-pl-.png"
 Eicon: tbutton-pms Estyle/wood/tbutton-pms.png"
 Eicon: tbutton-pr Estyle/wood/tbutton-pr.png"
 
-tbutton implements
-    : e-tchoise ( -- l+ l- ms r )
+tbutton with
+  F : e-tchoise ( -- l+ l- ms r )
         color @ $FF and 1 =
         IF    push?
             IF    tbutton-pl+ tbutton-pl- tbutton-pms tbutton-pr
@@ -157,12 +160,15 @@ tbutton implements
             IF    tbutton-dl+ tbutton-dl- tbutton-dms tbutton-dr
             ELSE  tbutton-dl+ tbutton-dl- tbutton-dms tbutton-dr  THEN
         THEN  ;
-    : e-tbutton ( l+ l- ms r -- )
+  F : e-tbutton ( l+ l- ms r -- )
       { l+ l- ms r |
         x @ y @ h @ w @ 2/ min h @
         callback fetch IF  l+  ELSE  l-  THEN e-draw
         x @ h @ w @ 2/ min + y @ w @ h @ h @ 2/ + w @ h @ 2/ + min - h @ ms e-draw
         x @ w @ h @ 2/ w @ 2/ min - + y @ h @ 2/ w @ 2/ min h @ r e-draw } ;
+endwith
+
+tbutton implements
     : draw ( -- )
         xywh defocuscol @ @ dpy box
         e-tchoise e-tbutton
@@ -276,10 +282,13 @@ Eicon: arrow-pl Estyle/wood/arrow-pl.png"
 Eicon: arrow-fl Estyle/wood/arrow-fl.png"
 Eicon: arrow-dl Estyle/wood/arrow-dl.png"
 
-tributton implements
+tributton with
     | Create p-table  T] arrow-pl arrow-pt arrow-pr arrow-pb [
     | Create f-table  T] arrow-fl arrow-ft arrow-fr arrow-fb [
     | Create d-table  T] arrow-dl arrow-dt arrow-dr arrow-db [
+endwith
+
+tributton implements
     : draw ( -- )  xywh defocuscol @ @ dpy box
         xywh 1 1 p- -1 xywh-
         color @ $FF and 1 =
