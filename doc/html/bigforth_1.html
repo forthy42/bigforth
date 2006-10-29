@@ -1,0 +1,544 @@
+<HTML>
+<HEAD>
+<!-- This HTML file has been created by texi2html 1.38
+     from ../bigforth.texi on 21 August 1999 -->
+
+<TITLE>bigFORTH/MINOS Manual - MINOS</TITLE>
+</HEAD>
+<BODY>
+Go to the first, previous, <A HREF="bigforth_2.html">next</A>, <A HREF="bigforth_2.html">last</A> section, <A HREF="bigforth_toc.html">table of contents</A>.
+<HR>
+
+
+
+<H1><A NAME="SEC1" HREF="bigforth_toc.html#SEC1">MINOS Documentation</A></H1>
+
+
+
+<H2><A NAME="SEC2" HREF="bigforth_toc.html#SEC2">Introduction</A></H2>
+
+
+
+<H3><A NAME="SEC3" HREF="bigforth_toc.html#SEC3">What's MINOS?</A></H3>
+
+<P>
+MINOS is the answer to the question "Is there something like
+Visual BASIC (Microsoft) or Delphi (Inprise) in Forth?" -- and the
+answer is "yes".
+
+</P>
+<P>
+Basically, these GUI RADs contain two components: a library with a
+wide variety of elements for a graphical user interface; e.g. windows,
+buttons, edit-controls, drawing areas, etc.; and an editor to combine
+the elements with the mouse by drag&#38;drop or click&#38;point
+actions. Missing code then is inserted to add actions when buttons are
+pressed.
+
+</P>
+<P>
+Typical applications are often related to data base
+access. Therefore, many of these systems already contain a data base
+engine or at least a standardized interface to a data base, such as
+ODBC.
+
+</P>
+<P>
+Another aspect are complex components. With some of these toolkits,
+you can create a web browser with some mouse clicks and a few
+keystrokes. However, these components hide their details, a shrink
+wrapped web browser application is not necessarily worse.
+
+</P>
+<P>
+The interactivity of these tools usually is not very high. You
+create your form, write your actions as code and compile it more
+(Delphi) or less (Visual Age for C++) fast. Trying it usually isn't
+possible before the compiler run.
+
+</P>
+
+
+
+<H3><A NAME="SEC4" HREF="bigforth_toc.html#SEC4">Why Visual?</A></H3>
+
+<P>
+It isn't really necessary to brush graphical user interfaces
+together, as it isn't to edit texts WYSIWYG. Many typesetting
+functions are more semantically than visual, e.g. a text is a headline
+or emphasized instead of written in bold 18 point Garamond or 11 point
+Roman italics. All this is true for user interfaces, to some extend
+much more. It's not the programmer that decides which font and size to
+use for the UI -- that's up to the user. As is color of buttons and
+texts.
+
+</P>
+<P>
+Also to layout individual widgets, more abstraction than defining
+position, width and height makes sense. Typically buttons are arranged
+horizontally or vertically, perhaps with a bit distance between
+them. The size of buttons must follow the containing strings, and
+should conform to aesthetics (e.g. each button in a row has the same
+width).
+
+</P>
+<P>
+Such an abstract model, related to TeX's boxes&#38;glues, programs
+quite good even without a visual editor. The programmer isn't
+responsible for "typesetting" the buttons and boxes. This approach
+is quite usual in Unix. Motif and Tcl/Tk use neighborhood relations,
+Interviews uses boxes&#38;glues. I decided for boxes&#38;glues, since it's a
+fast and intuitive solution, although it needs more objects to get the
+same result.
+
+</P>
+<P>
+These concepts contradict somehow with a graphical editing process,
+since the editors I know don't provide abstract concepts ("place left
+of an object" or "place in a row"), but positions.
+
+</P>
+
+
+
+<H3><A NAME="SEC5" HREF="bigforth_toc.html#SEC5">Visual Forth?</A></H3>
+
+<P>
+One point makes me think: the packets that allow real visual form
+programming have many years of programming invested in. Microsoft,
+Borland, and IBM may hire hundreds of programmers just for one such
+project. This man-power isn't available for any Forth project. But
+stop:
+
+</P>
+
+<OL>
+<LI>Forth claims that good programmers can work much more
+
+efficient with Forth
+
+<LI>A team of 300 (wo)men blocks itself. If the boss partitions the
+
+work, the programmers need to document functions, and to read
+documents from other programmer related to other functions and must
+understand them, or ask questions to figure things out. Everybody
+knows that documenting takes much longer than writing the code, and
+explaining is even worse. Thus at a certain project complexity level,
+no time is left for the programming task; all time is used to specify
+planned functions and read the specification from other
+programmers. Or the programmers just chat before the door holes of the
+much too small and noisy cubicles.
+
+<LI>A good programmer reportedly works 20 times as fast as a bad,
+
+even though he can't type in more key strokes per time. The resulting
+program is either up to 20 times shorter or has 20 times less bugs (or
+both) -- with more functionality at the same time. Teamwork however
+prevents good programmers from work, since they are frustrated by bad
+programmers surrounding them, from their inability to produce required
+information in time; and the bad programmers are frustrated by the
+good ones, which makes them even worse.
+
+<LI>Therefore, even in large projects, the real work is (or should
+
+be) done by a small "core team". Then the Dilbert rule applies: what
+can be done with two people, can be done with one at half of the
+costs.
+
+</OL>
+
+<P>
+Furthermore, bigFORTH-DOS already contains a "Text-GUI", without
+graphical editor, but with an abstract boxes&#38;glue concept, which, as
+claimed above, hinders the use of such an editor.
+
+</P>
+<P>
+Finally I wanted to get rid of DOS, and port bigFORTH to a real
+operating system (Linux). In contrast to Windows and OS/2, user
+interface and screen access are separated there. Drawing on the screen
+uses the X Window System (short X), the actual user interface is
+implemented in a library. This is the reason, why there is no common
+interface, but a lot of different libraries, such as Athena Widgets,
+Motif, Tcl/Tk, xforms, Qt, gtk, and others. The "look and feel" from
+Motif-like buttons is quite common, even Windows and MacOS resemble
+it.
+
+</P>
+<P>
+All these libraries have disadvantages. The Athena Widgets are
+hopelessly outdated.  Motif is commercial, even if a free clone
+(Lesstif) is in creation. It's slow and a memory hog. Tcl/Tk consumes
+less memory, but it's <EM>even</EM> slower.  How do you explain your
+users that drawing a window takes seconds, while Quake renders
+animated 3D-graphic on the same machine? Qt is fast, but it's written
+in C++ and doesn't have a foreign language interface now. gtk, the
+GIMP toolkit, has more foreign language interfaces, and it's free, but
+it wasn't available until recently.
+
+</P>
+<P>
+Therefore I decided to port the widget classes from bigFORTH-DOS
+to X, and write an editor for it. Such classes written in Forth
+naturally fit in an development environment and are -- from the Forth
+point of view -- easier to maintain.  There are not such many widget
+libraries in C, because it's a task written in an afternoon, but
+because the available didn't fit the requests, and a modification
+looked desperate.
+
+</P>
+
+
+
+<H3><A NAME="SEC6" HREF="bigforth_toc.html#SEC6">The Name -- Why MINOS?</A></H3>
+
+<P>
+"Visual XXX" is an all day's name, and it's too much of a
+microsoftism for me. "Forth" is a no-word, especially since the
+future market consists of one billion Chinese, and for them four is a
+number of unluck (because "se" (four) sounds much like "se"
+(death)). However, even Borland doesn't call their system "Visual
+TurboPascal", but "Delphi".
+
+</P>
+<P>
+Greek is good, anyway, since this library relates to the
+boxes&#38;glues model of TeX, which is pronounced Greek, too. Compared
+with Motif, the library is quite copact (MINimal), and since it's
+mainly for Linux, the phonetic distance is small... I pronounce it
+Greek: "meenoz".
+
+</P>
+
+
+
+<H3><A NAME="SEC7" HREF="bigforth_toc.html#SEC7">Port to Windows</A></H3>
+
+<P>
+I ported MINOS to Windows 95/NT, on the demand of some potential
+users. It doesn't run near as stable as under Linux/X, since there are
+a hideous number of subtle bugs in Windows, and I don't have the time
+to work around all of them. Drawing polygons doesn't work as well as
+on X, and all the bugs that are in the memory drawing device can drive
+me nuts. The Windows port of MINOS looks more like the "modern
+Forth" Claus Vogt portrayed in <TT>`news:de.comp.lang.forth'</TT>: it shows random
+general protection faults. Well, just like any other Windows
+program.
+
+</P>
+
+
+<H2><A NAME="SEC8" HREF="bigforth_toc.html#SEC8">Widget Classes</A></H2>
+
+<P>
+The primary classes of MINOS are gadgets (widgets and displays),
+actors, and resources (xresource and font).
+
+</P>
+<P>
+Resources just provide system-specific data like window handles,
+display pointers, font informations, etc., they are critical for
+system-specific parts of display implementations.
+
+</P>
+<P>
+Widgets are the central objects represented on screen. Widgets draw
+through displays, such as windows, viewports, etc. Since many displays
+can be embedded into a bigger window, they also have all widget
+functionality. Widgets are composed in boxes (horizontal and
+vertical), and automatically layouted. Boxes certainly are widgets
+themselves, and some of the more complicated widgets such as sliders
+or textboxes are derived from boxes to layout the inner parts easily.
+
+</P>
+<P>
+Actors are bound to associated actions when operating a widget
+(i.e. clicking on it, pointing on it, or entering text). Actors
+provide the way to script actions.
+
+</P>
+
+
+<H3><A NAME="SEC9" HREF="bigforth_toc.html#SEC9">Actors</A></H3>
+
+<P>
+<B>ACTOR</B>
+
+<UL>
+<LI>All Actors have the following methods in common:
+
+
+<UL>
+<LI><B>called</B> This variable points to the object that is being called
+
+<LI><B>caller</B> This variable points to the object that is
+
+calling (the widget).
+<LI><B>set</B> ( -- ) sets the flag
+
+<LI><B>reset</B> ( -- ) resets the flag
+
+<LI><B>toggle</B> ( -- ) toggles the flag
+
+<LI><B>fetch</B> ( -- x1 .. xn ) queries the value(s)
+
+<LI><B>store</B> ( x1 .. xn -- ) changes the value(s)
+
+<LI><B>click</B> ( x y b n -- ) performs the action for a click
+
+<LI><B>key</B> ( key sh -- ) performs the action for a keystroke
+
+<LI><B>enter</B> ( -- ) performs the action for entering the widget
+
+<LI><B>leave</B> ( -- ) performs the action for leaving the widget
+
+<LI><B>assign</B> ( x1 .. xn -- ) initially assigns the state
+
+<LI><B>set-called</B> ( o -- ) sets the called object
+
+</UL>
+
+The stack effect you see below is the stack effect of the init method.
+<LI><B>KEY-ACTOR</B> This is an actor for keyboard macros. It
+
+inserts keystrokes into the called widget.
+<LI><B>TOOLTIP</B> ( actor tip -- ) A tooltip is a nested actor; it shows
+
+the widget tip some time after entering with the mouse, and forwards the other
+messages to actor
+<LI><B>EDIT-ACTION</B> ( o xt -- ) This actor handles text input field key
+
+events, and does all the editing stuff. After each keystroke and each click,
+it calls xt ( -- ).
+
+<UL>
+<LI><B>NUMBER-ACTION</B> ( o xt -- ) Same as EDIT-ACTION, but filters
+
+out digits only
+</UL>
+
+<LI><B>SCALE-VAR</B> ( o pos max -- ) Scaler actor,
+
+keeps position and maximum value in own variables.
+
+<UL>
+<LI><B>SCALE-DO</B> ( o pos max xt -- ) Same as SCALE-VAR, but executes
+
+xt ( pos -- ) on changes
+<LI><B>SLIDER-VAR</B> ( o pos max step -- ) Slider actor, keeps position,
+
+step, and maximum value in own variables
+
+<UL>
+<LI><B>SLIDER-DO</B> ( o pos max step xt -- ) Same as SLIDER-VAR,
+
+but executes xt ( -- ) on changes
+</UL>
+
+</UL>
+
+<LI><B>SIMPLE</B> ( o xt -- ) xt is executed at every store (no
+
+state maintained)
+
+<UL>
+<LI><B>DRAG</B> ( o xt -- ) Calls toggle on each click event
+
+<LI><B>REP</B> ( o xt -- ) Calls toggle repeatedly while the user holds down
+
+the mouse button
+</UL>
+
+<LI><B>TOGGLE-STATE</B> ( o xtstore xtfetch -- ) allows generic fetch
+
+and store functions
+
+<UL>
+<LI><B>SCALE-ACT</B> ( o do-store do-fetch max -- ) Generic slider
+
+actor (maximum slider position provided)
+
+<UL>
+<LI><B>SLIDER-ACT</B> ( o do-store do-fetch max -- ) Generic scaler
+
+actor (maximum scaler position provided)
+</UL>
+
+</UL>
+
+<LI><B>TOGGLE-VAR</B> ( o addr xt -- ) keeps the flag in addr,
+
+and executes xt on changes
+
+<UL>
+<LI><B>TOGGLE-NUM</B> ( o n addr xt -- ) is responsible for state n in addr
+
+(sets addr to n when set), and executes xt on changes
+</UL>
+
+<LI><B>TOGGLE</B> ( o state xtset xtreset -- ) models a flag with
+
+initial state and two functions for each state
+</UL>
+
+
+
+<H3><A NAME="SEC10" HREF="bigforth_toc.html#SEC10">Resources</A></H3>
+
+<P>
+&#60;DL&#62;
+&#60;DT&#62;<B>XRESOURCE</B>
+&#60;DT&#62;<B>FONT</B>
+&#60;DD&#62;<B>X-FONT</B>
+&#60;/DL&#62;
+
+</P>
+
+
+<H3><A NAME="SEC11" HREF="bigforth_toc.html#SEC11">Widgets</A></H3>
+
+<P>
+<B>GADGET</B>
+
+<UL>
+<LI><B>WIDGET</B>
+
+
+<UL>
+<LI><B>TERMINAL</B>
+
+
+<UL>
+<LI><B>SCREDIT</B>
+
+
+<UL>
+<LI><B>STREDIT</B>
+
+</UL>
+
+</UL>
+
+</UL>
+
+&#60;DT&#62;<B>ARULE</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>BOXCHAR</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>HRTSIZER</B>
+&#60;DD&#62;<B>HXRTSIZER</B>
+&#60;DD&#62;<B>HSIZER</B>&#60;/DL&#62;
+&#60;DT&#62;<B>VRTSIZER</B>
+&#60;DD&#62;<B>VXRTSIZER</B>
+&#60;DD&#62;<B>VSIZER</B>
+&#60;DT&#62;<B>BUTTON</B>
+&#60;DD&#62;<B>ALERTBUTTON</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>MENU-ENTRY</B>
+&#60;DD&#62;<B>EDIMENU-ENTRY</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>MENU-TITLE</B>
+&#60;DD&#62;<B>SUB-MENU</B>&#60;/DL&#62;&#60;/DL&#62;
+&#60;DD&#62;<B>(TEXTFIELD</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>ICON-BUTTON</B>
+&#60;DD&#62;<B>BIG-ICON</B>
+&#60;DD&#62;<B>ICON-BUT</B>&#60;/DL&#62;
+&#60;DT&#62;<B>LBUTTON</B>
+&#60;DD&#62;<B>FILE-WIDGET</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>TEXT-LABEL</B>
+&#60;DD&#62;<B>MENU-LABEL</B>&#60;/DL&#62;&#60;/DL&#62;
+&#60;DT&#62;<B>TOGGLECHAR</B>
+&#60;DD&#62;<B>FLIPICON</B>
+&#60;DD&#62;<B>TOGGLEICON</B>
+&#60;DD&#62;&#60;DL&#62;&#60;DT&#62;<B>TBUTTON</B>
+&#60;DD&#62;<B>TICONBUTTON</B>
+&#60;DD&#62;<B>TOGGLEBUTTON</B>
+&#60;DD&#62;<B>TOPINDEX</B>
+&#60;DD&#62;<B>FLIPBUTTON</B>
+&#60;DD&#62;<B>RBUTTON</B>&#60;/DL&#62;
+&#60;DT&#62;<B>TRIBUTTON</B>
+&#60;DD&#62;<B>SLIDETRI</B>
+&#60;/DL&#62;&#60;/DL&#62;&#60;/DL&#62;
+
+
+
+<H3><A NAME="SEC12" HREF="bigforth_toc.html#SEC12">Boxes</A></H3>
+
+<P>
+&#60;!--
+COMBINED                  44  E4  40139938
+  VBOX                    44  E4  4013B15C
+    SLIDERVIEW            4C  E8  40146360
+      ASLIDERVIEW         4C  E8  40146C2C
+    VSLIDER               44  E8  401423B4
+      VSCALER             50  EC  401434F4
+      VSLIDER0            44  E8  40142B74
+    VRBOX                 44  E4  40140E74
+    VTBOX                 44  E4  4013C59C
+      VRTBOX              44  E4  4014163C
+      VATBOX              44  E4  4013CB70
+        VARTBOX           44  E4  40141760
+    COMPONENT             44  E4  4013BC8C
+      VASBOX              4C  E8  40147340
+      VRESIZE             44  E4  40146FF0
+      MODAL               48  E4  401418AC
+      VARBOX              44  E4  40141058
+  HBOX                    44  E4  4013A84C
+    INFO-MENU             54  E4  4014CA70
+    HSLIDER               44  E8  40141D94
+      HSCALER             50  EC  40142E98
+      HSLIDER0            44  E8  4014292C
+    HRBOX                 44  E4  401411B8
+    HTBOX                 44  E4  4013C0E8
+      HRTBOX              44  E4  401413F8
+      HATBOX              44  E4  4013CA50
+        HARTBOX           44  E4  4014151C
+    HABOX                 44  E4  4013BFC8
+      HASBOX              4C  E8  40147558
+      HRESIZE             44  E4  40147138
+      HARBOX              44  E4  401412D8
+      TEXTFIELD           48  E4  40140A08
+        INFOTEXTFIELD     4C  E4  40140C38
+(NIL                      24  C8  40137B80
+GLUE                      34  C8  401379F8
+  GLCANVAS                58  CC  4014B670
+  RULE                    38  C8  40138458
+    CANVAS                78 118  40138FCC
+    MFILL                 38  C8  40138A48
+    MSKIP                 38  C8  40138908
+      SSKIP               40  C8  40146178
+    VRULE                 38  C8  40138734
+    HRULE                 38  C8  40138618
+  VGLUE                   34  C8  40138308
+  HGLUE                   34  C8  401381EC
+    TOPGLUE               34  C8  4013E908
+ICON                      28  C8  401377E4
+ICON-PIXMAP               2C  CC  4013761C
+--&#62;
+
+</P>
+
+
+<H3><A NAME="SEC13" HREF="bigforth_toc.html#SEC13">Displays</A></H3>
+
+<P>
+&#60;!--
+DISPLAYS                    90 178  4012FC60
+  WINDOW                    A4 194  40148B18
+    FILE-SELECTOR           C4 198  40151AB8
+    MENU-WINDOW             A4 194  4014D09C
+    FRAME                   A8 1A4  4014A698
+      MENU-FRAME            A8 1A4  4014C0D0
+      FRAME-TIP             AC 1A4  4014AD94
+    WINDOW-STUB             A4 194  4014A2C0
+  (NILSCREEN                90 178  40137D00
+  BACKING                   A8 17C  40131DD0
+    VIEWPORT                E0 190  40143EB4
+      SCRVIEWPORT           E0 190  40123590
+      HVIEWPORT             E8 190  40145F14
+      VVIEWPORT             E8 190  40145CC4
+    BEAMER                  B8 180  401330F8
+    DOUBLEBUFFER            A8 17C  40132DB0 ok
+--&#62;
+
+</P>
+<HR>
+Go to the first, previous, <A HREF="bigforth_2.html">next</A>, <A HREF="bigforth_2.html">last</A> section, <A HREF="bigforth_toc.html">table of contents</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,126 @@
+This is TeX, Version 3.14159 (C version 6.1) (format=tex 95.11.2)  21 AUG 1999 14:53
+**bigforth.texi
+(bigforth.texi
+Hyphenation patterns for english, german, loaded.
+(/usr/TeX/texmf/tex/latex/plain/texinfo.tex
+Loading texinfo package [Version 1.4]: Basics,
+\bindingoffset=\dimen16
+\normaloffset=\dimen17
+\pagewidth=\dimen18
+\pageheight=\dimen19
+\cornerlong=\dimen20
+\cornerthick=\dimen21
+\topandbottommargin=\dimen22
+\outerhsize=\dimen23
+\outervsize=\dimen24
+\margin=\insert252
+\EMsimple=\toks13
+\singlespaceskip=\skip18
+\groupinvalidhelp=\toks14
+\mil=\dimen25
+\exdentamount=\skip19
+\inmarginspacing=\skip20
+ fonts,
+\sffam=\fam8
+\fontdepth=\count26
+ page headings,
+\titlepagetopglue=\skip21
+\titlepagebottomglue=\skip22
+\evenheadline=\toks15
+\oddheadline=\toks16
+\evenfootline=\toks17
+\oddfootline=\toks18
+ tables,
+\tableindent=\dimen26
+\itemindent=\dimen27
+\itemmargin=\dimen28
+\itemmax=\dimen29
+\itemno=\count27
+\multitableparskip=\skip23
+\multitableparindent=\skip24
+\multitablecolspace=\dimen30
+\multitablelinespace=\skip25
+\colcount=\count28
+
+indexing,
+\initialskipamount=\skip26
+\secondaryindent=\skip27
+\partialpage=\box16
+\doublecolumnhsize=\dimen31
+ sectioning,
+\chapno=\count29
+\secno=\count30
+\subsecno=\count31
+\subsubsecno=\count32
+\appendixno=\count33
+\contentsfile=\write0
+\absseclevel=\count34
+\secbase=\count35
+\chapheadingskip=\skip28
+\secheadingskip=\skip29
+\subsecheadingskip=\skip30
+ toc printing,
+\contentsrightmargin=\skip31
+\shortappendixwidth=\dimen32
+\tocindent=\dimen33
+ environments,
+\dblarrowbox=\box17
+\longdblarrowbox=\box18
+\pushcharbox=\box19
+\bullbox=\box20
+\equivbox=\box21
+\errorbox=\box22
+\lispnarrowing=\skip32
+\envskipamount=\skip33
+\circthick=\dimen34
+\cartouter=\dimen35
+\cartinner=\dimen36
+\normbskip=\skip34
+\normpskip=\skip35
+\normlskip=\skip36
+\lskip=\skip37
+\rskip=\skip38
+ defuns,
+\defbodyindent=\skip39
+\defargsindent=\skip40
+\deftypemargin=\skip41
+\deflastargmargin=\skip42
+\parencount=\count36
+ cross reference,
+\auxfile=\write1
+\footnoteno=\count37
+
+and turning on texinfo input format.
+\defaultparindent=\dimen37
+) (bigforth.aux)
+@cpindfile=@write2
+@fnindfile=@write3
+@vrindfile=@write4
+@tpindfile=@write5
+@kyindfile=@write6
+@pgindfile=@write7
+ (version.texi) Chapter1
+[1] [2] [3] [4] [5] [6] [7] (GNU GENERAL PUBLIC LICENSE) [8]
+Underfull \hbox (badness 2368) in paragraph at lines 557--557
+[]@secrm TERMS AND CON-DI-TIONS FOR COPY-ING, 
+
+@hbox(9.87999+2.79999)x433.62, glue set 2.87518
+.@hbox(0.0+0.0)x0.0
+.@secrm T
+.@secrm E
+.@secrm R
+.@secrm M
+.etc.
+
+[9] [10] [11] [12] [13] [14] [15] (bigforth.toc) [-1] )
+(@end occurred inside a group at level 1) 
+Here is how much of TeX's memory you used:
+ 979 strings out of 12938
+ 9899 string characters out of 94921
+ 33809 words of memory out of 262141
+ 1936 multiletter control sequences out of 9500
+ 27642 words of font info for 95 fonts, out of 150000 for 255
+ 18 hyphenation exceptions out of 607
+ 11i,6n,11p,211b,350s stack positions out of 300i,40n,60p,3000b,4000s
+
+Output written on bigforth.dvi (16 pages, 47172 bytes).
