@@ -76,7 +76,7 @@ minos-about implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
           $0 $1 *hfill $0 $1 *vfill glue new 
-           icon" icons/minos.png" icon new 
+           icon" icons/minos" icon new 
           $0 $1 *hfill $0 $1 *vfill glue new 
         &3 habox new &2 borderbox
           S" Theseus 23feb1999" text-label new 
@@ -177,14 +177,14 @@ designer implements
                 &2 vabox new
               &1 habox new hfixbox  panel &2 borderbox
             &2 habox new vfixbox 
-                  ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Edit-Text/Code/Name-Mode"  icon" icons/ecn.png" flipicon new 
-                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Cut/Copy/Paste-Mode"  icon" icons/cut+copy+paste.png" flipicon new 
-                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Try-Mode"  icon" icons/try.png" flipicon new 
+                  ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Edit-Text/Code/Name-Mode"  icon" icons/ecn" flipicon new 
+                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Cut/Copy/Paste-Mode"  icon" icons/cut+copy+paste" flipicon new 
+                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  TT" Try-Mode"  icon" icons/try" flipicon new 
                 &3 varbox new &2 borderbox
-                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/head.png" flipicon new 
-                  ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/tail.png" flipicon new 
-                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/before.png" flipicon new 
-                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/after.png" flipicon new 
+                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/head" flipicon new 
+                  ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/tail" flipicon new 
+                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/before" flipicon new 
+                  ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  icon" icons/after" flipicon new 
                 &4 varbox new &2 borderbox
                     $0 $1 *hfill $0 $1 *vfil glue new 
                     ^^ S[  ]S ( MINOS ) :up tributton new 
@@ -199,10 +199,10 @@ designer implements
                     $0 $1 *hfill $0 $1 *vfil glue new 
                   &3 habox new
                 &3 vabox new &2 borderbox
-                  ^^ S[  ]S ( MINOS )  icon" icons/load.png" icon-but new 
-                  ^^ S[  ]S ( MINOS )  icon" icons/save.png" icon-but new 
-                  ^^ S[  ]S ( MINOS )  icon" icons/run.png" icon-but new 
-                  ^^ S[  ]S ( MINOS )  icon" icons/mod.png" icon-but new 
+                  ^^ S[  ]S ( MINOS )  icon" icons/load" icon-but new 
+                  ^^ S[  ]S ( MINOS )  icon" icons/save" icon-but new 
+                  ^^ S[  ]S ( MINOS )  icon" icons/run" icon-but new 
+                  ^^ S[  ]S ( MINOS )  icon" icons/mod" icon-but new 
                 &4 vabox new &2 borderbox
                 $0 $1 *hfil $0 $1 *vfilll glue new 
               &5 vabox new hfixbox 
@@ -246,7 +246,7 @@ designer implements
             1 1 viewport new  DS[ 
               $0 $1 *hfil $0 $1 *vfil glue new 
                 $0 $1 *hfil $0 $1 *vfil rule new 
-                 icon" icons/minos.png" icon new 
+                 icon" icons/minos" icon new 
                 $0 $1 *hfil $0 $1 *vfil rule new 
               &3 habox new 
               $0 $1 *hfil $0 $1 *vfil glue new 

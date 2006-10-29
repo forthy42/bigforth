@@ -200,15 +200,15 @@ s" back" go-write ]S ( MINOS ) S" Back" button new
 9 0 DO  -36 0 to 0 2 to 36 0 to 0 2 to  LOOP
 -36 0 to stroke up 1 1 textpos 6 -30 to
 3 0 DO
-    3 0 DO  icon" icons/black-marker.png" icon  12 0 to  LOOP
+    3 0 DO  icon" icons/black-marker" icon  12 0 to  LOOP
     -36 12 to  LOOP  -6 -6 to
 dpy with field endwith
 19 dup * bounds ?DO
    I 19 bounds ?DO  I cx@
-      CASE  1 OF  icon" icons/white-dot.png"  icon  ENDOF 
-            2 OF  icon" icons/white-last.png" icon  ENDOF 
-           -1 OF  icon" icons/black-dot.png"  icon  ENDOF 
-           -2 OF  icon" icons/black-last.png" icon  ENDOF 
+      CASE  1 OF  icon" icons/white-dot"  icon  ENDOF 
+            2 OF  icon" icons/white-last" icon  ENDOF 
+           -1 OF  icon" icons/black-dot"  icon  ENDOF 
+           -2 OF  icon" icons/black-last" icon  ENDOF 
       ENDCASE
       2 0 to  LOOP
    -38 -2 to 19 +LOOP

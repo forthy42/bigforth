@@ -21,7 +21,7 @@ foo implements
           ^^ S[  ]S ( MINOS ) S" Dies ist ein Text" button new 
           ^^ S[  ]S ( MINOS ) S" Auch einer" button new 
           ^^ S[  ]S ( MINOS ) S" Und so" button new 
-          ^^ S[  ]S ( MINOS )  icon" icons/printer.png" S" Printer" big-icon new 
+          ^^ S[  ]S ( MINOS )  icon" icons/printer" S" Printer" big-icon new 
         &4 hatab new
           ^^ S[  ]S ( MINOS ) S" Hier" button new 
           ^^ S[  ]S ( MINOS ) S" ist leider kein" button new 

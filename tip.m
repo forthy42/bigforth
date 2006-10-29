@@ -20,7 +20,7 @@ class;
 tip1 implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-               icon" icons/INFO.png" icon new 
+               icon" icons/INFO" icon new 
               $0 $1 *hfil $0 $1 *vfil glue new 
             &2 vabox new
               S" Did you know?" text-label new 

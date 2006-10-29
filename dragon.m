@@ -90,15 +90,15 @@ dragon implements
       gldragon with
           5 3d-turtle textures  5 0 DO 4 pick  LOOP
           3d-turtle set-texture
-          S" pattern/dragon.png"       3d-turtle load-texture
+          S" pattern/dragon"       3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-back.png"  3d-turtle load-texture
+          S" pattern/dragon-back"  3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-head.png"  3d-turtle load-texture
+          S" pattern/dragon-head"  3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-wing.png"  3d-turtle load-texture
+          S" pattern/dragon-wing"  3d-turtle load-texture
           3d-turtle set-texture
-          S" pattern/dragon-claw.png"  3d-turtle load-texture
+          S" pattern/dragon-claw"  3d-turtle load-texture
       endwith
       texture ! back-texture ! head-texture ! wing-texture ! claw-texture !
       make-dragon-task  THEN

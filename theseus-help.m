@@ -20,7 +20,7 @@ minos-about implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
               $0 $1 *hfill $0 $1 *vfill glue new 
-               icon" icons/minos.png" icon new 
+               icon" icons/minos" icon new 
               $0 $1 *hfill $0 $1 *vfill glue new 
             &3 habox new
             S" Theseus 10sep2000" text-label new 

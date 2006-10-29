@@ -179,7 +179,7 @@ test-widgets implements
          $200  $000 r@ $800 xto
         r@ $900 >= IF  canvas fill  THEN  canvas stroke
         1 1 textpos
-        icon" icons/green-dot.png" icon
+        icon" icons/green-dot" icon
         1 0 textpos
         r@ $000 $200 within IF s" wer" THEN
         r@ $200 $300 within IF s" malt" THEN
@@ -245,7 +245,7 @@ test-widgets implements
                     &3 habox new $10  noborderbox  &2 borderbox
                   &2 vabox new
                   ^^ S[ s" Button 4" tex assign ]S ( MINOS ) S" Button 4" button new 
-                      ^^ S[ s" Printer-Icon" tex assign ]S ( MINOS )  icon" icons/printer.png" S" Printer-Icon" big-icon new 
+                      ^^ S[ s" Printer-Icon" tex assign ]S ( MINOS )  icon" icons/printer" S" Printer-Icon" big-icon new 
                       $0 $1 *hfilll $10 $1 *vfilll rule new 
                         ^^ S[ beam-clone ]S ( MINOS ) S" Clone" button new  ^^bind clone-button
                       &1 habox new
@@ -292,19 +292,19 @@ test-widgets implements
                   hrtsizer new 
                 &2 hasbox new
                   1 1 vviewport new  DS[ 
-                        ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross.png"icons/mini-exclam.png" S" Toggle 0" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross.png"icons/mini-exclam.png" S" Toggle 1" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross.png"icons/mini-exclam.png" S" Toggle 2" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross.png"icons/mini-exclam.png" S" Toggle 3" ticonbutton new 
+                        ^^ -1 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross"icons/mini-exclam" S" Toggle 0" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross"icons/mini-exclam" S" Toggle 1" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross"icons/mini-exclam" S" Toggle 2" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/mini-cross"icons/mini-exclam" S" Toggle 3" ticonbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle 4" rbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle 5" rbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle 6" rbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle 7" rbutton new 
                       &8 varbox new
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot.png"icons/green-dot.png" S" Toggle 8" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot.png"icons/green-dot.png" S" Toggle 9" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot.png"icons/green-dot.png" S" Toggle A" ticonbutton new 
-                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot.png"icons/green-dot.png" S" Toggle B" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot"icons/green-dot" S" Toggle 8" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot"icons/green-dot" S" Toggle 9" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot"icons/green-dot" S" Toggle A" ticonbutton new 
+                        ^^  0 T[  ][ ( MINOS )  ]T ( MINOS )  2icon" icons/red-dot"icons/green-dot" S" Toggle B" ticonbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle C" tbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle D" tbutton new 
                         ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Toggle E" tbutton new 

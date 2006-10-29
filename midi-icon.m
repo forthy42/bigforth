@@ -35,13 +35,13 @@ midi implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         ^^ ST[  ]ST ( MINOS ) T" " S" Datei:" infotextfield new  ^^bind filename
-          ^^ S[ ?player player start ]S ( MINOS )  TT" Play"  icon" icons/play.png" icon-but new  ^^bind play-it
-          ^^ S[ ?player player stop ]S ( MINOS )  TT" Stop"  icon" icons/stop.png" icon-but new  ^^bind stop-it
+          ^^ S[ ?player player start ]S ( MINOS )  TT" Play"  icon" icons/play" icon-but new  ^^bind play-it
+          ^^ S[ ?player player stop ]S ( MINOS )  TT" Stop"  icon" icons/stop" icon-but new  ^^bind stop-it
           ^^ S[ s" MIDI" s" " midi-path @
 IF  midi-path $@  ELSE  S" *.mid"  THEN
 ^ S[ 2swap midi-path $! filename assign ?player ]S
-fsel-action ]S ( MINOS )  TT" Load"  icon" icons/load.png" icon-but new  ^^bind load-it
-          ^^ S[ close ]S ( MINOS )  TT" Close"  icon" icons/mini-cross.png" icon-but new  ^^bind close-it
+fsel-action ]S ( MINOS )  TT" Load"  icon" icons/load" icon-but new  ^^bind load-it
+          ^^ S[ close ]S ( MINOS )  TT" Close"  icon" icons/mini-cross" icon-but new  ^^bind close-it
         &4 hatbox new &1 hskips
       &2 vabox new panel
     ( [dumpend] ) ;

@@ -41,18 +41,18 @@ include 4wins.fs
         drop  ENDCASE ;
 : 4win-move ( n -- )
   gameover @ IF  4init dpy draw THEN
-  #cols 0 ?DO  icon" icons/arrow0.png" I >icon  LOOP
+  #cols 0 ?DO  icon" icons/arrow0" I >icon  LOOP
   0 over b[] c@ 0= IF
-        icon" icons/arrow1.png" over >icon
+        icon" icons/arrow1" over >icon
         dup >r -1 swap stone? dpy draw
         s" My move" game-state assign dpy sync s" Your move"
         gameover @ 0= IF  c
-            icon" icons/arrow0.png" r> >icon
-            icon" icons/arrow2.png" swap >icon
+            icon" icons/arrow0" r> >icon
+            icon" icons/arrow2" swap >icon
             <lost> #depth + <= IF  2drop s" I'm going to lose"  THEN
             gameover @ IF  2drop s" I win!"  THEN
         ELSE
-            icon" icons/arrow0.png" r> >icon
+            icon" icons/arrow0" r> >icon
             2drop  s" You win!"  THEN
         true #cols 0 ?DO  0 I b[] cx@ 0<> and  LOOP
 	IF  2drop s" tie"  gameover on  THEN
@@ -65,31 +65,31 @@ include 4wins.fs
   0 swap b[] #rows bounds ?DO
       1 #rows I' I - - 2* 1+ home!
       I cx@
-      dup 0= IF  icon" icons/empty.png"  icon  THEN
-      dup 0< IF  icon" icons/piece0.png" icon  THEN
-      dup 0> IF  icon" icons/piece1.png" icon  THEN
-      abs #win >= IF  icon" icons/star0.png" icon  THEN
+      dup 0= IF  icon" icons/empty"  icon  THEN
+      dup 0< IF  icon" icons/piece0" icon  THEN
+      dup 0> IF  icon" icons/piece1" icon  THEN
+      abs #win >= IF  icon" icons/star0" icon  THEN
   LOOP endwith ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-            ^^ S[ 0 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop0
+            ^^ S[ 0 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop0
             CV[ 0 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 0 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 1 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop1
+            ^^ S[ 1 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop1
             CV[ 1 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 1 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 2 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop2
+            ^^ S[ 2 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop2
             CV[ 2 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 2 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 3 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop3
+            ^^ S[ 3 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop3
             CV[ 3 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 3 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 4 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop4
+            ^^ S[ 4 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop4
             CV[ 4 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 4 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 5 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop5
+            ^^ S[ 5 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop5
             CV[ 5 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 5 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
-            ^^ S[ 6 4win-move ]S ( MINOS )  icon" icons/arrow0.png" icon-but new  ^^bind drop6
+            ^^ S[ 6 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop6
             CV[ 6 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 6 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
           &2 vabox new vfixbox 
         &7 habox new

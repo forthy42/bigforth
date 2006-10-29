@@ -43,16 +43,16 @@ abacus-comp implements
  ( [methodstart] ) : re-calc  outer re-calc ;
 : assign  *i ! *v ! bind outer ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ TN[ 0 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 5 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ &10 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot.png"icons/gold-hwire.png" toggleicon new 
+          ^^ TN[ 0 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 5 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ &10 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
         &3 harbox new
-          ^^ TN[ 0 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 1 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 2 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 3 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 4 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
-          ^^ TN[ 5 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot.png"icons/gold-hwire.png" toggleicon new 
+          ^^ TN[ 0 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 1 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 2 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 3 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 4 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ 5 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
         &6 harbox new
       &2 habox new &1 hskips
     ( [dumpend] ) ;

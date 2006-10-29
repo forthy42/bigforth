@@ -103,7 +103,7 @@ about implements
           S" mass, most of the additional accelleration comes from the galaxy" text-label new 
           S" itself." text-label new 
             $10 $1 *hfil $10 $1 *vfil glue new 
-             icon" icons/starsln.png" icon new 
+             icon" icons/starsln" icon new 
             $10 $1 *hfil $10 $1 *vfil glue new 
           &3 habox new &1 vskips
         &8 vabox new
@@ -126,7 +126,7 @@ galaxy implements
   startex @ 0= IF
       1 3d-turtle textures dup startex ! 
       3d-turtle set-texture
-      S" icons/starsln.png" 3d-turtle load-texture
+      S" icons/starsln" 3d-turtle load-texture
   THEN
   GLgalaxy self
   alphax @ alphay @ alphaz @
@@ -202,7 +202,7 @@ IF  star-path $@  ELSE  s" *.star"  THEN
      spreadp @ 0 spread# assign  don't off
      stars $@ r@ read-file throw drop r> close-file throw
      a# draw redraw-galaxy ]S
-fsel-action ]S ( MINOS )  icon" icons/load.png" icon-but new 
+fsel-action ]S ( MINOS )  icon" icons/load" icon-but new 
                 ^^ S[ s" Save Stars" s" " star-path @
 IF  star-path $@  ELSE  s" *.star"  THEN
 ^ S[ 2swap star-path $! filename $!
@@ -210,7 +210,7 @@ IF  star-path $@  ELSE  s" *.star"  THEN
      >r & star# cell r@ write-file throw
      bulgep 2 cells r@ write-file throw
      stars $@ r@ write-file throw r> close-file throw ]S
-fsel-action ]S ( MINOS )  icon" icons/save.png" icon-but new 
+fsel-action ]S ( MINOS )  icon" icons/save" icon-but new 
               &2 hatbox new vfixbox 
               ^^ S[ iterate-step ]S ( MINOS ) S" Run" button new  ^^bind iterate
               ^^ S[ iterations get drop 0 DO iterate-step LOOP ]S ( MINOS ) S" Runs" button new  ^^bind iterates

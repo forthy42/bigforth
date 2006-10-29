@@ -28,7 +28,7 @@ IF  do-audio @
     do-video @
     IF  0" mpeg2dec -o x11 /tmp/video &" system drop  THEN
     $2000 dup NewTask activate css-cat EXIT
-THEN  playing on ]S ( MINOS )  TT" Play"  icon" icons/play.png" icon-but new  ^^bind play-it
+THEN  playing on ]S ( MINOS )  TT" Play"  icon" icons/play" icon-but new  ^^bind play-it
           ^^ S[ >disk_key ]S ( MINOS ) S" Auth Disk" button new 
         &2 vatbox new &1 vskips
           ^^ TV[ do-audio ]T[ ( MINOS )  ]TV ( MINOS ) S" Audio" tbutton new 

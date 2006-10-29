@@ -35,7 +35,7 @@ class;
 minos-splash implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-         icon" icons/minos.png" icon new 
+         icon" icons/minos" icon new 
       &1 vabox new &2 borderbox
     ( [dumpend] ) ;
   : init  ^>^^  assign  widget 1 super init ;
@@ -53,7 +53,7 @@ gpl-about implements
             S" bigFORTH is a native code Forth system, MINOS is a GUI library." text-label new 
             S" Copyright (c) 1998-2005 by Bernd Paysan" text-label new 
               $10 $1 *hfil $10 $1 *vfil glue new 
-               icon" icons/minos.png" icon new 
+               icon" icons/minos" icon new 
               $10 $1 *hfil $10 $1 *vfil glue new 
             &3 habox new vfixbox 
           &3 vabox new vfixbox 
