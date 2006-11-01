@@ -3,7 +3,9 @@
 memory also dos also
 \needs float import float
 \needs glconst | import glconst
+[IFDEF] x11
 \needs xconst  | import xconst
+[THEN]
 float also glconst also
 [IFDEF] x11  x11 also [THEN]
 [IFDEF] win32  win32 also [THEN]
