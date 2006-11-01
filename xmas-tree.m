@@ -33,11 +33,13 @@ xmas-tree implements
  ( [methodstart] ) : make-gear-task recursive
   gear-task @ 1 gear-task !
   0= IF
+[IFDEF] xft
       screen xrc with
           s" -*-helvetica-bold-r-normal--32-*-*-*-p-*-iso10646-1" 4 font!
       endwith
       s" Christmas" 4 screen xrc font@ 3d-turtle text-texture F bind xmas-text
       s" Merry"     4 screen xrc font@ 3d-turtle text-texture F bind merry-text
+[THEN]
   THEN
   glgear render &100 0 DO  pause  LOOP
   glgear draw   &100 0 DO  pause  LOOP ;

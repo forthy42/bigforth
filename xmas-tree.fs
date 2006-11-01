@@ -30,8 +30,10 @@ Create front_shininess  !&20.0 f>fs ,
 Create front_specular   !&1   f>fs dup , dup , , #1 ,
 Create no_specular      !0   f>fs dup , dup , , #1 ,
 
+[IFDEF] xft
 3d-text ptr merry-text
 3d-text ptr xmas-text
+[THEN]
 
 forward tree-branch
 
@@ -41,8 +43,10 @@ forward tree-branch
   F : merry-xmas ( -- )
       .rot .color
       pi f2/ down pi f2/ roll-left 0e 0e -.1e forward-xyz
+[IFDEF] xft
       1 2 ^ merry-text draw
       1 0 ^ xmas-text draw
+[THEN]
   ;
   F : stroh-stern ( n -- ) { n f: r |
       pi n fm/ right
