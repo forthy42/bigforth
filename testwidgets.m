@@ -17,7 +17,6 @@ public:
   topindex ptr (topindex-02)
   button ptr clone-button
   beamer ptr beam1
-  doublebuffer ptr dbuf
   canvas ptr nikolaus
   infotextfield ptr tex
   vabox ptr topics
@@ -251,9 +250,7 @@ test-widgets implements
                       &1 habox new
                     &3 vabox new hfixbox 
                       :beamer beamer new  ^^bind beam1 D[ 
-                        doublebuffer new  ^^bind dbuf D[ 
                           CV[ outer with nikolaus self start-cv1 endwith ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $10 $A *hfil $10 $A *vfil canvas new  ^^bind nikolaus
-                        &1 habox new ]D ( MINOS ) 
                       &1 habox new ]D ( MINOS ) 
                     &1 habox new -&2 borderbox
                   &2 habox new &1 hskips
