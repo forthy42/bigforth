@@ -126,7 +126,7 @@ $FF w,
         screen xrc dpy @ { img w h dpy |
         $20 h w screen xwin @ dpy XCreatePixmap
         ARGB32 @ 0= IF
-            dpy $7FE ARGB32 0 XRenderFindFormat
+            dpy PictStandardARGB32 XRenderFindStandardFormat
             ARGB32 $20 move  THEN
         ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture { pixmap rgba32 mpict |
         w 4* $20 h w img 0 ZPixmap $20 dpy dup DefaultScreen DefaultVisual dpy

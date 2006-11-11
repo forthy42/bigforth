@@ -15,12 +15,12 @@ also MINOS
 
 : fl  tflush screen sync ;
 
-ficon: open-icon icons/open.png"
-ficon: close-icon icons/close.png"
-ficon: text-icon icons/text.png"
-ficon: blue-dot icons/blue-dot.png"
-ficon: red-dot icons/red-dot.png"
-ficon: green-dot icons/green-dot.png"
+ficon: open-icon icons/open"
+ficon: close-icon icons/close"
+ficon: text-icon icons/text"
+ficon: blue-dot icons/blue-dot"
+ficon: red-dot icons/red-dot"
+ficon: green-dot icons/green-dot"
 
 viewport ptr class-struct
 

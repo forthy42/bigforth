@@ -800,20 +800,8 @@ class;
 	    >2** swap >2** swap 2swap 2over
 	    8 -rot pixmap new >r
             $10 color !
-	    r@ displays with xrc dpy @ xwin @ xft-draw @ endwith
-	    xft-draw' !
-	\ fixme!!! xft-font needs to know about pixmaps itself!
-	    xft-font self @ class? IF
-		8 XftDrawCreateAlpha
-		r@ displays with  xft-draw !  endwith
-	    ELSE
-		r@ displays with  xft-draw off  endwith
-	    THEN
             r@ displays with xywh $10 box endwith
             0 0 r@ draw r>
-	    dup displays with
-	       xft-draw @ ?dup IF  XftDrawDestroy  THEN
-	       xft-draw' @ xft-draw !  endwith
 	    endwith ( greymap )
         pixmap with get dispose endwith
         dup >r map>addrwh

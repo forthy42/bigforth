@@ -108,16 +108,37 @@ struct{
     short yOff
 } XGlyphInfo
 
-also minos
+also minos also
 
 Variable xft-draw'
 
 displays implements
     : dispose  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
-	:: dispose ;
+        :: dispose ;
 class;
 
-definitions minos
+backing implements
+    : create-pixmap  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        xft-draw off  :: create-pixmap ;
+    : dispose  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        :: dispose ;
+class;
+
+doublebuffer implements
+    : create-pixmap  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        xft-draw off  :: create-pixmap ;
+    : dispose  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        :: dispose ;
+class;
+
+pixmap implements
+    : create-pixmap  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        xft-draw off  :: create-pixmap ;
+    : dispose  xft-draw @ IF  xft-draw @ XftDrawDestroy  THEN
+        :: dispose ;
+class;
+
+previous xft definitions minos
 
 X-font class Xft-font
     method add-font
@@ -129,14 +150,14 @@ how:
     : assign ( addr u -- )
         name-string $! 0 name-string $@ + c!
         screen xrc dpy @  screen xrc screen @
-	name-string $@ drop XftFontOpenXlfd dup id !
-	dup 0= abort" Font not found!"
+        name-string $@ drop XftFontOpenXlfd dup id !
+        dup 0= abort" Font not found!"
         XftFont ascent @ ascent ! ;
     : add-font ( addr u clow chigh -- )
         extra-code 2! extra-name $! 0 extra-name $@ + c!
         screen xrc dpy @  screen xrc screen @
         extra-name $@ drop XftFontOpenXlfd dup extra-id !
-	dup 0= abort" Font not found!"
+        dup 0= abort" Font not found!"
         XftFont ascent @ extra-ascent ! ;
     | Create xft-color  sizeof XftColor allot
     $FFFF xft-color XftColor color XRenderColor alpha w!
@@ -168,14 +189,16 @@ how:
     : draw ( addr u x y dpy -- ) { addr u x y dpy }
         color @ $FF and dpy set-color
         dpy displays with
-            drawable rot drop
             xft-draw @ 0= IF
-		swap xrc vis @
-		xrc cmap @ XftDrawCreate xft-draw !
-	    ELSE
-		2drop
-	    THEN
-	    xft-draw @ dup clip-r @ XftDrawSetClip drop
+                & pixmap @ class? IF
+                    drawable rot drop swap xrc depth @
+                    XftDrawCreateAlpha
+                ELSE
+                    drawable rot drop swap xrc vis @
+                    xrc cmap @ XftDrawCreate
+                THEN  xft-draw !
+            THEN
+            xft-draw @ dup clip-r @ XftDrawSetClip drop
         endwith xft-draw' ! 0
         BEGIN
             1+  addr u  scan-within >r
