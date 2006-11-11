@@ -819,7 +819,7 @@ Variable reenter
     cur box attribs c@ and 0<> ;
 
 : boxes ( -- o )
-\    backing new D[ \ backing noback on
+    backing new D[ \ backing noback on
       0 TS[ cur +boxmode  !  rebox ][
           ?cur-box:0
           cur box self ?hbox dup cur +boxmode !
@@ -875,7 +875,7 @@ Variable reenter
           S" " textfield new dup cur bind cur-dpy-edit
     4 vabox new
     3 vabox new panel 2 borderbox hfixbox vfixbox
-    dup cur bind status \ ]D
+    dup cur bind status  ]D
     0 1 *filll 2dup glue new
     2 vabox new ;
 
@@ -1168,6 +1168,7 @@ s" Component"     component-entity
 endgroup
 
 : classes ( -- o )
+    backing new D[
     displays: 0 >vfbox s" Displays"    topindex new >r
     complex:  0 >vfbox s" Complex"     topindex new >r
     glues:    0 >vfbox s" Glues"       topindex new >r
@@ -1188,7 +1189,7 @@ endgroup
     0 S[ ?cur-box  false addbox ]S s" vbox"       button new
     3 vabox new 1 vabox new panel 2 borderbox
     2 habox new
-    vfixbox ;
+    vfixbox ]D ;
 
 \ load file
 
@@ -1565,7 +1566,7 @@ Variable auto-save-file
    4 vabox new vfixbox ;
 
 : modes ( -- o )
-\    backing new D[
+    backing new D[
     [IFDEF] edit-modes
         edit-modes
         hline
@@ -1576,7 +1577,7 @@ Variable auto-save-file
     hline
     file-io
     [IFDEF] edit-modes  7  [ELSE]  5  [THEN]
-    vabox new 2 borderbox \ ]D
+    vabox new 2 borderbox ]D
     0fill
     2 vabox new hfixbox ;
 
