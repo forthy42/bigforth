@@ -235,10 +235,10 @@ test-widgets implements
                         ^^ S[ s" Kuck mal" tex assign ]S ( MINOS ) S" Kuck mal" button new 
                         $10 $1 *hfil $10 $1 *vfil glue new 
                       &3 hartbox new flipbox  panel dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
-                        ^^ S[ s" Kuck" tex assign ]S ( MINOS ) S" Kuck" button new  font" -*-times new roman-medium-r-*--17-*-*-*-p-0-iso8859-15"
-                        ^^ S[ s" mal" tex assign ]S ( MINOS ) S" mal" button new  font" -*-times new roman-medium-i-*--17-*-*-*-p-0-iso8859-15"
-                        ^^ S[ s" wer" tex assign ]S ( MINOS ) S" wer" button new  font" -*-times new roman-bold-r-*--17-*-*-*-p-0-iso8859-15"
-                        ^^ S[ s" da" tex assign ]S ( MINOS ) S" da" button new  font" -*-times new roman-bold-i-*--17-*-*-*-p-0-iso8859-15"
+                        ^^ S[ s" Kuck" tex assign ]S ( MINOS ) S" Kuck" button new  font" -*-verdana-medium-r-*--17-*-*-*-p-0-iso8859-15"
+                        ^^ S[ s" mal" tex assign ]S ( MINOS ) S" mal" button new  font" -*-verdana-medium-i-*--17-*-*-*-p-0-iso8859-15"
+                        ^^ S[ s" wer" tex assign ]S ( MINOS ) S" wer" button new  font" -*-verdana-bold-r-*--17-*-*-*-p-0-iso8859-15"
+                        ^^ S[ s" da" tex assign ]S ( MINOS ) S" da" button new  font" -*-verdana-bold-i-*--17-*-*-*-p-0-iso8859-15"
                         ^^ S[ s" spricht" tex assign ]S ( MINOS ) S" spricht" button new 
                       &5 harbox new panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
                     &3 habox new $10  noborderbox  &2 borderbox

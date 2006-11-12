@@ -18,7 +18,7 @@ previous
 \ also minos large-font previous
 
 also minos
-  0 to backing-mode
+  \ 0 to backing-mode
   \ 0 to color-round  6  6  6 color-cube \ share with E
   \ 1 to color-round  5  5  5 color-cube \ share with Netscape -ncol 125
   \ 0 to color-round  4  8  4 color-cube \ share with xv

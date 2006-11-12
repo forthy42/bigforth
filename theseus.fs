@@ -1693,4 +1693,4 @@ export theseus designer ;
 
 Module;
 
-script? [IF] designer open [THEN]
+script? [IF] minos openw forth designer open [THEN]

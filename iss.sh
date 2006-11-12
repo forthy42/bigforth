@@ -52,7 +52,7 @@ $((cd ..; eval ls $(cd bigforth; make dist-files)) | sed \
 ;   "Icon title", "File name", "Parameters", "Working dir (can leave blank)",
 ;   "Custom icon filename (leave blank to use the default icon)", Icon index
 Name: "{group}\MINOS"; Filename: "{app}\xbigforth.exe"; WorkingDir: "{app}"; IconFilename: "{app}\minos.ico"
-Name: "{group}\Theseus"; Filename: "{app}\xbigforth.exe"; Parameters: "##include theseus.fs minos openw designer open forth"; WorkingDir: "{app}"; IconFilename: "{app}\minos.ico"
+Name: "{group}\Theseus"; Filename: "{app}\xbigforth.exe"; Parameters: "theseus.fs"; WorkingDir: "{app}"; IconFilename: "{app}\minos.ico"
 Name: "{group}\bigFORTH"; Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"
 Name: "{group}\Remake Kernel"; Filename: "{app}\bigforth.exe"; Parameters: "##include forth.fb save-target forthker bye"; WorkingDir: "{app}"
 Name: "{group}\Remake bigFORTH"; Filename: "{app}\forthker.exe"; Parameters: "##include startup.fb warning on savesystem bigforth bye"; WorkingDir: "{app}"
