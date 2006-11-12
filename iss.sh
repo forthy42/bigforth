@@ -66,9 +66,9 @@ Name: "{group}\Uninstall bigFORTH"; Filename: "{uninstallexe}"
 
 [Run]
 Filename: "{app}\forthker.exe"; Workingdir: "{app}"; Parameters: "include starup.fb ' .blk is .status warning on savesystem bigforth bye"
-Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ;. include float.fb m' float savemod float bye"
-Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ;. include glconst.fs m' glconst savemod glconst bye"
-Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use float.fb use glconst.fs path ;. include startx.fb warning on savesystem xbigforth bye"
+Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs path ;. include float.fb m' float savemod float bye"
+Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs use float.fb path ;. include glconst.fs m' glconst savemod glconst bye"
+Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs use float.fb use glconst.fs path ;. include startx.fb warning on savesystem xbigforth bye"
 Filename: "{app}\xbigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ';{app};.' include adjust.m"
 
 [UninstallDelete]

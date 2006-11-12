@@ -51,7 +51,7 @@ gpl-about implements
   [ previous ] ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             S" bigFORTH is a native code Forth system, MINOS is a GUI library." text-label new 
-            S" Copyright (c) 1998-2005 by Bernd Paysan" text-label new 
+            S" Copyright (c) 1998-2006 by Bernd Paysan" text-label new 
               $10 $1 *hfil $10 $1 *vfil glue new 
                icon" icons/minos" icon new 
               $10 $1 *hfil $10 $1 *vfil glue new 

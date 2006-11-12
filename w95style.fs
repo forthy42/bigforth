@@ -167,6 +167,9 @@ menu-title implements
     : draw  ( -- )  xywh color @ dpy box
         color 2+ c@ IF  shadow swap xS 2/ xywh drawshadow  THEN
         text $@ 0 0 textcenter ;
+    : moved ( x y -- ) :: moved draw
+      shadow xS 2/ xywh drawshadow ;
+    : leave :: leave draw ;
 class;
 
 menu-entry implements

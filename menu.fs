@@ -63,7 +63,8 @@ also MINOS also
     s" Tips" menu-entry new
     ^ S[ gpl-about open ]S s" About" menu-entry new
     3 vabox new 2 borderbox
-    s"  Help " menu-title new add-help ;
+    [IFDEF] win32 s"  ? " [ELSE] s"  Help " [THEN]
+    menu-title new add-help ;
 
 : show-splash ( -- )
     minos-splash new 1 0 modal new
