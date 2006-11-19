@@ -31,8 +31,8 @@ adjust implements
         ^^ ST[  ]ST ( MINOS ) T" " S" Pathes" infotextfield new  ^^bind path#
         ^^ ST[  ]ST ( MINOS ) T" py" S" ID" infotextfield new  ^^bind id#
           $10 $1 *hfill $10 $1 *vfil glue new 
-          ^^ S[ id# get path# get s" xbigforth.cnf" adjust-path-id
-id# get path# get  s" bigforth.cnf" adjust-path-id
+          ^^ S[ id# get path# get s" xbigforth.ini" adjust-path-id
+id# get path# get  s" bigforth.ini" adjust-path-id
 close ]S ( MINOS ) S" OK" button new  ^^bind path-ok
           $10 $1 *hfil $10 $1 *vfil glue new 
           ^^ S[ close ]S ( MINOS ) S" Cancel" button new 

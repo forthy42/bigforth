@@ -6,7 +6,7 @@ DOS also fileop also minos also
 
 : adjust-path-id ( addr-id u1 addr-path u2 addr-file u3 -- )
   2dup r/w open-file throw >r
-  s" tmp.cnf" r/w output-file
+  s" tmp.ini" r/w output-file
   BEGIN  scratch $100 r@ read-line throw  WHILE
          scratch over 5 min s" Path " compare 0=
          IF    drop .' Path "'
@@ -18,4 +18,4 @@ DOS also fileop also minos also
                ELSE   scratch swap type  THEN
          THEN  cr
   REPEAT  drop eot  r> close-file throw
-  s" tmp.cnf" 2swap cp 0" tmp.cnf" fdelete drop 2drop 2drop ;
+  s" tmp.ini" 2swap cp 0" tmp.ini" fdelete drop 2drop 2drop ;
