@@ -9,11 +9,15 @@ case "$host_os" in
 		EXTFLAGS="-mno-cygwin"
 		WINDOWS="-mwindows"
 		ARCHFLAGS=""
+		INI="bigforth.ini"
+		XINI="xbigforth.ini"
 		;;
 	*)
 		EXTFLAGS=""
 		WINDOWS=""
 		ARCHFLAGS=""
+		INI=".bigforthrc"
+		XINI=".xbigforthrc"
 		;;
 esac
 
@@ -32,5 +36,7 @@ AC_SUBST(EXTFLAGS)
 AC_SUBST(ARCHFLAGS)
 AC_SUBST(WINDOWS)
 AC_SUBST(libdirpath)
+AC_SUBST(INI)
+AC_SUBST(XINI)
 
-AC_OUTPUT(Makefile bigforth.cnf xbigforth.cnf)
+AC_OUTPUT(Makefile $INI $XINI)
