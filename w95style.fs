@@ -73,7 +73,7 @@ class;
 
 rbutton implements
     : draw ( -- )  halfshade
-        xM  xM xS + 2+ 3 / 1+ dup xS 2* -
+        xM  xM xS + 2/ dup xS 2* -
         callback fetch
         { m n n' s |
         x @ m 2/ + y @ h @ n 3* - 1+ 2/ + n 2* +
@@ -165,10 +165,10 @@ class;
 
 menu-title implements
     : draw  ( -- )  xywh color @ dpy box
-        color 2+ c@ IF  shadow swap xS 2/ xywh drawshadow  THEN
+        color 2+ c@ IF  shadow swap xS 2/ xywh xS 2/ xywh- drawshadow  THEN
         text $@ 0 0 textcenter ;
     : moved ( x y -- ) :: moved draw
-      shadow xS 2/ xywh drawshadow ;
+      shadow xS 2/ xywh xS 2/ xywh- drawshadow ;
     : leave :: leave draw ;
 class;
 

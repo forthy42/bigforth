@@ -52,7 +52,7 @@ XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
-	  xbigforth.cnf xft-font.fs imlib.fs Estyle.fs
+	  .xbigforthrc xft-font.fs imlib.fs Estyle.fs
 
 all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
 
@@ -97,7 +97,7 @@ bigforth.fi: forthker.fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
 	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
 
-xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) bigforth.cnf
+xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) .bigforthrc
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs use float.fb include startx.fb $(XSAVE) xbigforth $(BYE)"
 
@@ -121,7 +121,7 @@ DOCDIST = bigforth/help/{*.html,[a-z]*.gif,*.jpg,*.sh} bigforth/doc/bigforth.tex
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,{,x}bigforth.cnf}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,.{,x}bigforthrc}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
 
 DRAGONDIST = bigforth/pattern/dragon{,-back,-head,-wing,-claw}.png \
 	bigforth/pattern/{bark,normal-w1,back,focus}.ppm
@@ -187,10 +187,10 @@ config.status:	configure
 Makefile:	Makefile.in config.status
 		CONFIG_FILES="$@" ./config.status
 
-xbigforth.cnf:	xbigforth.cnf.in config.status
+.xbigforthrc:	.xbigforthrc.in config.status
 		CONFIG_FILES="$@" ./config.status
 
-bigforth.cnf:	bigforth.cnf.in config.status
+.bigforthrc:	.bigforthrc.in config.status
 		CONFIG_FILES="$@" ./config.status
 
 # This is the documentation part, and is not ready yet
