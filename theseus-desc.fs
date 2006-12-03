@@ -744,10 +744,14 @@ descriptor class scaler-des
 public:
     cell var pos
     early offset!
+    early text*!
+    early text/!
 how:
     : init &10 contents ! ;
     : h-offset ( -- addr )
-        item self hscaler with offset endwith ;
+	item self hscaler with offset endwith ;
+    : text*/ ( -- addr )
+	item self hscaler with text*/ endwith ;
     : assign ( n -- ) dup contents !
         item self 0= IF  drop  EXIT  THEN
         item self widget with get endwith nip nip
@@ -757,14 +761,26 @@ how:
     : offset! ( n -- )
         item self 0= IF  drop  EXIT  THEN
         h-offset !
-        item !resized  item resized ;
+	item !resized  item resized ;
+    : text*! ( n -- )
+	item self 0= IF  drop  EXIT  THEN
+	text*/ cell+ !
+	item !resized  item resized ;
+    : text/! ( n -- )
+	item self 0= IF  drop  EXIT  THEN
+	text*/ !
+	item !resized  item resized ;
     : edit-field ( -- o )
         ^ F cur bind slider
         0 SN[ text@ drop cur slider assign ]SN
         get 0 s" Steps:" infotextfield new
         0 SN[ text@ drop cur slider with offset! endwith ]SN
         h-offset @ s>d s" Offset:" infotextfield new
-        2 habox new hskip
+        0 SN[ text@ drop cur slider with text*! endwith ]SN
+        text*/ cell+ @ s>d s" Scale:" infotextfield new
+        0 SN[ text@ drop cur slider with text/! endwith ]SN
+        text*/ @ s>d s" Div:" infotextfield new
+        4 habox new hskip
         dup F bind edit-string ;
     : null ( -- actor ) cur pane self pos @ &9 scale-var new ;
     : make ( -- actor ) cur pane self pos @ get scale-var new ;
@@ -773,7 +789,8 @@ how:
         item self hscaler with get nip nip endwith .d
         get .d ;
     : post-dump ( -- )
-        h-offset @ ?dup  IF  space .d ." SC# " THEN ;
+	h-offset @ ?dup  IF  space .d ." SC# " THEN
+	text*/ 2@ 1 1 d= 0= IF  space text*/ 2@ swap .d .d ." SC*/ " THEN ;
 class;
 
 action-des class slider-code
