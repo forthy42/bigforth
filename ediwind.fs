@@ -285,8 +285,9 @@ class;
 : updated?  scredit updated? ;
 : curup        c/l negate c ;
 : curdown      c/l c ;
+: cursize      scredit 'start cur + dup xchar+ swap - ;
 : curleft      scredit 'start cur + dup xchar- swap - c ;
-: currite      scredit 'start cur + dup xchar+ swap - c ;
+: currite      cursize c ;
 : 'start    scredit 'start ;
 
 \ print buffers                                        27dec99py

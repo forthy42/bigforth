@@ -83,7 +83,7 @@ also dos
         r> I - +LOOP ;
 
 previous
-        
+
 \ input editor
 
 2variable 'cursave
@@ -113,7 +113,7 @@ previous
     >string over r@ + -rot move
     rot r> - -rot ;
 : ?xcdel ( max span addr pos1 -- max span addr pos2 0 )
-  dup  IF  (xcdel) .all 2 spaces .rest  THEN  0 ;
+  dup  IF  over2 >r (xcdel) .all over2 r> swap - spaces .rest  THEN  0 ;
 : <xcdel> ( max span addr pos1 -- max span addr pos2 0 )
   2 pick over <>
     IF  xcforw drop ?xcdel EXIT  THEN 0 ;

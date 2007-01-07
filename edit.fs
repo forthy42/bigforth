@@ -465,7 +465,8 @@ Variable epos
       ELSE  DelLine PrevLine false  THEN
       cur InsSpaces  pad count InsString
       IF  stredit draw  ELSE  LineModified  THEN  EXIT  
-  THEN  modify 1 DelString <char linemodified ;
+  THEN  modify Liner@ drop dup xchar+ swap -
+  DelString 0 Liner@ + c! <char linemodified ;
 : backspace  ( -- )  pos @ 0= ?EXIT
     curleft delchar ;
 
