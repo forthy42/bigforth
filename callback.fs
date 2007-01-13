@@ -23,8 +23,14 @@ also callbacks definitions
 
 Code (int)   AX DX mov  AX pop
     Next end-code macro 0 :ax T&P
+' (int) alias (float)
+' (int) alias (void)
 Code int   AX push  DX ) AX mov  cell # DX add
     Next end-code macro :ax 0 T&P
+Code df  .fl DX ) fld  8 # DX add
+    Next end-code macro
+Code sf  .fs DX ) fld  4 # DX add
+    Next end-code macro
 
 previous definitions
 
@@ -45,9 +51,10 @@ also dos
 previous
 
 \ example
-
+0 [IF]
 callback 2:1 (int) int int callback;
 : cb-test  ." Testing callbacks:" .s ." gives " + .s cr ;
 ' cb-test 2:1 c_plus
 dos legacy off fptr 2:1call int int (int) forth
 1 2 c_plus 2:1call .
+[THEN]
