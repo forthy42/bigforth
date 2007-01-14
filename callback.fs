@@ -9,7 +9,8 @@ Code (callback
 	3 [FOR] -$1000 SP D) SP lea  SP ) CX mov  [NEXT]
 	$2000 SI D) SP lea  [THEN]
     ;c: 'up @ up!  rp@ $3F00 - sys-sp !
-    s0 @ >r sp@ 1 cells + s0 !  rp@ 6 cells + swap  catch drop
+    s0 @ >r sp@ 1 cells + s0 !  rp@ 6 cells + swap  catch
+    ?dup IF  r> s0 ! r> sys-sp !  throw  THEN
     r> s0 !  >c: R:  sys-sp A#) pop  OP pop  UP pop  SI pop
     ret  end-code
 
@@ -51,7 +52,7 @@ also dos
 previous
 
 \ example
-false [IF]
+true [IF]
 callback 2:1 (int) int int callback;
 : cb-test  ." Testing callbacks:" .s ." gives " + .s cr ;
 : cb-test2  ." Testing callbacks:" .s ." gives " + .s cr abort" failed" ;
