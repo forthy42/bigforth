@@ -9,7 +9,7 @@ Code (callback
 	3 [FOR] -$1000 SP D) SP lea  SP ) CX mov  [NEXT]
 	$2000 SI D) SP lea  [THEN]
     ;c: 'up @ up!  rp@ $3F00 - sys-sp !
-    s0 @ >r sp@ 1 cells + s0 !  rp@ 6 cells + swap  execute
+    s0 @ >r sp@ 1 cells + s0 !  rp@ 6 cells + swap  catch drop
     r> s0 !  >c: R:  sys-sp A#) pop  OP pop  UP pop  SI pop
     ret  end-code
 
