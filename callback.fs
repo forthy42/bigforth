@@ -51,10 +51,13 @@ also dos
 previous
 
 \ example
-0 [IF]
+false [IF]
 callback 2:1 (int) int int callback;
 : cb-test  ." Testing callbacks:" .s ." gives " + .s cr ;
+: cb-test2  ." Testing callbacks:" .s ." gives " + .s cr abort" failed" ;
 ' cb-test 2:1 c_plus
+' cb-test2 2:1 c_plus2
 dos legacy off fptr 2:1call int int (int) forth
 1 2 c_plus 2:1call .
+1 2 c_plus2 2:1call .
 [THEN]
