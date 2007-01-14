@@ -52,7 +52,7 @@ also dos
 previous
 
 \ example
-true [IF]
+false [IF]
 callback 2:1 (int) int int callback;
 : cb-test  ." Testing callbacks:" .s ." gives " + .s cr ;
 : cb-test2  ." Testing callbacks:" .s ." gives " + .s cr abort" failed" ;
