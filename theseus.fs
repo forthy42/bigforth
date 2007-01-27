@@ -1120,12 +1120,12 @@ s" Icon"
 endgroup
 
 group sizer:
-s" hrtsizer"  hsentity hrtsizer
-s" hsizer"    hsentity hsizer
-s" hxrtsizer" hsentity hxrtsizer
-s" vrtsizer"  vsentity vrtsizer
-s" vsizer"    vsentity vsizer
-s" vxrtsizer" vsentity vxrtsizer
+s" Hrtsizer"  hsentity hrtsizer
+s" Hsizer"    hsentity hsizer
+s" Hxrtsizer" hsentity hxrtsizer
+s" Vrtsizer"  vsentity vrtsizer
+s" Vsizer"    vsentity vsizer
+s" Vxrtsizer" vsentity vxrtsizer
 endgroup
 
 \ object creator
@@ -1154,7 +1154,7 @@ s" VGlue"    entity *vglue           vglue-des
 s" Rule"     entity rule             hglue-des vglue-des
 s" HRule"    entity hrule            hglue-des
 s" VRule"    entity vrule            vglue-des
-s" topglue"  entity topglue          topglue-des
+s" Topglue"  entity topglue          topglue-des
 endgroup
 
 group complex:
