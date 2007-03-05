@@ -73,7 +73,7 @@ also MINOS also
         screen xywh 2swap 2drop xywh 2swap 2drop p- p2/ show
         modal ' close swap &1000 after schedule
     endwith ;
-:noname ( show-splash )
+:noname  show-splash
     main-menu color-menu game-menu font-menu help-menu ; IS terminal-menu
 
 previous previous

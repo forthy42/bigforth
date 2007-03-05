@@ -597,8 +597,8 @@ how:
         ."  ]DS ( MINOS ) " ;
 class;
 
-Create toggle-on$  ," On-Xt ( -- ):" ," Var ( -- addr ):" ," Num Var ( -- n addr ):" ," Fetch-Xt ( -- flag ):"
-Create toggle-off$ ," Off-Xt ( -- ):" ," Change-Xt ( -- ):" ," Change-Xt ( -- ):" ," Store-Xt ( flag -- ):"
+Create toggle-on$  ," On-Xt ( -- ):" ," Var ( -- addr ):" ," Num Var ( -- n addr ):" ," Fetch-Xt ( -- flag ):" ," Bit ( -- addr n ):"
+Create toggle-off$ ," Off-Xt ( -- ):" ," Change-Xt ( -- ):" ," Change-Xt ( -- ):" ," Store-Xt ( flag -- ):" ," Change-Xt ( -- ):"
 
 : typ$ ( addr n -- addr' u )  0 ?DO  count +  LOOP  count ;
 
@@ -622,23 +622,25 @@ how:
 	get-tip s" Tooltip:" infotextfield new ;
     : edit-field ( -- o )
         ^ F cur bind toggle
-        0 TN[ 0 typ ]T[ [ toggle-on$  0 typ$ ] SLiteral code-string text!
-                        [ toggle-off$ 0 typ$ ] SLiteral code2-string text! ]TN
+        0 TN[ 0 typ ]T[ toggle-on$  0 typ$ code-string text!
+                        toggle-off$ 0 typ$ code2-string text! ]TN
             s" Toggle" rbutton new
-        0 TN[ 1 typ ]T[ [ toggle-on$  1 typ$ ] SLiteral code-string text!
-                        [ toggle-off$ 1 typ$ ] SLiteral code2-string text! ]TN
+        0 TN[ 1 typ ]T[ toggle-on$  1 typ$ code-string text!
+                        toggle-off$ 1 typ$ code2-string text! ]TN
             s" Toggle-Var" rbutton new
-        0 TN[ 2 typ ]T[ [ toggle-on$  2 typ$ ] SLiteral code-string text!
-                        [ toggle-off$ 2 typ$ ] SLiteral code2-string text! ]TN
+        0 TN[ 2 typ ]T[ toggle-on$  2 typ$ code-string text!
+                        toggle-off$ 2 typ$ code2-string text! ]TN
             s" Toggle-Num" rbutton new
-        0 TN[ 3 typ ]T[ [ toggle-on$  3 typ$ ] SLiteral code-string text!
-                        [ toggle-off$ 3 typ$ ] SLiteral code2-string text! ]TN
+        0 TN[ 3 typ ]T[ toggle-on$  3 typ$ code-string text!
+                        toggle-off$ 3 typ$ code2-string text! ]TN
             s" Toggle-State" rbutton new
-        cur back with 2fill endwith 5 hartbox new
+        0 TN[ 4 typ ]T[ toggle-on$  4 typ$ code-string text!
+                        toggle-off$ 4 typ$ code2-string text! ]TN
+            s" Toggle-Bit" rbutton new
+        cur back with 2fill endwith 6 hartbox new
         content toggle-on$ typ @ typ$ infocodefield new
-        dup F bind code-string
         content2 toggle-off$ typ @ typ$ infocodefield new
-        dup F bind code2-string
+        dup F bind code2-string over F bind code-string
         tooltip-field
         4 vabox new vskip ;
     : null ( -- actor ) 0 flag ['] noop toggle-var new ;
@@ -657,10 +659,11 @@ how:
             ."  TV[ " type ."  ]T[ ( MINOS ) " type ."  ]TV ( MINOS ) "
         ELSE 2 case? IF
             ."  TN[ " type ."  ]T[ ( MINOS ) " type ."  ]TN ( MINOS ) "
-        ELSE
-            drop
-            ."  TS[ " type ."  ][ ( MINOS ) " type ."  ]TS ( MINOS ) "
-        THEN THEN THEN
+        ELSE 3 case? IF
+	    ."  TS[ " type ."  ][ ( MINOS ) " type ."  ]TS ( MINOS ) "
+	ELSE 4 case? IF
+	    ."  TB[ " type ."  ]T[ ( MINOS ) " type ."  ]TB ( MINOS ) " 
+        ELSE drop THEN THEN THEN THEN THEN
         dump-tooltip ;
     : get ( -- addr1 n1 addr2 n2 )  content $@ content2 $@ ;
 class;

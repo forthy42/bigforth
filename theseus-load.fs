@@ -132,6 +132,12 @@ also minos-load definitions
         s"  ]TS ( MINOS ) " content2 scan-strings
         3 typ ! self
     endwith ;
+: TB[   drop S" " S" "
+    toggle-des new toggle-des with assign
+        s"  ]T[ ( MINOS ) " content  scan-strings
+        s"  ]TB ( MINOS ) " content2 scan-strings
+        4 typ ! self
+    endwith ;
 : CK[  drop
     S" " click-des new click-des with assign
         s"  ]CK ( MINOS ) " content scan-strings

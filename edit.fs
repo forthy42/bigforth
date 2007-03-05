@@ -218,7 +218,7 @@ class;
 
 \ Aktionen auf thisline                                27apr91py
 
-: Lalign  ( len -- alen )  4+ -$10 and $14 + ;
+: Lalign  ( len -- alen ) -$10 and $18 + ;
 : LineLen ( -- len )  stredit cols @ 1- ;
 
 Variable ?reformat
