@@ -1602,8 +1602,8 @@ Variable auto-save-file
     8 vabox new 2 borderbox ;
 
 : edit-menu ( -- o )
-    ^ S[ new:dialog cur pane resized ]S      s" New Dialog"      menu-entry new
-    ^ S[ new:menu-window cur pane resized ]S s" New Menu Window" menu-entry new
+    ^ S[ new:dialog cur pane !resized ]S      s" New Dialog"      menu-entry new
+    ^ S[ new:menu-window cur pane !resized ]S s" New Menu Window" menu-entry new
     2 vabox new 2 borderbox ;
 
 include theseus-help.m
