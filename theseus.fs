@@ -493,8 +493,8 @@ resource:dialog implements
              IF  implementation-file $@  ELSE  s" "  THEN
              ( s" SF:" info) textfield new dup bind IF-field  2 habox new
              dialog-stack self IF  9  ELSE  7  THEN  vabox new
-             2 borderbox dup >r
-             menu-icon with menu-frame popup endwith ?menu-call
+             2 borderbox dup >r [IFDEF] x11 dpy get-win swap [THEN]
+	     menu-icon with menu-frame popup endwith ?menu-call
              r> with dispose endwith
            ]S TT" Dialog Menu"
            icon" icons/menu" icon-but new dup bind menu-icon
