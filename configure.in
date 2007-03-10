@@ -1,6 +1,6 @@
 dln this is a really minimal autoconf file
 
-AC_INIT([bigforth],[2.1.6],[http://sourceforge.net/tracker/?atid=101028&group_id=1028&func=browse])
+AC_INIT([bigforth],[2.1.7],[http://sourceforge.net/tracker/?atid=101028&group_id=1028&func=browse])
 AC_CANONICAL_HOST
 AC_PROG_CC
 
