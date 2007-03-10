@@ -98,7 +98,7 @@ about implements
           S" This program simulates 'dark masses' in a galaxy." text-label new 
           S" However, it doesn't assume real dark masses, but" text-label new 
           S" a generalization of Mach's principle." text-label new 
-          S" The assumed formula for an inertial system is: sum(a*m/r²)=0." text-label new 
+          S" The assumed formula for an inertial system is: sum(a*m/rÂ²)=0." text-label new 
           S" Since the background mass is small compared to the galaxie's" text-label new 
           S" mass, most of the additional accelleration comes from the galaxy" text-label new 
           S" itself." text-label new 
