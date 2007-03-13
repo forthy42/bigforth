@@ -756,8 +756,13 @@ Variable reenter
         IF  names next self  names dispose  bind names
             r@ cur box self names update-hint  THEN
         cur box self cur topbox self = IF
-            r@ cur bind topbox
-            r@ cur resources bind topbox
+	    r@ cur bind topbox
+	    r@ cur resources with
+	    BEGIN
+		cur box self topbox self = IF  dup bind topbox  THEN
+		next-resource self  WHILE
+		    next-resource self op!
+	    REPEAT  endwith drop
         THEN
         0 cur box n !  cur box dispose
         r> cur bind box
