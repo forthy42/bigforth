@@ -329,22 +329,22 @@ how:
 class;
 
 hslider implements
-    : init ( callback -- )  >callback
+    : subbox ( -- ) 
         ^ R[ lstep ]R 0 slidetri new
         ^ R[ lpage ]R ['] part1 ['] part0 hslider-p Eside new
         ^ M[ slide ]M ['] part2 ['] part0 hslider-f hslider-d Erule new
           arule with $01000003 assign ^ endwith
         ^ R[ rpage ]R ['] part3 ['] part0 hslider-p Eside new
         ^ R[ rstep ]R 2 slidetri new
-        5 super init ;
+        5 ;
 class;
 
 hslider0 implements
-    hslider :: init
+    hslider :: subbox
 class;
 
 hscaler implements
-    : init ( callback -- )  >callback
+    : subbox ( -- )
         ^ M[ slide ]M ['] part0a ['] part5 arule new
         ^ R[ lpage ]R ['] part1 ['] part0b hslider-p Eside new
         ^ M[ slide ]M :[ part4 swap 2* xS + swap ]:
@@ -353,11 +353,11 @@ hscaler implements
         arule with $01000003 assign ^ endwith
         ^ R[ rpage ]R ['] part3 ['] part0b hslider-p Eside new
         3 hbox new
-        2 vbox new 1 super super init ;
+        2 vbox new 1 ;
 class;
 
 vscaler implements
-    : init ( callback -- )  >callback
+    : subbox ( -- )
         ^ M[ slide ]M ['] part5 ['] part0a arule new
         ^ R[ rpage ]R ['] part0b ['] part3 vslider-p Eside new
         ^ M[ slide ]M :[ part0a swap xS 2* + swap ]:
@@ -366,22 +366,22 @@ vscaler implements
         arule with $01000003 assign ^ endwith
         ^ R[ lpage ]R ['] part0b ['] part1 vslider-p Eside new
         3 vbox new
-        2 hbox new 1 super super init ;
+        2 hbox new 1 ;
 class;
 
 vslider implements
-    : init ( callback -- )  >callback
+    : subbox ( -- )
         ^ R[ lstep ]R 1 slidetri new \ 1 ^ habox new fixbox
         ^ R[ lpage ]R ['] part0 ['] part1 vslider-p Eside new
         ^ M[ slide ]M ['] part0 ['] part2 vslider-f vslider-d Erule new
           arule with $02000003 assign ^ endwith
         ^ R[ rpage ]R ['] part0 ['] part3 vslider-p Eside new
         ^ R[ rstep ]R 3 slidetri new \ 1 ^ habox new fixbox
-        5 super init ;
+        5 ;
 class;
 
 vslider0 implements
-    vslider :: init
+    vslider :: subbox
 class;
 
 Eicon: vbutton-f Estyle/ShinyMetal/bar_vertical_2.png"
