@@ -1502,28 +1502,28 @@ Variable auto-save-file
         s" Theseus: " window title!  file-name $@ title+!
     endwith ;
 
+: try-save ( -- )
+    s" +" cur file-name $+!
+    :[ cur file-name $@ dump-file ]: catch
+    0= IF
+	cur file-name $@len 1- cur file-name $!len
+	cur file-name $@ rename-old
+	cur file-name $@ rename-save
+	auto-save-file $@ delete-file drop
+	cur save-state off THEN ;
+
 : save-minos...
     s" Save as:" s" " s" *.m"
     cur self S[ ^ bind cur ( s" .m" ?suffix )
                 auto-save-name auto-save-file $!
                 path+file
                 cur file-name $! set-title
-                s" +" cur file-name $+!
-                :[ cur file-name $@ dump-file ]: catch
-                cur file-name $@len 1- cur file-name $!len
-                0= IF
-                    cur file-name $@ rename-old
-                    cur file-name $@ rename-save
-                    auto-save-file $@ delete-file drop
-                    cur save-state off THEN ]S
+                try-save ]S
     fsel-dialog ;
 
 : save-minos
     cur file-name @ 0= IF  save-minos...  EXIT  THEN
-    cur file-name $@ rename-old
-    cur file-name $@ dump-file
-    auto-save-name delete-file drop
-    set-title cur save-state off ;
+    try-save ;
 
 : append-modes ( -- o )
    0 false T[ ['] addfirst F IS +object ['] cur-box-dpy F IS cur-dpy ][ ]T
