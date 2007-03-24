@@ -211,7 +211,7 @@ class;
 : retscr    stredit retscr   ; macro
 : retbuf    stredit start    ; macro
 
-: MakeLine ( -- MP )  $14 NewHandle  dup @ $14 erase ;
+: MakeLine ( -- MP )  $18 NewHandle  dup @ $18 erase ;
 : (InsLine ( MP -- ) thisline @
   dup 0=  IF    drop thisline !  ELSE  MoveLine  THEN ;
 : InsLine ( -- ) MakeLine  (InsLine ;
@@ -225,15 +225,16 @@ Variable ?reformat
 Forward FormatPar
 
 : enough? ( len -- )  LineLen > ?reformat ! ;
-: SetLineLen  ( len -- )  dup enough?
-  Lalign dup thisline @ @ 8 + c@ Lalign
-  = 0= IF  thisline @ over SetHandleSize  THEN drop ;
-: +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
 : Line@  ( -- addr count )  thisline @ @ 8 + count ;
+: SetLineLen  ( len -- )  dup enough?
+    Lalign dup thisline @ @ 8 + c@ Lalign
+    = 0= IF  thisline @ over SetHandleSize  THEN drop
+    0 Line@ + c! ;
+: +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
 : Liner@ ( -- addr count )  Line@ cur /string ;
 : 'cursor ( -- addr ) Liner@ drop ;
 : LineLen+! ( n -- ) >r thisline @ @ 8+ dup c@ r> + swap c!
-  ?reformat @ IF  FormatPar  THEN ;
+  0 Line@ + c! ?reformat @ IF  FormatPar  THEN ;
 
 \ Einfügen                                             07may91py
 
