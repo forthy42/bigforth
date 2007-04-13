@@ -1510,7 +1510,8 @@ Variable auto-save-file
 	cur file-name $@ rename-old
 	cur file-name $@ rename-save
 	auto-save-file $@ delete-file drop
-	cur save-state off THEN ;
+	cur save-state off THEN
+    cur file-name $@len 1- cur file-name $!len ;
 
 : save-minos...
     s" Save as:" s" " s" *.m"
