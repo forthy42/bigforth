@@ -96,10 +96,10 @@ DOS
 $0095 Value pngflags
 
 : read-png-image ( fd -- addr w h color_type ) >r
-    r@ filehandle @ _dup 0" r" fdopen dup
+    r@ filehandle @ 0" r" fdopen dup
     init-png >r r@ rot png_init_io
     r@ over pngflags 0 png_read_png
-    swap fclose drop r>
+    nip r>
     r> close-file throw
     swap png2array ;
 
