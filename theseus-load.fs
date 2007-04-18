@@ -328,6 +328,7 @@ ventity: viewport
 ventity: hviewport
 ventity: vviewport
 dentity: backing
+dentity: clipper
 dentity: doublebuffer
 dentity: beamer
 
