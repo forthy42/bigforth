@@ -45,7 +45,7 @@ $((cd ..; eval ls $(cd bigforth; make dist-files)) | sed \
   -e 's#^bigforth\\\(.*\)$#Source: "\1"; DestDir: "{app}"#g' \
   -e 's#\(icons\\.*\)\.png#\1.icn#g' \
   -e 's#\(pattern\\.*\)\.png#\1.ppm#g' \
-  | grep -v 'icons\\edit..*\.icn' | sort -u)
+  | grep -v 'icons\\edit..*\.icn' | grep -v midi.fs | sort -u)
 
 [Icons]
 ; Parameter quick reference:
