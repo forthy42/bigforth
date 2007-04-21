@@ -5,12 +5,16 @@
 #define _GNU_SOURCE
 #endif
 
+#if defined(BSD) || defined(linux)
+#define unix
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <signal.h>
-#ifdef linux
+#ifdef unix
 #include <locale.h>
 #endif
 
@@ -99,7 +103,7 @@ int verbose=0;
 #endif /* OS/2 */
 
 
-#ifdef linux /* Create Linux loader */
+#ifdef unix /* Create Unix loader */
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -196,7 +200,7 @@ static char bigforth_header[] =
 #endif
   "\022compiled 24jan97py"
 #endif
-#ifdef linux
+#ifdef unix
   "\353\137"
 #ifdef MINOS
   "\062"
@@ -606,7 +610,7 @@ void install_signal_handlers()
 
 #endif /* OS/2 specific wrapper */
 
-#ifdef linux
+#ifdef unix
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/types.h>
