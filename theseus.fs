@@ -548,7 +548,7 @@ resource:dialog implements
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
             cr .'     ( [dumpend] ) ;' cr
-            .'   : init  ^>^^  assign  widget 1 super init ;'
+            .'   : init  ^>^^  assign  widget 1 :: init ;'
             cr ." class;" cr
         THEN
         next-resource self 0= ?EXIT
