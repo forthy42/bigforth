@@ -77,7 +77,7 @@ $80 Value maxascii
 
 also dos
 
-: xc-display-width ( addr u -- n )
+: x-width ( addr u -- n )
     0 -rot bounds ?DO
         I xc@+ swap >r wcwidth +
         r> I - +LOOP ;
@@ -86,14 +86,21 @@ previous
 
 \ input editor
 
-2variable 'cursave
+variable curpos
 
-: save-cursor ( -- )  at? 'cursave 2! ( 27 emit '7 emit ) ;
-: restore-cursor ( -- )  'cursave 2@ at ( 27 emit '8 emit ) ;
+: cursor@ ( -- n )  at? swap form nip * + ;
+: cursor! ( n -- )  form nip /mod swap at ;
+: cur-correct  ( addr u -- )  x-width curpos @ + cursor@ -
+    form nip >r  r@ 2/ + r@ / r> * negate curpos +! ;
+
+: save-cursor ( -- )  cursor@ curpos ! ;
+: restore-cursor ( -- )  curpos @ cursor! ;
 : .rest ( addr pos1 -- addr pos1 )
-    restore-cursor 2dup type ;
+    key? ?EXIT
+    restore-cursor 2dup type 2dup cur-correct ;
 : .all ( span addr pos1 -- span addr pos1 )
-    restore-cursor >r 2dup swap type r> ;
+    key? ?EXIT
+    restore-cursor >r 2dup swap type 2dup swap cur-correct r> ;
 
 : >string  ( span addr pos1 -- span addr pos1 addr2 len )
     over 3 pick 2 pick chars /string ;
@@ -186,7 +193,7 @@ previous
 
 export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
   +x/string -x/string save-cursor restore-cursor
-  xkey xemit xc-display-width xdecode xaccept ;
+  xkey xemit x-width xdecode xaccept ;
 
 also DOS
 : utf-8-coding
