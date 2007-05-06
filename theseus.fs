@@ -1509,7 +1509,7 @@ Variable auto-save-file
 	cur file-name $@len 1- cur file-name $!len
 	cur file-name $@ rename-old
 	cur file-name $@ rename-save
-	auto-save-file $@ delete-file drop
+	auto-save-file dup @ IF $@ delete-file drop ELSE drop THEN
 	cur save-state off THEN
     cur file-name $@len 1- cur file-name $!len ;
 
