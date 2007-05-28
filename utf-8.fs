@@ -196,7 +196,7 @@ export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
   xkey xemit x-width xdecode xaccept ;
 
 also DOS
-: utf-8-coding
+: utf-8-coding  $80 to maxascii
     s" LC_ALL" env$ 2dup d0= IF  2drop
         s" LC_CTYPE" env$ 2dup d0= IF  2drop
             s" LANG" env$ 2dup d0= IF  2drop
