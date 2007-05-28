@@ -45,7 +45,7 @@ SOURCE	= bigforth.c linker.S
 KERNSRC	= forth.fb target.fb
 SYSSRC	= assem486.fb stream.fb errore.fs hash.fs fileint.fb \
 	  strings.fs savemod.fb tasker.fb vt100key.fs disass.fb \
-	  tools.fb except.fs sedit.fb struct.fs lambda.fs idle.fs \
+	  tools.fb except.fs sedit.fb struct.fs lambda.fs idle.fs callback.fs \
 	  startup.fb ftast.fb environ.fs version.h minos-version.h
 XCSRC	= x.fs glconst.fs
 XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
