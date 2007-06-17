@@ -90,11 +90,13 @@ variable curpos
 
 : cursor@ ( -- n )  at? swap form nip * + ;
 : cursor! ( n -- )  form nip /mod swap at ;
-: cur-correct  ( addr u -- )  x-width curpos @ + cursor@ -
+: cur-correct  ( addr u -- )
+    curpos @ -1 = IF  2drop  EXIT  THEN
+    x-width curpos @ + cursor@ -
     form nip >r  r@ 2/ + r@ / r> * negate curpos +! ;
 
-: save-cursor ( -- )  cursor@ curpos ! ;
-: restore-cursor ( -- )  curpos @ cursor! ;
+: save-cursor ( -- )  key? IF  -1  ELSE  cursor@  THEN  curpos ! ;
+: restore-cursor ( -- )  curpos @ -1 = ?EXIT  curpos @ cursor! ;
 : .rest ( addr pos1 -- addr pos1 )
     key? ?EXIT
     restore-cursor 2dup type 2dup cur-correct ;
@@ -138,7 +140,9 @@ variable curpos
     xcclear-line 0 tuck dup ;
 
 : (xcenter)  ( max span addr pos1 -- max span addr pos2 true )
-    >r 2dup swap write-history r> .all space true ;
+    >r 2dup swap write-history r>
+    key? IF  >r 2dup swap type r>  ELSE  .all  THEN
+    space true ;
 
 : xckill-expand ( max span addr pos1 -- max span addr pos2 )
     prefix-found cell+ @ ?dup IF  >r
