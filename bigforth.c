@@ -815,11 +815,11 @@ unsigned char getkey(stream)
       if (result == sizeof (char))
         return c;
 
+      if (errno != EINTR)
+        return (4);
+
       if (result == 0)
         return (0);
-
-      if (errno != EINTR)
-        return (EOF);
     }
 
   result = (int) pending;
