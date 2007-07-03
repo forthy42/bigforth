@@ -80,6 +80,15 @@ togglebutton implements
           push? dup p- color @ 8 >> dpy text THEN ;
 class;
 
+flipbutton implements
+     : draw ( -- )      xywh defocuscol @ @ dpy box
+	 callback fetch push? or  color @ $FF and 1 =
+	 IF    IF  button-p  ELSE  button-f  THEN
+	 ELSE  IF  button-p  ELSE  button-d  THEN  THEN
+	 e-button
+	 text $@ 0 push? 1 and textcenter ;
+class;
+
 topindex implements
     : e-draw-half ( x y w h icon -- )
         Eicon-pixmap with 2* draw-at 4 pick 2/ 4 pin endwith
@@ -452,4 +461,4 @@ sub-menu implements
         ELSE  tri-d-table  THEN  2 cells + perform e-draw ;
 class;
 
-previous previous previous previous previous previous Forth
+previous previous previous previous previous previous previous Forth

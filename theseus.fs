@@ -1505,13 +1505,13 @@ Variable auto-save-file
 : try-save ( -- )
     s" +" cur file-name $+!
     :[ cur file-name $@ dump-file ]: catch
+    cur file-name $@len 1- cur file-name $!len
     0= IF
-	cur file-name $@len 1- cur file-name $!len
 	cur file-name $@ rename-old
 	cur file-name $@ rename-save
 	auto-save-file dup @ IF $@ delete-file drop ELSE drop THEN
-	cur save-state off THEN
-    cur file-name $@len 1- cur file-name $!len ;
+	cur save-state off
+    THEN ;
 
 : save-minos...
     s" Save as:" s" " s" *.m"
@@ -1524,7 +1524,7 @@ Variable auto-save-file
 
 : save-minos
     cur file-name @ 0= IF  save-minos...  EXIT  THEN
-    try-save ;
+    try-save set-title ;
 
 : append-modes ( -- o )
    0 false T[ ['] addfirst F IS +object ['] cur-box-dpy F IS cur-dpy ][ ]T
