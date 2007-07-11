@@ -21,6 +21,8 @@ DVI2PS	= dvips -Z
 TEXI2HTML = texi2html
 MAKEINFO = makeinfo
 
+INI = @INI@
+XINI = @XINI@
 INSTDIR = $(libdir)
 BININSTDIR = $(bindir)
 CC = @CC@ @ARCHFLAGS@
@@ -52,7 +54,7 @@ XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
-	  @XINI@ xft-font.fs imlib.fs Estyle.fs
+	  $(XINI) xft-font.fs imlib.fs Estyle.fs
 
 all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
 
@@ -97,7 +99,7 @@ bigforth.fi: forthker.fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
 	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
 
-xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) @INI@
+xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) $(INI)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs use float.fb include startx.fb $(XSAVE) xbigforth $(BYE)"
 
@@ -121,7 +123,7 @@ DOCDIST = bigforth/help/{*.html,[a-z]*.gif,*.jpg,*.sh} bigforth/doc/bigforth.tex
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,@INI@,@XINI@}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
 
 DRAGONDIST = bigforth/pattern/dragon{,-back,-head,-wing,-claw}.png \
 	bigforth/pattern/{bark,normal-w1,back,focus}.ppm
@@ -166,8 +168,8 @@ install:	all
 	@install -d $(INSTDIR)
 	@for i in $(INSTDIRS); do install -d $(INSTDIR)/$$i; done
 	@install -m 644 {forthker,bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
-	@install -m 644 @INI@ $(INSTDIR)
-	@install -m 644 @XINI@ $(INSTDIR)
+	@install -m 644 $(INI) $(INSTDIR)
+	@install -m 644 $(XINI) $(INSTDIR)
 	@install -m 755 {forthker,bigforth,xbigforth} $(BININSTDIR)
 	@install -m 644 {BUGS,ToDo,README,COPYING,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
 	@install -m 644 icons/*.png $(INSTDIR)/icons
@@ -188,10 +190,10 @@ config.status:	configure
 Makefile:	Makefile.in config.status
 		CONFIG_FILES="$@" ./config.status
 
-@XINI@:	@XINI@.in config.status
+$(XINI):	$(XINI).in config.status
 		CONFIG_FILES="$@" ./config.status
 
-@INI@:	@INI@.in config.status
+$(INI):	$(INI).in config.status
 		CONFIG_FILES="$@" ./config.status
 
 # This is the documentation part, and is not ready yet
