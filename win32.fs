@@ -32,7 +32,10 @@ library gdi32 gdi32
 1 user32 GetQueueStatus GetQueueStatus ( flags -- dword )
 5 user32 PeekMessage PeekMessageA ( remove fmax fmin wnd msg -- 
         flag )
+5 user32 PeekMessageW PeekMessageW ( remove fmax fmin wnd msg -- 
+        flag )
 4 user32 GetMessage GetMessageA ( fmax fmin wnd msg -- flag )
+4 user32 GetMessageW GetMessageW ( fmax fmin wnd msg -- flag )
 1 user32 GetSysColor GetSysColor ( index -- color )
 1 user32 OpenClipboard OpenClipboard ( wnd/0 -- bool )
 0 user32 EmptyClipboard EmptyClipboard ( -- bool )
@@ -40,7 +43,10 @@ library gdi32 gdi32
 2 user32 SetClipboardData SetClipboardData ( mem format -- hand )
 0 user32 CloseClipboard CloseClipboard ( -- bool )
 1 user32 RegisterClass RegisterClassA ( class -- atom )
+1 user32 RegisterClassW RegisterClassW ( class -- atom )
 &12 user32 CreateWindowEx CreateWindowExA ( param inst menu wndpar 
+        h w y x style name class exstyle -- win )
+&12 user32 CreateWindowExW CreateWindowExW ( param inst menu wndpar 
         h w y x style name class exstyle -- win )
 1 user32 DestroyWindow DestroyWindow ( win -- bool )
 4 user32 DefWindowProc DefWindowProcA ( lparam wparam msg hwnd --
@@ -52,10 +58,12 @@ library gdi32 gdi32
 2 user32 LoadIcon LoadIconA ( x y -- icon )
 7 user32 CreateIcon CreateIcon ( x y -- icon )
 2 user32 SetWindowText SetWindowTextA ( str win -- bool )
+2 user32 SetWindowTextW SetWindowTextW ( str win -- bool )
 1 user32 SetCapture SetCapture ( win -- win )
 0 user32 ReleaseCapture ReleaseCapture ( -- bool )
 1 user32 TranslateMessage TranslateMessage ( msg -- bool )
 1 user32 DispatchMessage DispatchMessageA ( msg -- bool )
+1 user32 DispatchMessageW DispatchMessageW ( msg -- bool )
 3 user32 AdjustWindowRect AdjustWindowRect ( menu style rect -- 
         flag )
 3 user32 SetClassLong SetClassLongA ( arg n wnd -- r )
@@ -114,7 +122,7 @@ library gdi32 gdi32
 2 gdi32 SetWorldTransform SetWorldTransform ( *xform dc -- bool )
 6 kernel32 MultiByteToWideChar MultiByteToWideChar
    ( uwc *wc umb *mb flags codepage -- uwc' )
-6 kernel32 WideCharToMultiByte WideCharToMultiByte
+8 kernel32 WideCharToMultiByte WideCharToMultiByte
    ( umb *mb uwc *wc flags codepage -- umb' )
 
 \ structures

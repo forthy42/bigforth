@@ -201,11 +201,13 @@ export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
 
 also DOS
 : utf-8-coding  $80 to maxascii
+[ [IFUNDEF] win32 ]
     s" LC_ALL" env$ 2dup d0= IF  2drop
         s" LC_CTYPE" env$ 2dup d0= IF  2drop
             s" LANG" env$ 2dup d0= IF  2drop
                 $100 to maxascii  EXIT  THEN THEN THEN
-    s" UTF-8" search nip nip 0= IF  $100 to maxascii  THEN ;
+    s" UTF-8" search nip nip 0= IF  $100 to maxascii  THEN
+[ [THEN] ] ;
 
 cold:  utf-8-io  utf-8-coding ;
 
