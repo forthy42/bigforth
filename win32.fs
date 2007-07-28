@@ -75,6 +75,9 @@ library gdi32 gdi32
 0 user32 WaitMessage WaitMessage ( -- r )
 1 user32 SetFocus SetFocus ( wnd -- r )
 2 user32 SetParent SetParent ( parent wnd -- r )
+1 user32 GetKeyboardLayout GetKeyboardLayout ( thread -- hkl )
+2 user32 ActivateKeyboardLayout ActivateKeyboardLayout
+   ( flags hkl -- hkl )
 
 \ GDI functions currently used                         20jul97py
 
