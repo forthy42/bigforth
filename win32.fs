@@ -81,6 +81,7 @@ library gdi32 gdi32
 4 gdi32 MoveToEx MoveToEx ( *point y x dc -- flag )
 3 gdi32 LineTo LineTo ( y x dc -- flag )
 5 gdi32 TextOut TextOutA ( u addr y x dc -- flag )
+5 gdi32 TextOutW TextOutW ( u addr y x dc -- flag )
 7 gdi32 ExtTextOut ExtTextOutA ( dx u addr opt y x dc -- flag )
 &12 gdi32 MaskBlt MaskBlt ( rop ym xm bm ys xs hs nh nw yd xd hd -- 
        bool )
@@ -111,6 +112,10 @@ library gdi32 gdi32
 3 gdi32 Polyline Polyline ( n *point dc -- bool )
 3 gdi32 Polygon Polygon ( n *point dc -- bool )
 2 gdi32 SetWorldTransform SetWorldTransform ( *xform dc -- bool )
+6 kernel32 MultiByteToWideChar MultiByteToWideChar
+   ( uwc *wc umb *mb flags codepage -- uwc' )
+6 kernel32 WideCharToMultiByte WideCharToMultiByte
+   ( umb *mb uwc *wc flags codepage -- umb' )
 
 \ structures
 
@@ -330,9 +335,13 @@ $F0000 Constant PS_TYPE_MASK
  16 Constant CLIP_LH_ANGLES
  32 Constant CLIP_TT_ALWAYS
 128 Constant CLIP_EMBEDDED
+
 0 Constant DEFAULT_QUALITY
 1 Constant DRAFT_QUALITY
 2 Constant PROOF_QUALITY
+3 Constant NONANTIALIASED_QUALITY
+4 Constant ANTIALIASED_QUALITY
+5 Constant CLEARTYPE_QUALITY
 
 0 Constant DEFAULT_PITCH
 1 Constant FIXED_PITCH
@@ -846,6 +855,11 @@ $FFFF  Constant HWND_BROADCAST
     0  Constant HWND_TOP
    -1  Constant HWND_TOPMOST
     0  Constant HWND_DESKTOP
+
+\ Code pages
+
+&28591 Constant CP_ISO_8859_1
+&65001 Constant CP_UTF8
 
 toss toss
 
