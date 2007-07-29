@@ -77,8 +77,8 @@ Create event &28 allot
 : windows-wait ( n -- )  drop
   app-timer!  app-timer @ 0= ?EXIT
   WaitMessage
-  IF  BEGIN  1 &275 dup timer-win @ event PeekMessage
-             0= UNTIL  THEN ;
+  IF  BEGIN  1 &275 dup timer-win @ event PeekMessage  0= UNTIL
+  THEN ;
 \  IF  &275 dup timer-win @ event GetMessage drop  THEN ;
 [THEN]
 

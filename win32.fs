@@ -67,7 +67,7 @@ library imm32 imm32
 1 user32 DispatchMessageW DispatchMessageW ( msg -- bool )
 3 user32 AdjustWindowRect AdjustWindowRect ( menu style rect -- 
         flag )
-3 user32 SetClassLong SetClassLongA ( arg n wnd -- r )
+3 user32 SetClassLong SetClassLongW ( arg n wnd -- r )
 2 user32 BeginPaint BeginPaint ( paint wnd -- dc )
 2 user32 EndPaint EndPaint ( paint wnd -- bool )
 1 user32 GetKeyState GetKeyState ( vkey -- flag )
