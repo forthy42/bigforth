@@ -87,7 +87,7 @@ library imm32 imm32
 &14 gdi32 CreateFont CreateFontA ( face pitch&family clippres 
        outpres charset strikeout underline italic fw or esc
        width height -- hfont )
-4 gdi32 GetTextExtentPoint32 GetTextExtentPoint32A ( size len str 
+4 gdi32 GetTextExtentPoint32 GetTextExtentPoint32W ( size len str 
        hdc -- bool )
 2 gdi32 SelectObject SelectObject ( gdiobj dc -- gdiobj )
 4 gdi32 MoveToEx MoveToEx ( *point y x dc -- flag )
