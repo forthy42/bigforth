@@ -49,7 +49,7 @@ library gdi32 gdi32
 &12 user32 CreateWindowExW CreateWindowExW ( param inst menu wndpar 
         h w y x style name class exstyle -- win )
 1 user32 DestroyWindow DestroyWindow ( win -- bool )
-4 user32 DefWindowProc DefWindowProcA ( lparam wparam msg hwnd --
+4 user32 DefWindowProc DefWindowProcW ( lparam wparam msg hwnd --
         lresult )
 6 user32 MoveWindow MoveWindow ( repaint h w y x wnd -- bool )
 7 user32 SetWindowPos SetWindowPos ( flag h w y x top wnd -- r )
@@ -605,6 +605,8 @@ $FF Constant QS_ALLINPUT
 
  1125 Constant WM_CHOOSEFONT_SETLOGFONT
  1126 Constant WM_CHOOSEFONT_SETFLAGS
+
+\ Input Method Editor
 
 \ GetClipboardFormat, SetClipboardData                 23jul97py
 
