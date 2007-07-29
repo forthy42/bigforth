@@ -7,6 +7,7 @@ DOS also forth also
 \ lib: kernel kernel32
 \ library user32 user32
 library gdi32 gdi32
+library imm32 imm32
 
 \ KERNEL functions currently used                      20jul97py
 
@@ -123,10 +124,15 @@ library gdi32 gdi32
 3 gdi32 Polyline Polyline ( n *point dc -- bool )
 3 gdi32 Polygon Polygon ( n *point dc -- bool )
 2 gdi32 SetWorldTransform SetWorldTransform ( *xform dc -- bool )
+
+\ wide char stuff                                      29jul07py
+
 6 kernel32 MultiByteToWideChar MultiByteToWideChar
    ( uwc *wc umb *mb flags codepage -- uwc' )
 8 kernel32 WideCharToMultiByte WideCharToMultiByte
    ( umb *mb uwc *wc flags codepage -- umb' )
+4 imm32 ImmIsUIMessage ImmIsUIMessageW
+   ( lparam wparam msg wnd -- bool )
 
 \ structures
 

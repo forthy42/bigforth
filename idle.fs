@@ -56,7 +56,7 @@ also DOS
 4 user32 SetTimer SetTimer ( func elapse ide wnd -- n )
 2 user32 KillTimer KillTimer ( ide wnd -- r )
 0 user32 WaitMessage WaitMessage ( -- r )
-5 user32 PeekMessage PeekMessageA ( remove fmax fmin wnd msg -- 
+5 user32 PeekMessage PeekMessageW ( remove fmax fmin wnd msg -- 
         flag )
 previous
 
@@ -87,11 +87,11 @@ Create event &28 allot
     &20 ms>time unix-wait
     timer@ 1 unix-wait timer@ swap - 5 ms>time <
     IF
-	timer@ 1 unix-wait timer@ swap - 1 ms>time 2/ >
-	IF  1 1  ELSE  9 2  THEN
+        timer@ 1 unix-wait timer@ swap - 1 ms>time 2/ >
+        IF  1 1  ELSE  9 2  THEN
     ELSE
-	timer@ 1 unix-wait timer@ swap - &15 ms>time <
-	IF  &10  ELSE  &20  THEN  &10 
+        timer@ 1 unix-wait timer@ swap - &15 ms>time <
+        IF  &10  ELSE  &20  THEN  &10 
     THEN ; idles
 [ELSE] &20 &10 [THEN]
 dup Value idle+
