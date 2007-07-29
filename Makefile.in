@@ -2,7 +2,7 @@
 
 DATE= $$(date '+%d%b%Y' | tr '[A-Z]' '[a-z]')
 SRCREV=@PACKAGE_VERSION@
-MINOSREV=1.1.7
+MINOSREV=1.1.8
 BINREV=$(SRCREV)
 PATREV=1.0.1
 EWOODREV=1.0.2
