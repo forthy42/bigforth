@@ -23,6 +23,8 @@ $80 Value maxascii
             $3F and r> or
     REPEAT  rdrop ;
 
+' xc@+ IS char@
+
 : xc!+ ( xc xcaddr -- xcaddr' )
     over maxascii u< IF  tuck c! 1+  EXIT  THEN \ special case ASCII
     >r 0 swap  $3F
