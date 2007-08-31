@@ -11,8 +11,9 @@
 \ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 \ GNU General Public License for more details.
 
-\needs locals| | include locals.fs
-\needs atlas | include atlas.fs
+\needs float   import float
+\needs locals| include locals.fs
+\needs atlas   include atlas.fs
 
 Module GSL
 
@@ -40,7 +41,7 @@ callback 4:0 (void) int int int int callback;
 : cstr-fstr ( addr -- addr len )
     0
     begin 2dup + c@ 0 = not while
-	    1+
+            1+
     repeat ;
 
 : .bold-red ." [1;31;40m" ;
@@ -183,7 +184,7 @@ libgsl gsl_vector_subvector int int int (int) gsl_vector_subvector
 \ libblas cblas_dgemm int int df int int int
 \ int df int int int int int int (void/fp) cblas_dgemm
 libblas cblas_dgemv int int int int df int
-int df int int int int (void/fp) cblas_dgemv
+int df int int int int (void/fp) dgemv_
 libgsl gsl_blas_ddot int int int (int) gsl_blas_ddot
 ( *gsl_vector *gsl_vector df -- n )
 libgsl gsl_blas_dgemm int df int int df int int (int/fp) gsl_blas_dgemm
@@ -538,26 +539,26 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : action? (  *gsl_matrix *gsl_matrix n n n -- )
     dup 0= if
-	drop
-	2swap 2dup
-	]]size2 swap ]]size1 swap
-	exit
+        drop
+        2swap 2dup
+        ]]size2 swap ]]size1 swap
+        exit
     then
     dup 1 = if
-	drop
-	2swap 2dup
-	]]size2 swap ]]size2 swap
-	exit
+        drop
+        2swap 2dup
+        ]]size2 swap ]]size2 swap
+        exit
     then
     2 = if
-	2swap 2dup
-	]]size1 swap ]]size1 swap
-	exit
+        2swap 2dup
+        ]]size1 swap ]]size1 swap
+        exit
     then
     3 = if
-	2swap 2dup
-	]]size1 swap ]]size2 swap
-	exit
+        2swap 2dup
+        ]]size1 swap ]]size2 swap
+        exit
     then ;    
 : ]]mul (  *gsl_matrix *gsl_matrix n n n -- *gsl_matrix )
     !1 !0 action?
@@ -591,10 +592,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : ]]i ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 <> if
-	abort" ERROR: Not a square matrix!"
+        abort" ERROR: Not a square matrix!"
     then
     dup ]]size1 0 do
-	dup i i !1 ]]! 
+        dup i i !1 ]]! 
     loop drop ;
 : identity ( n -- *gsl_matrix )
     dup gsl_matrix_calloc dup ]]i ;
@@ -602,9 +603,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     dup ]]size1 swap ]]size2 min identity ;
 : left/right' ( *gsl_matrix *gsl_matrix -- *gsl_matrix )
     over ]]size1 over ]]size1 > if
-	swap ]]*' exit
+        swap ]]*' exit
     else
-	]]'* exit
+        ]]'* exit
     then ;
 
 \ original matrix remains intact
@@ -656,9 +657,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     over ]]size1 gsl_vector_calloc 
     { m[[ x[ y[ |
     m[[ ]]size1 0 do
-	m[[ ]]size2 0 do
-	    m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
-	loop
+        m[[ ]]size2 0 do
+            m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
+        loop
     loop y[ } ;
 
 : >#rows ( -- )
@@ -802,7 +803,7 @@ also float
 : ]diag[[ ( *gsl_vector -- *gsl_matrix )
     dup ]size dup dup gsl_matrix_calloc swap
     0 do
-	2dup swap i ]@ i i ]]!
+        2dup swap i ]@ i i ]]!
     loop nip ;
 
 : ]print ( *gsl_vector -- )
@@ -810,27 +811,27 @@ also float
 : ]]print ( *gsl_matrix -- )
     cr
     dup ]]size1 0 do
-	\ i . ." :  "
-	dup ]]size2 0 do
-	    dup
-	    j i ]]@ f.
-	loop
-	cr
+        \ i . ." :  "
+        dup ]]size2 0 do
+            dup
+            j i ]]@ f.
+        loop
+        cr
     loop
     drop ;
 : ]]row-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size2 @ 0 do
-	2dup
-	 i ]]@ f.
+        2dup
+         i ]]@ f.
     loop
     cr 2drop ;
 
 : ]]col-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size1 @ 0 do
-	2dup
-	i swap ]]@ f.
+        2dup
+        i swap ]]@ f.
     loop
     cr 2drop ;
 
@@ -839,15 +840,15 @@ also float
 
 : ]]randomize ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 * 0 do
-	    dup
-	    gsl-randomu
-	    ]]data i dfloats + df!
+            dup
+            gsl-randomu
+            ]]data i dfloats + df!
     loop drop ;
 : ]randomize ( *gsl_vector -- )
     dup ]size 0 do
-	    dup
-	    gsl-randomu
-	    i ]!
+            dup
+            gsl-randomu
+            i ]!
     loop drop ;
 : ]mean ( *gsl_vector -- f )
     dup ]size 1 swap gsl_stats_mean ;
@@ -890,34 +891,34 @@ also float
 : pushfstack
     fdepth dup gsl_vector_alloc to tempfloat
     0 ?do
-	tempfloat i ]!
+        tempfloat i ]!
     loop ;
 : savefloat2
     fdepth dup gsl_vector_alloc to tempfloat2 0
     ?do
-	tempfloat2 i ]!
+        tempfloat2 i ]!
     loop ;
 
 : restorefloat
     0 tempfloat ]size
     ?do
-	i 0= if leave then
-	tempfloat i 1- ]@ -1
+        i 0= if leave then
+        tempfloat i 1- ]@ -1
     +loop tempfloat ]free ;
 
 : restorefloat2
     0 tempfloat2 ]size
     ?do
-	i 0= if leave then	
-	tempfloat2 i 1- ]@ -1
+        i 0= if leave then      
+        tempfloat2 i 1- ]@ -1
     +loop tempfloat2 ]free ;
 
 : popfstack
     fdepth 0<> if
-    	savefloat2
-	restorefloat
-	restorefloat2
-	exit
+        savefloat2
+        restorefloat
+        restorefloat2
+        exit
     then
     restorefloat ;   
 \ allocate a nameless vector
