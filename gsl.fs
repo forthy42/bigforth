@@ -12,8 +12,9 @@
 \ GNU General Public License for more details.
 
 \needs float   import float
-\needs locals| include locals.fs
+\needs locals  include locals.fs
 \needs atlas   include atlas.fs
+\needs callback include callback.fs
 
 Module GSL
 
@@ -35,13 +36,12 @@ libgsl gsl_set_error_handler ptr (int) gsl_set_error_handler
 libgsl gsl_strerror int (ptr) gsl_strerror
 
 
-include callback.fs
 also dos
 callback 4:0 (void) int int int int callback;
 : cstr-fstr ( addr -- addr len )
     0
     begin 2dup + c@ 0 = not while
-            1+
+	    1+
     repeat ;
 
 : .bold-red ." [1;31;40m" ;
@@ -61,6 +61,8 @@ callback 4:0 (void) int int int int callback;
 \ 1 2 c_plus 2:1call .
 variable old_handler
 c_plus gsl_set_error_handler old_handler !
+
+0 Constant GSL_SUCCESS
 
 \ random number generation               Mon Sep 12 22:06:01 MDT 2005
 
@@ -89,6 +91,9 @@ libgsl gsl_ran_gaussian_pdf df df (fp) gsl_ran_gaussian_pdf ( df df -- df )
 libgsl gsl_ran_ugaussian int (fp) gsl_ran_ugaussian ( *gsl_rng -- df )
 libgsl gsl_ran_ugaussian_ratio_method int (fp) gsl_ran_ugaussian_ratio_method ( *gsl_rng -- df )
 libgsl gsl_ran_ugaussian_pdf df (fp) gsl_ran_ugaussian_pdf ( df df -- df )
+libgsl gsl_ran_discrete_preproc int int (int) gsl_ran_discrete_preproc ( int int -- int )
+libgsl gsl_ran_discrete int int (int) gsl_ran_discrete
+libgsl gsl_ran_discrete_free int (void) gsl_ran_discrete_free
 \ cdf P(x) = \int_{-\infty}^{x} p(x)dx  Q(x) = \int_{x}^{\infty} p(x)dx
 libgsl gsl_cdf_gaussian_P df df (fp) gsl_cdf_gaussian_P ( df df -- df )
 libgsl gsl_cdf_gaussian_Q df df (fp) gsl_cdf_gaussian_Q ( df df -- df )
@@ -142,7 +147,7 @@ libgsl gsl_vector_min int (fp) gsl_vector_min ( addr -- df )
 libgsl gsl_vector_max_index int (fp) gsl_vector_max_index ( addr -- df )
 libgsl gsl_vector_min_index int (fp) gsl_vector_min_index ( addr -- df )
 
-\ premutations
+\ permutations
 
 libgsl gsl_permutation_alloc int (int) gsl_permutation_alloc ( n -- *gsl_permutation )
 libgsl gsl_permutation_calloc int (int) gsl_permutation_calloc ( n -- *gsl_permutation )
@@ -179,6 +184,12 @@ libgsl gsl_matrix_column int int (int) gsl_matrix_column ( *gsl_matrix idx -- *g
 libgsl gsl_matrix_diagonal int (int) gsl_matrix_diagonal ( *gsl_matrix -- *gsl_vector )
 
 libgsl gsl_vector_subvector int int int (int) gsl_vector_subvector
+\ Copying Rows and columns
+libgsl gsl_matrix_get_row int int int (int) gsl_matrix_get_row
+libgsl gsl_matrix_set_row int int int (int) gsl_matrix_set_row
+libgsl gsl_matrix_get_col int int int (int) gsl_matrix_get_col
+libgsl gsl_matrix_set_col int int int (int) gsl_matrix_set_col
+
 
 \ BLAS                                      Wed Sep 14 16:10:34 MDT 2005
 \ libblas cblas_dgemm int int df int int int
@@ -203,6 +214,69 @@ libgsl gsl_linalg_SV_decomp int int int int (int) gsl_linalg_SV_decomp
 ( *gsl_matrix *gsl_matrix *gsl_vector *gsl_vector -- n )
 libgsl gsl_linalg_SV_decomp_mod int int int int int (int) gsl_linalg_SV_decomp_mod
 ( *gsl_matrix *gsl_matrix *gsl_matrix *gsl_vector *gsl_vector -- n )
+
+\ ------------------------------------------------------------------------------
+\                  *** Ordinary Differential Equations ***
+\ --- ODE system
+struct{
+    cell func \ (* function)
+        \ (double t, const double y[], double dydt[], void * params);
+    cell jac \ (* jacobian)
+        \ (double t, const double y[], double * dfdy, double dfdt[],
+        \ void * params);
+    cell dim \ dimension;
+    cell params \ * params;
+} gsl_odeiv_system
+\ constants related to ODE
+ 1 constant GSL_ODEIV_HADJ_INC
+ 0 constant GSL_ODEIV_HADJ_NIL
+-1 constant GSL_ODEIV_HADJ_DEC
+
+callback gsl_odeiv_func4:1     (int) df int int int callback;
+callback gsl_odeiv_jac5:1  (int) df int int int int callback;
+
+\ --- Stepping Functions
+libgsl gsl_odeiv_step_alloc ptr int (ptr) gsl_odeiv_step_alloc
+( *step_type int -- *step )
+libgsl gsl_odeiv_step_reset ptr (int) gsl_odeiv_step_reset ( *step -- r )
+libgsl gsl_odeiv_step_free ptr (void) gsl_odeiv_step_free  ( *step  -- )
+libgsl gsl_odeiv_step_name ptr (ptr) gsl_odeiv_step_name   ( *step -- *str0 )
+libgsl gsl_odeiv_step_order ptr (int) gsl_odeiv_step_order ( *step -- order)
+libgsl gsl_odeiv_step_apply int int int int int df df int (int) gsl_odeiv_step_apply
+( -- )
+\ available algorithms
+libgsl gsl_odeiv_step_rk2    (int)    gsl_odeiv_step_rk2
+libgsl gsl_odeiv_step_rk4    (int)    gsl_odeiv_step_rk4
+libgsl gsl_odeiv_step_rkf45  (int)  gsl_odeiv_step_rkf45
+libgsl gsl_odeiv_step_rkck   (int)   gsl_odeiv_step_rkck
+libgsl gsl_odeiv_step_rk8pd  (int)  gsl_odeiv_step_rk8pd
+libgsl gsl_odeiv_step_rk2imp (int) gsl_odeiv_step_rk2imp
+libgsl gsl_odeiv_step_rk4imp (int) gsl_odeiv_step_rk4imp
+libgsl gsl_odeiv_step_bsimp  (int)  gsl_odeiv_step_bsimp
+libgsl gsl_odeiv_step_gear1  (int)  gsl_odeiv_step_gear1
+libgsl gsl_odeiv_step_gear2  (int)  gsl_odeiv_step_gear2
+
+\ --- Adaptive Step-size Control
+libgsl gsl_odeiv_control_standard_new df df df df (ptr) gsl_odeiv_control_standard_new ( a_dydt a_y eps_rel eps_abs -- *control )
+libgsl gsl_odeiv_control_y_new df df (int) gsl_odeiv_control_y_new
+( eps_abs eps_rel -- *control )
+libgsl gsl_odeiv_control_yp_new df df (ptr) gsl_odeiv_control_yp_new
+( eps_abs eps_rel -- *control )
+
+\ int gsl_odeiv_control_hadjust (gsl_odeiv_control * c, gsl_odeiv_step
+\ * s, const double y[], const double yerr[], const double dydt[],
+\ double * h);
+libgsl gsl_odeiv_control_hadjust int int int int int int (int) gsl_odeiv_control_hadjust
+libgsl gsl_odeiv_control_free ptr (void) gsl_odeiv_control_free ( *control -- )
+libgsl gsl_odeiv_control_name ptr (ptr) gsl_odeiv_control_name  ( *c -- *str0 )
+
+\ --- Evolution
+libgsl gsl_odeiv_evolve_alloc int (int) gsl_odeiv_evolve_alloc
+( #dimensions -- evolution_func )
+libgsl gsl_odeiv_evolve_apply int int df int int int int int (int) gsl_odeiv_evolve_apply
+( -- )
+libgsl gsl_odeiv_evolve_reset ptr (int) gsl_odeiv_evolve_reset ( *e -- r )
+libgsl gsl_odeiv_evolve_free ptr (void) gsl_odeiv_evolve_free  ( *e --  )
 
 legacy on
 previous
@@ -397,6 +471,8 @@ gsl_rng_types_setup  value gsl_rng_array(
     gsl_rng_default gsl_rng_clone ;
 : gsl-gaussian ( -- df )
     gsl_rng_default !1 gsl_ran_gaussian ;
+: gsl-discrete ( *gsl_ran_discrete -- n )
+    gsl_rng_default swap gsl_ran_discrete ;
 
 \ vectors and matrices
 
@@ -451,10 +527,12 @@ gsl_rng_types_setup  value gsl_rng_array(
     r@ gsl_matrix size1 !
     r@ gsl_matrix tda !
     r@ gsl_matrix data !
+    0 r@ gsl_matrix owner !
     r> ;
 
 : pmatrix ( *data tda n m -- *gsl_matrix )
     sizeof gsl_matrix allocate throw
+    dup 0 swap gsl_matrix owner !
     pmatrix! ;
 
 \ permutations
@@ -499,6 +577,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 : ]]copy]] ( *gsl_matrix_dest *gsl_matrix_src -- ) gsl_matrix_memcpy drop ;
 \ : ]]row ( *gsl_matrix idx -- *gsl_vector ) gsl_matrix_row ;
 \ : ]]col ( *gsl_matrix idx -- *gsl_vector ) gsl_matrix_column ;
+: ]]>]  ( *gsl_vector *gsl_matrix i -- ) gsl_matrix_get_col drop ;
+: ]]>]' ( *gsl_vector *gsl_matrix i -- ) gsl_matrix_get_row drop ;
+: ]>]]  ( *gsl_matrix *gsl_vector i -- ) swap gsl_matrix_set_col drop ;
+: ]'>]] ( *gsl_matrix *gsl_vector i -- ) swap gsl_matrix_set_row drop ;
 
 : ]]max gsl_matrix_max ;
 : ]]min gsl_matrix_min ;
@@ -522,6 +604,11 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 : ]]- ( *gsl_matrix *gsl_matrix -- *gsl_matrix )
     swap ]]clone dup -rot swap ]]sub! ;
 
+\ allocate a nameless vector
+: :] ( # -- addr ) gsl_vector_calloc ;
+\ allocate a nameless matrix
+: :]] ( # # -- addr ) gsl_matrix_calloc ;
+
 \ blas
 
 \ constants
@@ -539,26 +626,26 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : action? (  *gsl_matrix *gsl_matrix n n n -- )
     dup 0= if
-        drop
-        2swap 2dup
-        ]]size2 swap ]]size1 swap
-        exit
+	drop
+	2swap 2dup
+	]]size2 swap ]]size1 swap
+	exit
     then
     dup 1 = if
-        drop
-        2swap 2dup
-        ]]size2 swap ]]size2 swap
-        exit
+	drop
+	2swap 2dup
+	]]size2 swap ]]size2 swap
+	exit
     then
     2 = if
-        2swap 2dup
-        ]]size1 swap ]]size1 swap
-        exit
+	2swap 2dup
+	]]size1 swap ]]size1 swap
+	exit
     then
     3 = if
-        2swap 2dup
-        ]]size1 swap ]]size2 swap
-        exit
+	2swap 2dup
+	]]size1 swap ]]size2 swap
+	exit
     then ;    
 : ]]mul (  *gsl_matrix *gsl_matrix n n n -- *gsl_matrix )
     !1 !0 action?
@@ -592,10 +679,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : ]]i ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 <> if
-        abort" ERROR: Not a square matrix!"
+	abort" ERROR: Not a square matrix!"
     then
     dup ]]size1 0 do
-        dup i i !1 ]]! 
+	dup i i !1 ]]! 
     loop drop ;
 : identity ( n -- *gsl_matrix )
     dup gsl_matrix_calloc dup ]]i ;
@@ -603,9 +690,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     dup ]]size1 swap ]]size2 min identity ;
 : left/right' ( *gsl_matrix *gsl_matrix -- *gsl_matrix )
     over ]]size1 over ]]size1 > if
-        swap ]]*' exit
+	swap ]]*' exit
     else
-        ]]'* exit
+	]]'* exit
     then ;
 
 \ original matrix remains intact
@@ -622,11 +709,11 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 : ]]2T ( *gsl_matr *gsl_matrix -- )
     gsl_matrix_transpose_memcpy drop ;
 
-
 : ]]+! ( *gsl_matrix i j df -- ) >r 2dup r@ ]]@ f+ r> ]]! ;
 : ]]scale! ( *gsl_matrix i j df -- ) >r 2dup r@ ]]@ f* r> ]]! ;
 : ]]data_ij ( *gsl_matrix i j -- addr)
     rot >r swap r@ ]]tda dfloats * swap dfloats + r> ]]data + ;
+\ Cross product can be either calculated through determinant:
 : ]x ( *gsl_vector *gsl_vector -- *gsl_vector )
     3 gsl_vector_alloc
     { x1[ x2[ x3[ |
@@ -634,11 +721,26 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     x1[ 2 ]@ x2[ 0 ]@ f* x1[ 0 ]@ fnegate x2[ 2 ]@ f* f+ x3[ 1 ]!
     x1[ 1 ]@ fnegate x2[ 0 ]@ f* x1[ 0 ]@ x2[ 1 ]@ f* f+ x3[ 2 ]!
     x3[ } ;
+\ or using algebraic form when first vector in the product is
+\ rewritten in a matrix form:
+\ a x b = [C_a] b
+\         [ 0   -a[2]  a[1] ]
+\ [C_a] = [ a[2] 0    -a[0] ]
+\         [-a[1] a[0]  0    ]
+\ a function to convert a vector into such matrix:
+: ]>[x] ( ] -- ]] )
+    [IFDEF] debug
+	dup ]size 3 <> abort" Not a 3D vector!"
+    [THEN]
+    3 3 :]] dup >r
+    swap 2dup 2 ]@ fdup dup fnegate 0 1 ]]! 1 0 ]]!
+    2dup 1 ]@ fdup dup fnegate 2 0 ]]! 0 2 ]]!
+    0 ]@ fdup dup fnegate 1 2 ]]! 2 1 ]]! r> ;
 : ]. ( *gsl_vector *gsl_vector -- f:dot_product )
     { x1[ x2[ |
     0 0 sp@ x1[ x2[ rot gsl_blas_ddot drop fd>f } ;
 : ]total ( *gsl_vector -- f:sum )
-    dup ]size gsl_vector_alloc dup 1e0 ]fill dup rot ]. ]free ;
+    dup ]size gsl_vector_alloc dup !1 ]fill dup rot ]. ]free ;
 \ probability normalize - assures sum is unity
 : ]pnormalize ( *gsl_vector - )
     dup ]total 1/f ]*c ;
@@ -657,9 +759,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     over ]]size1 gsl_vector_calloc 
     { m[[ x[ y[ |
     m[[ ]]size1 0 do
-        m[[ ]]size2 0 do
-            m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
-        loop
+	m[[ ]]size2 0 do
+	    m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
+	loop
     loop y[ } ;
 
 : >#rows ( -- )
@@ -685,11 +787,11 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 : ]]submat ( *gsl_matrix n1 n2 m1 m2 -- *gsl_matrix )
     { m[[ n1 n2 m1 m2 |
     sizeof gsl_matrix allocate throw >r
-    n2 n1 - 1+ r@ gsl_matrix size1 !
-    m2 m1 - 1+ r@ gsl_matrix size2 !
-    m[[ n1 m1 ]]data_ij r@ gsl_matrix data !
-    m[[ ]]tda r@ gsl_matrix tda !    
-    0 r@ gsl_matrix owner ! r> } ;
+    n2 n1 - 1+          r@ gsl_matrix size1 !
+    m2 m1 - 1+          r@ gsl_matrix size2 !
+    m[[ n1 m1 ]]data_ij r@ gsl_matrix data  !
+    m[[ ]]tda           r@ gsl_matrix tda   !    
+    0                   r@ gsl_matrix owner ! r> } ;
 : ?square ( *gsl_matrix -- )
     dup ]]size1 swap ]]size2 <> abort" ERROR: Not a square matrix!" ;
 : ]]diag ( *gsl_matrix n1 n2 -- *gsl_vector )
@@ -803,35 +905,35 @@ also float
 : ]diag[[ ( *gsl_vector -- *gsl_matrix )
     dup ]size dup dup gsl_matrix_calloc swap
     0 do
-        2dup swap i ]@ i i ]]!
+	2dup swap i ]@ i i ]]!
     loop nip ;
 
 : ]print ( *gsl_vector -- )
-    dup ]size 0 do dup i ]@ f. loop drop cr ;
+    dup ]size 0 do dup i ]@ fs. loop drop cr ;
 : ]]print ( *gsl_matrix -- )
     cr
     dup ]]size1 0 do
-        \ i . ." :  "
-        dup ]]size2 0 do
-            dup
-            j i ]]@ f.
-        loop
-        cr
+	\ i . ." :  "
+	dup ]]size2 0 do
+	    dup
+	    j i ]]@ f.
+	loop
+	cr
     loop
     drop ;
 : ]]row-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size2 @ 0 do
-        2dup
-         i ]]@ f.
+	2dup
+	 i ]]@ f.
     loop
     cr 2drop ;
 
 : ]]col-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size1 @ 0 do
-        2dup
-        i swap ]]@ f.
+	2dup
+	i swap ]]@ f.
     loop
     cr 2drop ;
 
@@ -840,15 +942,15 @@ also float
 
 : ]]randomize ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 * 0 do
-            dup
-            gsl-randomu
-            ]]data i dfloats + df!
+	    dup
+	    gsl-randomu
+	    ]]data i dfloats + df!
     loop drop ;
 : ]randomize ( *gsl_vector -- )
     dup ]size 0 do
-            dup
-            gsl-randomu
-            i ]!
+	    dup
+	    gsl-randomu
+	    i ]!
     loop drop ;
 : ]mean ( *gsl_vector -- f )
     dup ]size 1 swap gsl_stats_mean ;
@@ -891,38 +993,36 @@ also float
 : pushfstack
     fdepth dup gsl_vector_alloc to tempfloat
     0 ?do
-        tempfloat i ]!
+	tempfloat i ]!
     loop ;
 : savefloat2
     fdepth dup gsl_vector_alloc to tempfloat2 0
     ?do
-        tempfloat2 i ]!
+	tempfloat2 i ]!
     loop ;
 
 : restorefloat
     0 tempfloat ]size
     ?do
-        i 0= if leave then
-        tempfloat i 1- ]@ -1
+	i 0= if leave then
+	tempfloat i 1- ]@ -1
     +loop tempfloat ]free ;
 
 : restorefloat2
     0 tempfloat2 ]size
     ?do
-        i 0= if leave then      
-        tempfloat2 i 1- ]@ -1
+	i 0= if leave then	
+	tempfloat2 i 1- ]@ -1
     +loop tempfloat2 ]free ;
 
 : popfstack
     fdepth 0<> if
-        savefloat2
-        restorefloat
-        restorefloat2
-        exit
+    	savefloat2
+	restorefloat
+	restorefloat2
+	exit
     then
     restorefloat ;   
-\ allocate a nameless vector
-: :] ( # -- addr ) gsl_vector_calloc ;
 
 \ these words do not work with float matrices but are needed for
 \ scientific calculations, that's why they are in this module
@@ -944,6 +1044,10 @@ also float
     R> * R> + *
     +
     ALIGNED ;
+
+\ initializing random number generator to some value in order to have
+\ it available upon loading of gsl
+mt19937
 
 previous previous
 
