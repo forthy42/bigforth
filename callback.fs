@@ -51,6 +51,9 @@ also dos
 
 previous
 
+: func' ' dup 2- wx@ abs + &11 - cfa@ ;
+\ converts a C binding to its function pointer
+
 \ example
 false [IF]
 callback 2:1 (int) int int callback;
