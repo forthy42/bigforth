@@ -19,7 +19,7 @@ Module GSL
 
 also float also DOS
 
-library libblas libblas.so.3
+library libblas libgslcblas.so.0
 
 library libgsl libgsl.so.0 depends libblas \ libgslcblas
 
@@ -184,7 +184,7 @@ libgsl gsl_vector_subvector int int int (int) gsl_vector_subvector
 \ libblas cblas_dgemm int int df int int int
 \ int df int int int int int int (void/fp) cblas_dgemm
 libblas cblas_dgemv int int int int df int
-int df int int int int (void/fp) dgemv_
+int df int int int int (void/fp) cblas_dgemv
 libgsl gsl_blas_ddot int int int (int) gsl_blas_ddot
 ( *gsl_vector *gsl_vector df -- n )
 libgsl gsl_blas_dgemm int df int int df int int (int/fp) gsl_blas_dgemm
