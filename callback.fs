@@ -51,7 +51,9 @@ also dos
 
 previous
 
-: func' ' dup 2- wx@ abs + &11 - cfa@ ;
+: func@ ( xt -- cfptr ) dup 2- wx@ abs + &11 - cfa@ ;
+: func' ' func@ ;
+: [func'] postpone ['] postpone func@ ; immediate restrict
 \ converts a C binding to its function pointer
 
 \ example
