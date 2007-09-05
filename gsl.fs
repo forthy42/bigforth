@@ -11,16 +11,16 @@
 \ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 \ GNU General Public License for more details.
 
-\needs float   import float
-\needs locals  include locals.fs
-\needs atlas   include atlas.fs
+\needs float    import float
+\needs locals   include locals.fs
+\needs atlas    include atlas.fs
 \needs callback include callback.fs
 
 Module GSL
 
-also float also DOS
+also float also atlas also DOS
 
-library libblas libgslcblas.so.0
+library libblas libblas.so.3
 
 library libgsl libgsl.so.0 depends libblas \ libgslcblas
 
@@ -35,13 +35,11 @@ libgsl gsl_set_error_handler ptr (int) gsl_set_error_handler
 ( function -- function )
 libgsl gsl_strerror int (ptr) gsl_strerror
 
-
-also dos
 callback 4:0 (void) int int int int callback;
 : cstr-fstr ( addr -- addr len )
     0
     begin 2dup + c@ 0 = not while
-	    1+
+            1+
     repeat ;
 
 : .bold-red ." [1;31;40m" ;
@@ -244,17 +242,28 @@ libgsl gsl_odeiv_step_name ptr (ptr) gsl_odeiv_step_name   ( *step -- *str0 )
 libgsl gsl_odeiv_step_order ptr (int) gsl_odeiv_step_order ( *step -- order)
 libgsl gsl_odeiv_step_apply int int int int int df df int (int) gsl_odeiv_step_apply
 ( -- )
-\ available algorithms
-libgsl gsl_odeiv_step_rk2    (int)    gsl_odeiv_step_rk2
-libgsl gsl_odeiv_step_rk4    (int)    gsl_odeiv_step_rk4
-libgsl gsl_odeiv_step_rkf45  (int)  gsl_odeiv_step_rkf45
-libgsl gsl_odeiv_step_rkck   (int)   gsl_odeiv_step_rkck
-libgsl gsl_odeiv_step_rk8pd  (int)  gsl_odeiv_step_rk8pd
-libgsl gsl_odeiv_step_rk2imp (int) gsl_odeiv_step_rk2imp
-libgsl gsl_odeiv_step_rk4imp (int) gsl_odeiv_step_rk4imp
-libgsl gsl_odeiv_step_bsimp  (int)  gsl_odeiv_step_bsimp
-libgsl gsl_odeiv_step_gear1  (int)  gsl_odeiv_step_gear1
-libgsl gsl_odeiv_step_gear2  (int)  gsl_odeiv_step_gear2
+\ --- Available algorithms
+libgsl _gsl_odeiv_step_rk2    (int)    gsl_odeiv_step_rk2
+libgsl _gsl_odeiv_step_rk4    (int)    gsl_odeiv_step_rk4
+libgsl _gsl_odeiv_step_rkf45  (int)  gsl_odeiv_step_rkf45
+libgsl _gsl_odeiv_step_rkck   (int)   gsl_odeiv_step_rkck
+libgsl _gsl_odeiv_step_rk8pd  (int)  gsl_odeiv_step_rk8pd
+libgsl _gsl_odeiv_step_rk2imp (int) gsl_odeiv_step_rk2imp
+libgsl _gsl_odeiv_step_rk4imp (int) gsl_odeiv_step_rk4imp
+libgsl _gsl_odeiv_step_bsimp  (int)  gsl_odeiv_step_bsimp
+libgsl _gsl_odeiv_step_gear1  (int)  gsl_odeiv_step_gear1
+libgsl _gsl_odeiv_step_gear2  (int)  gsl_odeiv_step_gear2
+
+: gsl_odeiv_step_rk2    [func']    _gsl_odeiv_step_rk2 @ ;
+: gsl_odeiv_step_rk4    [func']    _gsl_odeiv_step_rk4 @ ;
+: gsl_odeiv_step_rkf45  [func']  _gsl_odeiv_step_rkf45 @ ;
+: gsl_odeiv_step_rkck   [func']   _gsl_odeiv_step_rkck @ ;
+: gsl_odeiv_step_rk8pd  [func']  _gsl_odeiv_step_rk8pd @ ;
+: gsl_odeiv_step_rk2imp [func'] _gsl_odeiv_step_rk2imp @ ;
+: gsl_odeiv_step_rk4imp [func'] _gsl_odeiv_step_rk4imp @ ;
+: gsl_odeiv_step_bsimp  [func']  _gsl_odeiv_step_bsimp @ ;
+: gsl_odeiv_step_gear1  [func']  _gsl_odeiv_step_gear1 @ ;
+: gsl_odeiv_step_gear2  [func']  _gsl_odeiv_step_gear2 @ ;
 
 \ --- Adaptive Step-size Control
 libgsl gsl_odeiv_control_standard_new df df df df (ptr) gsl_odeiv_control_standard_new ( a_dydt a_y eps_rel eps_abs -- *control )
@@ -262,11 +271,6 @@ libgsl gsl_odeiv_control_y_new df df (int) gsl_odeiv_control_y_new
 ( eps_abs eps_rel -- *control )
 libgsl gsl_odeiv_control_yp_new df df (ptr) gsl_odeiv_control_yp_new
 ( eps_abs eps_rel -- *control )
-
-\ int gsl_odeiv_control_hadjust (gsl_odeiv_control * c, gsl_odeiv_step
-\ * s, const double y[], const double yerr[], const double dydt[],
-\ double * h);
-libgsl gsl_odeiv_control_hadjust int int int int int int (int) gsl_odeiv_control_hadjust
 libgsl gsl_odeiv_control_free ptr (void) gsl_odeiv_control_free ( *control -- )
 libgsl gsl_odeiv_control_name ptr (ptr) gsl_odeiv_control_name  ( *c -- *str0 )
 
@@ -279,7 +283,7 @@ libgsl gsl_odeiv_evolve_reset ptr (int) gsl_odeiv_evolve_reset ( *e -- r )
 libgsl gsl_odeiv_evolve_free ptr (void) gsl_odeiv_evolve_free  ( *e --  )
 
 legacy on
-previous
+
 
 \ Structures
 
@@ -521,7 +525,8 @@ gsl_rng_types_setup  value gsl_rng_array(
     sizeof gsl_vector allocate throw
     dup >r dup 1 swap gsl_vector stride !
     gsl_vector size ! r@
-    gsl_vector data ! r> ;
+    gsl_vector data ! r@
+    0 swap gsl_vector owner ! r> ;
 : pmatrix! ( *data tda n m *pmatrix -- *gsl_matrix )
     dup >r gsl_matrix size2 !
     r@ gsl_matrix size1 !
@@ -626,26 +631,26 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : action? (  *gsl_matrix *gsl_matrix n n n -- )
     dup 0= if
-	drop
-	2swap 2dup
-	]]size2 swap ]]size1 swap
-	exit
+        drop
+        2swap 2dup
+        ]]size2 swap ]]size1 swap
+        exit
     then
     dup 1 = if
-	drop
-	2swap 2dup
-	]]size2 swap ]]size2 swap
-	exit
+        drop
+        2swap 2dup
+        ]]size2 swap ]]size2 swap
+        exit
     then
     2 = if
-	2swap 2dup
-	]]size1 swap ]]size1 swap
-	exit
+        2swap 2dup
+        ]]size1 swap ]]size1 swap
+        exit
     then
     3 = if
-	2swap 2dup
-	]]size1 swap ]]size2 swap
-	exit
+        2swap 2dup
+        ]]size1 swap ]]size2 swap
+        exit
     then ;    
 : ]]mul (  *gsl_matrix *gsl_matrix n n n -- *gsl_matrix )
     !1 !0 action?
@@ -679,10 +684,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : ]]i ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 <> if
-	abort" ERROR: Not a square matrix!"
+        abort" ERROR: Not a square matrix!"
     then
     dup ]]size1 0 do
-	dup i i !1 ]]! 
+        dup i i !1 ]]! 
     loop drop ;
 : identity ( n -- *gsl_matrix )
     dup gsl_matrix_calloc dup ]]i ;
@@ -690,9 +695,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     dup ]]size1 swap ]]size2 min identity ;
 : left/right' ( *gsl_matrix *gsl_matrix -- *gsl_matrix )
     over ]]size1 over ]]size1 > if
-	swap ]]*' exit
+        swap ]]*' exit
     else
-	]]'* exit
+        ]]'* exit
     then ;
 
 \ original matrix remains intact
@@ -730,7 +735,7 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 \ a function to convert a vector into such matrix:
 : ]>[x] ( ] -- ]] )
     [IFDEF] debug
-	dup ]size 3 <> abort" Not a 3D vector!"
+        dup ]size 3 <> abort" Not a 3D vector!"
     [THEN]
     3 3 :]] dup >r
     swap 2dup 2 ]@ fdup dup fnegate 0 1 ]]! 1 0 ]]!
@@ -759,9 +764,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     over ]]size1 gsl_vector_calloc 
     { m[[ x[ y[ |
     m[[ ]]size1 0 do
-	m[[ ]]size2 0 do
-	    m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
-	loop
+        m[[ ]]size2 0 do
+            m[[ j i ]]@ x[ i ]@ f* y[ j ]+! 
+        loop
     loop y[ } ;
 
 : >#rows ( -- )
@@ -804,7 +809,7 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     0 d[ gsl_vector owner !
     d[ } ;
     
-previous
+
 
 \ with input matrix replaced by the result
 : ]]gsl-svd ( *gsl_matrix -- *gsl_matrix *gsl_vector )
@@ -827,7 +832,7 @@ previous
     vW ]free mX ]]free
     mV vS } ;
 
-also atlas
+
 : ]]alu ( *gsl_matrix -- *gsl_permutation ) ( matrix replaced with its lu )
     { a[[ |
     CblasRowMajor a[[ ]]size1 a[[ ]]size2 a[[ ]]data a[[ ]]size1 dup
@@ -897,15 +902,12 @@ also atlas
     dgesvd_
     r> ]free p[ free throw
     A[[ V[[ W[ } } ;
-previous
 
-
-also float
 
 : ]diag[[ ( *gsl_vector -- *gsl_matrix )
     dup ]size dup dup gsl_matrix_calloc swap
     0 do
-	2dup swap i ]@ i i ]]!
+        2dup swap i ]@ i i ]]!
     loop nip ;
 
 : ]print ( *gsl_vector -- )
@@ -913,27 +915,27 @@ also float
 : ]]print ( *gsl_matrix -- )
     cr
     dup ]]size1 0 do
-	\ i . ." :  "
-	dup ]]size2 0 do
-	    dup
-	    j i ]]@ f.
-	loop
-	cr
+        \ i . ." :  "
+        dup ]]size2 0 do
+            dup
+            j i ]]@ f.
+        loop
+        cr
     loop
     drop ;
 : ]]row-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size2 @ 0 do
-	2dup
-	 i ]]@ f.
+        2dup
+         i ]]@ f.
     loop
     cr 2drop ;
 
 : ]]col-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size1 @ 0 do
-	2dup
-	i swap ]]@ f.
+        2dup
+        i swap ]]@ f.
     loop
     cr 2drop ;
 
@@ -942,15 +944,15 @@ also float
 
 : ]]randomize ( *gsl_matrix -- )
     dup dup ]]size1 swap ]]size2 * 0 do
-	    dup
-	    gsl-randomu
-	    ]]data i dfloats + df!
+            dup
+            gsl-randomu
+            ]]data i dfloats + df!
     loop drop ;
 : ]randomize ( *gsl_vector -- )
     dup ]size 0 do
-	    dup
-	    gsl-randomu
-	    i ]!
+            dup
+            gsl-randomu
+            i ]!
     loop drop ;
 : ]mean ( *gsl_vector -- f )
     dup ]size 1 swap gsl_stats_mean ;
@@ -993,34 +995,34 @@ also float
 : pushfstack
     fdepth dup gsl_vector_alloc to tempfloat
     0 ?do
-	tempfloat i ]!
+        tempfloat i ]!
     loop ;
 : savefloat2
     fdepth dup gsl_vector_alloc to tempfloat2 0
     ?do
-	tempfloat2 i ]!
+        tempfloat2 i ]!
     loop ;
 
 : restorefloat
     0 tempfloat ]size
     ?do
-	i 0= if leave then
-	tempfloat i 1- ]@ -1
+        i 0= if leave then
+        tempfloat i 1- ]@ -1
     +loop tempfloat ]free ;
 
 : restorefloat2
     0 tempfloat2 ]size
     ?do
-	i 0= if leave then	
-	tempfloat2 i 1- ]@ -1
+        i 0= if leave then      
+        tempfloat2 i 1- ]@ -1
     +loop tempfloat2 ]free ;
 
 : popfstack
     fdepth 0<> if
-    	savefloat2
-	restorefloat
-	restorefloat2
-	exit
+        savefloat2
+        restorefloat
+        restorefloat2
+        exit
     then
     restorefloat ;   
 
@@ -1049,6 +1051,6 @@ also float
 \ it available upon loading of gsl
 mt19937
 
-previous previous
+previous previous previous
 
 Module;
