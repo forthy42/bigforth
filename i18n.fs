@@ -17,7 +17,7 @@ Variable lsids
     nip nip ;
 
 : (l")  r> dup cell+ cell+ @+ + aligned >r ;
-: (l2)  r> dup cell+ >r @ ; 
+: (l2)  r> @+ >r ; 
 
 : append ( addr list -- )
     BEGIN  dup @  WHILE  @  REPEAT  ! ;
@@ -93,6 +93,25 @@ Variable last-namespace
 : locale! ( addr u lsid -- ) >r
     2dup r@ locale@ str= IF  rdrop 2drop  EXIT  THEN
     r> id#@ here locale' append 0 A, , s, ;
+
+: native-file ( fid -- ) >r
+    BEGIN  pad $1000 r@ read-line throw  WHILE
+	    pad swap l,  REPEAT
+    drop r> close-file throw ;
+
+: locale-file ( fid -- ) >r  lsids
+    BEGIN  @ dup  WHILE  pad $1000 r@ read-line throw
+	    IF  pad swap over2 locale!  ELSE  drop  THEN  REPEAT
+    drop r> close-file throw ;
+
+: included-locale ( addr u -- )  r/o open-file throw
+    locale-file ;
+
+: included-native ( addr u -- )  r/o open-file throw
+    native-file ;
+
+: include-locale ( -- )  use isfile@ locale-file ;
+: include-native ( -- )  use isfile@ native-file ;
 
 \ easy use
 
