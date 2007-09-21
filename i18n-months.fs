@@ -22,7 +22,7 @@ l" December"  months 11 cells + !
 
 Locale de
 
-de >locale
+de
 
 s" Januar" l" January" locale!
 s" Februar" l" February" locale!
@@ -33,13 +33,11 @@ s" Juli" l" July" locale!
 s" Oktober" l" October" locale!
 s" Dezember" l" December" locale!
 
-Locale de_AT
+& de Country de_AT
 
-de_AT >locale
+de_AT
 
 s" Jänner" l" January" locale!
-
-locale-stack off
 
 \ by line
 
@@ -47,7 +45,9 @@ locale-stack off
   12 0 DO  refill drop source months I cells + @ locale!  LOOP   refill drop ;
 
 Locale fr
-fr >locale
+fr
+
+s" «»" delimiters locale!
 
 <<months
 janvier
@@ -63,10 +63,8 @@ octobre
 novembre
 décembre
 
-locale-stack off
-
 Locale it
-it >locale
+it
 
 <<months
 gennaio
@@ -82,10 +80,10 @@ ottobre
 novembre
 dicembre
 
-locale-stack off
-
 Locale zh
-zh >locale
+zh
+
+s" “”" delimiters locale!
 
 <<months
 一月
@@ -101,10 +99,8 @@ zh >locale
 十一月
 十二月
 
-locale-stack off
-
 Locale ru
-ru >locale
+ru
 
 <<months
 Январь
@@ -120,4 +116,3 @@ ru >locale
 Ноябрь
 Декабрь
 
-locale-stack off

@@ -221,14 +221,14 @@ class;
 : (normal-font ( -- )
     screen xrc with
         s" -*-helvetica-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
-        s" -*-courier-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
+        s" -*-courier new-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
         s" -*-helvetica-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
         s" -*-helvetica-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
     endwith
     maxascii $80 = IF
         4 0 DO
             s" -*-ar pl kaitim gb-medium-r-normal--14-*-*-*-c-*-iso10646-1"
-            $1100 $A000 I add-font
+            $2E80 $A000 I add-font
         LOOP  THEN
      0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
@@ -236,14 +236,14 @@ class;
 : (large-font ( -- )
     screen xrc with
        s" -*-helvetica-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
-       s" -*-courier-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
+       s" -*-courier new-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
        s" -*-helvetica-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
        s" -*-helvetica-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
     endwith
     maxascii $80 = IF
         4 0 DO
             s" -*-ar pl kaitim gb-medium-r-normal--20-*-*-*-c-*-iso10646-1"
-            $1100 $A000 I add-font
+            $2E80 $A000 I add-font
         LOOP  THEN
      0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;

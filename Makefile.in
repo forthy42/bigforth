@@ -54,7 +54,7 @@ XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
-	  $(XINI) xft-font.fs imlib.fs Estyle.fs
+	  $(XINI) xft-font.fs imlib.fs Estyle.fs i18n.fs i18n-months.fs
 
 all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
 

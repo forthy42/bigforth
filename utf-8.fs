@@ -48,8 +48,8 @@ $80 Value maxascii
     BEGIN  1- dup c@ $C0 and maxascii <>  UNTIL ;
 
 : +x/string ( xcaddr u -- xcaddr' u' )
-    over + xchar+ over - ;
-: -x/string ( xcaddr u -- xcaddr' u' )
+    over + >r xchar+ r> over - ;
+: x/string- ( xcaddr u -- xcaddr' u' )
     over + xchar- over - ;
 
 \ utf key and emit
@@ -346,7 +346,7 @@ variable curpos
 ' emit alias xemit
 
 export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
-  +x/string -x/string save-cursor restore-cursor
+  +x/string x/string- save-cursor restore-cursor
   xkey xemit x-width xdecode xaccept ;
 
 also DOS

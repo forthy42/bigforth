@@ -251,6 +251,9 @@ also minos-load definitions
 : S" [char] " parse string-des new string-des with assign
     self endwith ;
 
+: X" [char] " parse string-des new string-des with assign
+    self endwith ;
+
 : T" [char] " parse text-des new text-des with assign
     self endwith ;
 

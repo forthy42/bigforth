@@ -204,7 +204,7 @@ how:
         dup F bind edit-string ;
     : null ( -- addr u )  s" String" ;
     : make ( -- addr u )  get ;
-    : dump ( -- ) .' S" ' get type .' " ' ;
+    : dump ( -- ) .' X" ' get type .' " ' ;
 class;
 
 string-des class text-des
