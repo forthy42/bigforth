@@ -133,7 +133,7 @@ library imm32 imm32
    ( umb *mb uwc *wc flags codepage -- umb' )
 4 imm32 ImmIsUIMessage ImmIsUIMessageW
    ( lparam wparam msg wnd -- bool )
-2 kernel32 GetUserDefaultLocaleName GetUserDefaultLocaleName
+0 kernel32 GetUserDefaultLCID GetUserDefaultLCID
    ( len addr -- len' )
 
 \ structures
