@@ -226,19 +226,12 @@ class;
         s" -*-helvetica-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
     endwith
     maxascii $80 = IF
-	4 0 DO
-	    I 1 = IF
-		s" -*-ar pl kaitim gb-medium-r-normal--14-*-*-*-c-*-iso10646-1"
-	    ELSE
-		I 3 = IF
-		    s" -*-ar pl kaitim gb-bold-r-normal--9-*-*-*-c-*-iso10646-1"
-		ELSE
-		    s" -*-ar pl kaitim gb-bold-r-normal--16-*-*-*-c-*-iso10646-1"
-		THEN
-	    THEN
-            $2E80 $A000 I add-font
-        LOOP  THEN
-     0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
+	s" -*-ar pl kaitim gb-bold-r-normal--15-*-*-*-c-*-iso10646-1"   $2E80 $A000 0 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--14-*-*-*-c-*-iso10646-1" $2E80 $A000 1 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--10-*-*-*-c-*-iso10646-1" $2E80 $A000 2 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--15-*-*-*-c-*-iso10646-1" $2E80 $A000 3 add-font
+    THEN
+    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
 
 : (large-font ( -- )
@@ -249,19 +242,12 @@ class;
        s" -*-helvetica-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
     endwith
     maxascii $80 = IF
-	4 0 DO
-	    I 1 = IF
-		s" -*-ar pl kaitim gb-medium-r-normal--20-*-*-*-c-*-iso10646-1"
-	    ELSE
-		I 3 = IF
-		    s" -*-ar pl kaitim gb-bold-r-normal--12-*-*-*-c-*-iso10646-1"
-		ELSE
-		    s" -*-ar pl kaitim gb-bold-r-normal--24-*-*-*-c-*-iso10646-1"
-		THEN
-	    THEN
-            $2E80 $A000 I add-font
-        LOOP  THEN
-     0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
+	s" -*-ar pl kaitim gb-bold-r-normal--22-*-*-*-c-*-iso10646-1"   $2E80 $A000 0 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--20-*-*-*-c-*-iso10646-1" $2E80 $A000 1 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--12-*-*-*-c-*-iso10646-1" $2E80 $A000 2 add-font
+	s" -*-ar pl kaitim gb-medium-r-normal--22-*-*-*-c-*-iso10646-1" $2E80 $A000 3 add-font
+    THEN
+    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
 
 also xft
