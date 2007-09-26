@@ -1,4 +1,4 @@
-#! ./xbigforth
+#! xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -25,21 +25,21 @@ class;
 hello implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-            0 -1 flipper X" Schwäbisch" topindex new ^^bind (topindex-00)
+            0 0 flipper X" Schwäbisch" topindex new ^^bind (topindex-00)
             0 0 flipper X" English" topindex new ^^bind (topindex-01)
             0 0 flipper X" 中文" topindex new ^^bind (topindex-02)
-            0 0 flipper X" Руссию" topindex new ^^bind (topindex-03)
+            0 -1 flipper X" Русский" topindex new ^^bind (topindex-03)
             0 0 flipper X" 日本" topindex new ^^bind (topindex-04)
             topglue new 
           &6 harbox new vfixbox 
               X" Hallöle Weltle!" text-label new 
-            &1 habox new panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
+            &1 habox new flipbox  panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
               X" Hello World!" text-label new 
             &1 habox new flipbox  panel dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
               X" 世界公民好" text-label new 
             &1 habox new flipbox  panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
-              X" сдравствуйте!" text-label new 
-            &1 habox new flipbox  panel dup ^^ with C[ (topindex-03) ]C ( MINOS ) endwith 
+              X" Здравствуйте!" text-label new 
+            &1 habox new panel dup ^^ with C[ (topindex-03) ]C ( MINOS ) endwith 
               X" 今日は" text-label new 
             &1 habox new flipbox  panel dup ^^ with C[ (topindex-04) ]C ( MINOS ) endwith 
           &5 habox new $10  noborderbox  &2 borderbox
