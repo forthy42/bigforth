@@ -134,7 +134,7 @@ library imm32 imm32
 4 imm32 ImmIsUIMessage ImmIsUIMessageW
    ( lparam wparam msg wnd -- bool )
 0 kernel32 GetUserDefaultLCID GetUserDefaultLCID
-   ( len addr -- len' )
+   ( -- LCID )
 
 \ structures
 
