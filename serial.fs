@@ -22,8 +22,10 @@ base @ 8 base !
 000000010002 Constant B115200
 020000000000 Constant CRTSCTS
 000000000060 Constant CS8
+000000000100 Constant CSTOPB
 000000000200 Constant CREAD
 000000004000 Constant CLOCAL
+000000004000 Constant IXANY
 000000010017 Constant CBAUD
 000000000001 Constant IGNBRK
 000000000004 Constant IGNPAR
@@ -59,7 +61,7 @@ Create t_buf  sizeof termios allot
 \  t_buf sizeof termios erase
   [ IGNBRK IGNPAR or         ] Literal    t_buf termios c_iflag !
   0                                       t_buf termios c_oflag !
-  [ CRTSCTS CS8 or CREAD or CLOCAL or ] Literal or
+  [ CRTSCTS CS8 or CSTOPB or CREAD or CLOCAL or ] Literal or
                                           t_buf termios c_cflag !
   0                                       t_buf termios c_lflag !
   1 t_buf termios c_cc VMIN + c!
@@ -71,6 +73,8 @@ Create t_buf  sizeof termios allot
 : reset-baud ( fd -- )
   t_old 1 rot tcsetattr drop ;
 
+$5409 Constant TCSBRK
+$540B Constant TCFLSH
 $541B Constant FIONREAD
 
 : check-read ( fd -- n )  >r
