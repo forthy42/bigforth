@@ -43,9 +43,10 @@ $80 Value maxascii
 
 \ pictured output
 
-| Create holdbuf 8 allot
-: xhold ( xc -- )  holdbuf xc!+
-    BEGIN  1- dup holdbuf u>=  WHILE  dup c@ hold  REPEAT  drop ;
+: xhold ( xc -- )  pad cell- over xc-size negate over +!
+  @ xc!+ drop ;
+: holds ( addr u -- )  pad cell- over negate over +!
+  @ swap move ;
 
 \ scan to next/previous character
 
@@ -353,7 +354,7 @@ variable curpos
 
 export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
   +x/string x/string- save-cursor restore-cursor
-  xkey xemit x-width xdecode xaccept xhold ;
+  xkey xemit x-width xdecode xaccept xhold holds ;
 
 also DOS
 : utf-8-coding  $80 to maxascii

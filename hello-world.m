@@ -15,6 +15,7 @@ public:
   | topindex ptr (topindex-02)
   | topindex ptr (topindex-03)
   | topindex ptr (topindex-04)
+  | topindex ptr (topindex-05)
  ( [varstart] )  ( [varend] ) 
 how:
   : open     new DF[ 0 ]DF s" Hello World" open-component ;
@@ -25,24 +26,27 @@ class;
 hello implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-            0 0 flipper X" Schwäbisch" topindex new ^^bind (topindex-00)
+            0 -1 flipper X" Schwäbisch" topindex new ^^bind (topindex-00)
             0 0 flipper X" English" topindex new ^^bind (topindex-01)
-            0 0 flipper X" 中文" topindex new ^^bind (topindex-02)
-            0 -1 flipper X" Русский" topindex new ^^bind (topindex-03)
-            0 0 flipper X" 日本" topindex new ^^bind (topindex-04)
+            0 0 flipper X" Français" topindex new ^^bind (topindex-02)
+            0 0 flipper X" 中文" topindex new ^^bind (topindex-03)
+            0 0 flipper X" Русский" topindex new ^^bind (topindex-04)
+            0 0 flipper X" 日本语" topindex new ^^bind (topindex-05)
             topglue new 
-          &6 harbox new vfixbox 
+          &7 harbox new vfixbox 
               X" Hallöle Weltle!" text-label new 
-            &1 habox new flipbox  panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
+            &1 habox new panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
               X" Hello World!" text-label new 
             &1 habox new flipbox  panel dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
-              X" 世界公民好" text-label new 
-            &1 habox new flipbox  panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
-              X" Здравствуйте!" text-label new 
-            &1 habox new panel dup ^^ with C[ (topindex-03) ]C ( MINOS ) endwith 
-              X" 今日は" text-label new 
+              X" 世界,你好!" text-label new 
+            &1 habox new flipbox  panel dup ^^ with C[ (topindex-03) ]C ( MINOS ) endwith 
+              X" Здравствуй, мир!" text-label new 
             &1 habox new flipbox  panel dup ^^ with C[ (topindex-04) ]C ( MINOS ) endwith 
-          &5 habox new $10  noborderbox  &2 borderbox
+              X" 今日は, 世界!" text-label new 
+            &1 habox new flipbox  panel dup ^^ with C[ (topindex-05) ]C ( MINOS ) endwith 
+              X" Bonjour le monde!" text-label new 
+            &1 habox new flipbox  panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
+          &6 habox new $10  noborderbox  &2 borderbox
         &2 vabox new
           $10 $1 *hfill *hglue new 
           ^^ S[ close ]S ( MINOS ) X"   OK  " button new 
