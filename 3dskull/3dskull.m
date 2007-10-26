@@ -93,7 +93,7 @@ skull implements
 	    3d-turtle del-textures drop
 	    1 3d-turtle textures dup
 	    3d-turtle set-texture
-	    imtext-zy texdimzy dup 3d-turtle create-mipmap3 drop
+	    imtext-zy texdimzy dup 3d-turtle create-mipmap3
 	endwith
 	yz-texture ! 1 yz-task ! make-yz-task EXIT
     THEN
@@ -108,7 +108,7 @@ skull implements
 	    3d-turtle del-textures drop	    
 	    1 3d-turtle textures dup
 	    3d-turtle set-texture
-	    imtext-xy texdimxy dup 3d-turtle create-mipmap3 drop
+	    imtext-xy texdimxy dup 3d-turtle create-mipmap3
 	endwith
 	xy-texture ! 1 xy-task ! make-xy-task EXIT
     THEN
@@ -122,7 +122,7 @@ skull implements
 	    3d-turtle del-textures drop
 	    1 3d-turtle textures dup
 	    3d-turtle set-texture
-	    imtext-zx texdimzx dup 3d-turtle create-mipmap3 drop
+	    imtext-zx texdimzx dup 3d-turtle create-mipmap3
 	endwith
 	xz-texture ! 1 xz-task ! make-xz-task EXIT THEN
     zxprojection self           
