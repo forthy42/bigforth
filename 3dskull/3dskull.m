@@ -179,7 +179,10 @@ skull implements
     xy@ itoa labelX text! labelX draw
     itoa labelY text! labelY draw
     zy@ itoa labelZ text! drop labelZ draw
-    redraw-pr ;
+    	xy@ 
+	zy->textr 0 yz-task !
+	zx->textr 0 xz-task !	
+	force-redraw-pr ;
 : zy-cross ( x y b n -- )
     2drop 2dup
     zyprojection self coordinates zclicked ! yclicked ! redraw-pr
@@ -188,7 +191,10 @@ skull implements
     zy@ zdim swap - itoa labelZ text! labelZ draw
     itoa labelY text! labelY draw
     xy@ itoa labelX text! drop labelX draw
-    redraw-pr ;
+    	zy@ zdim swap - 
+	xy->textr 0 xy-task !
+	zx->textr 0 xz-task !
+	force-redraw-pr ;
 : zx-cross ( x y b n -- )
     2drop 2dup
     zxprojection self coordinates zclicked ! xclicked ! redraw-pr
@@ -197,7 +203,10 @@ skull implements
     zx@ zdim swap - itoa labelZ text! labelZ draw
     itoa labelX text! labelX draw
     xy@ drop itoa labelY text! labelY draw
-    redraw-pr ;
+    	zx@ zdim swap - 
+	xy->textr 0 xy-task !
+	zy->textr 0 yz-task !
+	force-redraw-pr ;
 
 : dispose  xy-task @  IF  self dpy cleanup pause xy-task off  THEN
     yz-task @  IF  self dpy cleanup pause yz-task off  THEN
