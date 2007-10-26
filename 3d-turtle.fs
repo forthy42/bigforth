@@ -330,6 +330,10 @@ public:
 
 \ auto-texturing                                       30jan99py
 
+    early create-mipmap1
+    early create-mipmap3
+    early create-mipmap4
+
     early xy-texture
     early zphi-texture
     early zphi2-texture
