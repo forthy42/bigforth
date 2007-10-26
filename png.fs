@@ -139,11 +139,8 @@ $FF w,
         pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >>
         { data w h bits |
         data w h * 3* <>.24
-        w bits * pixmap-format XPixmapFormatValues depth @
-        1 = IF  8  ELSE  pixmap-format XPixmapFormatValues scanline_pad @  THEN
-        h w
-        data w h * 3* w h bits
-        screen xrc dpy @  create-pixmap 0 -rot }
+        data w h * 3* w h
+        create-pixmap 0 -rot }
     THEN ;
     
 previous previous previous previous previous previous

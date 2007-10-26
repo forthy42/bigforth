@@ -183,8 +183,15 @@ Create colcorrect 3 allot
 Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
 
 [IFDEF] x11
+: pixmap-bits ( -- n )
+  pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >> ;
 
-: create-pixmap { data size w h bits dpy | ( --> pixmap w h )
+: create-pixmap ( data size w h -- pixmap w h )
+  pixmap-bits screen xrc dpy @
+  { data size w h bits dpy |
+    w bits * pixmap-format XPixmapFormatValues depth @
+    1 = IF  8  ELSE  pixmap-format XPixmapFormatValues scanline_pad @  THEN
+    h w
     data size w pixels dpy trans bits cells + perform
     data 0 ZPixmap pixmap-format XPixmapFormatValues depth @
     dpy dup DefaultScreen DefaultVisual
@@ -193,22 +200,20 @@ Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
     h w screen xwin @ dpy XCreatePixmap
     { img pix |
       h w 0 0 0 0 img screen drawable nip pix swap XPutImage drop
-      img XImage data off  img XDestroyImage  data DisposPtr
+      img XImage data off  img XDestroyImage
       pix w h } } ;
 
 [IFDEF] has-png  include png.fs [THEN]
 
-: readP6 ( fd w h bits -- pixmap w h )
-    { fd w h bits |
-      w bits * pixmap-format XPixmapFormatValues depth @
-      1 = IF  8  ELSE  pixmap-format XPixmapFormatValues scanline_pad @  THEN
-      h w  w pixels h * w pixels h $10 + -$10 and *
-      w bits * h $10 + -$10 and * max cell+ dup NewPtr
+: readP6 ( fd w h -- pixmap w h )
+    { fd w h |
+      w pixels h * w pixels h $10 + -$10 and *
+      w pixmap-bits * h $10 + -$10 and * max cell+ dup NewPtr
       tuck swap erase
-      screen xrc dpy @
-      { size data dpy |
+      { size data |
         data size fd read-file throw drop
-        data size w h bits dpy create-pixmap } } ;
+        data size w h create-pixmap
+        data DisposPtr } } ;
 
 Create values sizeof XGCValues allot
 
@@ -264,7 +269,8 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
   negate  r@ BITMAPINFOHEADER biHeight !
           r> BITMAPINFOHEADER biWidth ! ;
 
-: readP6 ( fd w h bits -- pixmap w h )
+: readP6 ( fd w h -- pixmap w h )
+    pixel-bits @ 3 >>
     { fd w h bits |
       w pixels h *
       w pixels paligned h 1+ *
@@ -306,12 +312,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 : read-P6 ( fd -- pixmap w h ) >r
     r@ read-format
     scratch $100 r@ read-line throw 2drop
-    r> -rot
-[IFDEF] x11
-    pixmap-format XPixmapFormatValues bits_per_pixel @  [THEN]
-[IFDEF] win32
-    pixel-bits @  [THEN]
-    3 >> readP6 ;
+    r> -rot readP6 ;
     
 : read-P4 ( fd -- pixmap w h ) >r
     r@ read-format
