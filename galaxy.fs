@@ -191,7 +191,7 @@ Code v+ ( v1 v2 -- )
 
 $000 Value central#
  
-: set-msum ( -- ) ~~
+: set-msum ( -- )
   star# 0 ?DO  I star dup >xyz
       >x df@ >y df@ >z df@ vabs 1/f central# fm*
       0 star star# elements bounds ?DO  dup I <>
@@ -203,7 +203,7 @@ $000 Value central#
 
 !0.5 msum+ f!
 
-: set-a ( -- ) ~~
+: set-a ( -- )
   star# 0 ?DO  I star dup >xyz
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* fnegate vscale
@@ -224,7 +224,7 @@ Variable dirsens  dirsens on
 : approx ( f addr -- )
     dup df@ fover f- f2/ f- df! ;
 
-: set-a+ ( -- ) ~~
+: set-a+ ( -- )
   star# 0 ?DO  I star dup >xyz
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
@@ -243,7 +243,20 @@ Variable dirsens  dirsens on
     star# swap &100 */ -4 and dup >r !1 !.33 set-bulge
     r> star# !.3 !2.25 !.2 r> !.01 fm* r> !.01 fm* set-spiral ;
 
-&30 &40 &100 set-masses
+\ &30 &40 &100 set-masses
+
+0 [IF]
+332946 Constant sun-mass
+
+: set-masses ( -- )  2drop drop 1 to star#  init-stars
+  0 star
+  !1 dup element x df!
+  !0 dup element y df!
+  !0     element z df!
+  sun-mass to central# ;
+
+0 0 0 set-masses
+[THEN]
 
 Variable vis-mass
 Variable vis-a+
@@ -330,7 +343,7 @@ FVariable step# !0.003 step# f!
 
 init-disc
 
-: disc-msum ( -- ) ~~
+: disc-msum ( -- )
   disc# 0 ?DO  I disc >xyz
       >x df@ >y df@ >z df@ vabs 1/f central# fm*
       0 star star# elements bounds ?DO
@@ -340,7 +353,7 @@ init-disc
       star# 2* central# + fm/ I disc element msum df!
   pause LOOP ;
 
-: disc-a ( -- ) ~~
+: disc-a ( -- )
   disc# 0 ?DO  I disc >xyz
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
@@ -354,7 +367,7 @@ init-disc
           element ax df!
   pause LOOP ;
 
-: disc-a+ ( -- ) ~~
+: disc-a+ ( -- )
   disc# 0 ?DO  I disc >xyz
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
