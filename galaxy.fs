@@ -243,7 +243,7 @@ Variable dirsens  dirsens on
     star# swap &100 */ -4 and dup >r !1 !.33 set-bulge
     r> star# !.3 !2.25 !.2 r> !.01 fm* r> !.01 fm* set-spiral ;
 
-\ &30 &40 &100 set-masses
+&30 &40 &100 set-masses
 
 0 [IF]
 332946 Constant sun-mass

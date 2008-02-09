@@ -142,7 +142,7 @@ galaxy implements
   disc-msum disc-a disc-a+ redraw-galaxy dpy sync
   galaxy-lock unlock ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-              GL[ outer with draw-galaxy endwith ]GL ( MINOS ) ^^ S[  ]S ( MINOS ) $200 $1 *hfil $200 $1 *vfil glcanvas new  ^^bind GLgalaxy
+              GL[ outer with draw-galaxy endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $200 $1 *hfil $200 $1 *vfil glcanvas new  ^^bind GLgalaxy
             &1 habox new
                     CV[ clear visualize-mass ]CV ( MINOS ) ^^ CK[  ]CK ( MINOS ) $20 $1 *hfil $80 $1 *vfil canvas new  ^^bind mass#
                     ^^ &0 &360 SC[ &360 mod alphax ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around X axis" hscaler new  -&180 SC# 
@@ -152,7 +152,7 @@ galaxy implements
                     CV[ a-pos @ >r
 visualize-a  r@ vis@ 
 visualize-a+ r@ vis@ swap
-dup 0= IF  nip  ELSE  &1000 swap */  THEN decimal dup . cr
+dup 0= IF  nip  ELSE  &1000 swap */  THEN decimal
 0 <# # # # '. hold #s #>
 r@ 1+ 0 home! r> 2* vismax > IF  2 ELSE  0  THEN  0 textpos
 text  path 0 vismax -$100 * to stroke ]CV ( MINOS ) ^^ CK[ nip 1 and IF  DOPRESS  2swap 2drop  THEN
