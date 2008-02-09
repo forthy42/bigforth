@@ -111,7 +111,7 @@ forward tree-branch
       >matrix !.4 &11 stroh-stern matrix> >matrix
       pi &11 fm/ right !.3 &11 stroh-stern matrix> merry-xmas
       2drop ;
-  F : draw-tree ( n -- )  rd-val seed !
+  F : draw-tree ( n -- ) rd-val seed !
       [ pi !.2 f* ] Fliteral dup 1- fm*
       pi f2/ f2/ f+ roll-right
       pi 3 fm/ set-dphi
