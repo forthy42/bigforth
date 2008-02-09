@@ -47,9 +47,9 @@ Variable wait' 6 wait' !
   F : init-texture ( -- t1 t2 t3 )
 ?texture [IF]
       3 textures dup 2over swap
-      set-texture S" pattern/normal-w1.ppm" load-texture
-      set-texture S" pattern/back.ppm"      load-texture
-      set-texture S" pattern/focus.ppm"     load-texture ;
+      set-texture S" pattern/normal-w1" load-texture
+      set-texture S" pattern/back"      load-texture
+      set-texture S" pattern/focus"     load-texture ;
 [ELSE]  0 0 0 ;  [THEN]
 endwith
 

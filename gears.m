@@ -53,7 +53,7 @@ gears implements
 : dispose  gear-task @  IF  self dpy cleanup pause gear-task off  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-            GL[ outer with draw-gears endwith ]GL ( MINOS ) ^^ S[  ]S ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
+            GL[ outer with draw-gears endwith ]GL ( MINOS ) ^^ S[ 2drop 2drop ]S ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
             ^^ &0 &360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
             ^^ &0 &360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
             ^^ &0 &360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
