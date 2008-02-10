@@ -23,7 +23,10 @@
 
 import float float also
 
-332946 Constant sun-mass \ relative to earth
+332946e FConstant sun-mass \ relative to earth
+1.496e12 FConstant sun-earth
+
+sun-mass sun-earth f**2 f/ FConstant bg-scaler
 
 \ all units are SI units, m kg s
 
@@ -49,4 +52,15 @@ FVariable phi0  0e phi0 f!
 
 : r ( phi -- )  fcos epsilon f@ f* !1 f+ k f@ fswap f/ ;
 
-: range ( -- to from )  epsilon f@ 1/f fnegate facos fdup fnegate ;
+: range ( -- maxphi )  epsilon f@ 1/f fnegate facos ;
+
+: to-sun ( r -- scale )  f**2 bg-scaler f* 1/f ;
+
+: diff-a ( r -- a )
+  sun-earth fswap f- f**2
+  sun-mass fswap f/ bg-scaler f- GM f@ f* ;
+
+: delta-a ( alpha r -- a )  fdup to-sun f>r
+  fswap fsin f* diff-a fr> f* ;
+
+: v ( r -- )  GM f@ fswap f/ f2* U f@ f**2 f+ fsqrt ;
