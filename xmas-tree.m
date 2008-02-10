@@ -53,7 +53,7 @@ xmas-tree implements
 : dispose  gear-task @  IF  self dpy cleanup pause gear-task off  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-            GL[ outer with draw-xmas endwith ]GL ( MINOS ) ^^ S[ 2drop 2drop ]S ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
+            GL[ outer with draw-xmas endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
                     ^^ &0 &360 SC[ &360 mod alphax ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
                     ^^ &0 &360 SC[ &360 mod alphay ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
                     ^^ &0 &360 SC[ &360 mod alphaz ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
