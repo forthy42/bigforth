@@ -50,7 +50,7 @@ SYSSRC	= assem486.fb stream.fb errore.fs hash.fs fileint.fb \
 	  tools.fb except.fs sedit.fb struct.fs lambda.fs idle.fs callback.fs \
 	  startup.fb ftast.fb environ.fs version.h minos-version.h
 XCSRC	= x.fs glconst.fs
-XSRC	= startx.fb minos.fb oof.fb x11.fs xpm.fs locals.fs edit.fb \
+XSRC	= startx.fb minos.fs oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
