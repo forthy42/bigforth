@@ -336,9 +336,6 @@ S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
 
 : clear-icons  icons LIST>  cell+ off ;
 : clear-fonts  fonts LIST>  cell+ off ;
-
-: clear-resources  ( -- )
-  clear-icons  clear-fonts  0 bind term ;
 
 \ fonts                                                29jul07py
 
