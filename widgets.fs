@@ -315,7 +315,7 @@ public: defer drawer            defer pixel
         method dto              method dhome!
 
 \ canvas                                               22jun02py
-how:    : init ( xt ac w w+ h h+ -- )  super init bind outer
+how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
          >callback IS drawer down &360 coord ! $0D030C color ! ;
        : pixel, xp 2@ p+ 2dup xp 2! wextend swap wextend pixel ;
         : dx+ ( d -- n )  dx @ extend d+ swap dup dx ! 0< - ;

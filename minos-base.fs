@@ -790,7 +790,7 @@ class;                                          [THEN]
 
 Variable selection
 
-: nextpow2 ( n -- x~2 )  1  BEGIN  2* 2dup <  UNTIL  nip ;
+: nextpow2 ( n -- x^2 )  1  BEGIN  2* 2dup <  UNTIL  nip ;
 
 : (@select  ( -- addr n )  selection @ dup 0=
   IF  drop S" "  ELSE  @+ swap  THEN ;

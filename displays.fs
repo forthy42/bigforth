@@ -45,7 +45,7 @@ public: ptr dpy                 ptr childs
         method click            method click?
         method moved?           method moved!
         method get-win          method get-dpy
-        method click~           method flush-queue
+        method click^           method flush-queue
         method show-me          method scroll
         method clipx            method clipy
         method geometry         method geometry?
@@ -451,15 +451,15 @@ how:    : dispose  clicks HandleOff
         :noname \ cr ." mapping notify"
           event XRefreshKeyboardMapping drop ;
         MappingNotify cells Handlers + !
-        : click~ ( -- event )  clicks @ @+ swap 8* + ;
+        : click^ ( -- event )  clicks @ @+ swap 8* + ;
         : transclick ( x y -- x' y' ) ;
-        : sendclick ( count event -- )  pending on  click~ >r >r
+        : sendclick ( count event -- )  pending on  click^ >r >r
           r@ XButtonEvent state @
           r@ XButtonEvent button @ $80 swap << xor
           r@ XButtonEvent x @
           r> XButtonEvent y @ transclick swap
           r> w!+ w!+ w!+ w!  ;
-        : !xyclick ( event -- )  click~ >r
+        : !xyclick ( event -- )  click^ >r
           dup XButtonEvent x @ swap
               XButtonEvent y @ transclick swap r> w!+ w! ;
 
@@ -469,16 +469,16 @@ how:    : dispose  clicks HandleOff
           lasttime @ rot - swap lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
         : samepos? ( event -- flag )  pending @
-          IF    XButtonEvent x @+ @  click~ w@+ w@ p-
+          IF    XButtonEvent x @+ @  click^ w@+ w@ p-
                 dup * swap dup * + samepos <
           ELSE  drop false  THEN ;
         : moreclicks ( -- )
           clicks @ @ maxclicks 1- < negate clicks @ +! ;
         : flush-queue ( -- )  XTime xrc timeoffset @ @ +
           lasttime @ - twoclicks > pending @ and
-          IF  click~ 6+ w@ 1 and
+          IF  click^ 6+ w@ 1 and
               IF  moreclicks  THEN  pending off  THEN  ;
-        : +clicks ( -- ) click~ 6+ dup w@ 2+ -2 and swap w! ;
+        : +clicks ( -- ) click^ 6+ dup w@ 2+ -2 and swap w! ;
 
 \ Display                                              09mar99py
         : .button cr base push hex event XButtonEvent window
@@ -489,8 +489,8 @@ how:    : dispose  clicks HandleOff
           swap lasttime !  IF   event samepos?
                IF  lastclick @
                    IF    1 event XButtonEvent button @ 1- <<
-                         click~ 5 + dup c@ rot or swap c!
-                   ELSE  click~ 6 + w@ -2 and 1+ event sendclick
+                         click^ 5 + dup c@ rot or swap c!
+                   ELSE  click^ 6 + w@ -2 and 1+ event sendclick
                          lastclick on
                    THEN  EXIT  THEN   event !xyclick pending off
           THEN  pending @  IF  moreclicks  THEN
@@ -504,10 +504,10 @@ how:    : dispose  clicks HandleOff
           IF  event samepos?  IF  lastclick @
               IF    +clicks  lastclick off
                     moreclicks 2 event sendclick
-              ELSE  click~ 6+ w@ 1 and
+              ELSE  click^ 6+ w@ 1 and
                     IF  1 event XButtonEvent button @ 1- <<
-                        click~ 5 + dup c@ rot invert and swap c!
-                    THEN  THEN  EXIT  THEN  click~ 6+ w@  1 and
+                        click^ 5 + dup c@ rot invert and swap c!
+                    THEN  THEN  EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
           pending @ 0= IF  pending push  THEN
@@ -686,17 +686,17 @@ private:
 
 \ Display                                              12aug00py
 
-        : click~ ( -- event )  clicks @ @+ swap 8* + ;
+        : click^ ( -- event )  clicks @ @+ swap 8* + ;
         : >mshift ( fwkeys -- mstate ) 0
           over $01 and 0<> $100 and or
           over $02 and 0<> $400 and or
           over $10 and 0<> $200 and or
           dup $500 = emulate-3button @ and IF  $700 xor  THEN
           nip shift@ or ;
-        : !xyclick ( event -- )  click~ >r
+        : !xyclick ( event -- )  click^ >r
           MSG lparam @ >lohi swap r> w!+ w! ;
         : sendclick ( count event -- )
-          pending on  click~ >r
+          pending on  click^ >r
           dup MSG wparam @ >mshift swap
               MSG lparam @ >lohi swap r> w!+ w!+ w!+ w! ;
 
@@ -705,17 +705,17 @@ private:
           lasttime @ rot swap - swap lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
         : samepos? ( event -- flag )  pending @
-          IF    MSG lparam @ >lohi ( swap ) click~ w@+ w@ p-
+          IF    MSG lparam @ >lohi ( swap ) click^ w@+ w@ p-
                 dup * swap dup * + samepos <
           ELSE  drop false  THEN ;
         : moreclicks ( -- )
           clicks @ @ maxclicks 1- < negate clicks @ +! ;
         : flush-queue ( -- )  GetTickCount
           lasttime @ - twoclicks > pending @ and
-          IF  click~ 6+ w@ 1 and
+          IF  click^ 6+ w@ 1 and
               IF  moreclicks  THEN  pending off
               ( ReleaseCapture drop )  THEN  ;
-        : +clicks ( -- ) click~ 6+ dup w@ 2+ -2 and swap w! ;
+        : +clicks ( -- ) click^ 6+ dup w@ 2+ -2 and swap w! ;
 
 \ Display                                              19jan00py
         :noname ( lparam wparam msg win -- 0 ) ?grab \ add press
@@ -724,8 +724,8 @@ private:
           swap lasttime !
           IF   event samepos?
                IF  lastclick @
-                   IF   event MSG wparam @ >mshift click~ 4 + w!
-                   ELSE  click~ 6 + w@ -2 and 1+ event sendclick
+                   IF   event MSG wparam @ >mshift click^ 4 + w!
+                   ELSE  click^ 6 + w@ -2 and 1+ event sendclick
                          lastclick on
                    THEN  0 EXIT  THEN event !xyclick pending off
           THEN  pending @  IF  moreclicks  THEN
@@ -741,9 +741,9 @@ private:
           IF  event samepos?  IF  lastclick @
               IF    +clicks  lastclick off
                     moreclicks 2 event sendclick
-              ELSE  click~ 6+ w@ 1 and
-                    IF  event MSG wparam @ >mshift click~ 4 + w!
-                    THEN  THEN 0 EXIT  THEN  click~ 6+ w@  1 and
+              ELSE  click^ 6+ w@ 1 and
+                    IF  event MSG wparam @ >mshift click^ 4 + w!
+                    THEN  THEN 0 EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
           pending @ 0= IF  pending push  THEN
@@ -759,7 +759,7 @@ private:
           dup MSG wparam @ >wshift drop 0 ?DO
              dup   MSG wparam @ >wshift nip I 2+ swap
              over2 MSG lparam @ >lohi y @ - swap x @ -
-             click~ w!+ w!+ w!+ w!
+             click^ w!+ w!+ w!+ w!
              moreclicks
           2 +LOOP drop ;
         :noname ( lparam wparam msg win -- ) moved!

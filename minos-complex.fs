@@ -59,7 +59,7 @@ how:
                         GLX_BLUE_SIZE  ,   1 ,
                         GLX_DEPTH_SIZE ,  $10 ,  0 ,
         : init  ( exec actor w w+ h h+ -- )
-          super init  >callback  IS drawer  bind outer ;
+          super init  >callback  IS drawer  ^^ bind outer ;
         : dpy!  super dpy!
           dpy xrc with dpy @ screen @ endwith
           attrib canvas-mode 1 and cells +
@@ -131,7 +131,7 @@ how:
           pixmap @ wglCreateContext dup ?err ctx !
           rendered off ;
         : init  ( exec actor w w+ h h+ -- )
-          super init  >callback  IS drawer  bind outer ;
+          super init  >callback  IS drawer  ^^ bind outer ;
 
 \ OpenGL canvas                                        01nov06py
 
@@ -213,12 +213,12 @@ previous previous
 
 : ^^bind  postpone dup  postpone bind ;      immediate restrict
 /*
-| Create ^^bin-buf $100 allot
-: ^^bin ( -- )
-  ^^bin-buf off ^^bin-buf $sum !
+| Create ^^bind-buf $100 allot
+: ^^bind ( -- )
+  ^^bind-buf off ^^bin-buf $sum !
   s" dup ^^ with bind " $add
   bl word count $add s"  endwith" $add
-  ^^bin-buf count evaluate ; immediate
+  ^^bind-buf count evaluate ; immediate
 */
 \ IO-Window                                            26oct99py
 
@@ -560,7 +560,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
                             EXIT  THEN
               8 << or kbshift @ $100 or keyed ]CK >callback
           assign  defocuscol @ @ color ! ;
-        : close  S" ^Jbye"  bounds ?DO  i c@ 0 keyed  LOOP ;
+        : close  #cr 0 keyed S" bye"  bounds ?DO  i c@ 0 keyed  LOOP ;
         : dispose start HandleOff  keys HandleOff
           typebuf HandleOff  ^ dpy cleanup  super dispose ;
 class;

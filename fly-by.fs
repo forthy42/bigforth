@@ -54,11 +54,13 @@ FVariable phi0  0e phi0 f!
 
 : range ( -- maxphi )  epsilon f@ 1/f fnegate facos ;
 
-: to-sun ( r -- scale )  f**2 bg-scaler f* 1/f ;
+: to-sun ( r -- scale )  f**2
+    f>r fr@ 1/f bg-scaler f+ fr> f* 1/f ;
+\ : to-sun ( r -- scale )  f**2 bg-scaler f* 1/f ;
 
 : diff-a ( r -- a )
-  sun-earth fswap f- f**2
-  sun-mass fswap f/ bg-scaler f- GM f@ f* ;
+    sun-earth f- f**2 sun-mass fswap f/
+    bg-scaler f- GM f@ f* ;
 
 : delta-a ( alpha r -- a )  fdup to-sun f>r
   fswap fsin f* diff-a fr> f* ;
@@ -82,7 +84,7 @@ FVariable phi0  0e phi0 f!
 : integrate ( n -- result )
   range fdup dup 2* fm/ { f: maxphi f: stepphi } 0e
     dup negate 1+ DO
-	I abs I' 9 10 */ <  IF
+	I abs I' 1999 2000 */ <  IF
 	    maxphi I I' fm*/ stepphi delta-step f+
 	THEN
   LOOP ;

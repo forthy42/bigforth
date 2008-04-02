@@ -417,7 +417,7 @@ how:    : init ( widget win -- )  xwin !  title off
 
         : moved!  dpy moved! ;
         : moved?  dpy moved? ;
-        : click~  dpy click~ ;
+        : click^  dpy click^ ;
         : moreclicks dpy moreclicks ;
         : mxy!    transclick dpy mxy! ;
         : keyed   dpy keyed ;
