@@ -21,7 +21,7 @@
 \ ε=1 -> Parabel
 \ ε > 1 -> Hyperbel
 
-import float float also
+include galaxy.fs
 
 332946e FConstant sun-mass \ relative to earth
 1.496e12 FConstant sun-earth

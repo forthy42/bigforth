@@ -1,10 +1,14 @@
 \ compute rotation behaviour of galaxies               21may00py
 
 \needs float     import float
+[IFDEF] glcanvas
 \needs glconst | import glconst
 \needs 3d-turtle include 3d-turtle.fs
-
-float also glconst also opengl also
+[THEN]
+float also
+[IFDEF] glcanvas
+glconst also opengl also
+[THEN]
 
 1 dfloats Constant dfloat
 
@@ -81,12 +85,12 @@ FVariable oldgauss !0 oldgauss f!
 	( f**2 ) x2 f*     element z df! }
     LOOP } ;
 
-\ units: million meters, earth masses
+\ units: kg, meters, seconds
 \ rotations per day
 
-: set-earth ( n -- )  6.37739715e 6.35607896e -13.4987667264019E-6
+: set-earth ( -- )  6.37739715e6 6.35607896e6 -5.31800028336E-9
     { f: d1 f: d2 f: as |
-    0 ?DO
+    star# 0 ?DO
 	BEGIN  frnd f2* !1 f-
 	    frnd f2* !1 f-
 	    frnd f2* !1 f-
@@ -282,6 +286,12 @@ $40 Value vismax
 : vis@ ( n -- x )
     2* 1+ cells vis-array $@ drop + 2@
     swap dup IF  /  ELSE  nip  THEN ;
+: sv* ( x y z star -- v )
+    dup element z df@ f* fswap
+    dup element y df@ f* f+ fswap
+    dup element x df@ f* f+
+    xyz@ fsqsum fsqrt f/ fabs ;
+[IFDEF] canvas
 : draw-vis-array
   ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!
       rgb> drawcolor  path
@@ -294,11 +304,6 @@ $40 Value vismax
   star# 0 ?DO  I star element msum df@
                !1 f* vis'* I vis+  LOOP
   $00 $FF $00  draw-vis-array ;
-: sv* ( x y z star -- v )
-    dup element z df@ f* fswap
-    dup element y df@ f* f+ fswap
-    dup element x df@ f* f+
-    xyz@ fsqsum fsqrt f/ fabs ;
 : visualize-a#  vis-a !vis-array
     star# 0 ?DO
         I star a@ dirsens @ IF
@@ -501,5 +506,4 @@ Create front_shininess  !&20.0 f>fs ,
 	    disc IF  textured smooth on  draw-disc  THEN
 	dispose endwith
     endwith } ;
-
-
+[THEN]
