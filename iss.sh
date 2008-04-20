@@ -23,6 +23,7 @@ AllowNoIcons=1
 InfoBeforeFile=COPYING
 Compression=bzip
 DisableStartupPrompt=yes
+OutputBaseFilename=bigforth-$(eval echo $(cat version.h))
 
 [Messages]
 WizardInfoBefore=License Agreement
