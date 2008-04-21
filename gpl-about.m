@@ -38,7 +38,7 @@ minos-splash implements
          icon" icons/minos" icon new 
       &1 vabox new &2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
+  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 gpl-about implements
@@ -50,27 +50,26 @@ gpl-about implements
   ELSE   drop  THEN
   [ previous ] ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-            S" bigFORTH is a native code Forth system, MINOS is a GUI library." text-label new 
-            S" Copyright (c) 1998-2006 by Bernd Paysan" text-label new 
+            X" bigFORTH is a native code Forth system, MINOS is a GUI library." text-label new 
+            X" Copyright (c) 1998-2008 by Bernd Paysan" text-label new 
               $10 $1 *hfil $10 $1 *vfil glue new 
                icon" icons/minos" icon new 
               $10 $1 *hfil $10 $1 *vfil glue new 
             &3 habox new vfixbox 
           &3 vabox new vfixbox 
-            S" This program is free software; you can redistribute it and/or modify" text-label new 
-            S" it under the terms of the GNU General Public License as published by" text-label new 
-            S" the Free Software Foundation; either version 2 of the License, or" text-label new 
-            S" (at your option) any later version." text-label new 
+            X" This program is free software; you can redistribute it and/or modify" text-label new 
+            X" it under the terms of the GNU General Public License as published by" text-label new 
+            X" the Free Software Foundation; either version 3 of the License, or" text-label new 
+            X" (at your option) any later version." text-label new 
           &4 vabox new vfixbox 
-            S" This program is distributed in the hope that it will be useful," text-label new 
-            S" but WITHOUT ANY WARRANTY; without even the implied warranty of" text-label new 
-            S" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" text-label new 
-            S" GNU General Public License for more details." text-label new 
+            X" This program is distributed in the hope that it will be useful," text-label new 
+            X" but WITHOUT ANY WARRANTY; without even the implied warranty of" text-label new 
+            X" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" text-label new 
+            X" GNU General Public License for more details." text-label new 
           &4 vabox new vfixbox 
-            S" You should have received a copy of the GNU General Public License" text-label new 
-            S" along with this program; if not, write to the Free Software" text-label new 
-            S" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA." text-label new 
-          &3 vabox new vfixbox 
+            X" You should have received a copy of the GNU General Public License" text-label new 
+            X" along with this program.  If not, see <http://www.gnu.org/licenses/>." text-label new 
+          &2 vabox new vfixbox 
             1 1 vviewport new  DS[ 
                (straction stredit new  ^^bind COPYING $42 setup-edit 
             &1 vabox new ]DS ( MINOS ) 
@@ -78,12 +77,12 @@ gpl-about implements
           &2 habox new
         &5 vabox new &1 vskips
           $10 $1 *hfill $10 $1 *vfil glue new 
-          ^^ S[ close ]S ( MINOS ) S"  OK " button new  ^^bind gpl-ok
+          ^^ S[ close ]S ( MINOS ) X"  OK " button new  ^^bind gpl-ok
           $10 $1 *hfill $10 $1 *vfil glue new 
         &3 habox new vfixbox 
       &2 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
+  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 previous previous previous

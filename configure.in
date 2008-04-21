@@ -12,6 +12,13 @@ case "$host_os" in
 		INI="bigforth.ini"
 		XINI="xbigforth.ini"
 		;;
+	*bsd)
+		EXTFLAGS="-DBSD"
+		WINDOWS=""
+		ARCHFLAGS=""
+		INI=".bigforthrc"
+		XINI=".xbigforthrc"
+		;;
 	*)
 		EXTFLAGS=""
 		WINDOWS=""
