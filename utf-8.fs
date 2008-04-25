@@ -243,7 +243,7 @@ previous
 
 \ input editor
 
-variable curpos
+User curpos
 
 : cursor@ ( -- n )  at? swap form nip * + ;
 : cursor! ( n -- )  form nip /mod swap at ;
