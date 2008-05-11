@@ -15,23 +15,27 @@ Module atlas
 
 also DOS
 
-library liblapack liblapack.so.3
+library libatlas libatlas.so
+library liblapack liblapack.so depends libatlas
 
-legacy off
+legacy off warnings off
 
+\ these functions are provided by atlas, they make life so much easier
+\ that inversion of matrices is implemented through them rather than
+\ plain fortran functions of lapack, drawback is only one -- you need
+\ atlas installed, but this binding is to atlas, remember!
+liblapack clapack_dgesv  [ 8 ] ints (int) clapack_dgesv  ( -- )
+liblapack clapack_dgetrf [ 6 ] ints (int) clapack_dgetrf ( -- )
+liblapack clapack_dgetri [ 5 ] ints (int) clapack_dgetri ( -- )
 
-liblapack clapack_dgesv
- int int int int int int int int (int) dgesv_ ( -- )
+\ plain fortran routines
+liblapack dgetrf         [ 6 ] ints (void) dgetrf_ 
+liblapack dgetri         [ 7 ] ints (void) dgetri_ 
+liblapack dgesvd        [ 14 ] ints (void) dgesvd_ ( -- )
+liblapack dpotrf         [ 5 ] ints (void) dpotrf_ ( -- )
 
-liblapack clapack_dgetrf
- int int int int int int (int) dgetrf_ ( -- )
+legacy on warnings on
 
-liblapack clapack_dgetri
- int int int int int (int) dgetri_ ( -- )
-
-liblapack dgesvd_
- int int int int int int int int int int int int int int (void) dgesvd_ ( -- )
-
-legacy on
 previous
+
 Module;

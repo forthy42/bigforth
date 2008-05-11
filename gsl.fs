@@ -12,17 +12,41 @@
 \ GNU General Public License for more details.
 
 \needs float    import float
-\needs locals   include locals.fs
+warning off
+\needs locals|  include locals.fs
+warning on
 \needs atlas    include atlas.fs
 \needs callback include callback.fs
+\needs vectors  include vectors.fs
+\needs complex  include complex.fb
 
 Module GSL
 
-also float also atlas also DOS
+\ stole the hash function from hash.fs of bigforth
+| &14 Value Hashbits
+| 1 Hashbits << Value Hashlen
 
-library libblas libblas.so.3
+Label (hash ( SI:string -- AX:key )  :R  DX push
+      .b lods  $1F # AX and  AX CX mov  DX DX xor  CX 1 # shr
+      b IF  SI ) AH mov  SI inc  THEN  CX dec
+      0>= IF  BEGIN  .w SI ) DX mov  2 # SI add  CX dec
+                     DX AX *2 I) AX lea  0< UNTIL  THEN
+      & Hashbits A#) CX mov  AX DX mov  AX shr  DX AX add
+      & Hashlen  A#) CX mov  CX dec  CX AX and  DX pop  ret
+| Code Hash ( string -- key )
+       R: SI push  AX SI mov  (hash rel) call  SI pop
+    Next end-code
 
-library libgsl libgsl.so.0 depends libblas \ libgslcblas
+also dos also complex also float also atlas also vectors
+
+s" libptcblas.so" getlib 0<>
+[IF]
+    library libblas libptcblas.so depends libatlas
+[ELSE]
+    library libblas libcblas.so depends libatlas
+[THEN]
+
+library libgsl libgsl.so.0 depends libblas
 
 legacy off
 
@@ -42,25 +66,39 @@ callback 4:0 (void) int int int int callback;
             1+
     repeat ;
 
-: .bold-red ." [1;31;40m" ;
-: .red ." [2;31;40m" ;
-: .reset    ." [0;37;40m" ;
-: cb-test
+| : .bold-red ." [1;31;40m" ;
+| : .red ." [2;31;40m" ;
+| : .reset    ." [0;37;40m" ;
+| : cb-test
     cr
-    .bold-red ." GSL ERROR: " .reset cr
+    \ .bold-red
+    ." GSL ERROR: " cr
+    \ .reset cr
     10 spaces gsl_strerror cstr-fstr type cr 
     drop \    ." at line: " . cr
     drop \    ." of file: " cstr-fstr type cr
     10 spaces cstr-fstr type cr
-    .red
-    -1 abort" failed at[0;37;40m" ;
+    \ .red
+    -1 abort" failed at" ;
 ' cb-test 4:0 c_plus
 
 \ 1 2 c_plus 2:1call .
-variable old_handler
+| variable old_handler
 c_plus gsl_set_error_handler old_handler !
 
 0 Constant GSL_SUCCESS
+
+\ Special functions
+\ Digamma Function
+libgsl gsl_sf_psi_int int (fp) gsl_sf_psi_int ( n -- f:\psi[n] )
+libgsl gsl_sf_psi_int_e int ptr (int) gsl_sf_psi_int_e ( n *r -- n )
+libgsl gsl_sf_psi df (fp) gsl_sf_psi
+libgsl gsl_sf_psi_e int ptr (int) gsl_sf_psi_e ( n *r -- n )
+' gsl_sf_psi_int alias ipsi
+' gsl_sf_psi     alias fpsi
+\ Gamma function
+libgsl gsl_sf_gamma df (fp) gsl_sf_gamma
+' gsl_sf_gamma alias fgamma
 
 \ random number generation               Mon Sep 12 22:06:01 MDT 2005
 
@@ -71,13 +109,76 @@ libgsl gsl_rng_name int (int) gsl_rng_name ( *gsl_rng -- string )
 libgsl gsl_rng_set int int (void) gsl_rng_set ( *gsl_rng int -- )
 libgsl gsl_rng_uniform int (fp) gsl_rng_uniform ( *gsl_rng -- df )
 libgsl gsl_rng_uniform_pos int (fp) gsl_rng_uniform_pos ( *gsl_rng -- df )
-libgsl gsl_rng_uniform_int int int (int) gsl_rng_uniform_int ( *gsl_rng n -- n )
+libgsl gsl_rng_uniform_int int int (int) gsl_rng_uniform_int ( *gsl_rng n --n )
 libgsl gsl_rng_get int (int) gsl_rng_get ( *gsl_rng -- int )
 libgsl gsl_rng_max int (int) gsl_rng_max ( *gsl_rng -- int )
 libgsl gsl_rng_min int (int) gsl_rng_min ( *gsl_rng -- int )
 libgsl gsl_rng_clone int (int) gsl_rng_clone ( *gsl_rng -- *gsl_rng )
-libgsl gsl_rng_free int (int) gsl_rng_free ( *gsl_rng -- )
+libgsl gsl_rng_free int (void) gsl_rng_free ( *gsl_rng -- )
 
+libgsl _gsl_rng_borosh13         (int) gsl_rng_borosh13
+libgsl _gsl_rng_coveyou          (int) gsl_rng_coveyou
+libgsl _gsl_rng_cmrg             (int) gsl_rng_cmrg
+libgsl _gsl_rng_fishman18        (int) gsl_rng_fishman18
+libgsl _gsl_rng_fishman20        (int) gsl_rng_fishman20
+libgsl _gsl_rng_fishman2x        (int) gsl_rng_fishman2x
+libgsl _gsl_rng_gfsr4            (int) gsl_rng_gfsr4 \ 2nd fastest
+libgsl _gsl_rng_knuthran         (int) gsl_rng_knuthran
+libgsl _gsl_rng_knuthran2        (int) gsl_rng_knuthran2
+libgsl _gsl_rng_knuthran2002     (int) gsl_rng_knuthran2002
+libgsl _gsl_rng_lecuyer21        (int) gsl_rng_lecuyer21
+libgsl _gsl_rng_minstd           (int) gsl_rng_minstd
+libgsl _gsl_rng_mrg              (int) gsl_rng_mrg
+libgsl _gsl_rng_mt19937          (int) gsl_rng_mt19937 \ 3rd fastest
+libgsl _gsl_rng_mt19937_1999     (int) gsl_rng_mt19937_1999
+libgsl _gsl_rng_mt19937_1998     (int) gsl_rng_mt19937_1998
+libgsl _gsl_rng_r250             (int) gsl_rng_r250
+libgsl _gsl_rng_ran0             (int) gsl_rng_ran0
+libgsl _gsl_rng_ran1             (int) gsl_rng_ran1
+libgsl _gsl_rng_ran2             (int) gsl_rng_ran2
+libgsl _gsl_rng_ran3             (int) gsl_rng_ran3
+libgsl _gsl_rng_rand             (int) gsl_rng_rand
+libgsl _gsl_rng_rand48           (int) gsl_rng_rand48
+libgsl _gsl_rng_random128_bsd    (int) gsl_rng_random128_bsd
+libgsl _gsl_rng_random128_glibc2 (int) gsl_rng_random128_glibc2
+libgsl _gsl_rng_random128_libc5  (int) gsl_rng_random128_libc5
+libgsl _gsl_rng_random256_bsd    (int) gsl_rng_random256_bsd
+libgsl _gsl_rng_random256_glibc2 (int) gsl_rng_random256_glibc2
+libgsl _gsl_rng_random256_libc5  (int) gsl_rng_random256_libc5
+libgsl _gsl_rng_random32_bsd     (int) gsl_rng_random32_bsd
+libgsl _gsl_rng_random32_glibc2  (int) gsl_rng_random32_glibc2
+libgsl _gsl_rng_random32_libc5   (int) gsl_rng_random32_libc5
+libgsl _gsl_rng_random64_bsd     (int) gsl_rng_random64_bsd
+libgsl _gsl_rng_random64_glibc2  (int) gsl_rng_random64_glibc2
+libgsl _gsl_rng_random64_libc5   (int) gsl_rng_random64_libc5
+libgsl _gsl_rng_random8_bsd      (int) gsl_rng_random8_bsd
+libgsl _gsl_rng_random8_glibc2   (int) gsl_rng_random8_glibc2
+libgsl _gsl_rng_random8_libc5    (int) gsl_rng_random8_libc5
+libgsl _gsl_rng_random_bsd       (int) gsl_rng_random_bsd
+libgsl _gsl_rng_random_glibc2    (int) gsl_rng_random_glibc2
+libgsl _gsl_rng_random_libc5     (int) gsl_rng_random_libc5
+libgsl _gsl_rng_randu            (int) gsl_rng_randu
+libgsl _gsl_rng_ranf             (int) gsl_rng_ranf
+libgsl _gsl_rng_ranlux           (int) gsl_rng_ranlux    \ statistically best
+libgsl _gsl_rng_ranlux389        (int) gsl_rng_ranlux389 \ 
+libgsl _gsl_rng_ranlxd1          (int) gsl_rng_ranlxd1   \
+libgsl _gsl_rng_ranlxd2          (int) gsl_rng_ranlxd2
+libgsl _gsl_rng_ranlxs0          (int) gsl_rng_ranlxs0
+libgsl _gsl_rng_ranlxs1          (int) gsl_rng_ranlxs1
+libgsl _gsl_rng_ranlxs2          (int) gsl_rng_ranlxs2   \ up to here
+libgsl _gsl_rng_ranmar           (int) gsl_rng_ranmar
+libgsl _gsl_rng_slatec           (int) gsl_rng_slatec
+libgsl _gsl_rng_taus             (int) gsl_rng_taus \ 1st fastest
+libgsl _gsl_rng_taus2            (int) gsl_rng_taus2
+libgsl _gsl_rng_taus113          (int) gsl_rng_taus113
+libgsl _gsl_rng_transputer       (int) gsl_rng_transputer
+libgsl _gsl_rng_tt800            (int) gsl_rng_tt800
+libgsl _gsl_rng_uni              (int) gsl_rng_uni
+libgsl _gsl_rng_uni32            (int) gsl_rng_uni32
+libgsl _gsl_rng_vax              (int) gsl_rng_vax
+libgsl _gsl_rng_waterman14       (int) gsl_rng_waterman14
+libgsl _gsl_rng_zuf              (int) gsl_rng_zuf
+libgsl _gsl_rng_default          (int) gsl_rng_default
 
 
 \ random number distributions                     Tue Sep 13 00:44:35 MDT 2005
@@ -92,6 +193,10 @@ libgsl gsl_ran_ugaussian_pdf df (fp) gsl_ran_ugaussian_pdf ( df df -- df )
 libgsl gsl_ran_discrete_preproc int int (int) gsl_ran_discrete_preproc ( int int -- int )
 libgsl gsl_ran_discrete int int (int) gsl_ran_discrete
 libgsl gsl_ran_discrete_free int (void) gsl_ran_discrete_free
+libgsl gsl_ran_shuffle int int ptr ptr (void) gsl_ran_shuffle
+libgsl gsl_ran_choose int int ptr int ptr ptr (int) gsl_ran_choose
+libgsl gsl_ran_sample int int ptr int ptr ptr (void) gsl_ran_sample
+
 \ cdf P(x) = \int_{-\infty}^{x} p(x)dx  Q(x) = \int_{x}^{\infty} p(x)dx
 libgsl gsl_cdf_gaussian_P df df (fp) gsl_cdf_gaussian_P ( df df -- df )
 libgsl gsl_cdf_gaussian_Q df df (fp) gsl_cdf_gaussian_Q ( df df -- df )
@@ -121,72 +226,115 @@ libgsl gsl_stats_min_index int int int (int) gsl_stats_min_index ( array{ step s
 
 \ vectors and matrices                           Wed Sep 14 00:15:36 MDT 2005
 
-libgsl gsl_block_alloc int (int) gsl_block_alloc ( n -- addr )
+\ Vectors 
+libgsl gsl_block_alloc  int (int) gsl_block_alloc ( n -- addr )
 libgsl gsl_block_calloc int (int) gsl_block_calloc ( n -- addr )
-libgsl gsl_block_free int (int) gsl_block_free ( n -- addr )
+libgsl gsl_block_free   int (int) gsl_block_free ( n -- addr )
 
-libgsl gsl_vector_alloc int (int) gsl_vector_alloc ( n -- addr )
-libgsl gsl_vector_calloc int (int) gsl_vector_calloc ( n -- addr )
-libgsl gsl_vector_free int (void) gsl_vector_free ( addr -- )
-libgsl gsl_vector_get int int (fp) gsl_vector_get ( addr i -- df )
+libgsl gsl_vector_alloc             int (int) gsl_vector_alloc ( n -- addr )
+libgsl gsl_vector_calloc            int (int) gsl_vector_calloc ( n -- addr )
+libgsl gsl_vector_alloc_from_vector int int int ptr (int) gsl_vector_alloc_from_vector
+libgsl gsl_vector_free          int (void) gsl_vector_free ( addr -- )
+libgsl gsl_vector_get         int int (fp) gsl_vector_get ( addr i -- df )
 libgsl gsl_vector_set df int int (void/fp) gsl_vector_set ( df addr i --  )
-libgsl gsl_vector_set_all df int (void) gsl_vector_set_all ( df addr -- )
-libgsl gsl_vector_set_zero int (void) gsl_vector_set_zero ( addr -- )
-libgsl gsl_vector_memcpy int int (int) gsl_vector_memcpy ( dest_addr src_addr -- n )
+libgsl gsl_vector_set_all    df int (void) gsl_vector_set_all ( df addr -- )
+libgsl gsl_vector_set_zero      int (void) gsl_vector_set_zero ( addr -- )
+libgsl gsl_vector_memcpy     int int (int) gsl_vector_memcpy ( dest_addr src_addr -- n )
 
-libgsl gsl_vector_add int int (int) gsl_vector_add ( addr addr -- n )
-libgsl gsl_vector_sub int int (int) gsl_vector_sub ( addr addr -- n )
-libgsl gsl_vector_mul int int (int) gsl_vector_mul ( addr addr -- n )
-libgsl gsl_vector_div int int (int) gsl_vector_div ( addr addr -- n )
-libgsl gsl_vector_scale df int (int) gsl_vector_scale ( df addr -- n )
-libgsl gsl_vector_add_constant df int (int) gsl_vector_add_constant ( df addr -- n )
-libgsl gsl_vector_max int (fp) gsl_vector_max ( addr -- df )
-libgsl gsl_vector_min int (fp) gsl_vector_min ( addr -- df )
-libgsl gsl_vector_max_index int (fp) gsl_vector_max_index ( addr -- df )
-libgsl gsl_vector_min_index int (fp) gsl_vector_min_index ( addr -- df )
-
-\ permutations
-
-libgsl gsl_permutation_alloc int (int) gsl_permutation_alloc ( n -- *gsl_permutation )
-libgsl gsl_permutation_calloc int (int) gsl_permutation_calloc ( n -- *gsl_permutation )
-libgsl gsl_permutation_init int (void) gsl_permutation_init ( *gsl_permutation -- )
-libgsl gsl_permutation_free int (void) gsl_permutation_free ( *gsl_permutation -- )
-libgsl gsl_permutation_get int int (int) gsl_permutation_get ( *gsl_permutation i -- n )
-
-libgsl gsl_matrix_scale df int (int/fp)  gsl_matrix_scale ( *gsl_matrix df -- n )
-libgsl gsl_matrix_alloc int int (int) gsl_matrix_alloc ( n m -- *gsl_matrix )
-libgsl gsl_matrix_calloc int int (int) gsl_matrix_calloc ( n m -- *gsl_matrix )
-libgsl gsl_matrix_free int (void) gsl_matrix_free ( *gsl_matrix -- )
-libgsl gsl_matrix_get int int int (fp) gsl_matrix_get ( *gsl_matrix i j  -- df )
-libgsl gsl_matrix_ptr int int int (int) gsl_matrix_ptr ( *gsl_matrix i j  -- *[i,j] )
-libgsl gsl_matrix_set df int int int (void/fp) gsl_matrix_set ( df *gsl_matrix i j  -- )
-libgsl gsl_matrix_add int int (int/fp) gsl_matrix_add ( *gsl_matrix *gsl_matrix -- n )
-libgsl gsl_matrix_sub int int (int/fp) gsl_matrix_sub ( *gsl_matrix *gsl_matrix -- n )
-libgsl gsl_matrix_mul_elements int int (int/fp) gsl_matrix_mul_elements
-( *gsl_matrix *gsl_matrix -- n )
-libgsl gsl_matrix_set_all df int (void/fp) gsl_matrix_set_all ( *gsl_matrix df -- n )
-libgsl gsl_matrix_memcpy int int (int) gsl_matrix_memcpy
-( *gsl_matrix *gsl_matrix -- n )
-libgsl gsl_matrix_max int (fp) gsl_matrix_max ( *gsl_matrix -- df )
-libgsl gsl_matrix_min int (fp) gsl_matrix_min ( *gsl_matrix -- df )
-libgsl gsl_matrix_transpose_memcpy int int (int) gsl_matrix_transpose_memcpy
-( *gsl_matrix *gsl_matrix -- n )
-libgsl gsl_matrix_transpose int (int) gsl_matrix_transpose
-( *gsl_matrix *gsl_matrix -- n )
-
-libgsl gsl_matrix_submatrix int int int int int (int) gsl_matrix_submatrix
-( *gsl_matrix k1 k2 n1 n2 -- n )
-
-libgsl gsl_matrix_row int int (int) gsl_matrix_row ( *gsl_matrix idx -- *gsl_vector )
-libgsl gsl_matrix_column int int (int) gsl_matrix_column ( *gsl_matrix idx -- *gsl_vector )
-libgsl gsl_matrix_diagonal int (int) gsl_matrix_diagonal ( *gsl_matrix -- *gsl_vector )
+libgsl gsl_vector_add           int int (int) gsl_vector_add ( addr addr -- n )
+libgsl gsl_vector_sub           int int (int) gsl_vector_sub ( addr addr -- n )
+libgsl gsl_vector_mul           int int (int) gsl_vector_mul ( addr addr -- n )
+libgsl gsl_vector_div           int int (int) gsl_vector_div ( addr addr -- n )
+libgsl gsl_vector_scale          df int (int) gsl_vector_scale ( df addr -- n )
+libgsl gsl_vector_add_constant   df int (int) gsl_vector_add_constant ( df addr -- n )
+libgsl gsl_vector_max                 int (fp) gsl_vector_max ( addr -- df )
+libgsl gsl_vector_min                 int (fp) gsl_vector_min ( addr -- df )
+libgsl gsl_vector_minmax    ptr ptr ptr (void) gsl_vector_minmax
+libgsl gsl_vector_max_index          int (int) gsl_vector_max_index ( a -- n )
+libgsl gsl_vector_min_index          int (int) gsl_vector_min_index ( a -- n )
+libgsl gsl_vector_minmax_index ptr ptr ptr (void) gsl_vector_minmax_index
 
 libgsl gsl_vector_subvector int int int (int) gsl_vector_subvector
+\ Vector properties
+libgsl gsl_vector_isnull   ptr         (int) gsl_vector_isnull
+libgsl gsl_vector_ispos    ptr         (int) gsl_vector_ispos
+libgsl gsl_vector_isneg    ptr         (int) gsl_vector_isneg
+
+\ Sorting vectors
+libgsl gsl_sort int int ptr (void) gsl_sort
+libgsl gsl_sort_vector ptr (void) gsl_sort_vector
+libgsl gsl_sort_index int int ptr ptr (void) gsl_sort_index
+libgsl gsl_sort_vector_index ptr ptr (int) gsl_sort_vector_index
+libgsl gsl_sort_vector_smallest_index ptr int ptr (int) gsl_sort_vector_smallest_index
+
+\ permutations
+libgsl gsl_permutation_alloc   int (int) gsl_permutation_alloc ( n -- *gsl_prm)
+libgsl gsl_permutation_calloc int (int) gsl_permutation_calloc ( n -- *gsl_prm)
+libgsl gsl_permutation_init   int (void) gsl_permutation_init ( *gsl_prm -- )
+libgsl gsl_permutation_free   int (void) gsl_permutation_free ( *gsl_prm -- )
+libgsl gsl_permutation_get int int (int) gsl_permutation_get ( *gsl_prm i -- n)
+libgsl gsl_permutation_reverse ptr (void) gsl_permutation_reverse
+libgsl gsl_permutation_inverse ptr ptr (int) gsl_permutation_inverse
+
+\ Matrices
+\ Allocation
+libgsl gsl_matrix_alloc               int int (int) gsl_matrix_alloc
+libgsl gsl_matrix_calloc              int int (int) gsl_matrix_calloc
+libgsl gsl_matrix_alloc_from_block [ 5 ] ints (int) gsl_matrix_alloc_from_block
+libgsl gsl_matrix_alloc_from_matrix [ 5 ] ints (int) gsl_matrix_alloc_from_matrix
+libgsl gsl_matrix_free     ( *gsl_matrix -- )      int (void) gsl_matrix_free
+\ Accessing matrix elements
+libgsl gsl_matrix_get      int int int (fp) gsl_matrix_get ( *m i j  -- df )
+libgsl gsl_matrix_set df int int int (void) gsl_matrix_set ( df *m i j  -- )
+libgsl gsl_matrix_ptr     int int int (int) gsl_matrix_ptr ( *m i j  -- *[i,j] )
+\ Initializing matrix elements
+libgsl gsl_matrix_set_all      df int (void) gsl_matrix_set_all      ( *m df -- n )
+libgsl gsl_matrix_set_zero     df int (void) gsl_matrix_set_zero     ( *m df -- n )
+libgsl gsl_matrix_set_identity df int (void) gsl_matrix_set_identity ( *m df -- n )
+\ Reading and writing matrices
+libgsl gsl_matrix_fwrite      ptr ptr (int) gsl_matrix_fwrite
+libgsl gsl_matrix_fread       ptr ptr (int) gsl_matrix_fread
+libgsl gsl_matrix_fprintf ptr ptr ptr (int) gsl_matrix_fprintf
+libgsl gsl_matrix_fscanf      ptr ptr (int) gsl_matrix_fscanf
+\ Copying matrices
+libgsl gsl_matrix_memcpy      int int (int) gsl_matrix_memcpy ( *m *m -- n )
+libgsl gsl_matrix_swap        int int (int) gsl_matrix_swap ( *m *m -- n )
 \ Copying Rows and columns
 libgsl gsl_matrix_get_row int int int (int) gsl_matrix_get_row
 libgsl gsl_matrix_set_row int int int (int) gsl_matrix_set_row
 libgsl gsl_matrix_get_col int int int (int) gsl_matrix_get_col
 libgsl gsl_matrix_set_col int int int (int) gsl_matrix_set_col
+\ Exchanging rows and columns
+libgsl gsl_matrix_swap_rows    int int ptr (int) gsl_matrix_swap_rows
+libgsl gsl_matrix_swap_columns int int ptr (int) gsl_matrix_swap_columns
+libgsl gsl_matrix_swap_rowcol  int int ptr (int) gsl_matrix_swap_rowcol
+libgsl gsl_matrix_transpose_memcpy int int (int) gsl_matrix_transpose_memcpy
+libgsl gsl_matrix_transpose            int (int) gsl_matrix_transpose
+\ Matrix operations
+libgsl gsl_matrix_add          int int (int) gsl_matrix_add
+libgsl gsl_matrix_sub          int int (int) gsl_matrix_sub
+libgsl gsl_matrix_mul_elements int int (int) gsl_matrix_mul_elements
+libgsl gsl_matrix_div_elements int int (int) gsl_matrix_div_elements
+libgsl gsl_matrix_scale         df int (int)  gsl_matrix_scale
+libgsl gsl_matrix_add_constant  df int (int) gsl_matrix_add_constant
+\ Finding maximum and minimum elements of matrices
+libgsl gsl_matrix_max                 ptr (fp) gsl_matrix_max 
+libgsl gsl_matrix_min                 ptr (fp) gsl_matrix_min
+libgsl gsl_matrix_minmax    ptr ptr ptr (void) gsl_matrix_minmax
+libgsl gsl_matrix_min_index ptr ptr ptr (void) gsl_matrix_min_index
+libgsl gsl_matrix_max_index ptr ptr ptr (void) gsl_matrix_max_index
+libgsl gsl_matrix_minmax_index ptr ptr ptr ptr ptr (void) gsl_matrix_minmax_index
+\ Matrix properties
+libgsl gsl_matrix_isnull   ptr         (int) gsl_matrix_isnull
+libgsl gsl_matrix_ispos    ptr         (int) gsl_matrix_ispos
+libgsl gsl_matrix_isneg    ptr         (int) gsl_matrix_isneg
+\ libgsl gsl_matrix_isnonneg ptr         (int) gsl_matrix_isnonneg
+
+
+libgsl gsl_matrix_submatrix int int int int int (int) gsl_matrix_submatrix ( *gsl_matrix k1 k2 n1 n2 -- n )
+libgsl gsl_matrix_row int int (int) gsl_matrix_row ( *gsl_matrix idx -- *gsl_vector )
+libgsl gsl_matrix_column int int (int) gsl_matrix_column ( *gsl_matrix idx -- *gsl_vector )
+libgsl gsl_matrix_diagonal int (int) gsl_matrix_diagonal ( *gsl_matrix -- *gsl_vector )
 
 
 \ BLAS                                      Wed Sep 14 16:10:34 MDT 2005
@@ -213,7 +361,7 @@ libgsl gsl_linalg_SV_decomp int int int int (int) gsl_linalg_SV_decomp
 libgsl gsl_linalg_SV_decomp_mod int int int int int (int) gsl_linalg_SV_decomp_mod
 ( *gsl_matrix *gsl_matrix *gsl_matrix *gsl_vector *gsl_vector -- n )
 
-\ ------------------------------------------------------------------------------
+\ -----------------------------------------------------------------------------
 \                  *** Ordinary Differential Equations ***
 \ --- ODE system
 struct{
@@ -281,9 +429,74 @@ libgsl gsl_odeiv_evolve_apply int int df int int int int int (int) gsl_odeiv_evo
 ( -- )
 libgsl gsl_odeiv_evolve_reset ptr (int) gsl_odeiv_evolve_reset ( *e -- r )
 libgsl gsl_odeiv_evolve_free ptr (void) gsl_odeiv_evolve_free  ( *e --  )
+\ -----------------------------------------------------------------------------
+\                     *** Fast Fourier Transform ***
+\ -- real
+libgsl gsl_fft_real_wavetable_alloc int (ptr) gsl_fft_real_wavetable_alloc
+libgsl gsl_fft_real_wavetable_free  ptr (void) gsl_fft_real_wavetable_free
+libgsl gsl_fft_real_workspace_alloc int (ptr) gsl_fft_real_workspace_alloc
+libgsl gsl_fft_real_workspace_free  ptr (void) gsl_fft_real_workspace_free
+\ in-place
+libgsl gsl_fft_real_transform ptr int int ptr ptr (int) gsl_fft_real_transform
+libgsl gsl_fft_real_unpack    ptr ptr int int (int) gsl_fft_real_unpack
+
+\ -- halfcomplex
+\ - mixed radix
+libgsl gsl_fft_hc_wtbl_alloc int (ptr) gsl_fft_halfcomplex_wavetable_alloc
+libgsl gsl_fft_hc_wtbl_free  ptr (void) gsl_fft_halfcomplex_wavetable_free
+libgsl gsl_fft_hc_backward   ptr int int ptr ptr (int) gsl_fft_halfcomplex_backward
+libgsl gsl_fft_hc_inverse    ptr int int ptr ptr (int) gsl_fft_halfcomplex_inverse
+libgsl gsl_fft_hc_transform  ptr int int ptr ptr (int) gsl_fft_halfcomplex_transform
+libgsl gsl_fft_hc_unpack     ptr ptr int int (int) gsl_fft_halfcomplex_unpack
+\ - radix2
+libgsl gsl_fft_hc_r2_unpack    ptr ptr int int (int) gsl_fft_halfcomplex_radix2_unpack
+libgsl gsl_fft_hc_r2_backward  ptr int int (int) gsl_fft_halfcomplex_radix2_backward
+libgsl gsl_fft_hc_r2_inverse   ptr int int (int) gsl_fft_halfcomplex_radix2_inverse
+libgsl gsl_fft_hc_r2_transform ptr int int (int) gsl_fft_halfcomplex_radix2_transform
+
+
+| hashlen 32 vector fftpre(
+struct{
+    cell next
+    cell size
+    cell workspace
+    cell r_wavetable
+    cell hc_wavetable
+} gsl_fft_precomputes
+| create $buf 255 allot
+| : 2str dup >r abs s>d <# #s r> sign #> $buf 0place ;
+| : s>hash ( n -- key ) 2str $buf hash ;
+| : (cache-fft) ( n -- addr )
+    sizeof gsl_fft_precomputes allocate throw >r
+    0 r@ gsl_fft_precomputes next !
+    dup r@ gsl_fft_precomputes size !
+    dup gsl_fft_real_workspace_alloc r@ gsl_fft_precomputes workspace !
+    dup gsl_fft_real_wavetable_alloc r@ gsl_fft_precomputes r_wavetable !
+        gsl_fft_hc_wtbl_alloc r@ gsl_fft_precomputes hc_wavetable !
+    r> ;
+| : cache-fft ( size -- addr )
+    dup s>hash
+    fftpre( over )@ 0= if
+        swap (cache-fft)
+        fftpre( rot dup >r )!
+        fftpre( r> )@   
+    else
+        swap (cache-fft)
+        swap fftpre( over )@
+        over gsl_fft_precomputes next !
+        fftpre( rot dup >r )!
+        fftpre( r> )@
+    then ;
+\ in case not found addr is just the size
+| : find-fft-cache ( n -- addr 0/1 )
+    dup s>hash fftpre( swap )@ dup
+    begin while
+            2dup gsl_fft_precomputes size @ =
+            if nip true exit then
+            gsl_fft_precomputes next @ dup
+    repeat ;
 
 legacy on
-
 
 \ Structures
 
@@ -332,133 +545,139 @@ struct{
     cells + @ ;
 
 \ setting up all available random number generators
-gsl_rng_types_setup  value gsl_rng_array(
+\ gsl_rng_types_setup  value gsl_rng_array(
 0 value gsl_rng_default
 : gsl-free ( -- )
     gsl_rng_default gsl_rng_free ;
 
-: borosh13 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 0 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: cmrg ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 1 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: coveyou ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 2 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: fishman18 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 3 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: fishman20 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 4 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: fishman2x ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 5 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: gfsr4 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 6 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: knuthran ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 7 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: knuthran2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 8 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: lecuyer21 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 9 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: minstd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 10 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: mrg ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 11 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: mt19937 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 12 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: mt19937_1999 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 13 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: mt19937_1998 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 14 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: r250 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 15 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ran0 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 16 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ran1 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 17 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ran2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 18 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ran3 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 19 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: rand ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 20 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: rand48 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 21 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random128-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 22 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random128-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 23 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random128-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 24 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random256-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 25 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random256-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 26 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random256-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 27 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random32-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 28 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random32-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 29 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random32-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 30 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random64-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 31 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random64-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 32 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random64-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 33 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random8-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 34 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random8-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 35 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random8-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 36 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random-bsd ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 37 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random-glibc2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 38 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: random-libc5 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 39 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: randu ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 40 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranf ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 41 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlux ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 42 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlux389 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 43 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlxd1 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 44 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlxd2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 45 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlxs0 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 46 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlxs1 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 47 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranlxs2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 48 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: ranmar ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 49 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: slatec ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 50 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: taus ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 51 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: taus2 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 52 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: taus113 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 53 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: transputer ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 54 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: tt800 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 55 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: uni ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 56 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: uni32 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 57 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: vax ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 58 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: waterman14 ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 59 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
-: zuf ( -- *gsl_rng ) gsl_rng_default 0<> if gsl-free then 
-    gsl_rng_array( 60 )gsl-rng gsl_rng_alloc to gsl_rng_default ;
+\ the following code was generated automatically, for description
+\ consult GSL documentation
+: borosh13 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_borosh13 @ gsl_rng_alloc to gsl_rng_default ;
+: coveyou ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_coveyou @ gsl_rng_alloc to gsl_rng_default ;
+: cmrg ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_cmrg @ gsl_rng_alloc to gsl_rng_default ;
+: fishman18 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_fishman18 @ gsl_rng_alloc to gsl_rng_default ;
+: fishman20 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_fishman20 @ gsl_rng_alloc to gsl_rng_default ;
+: fishman2x ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_fishman2x @ gsl_rng_alloc to gsl_rng_default ;
+: gfsr4 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_gfsr4 @ gsl_rng_alloc to gsl_rng_default ;
+: knuthran ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_knuthran @ gsl_rng_alloc to gsl_rng_default ;
+: knuthran2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_knuthran2 @ gsl_rng_alloc to gsl_rng_default ;
+: knuthran2002 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_knuthran2002 @ gsl_rng_alloc to gsl_rng_default ;
+: lecuyer21 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_lecuyer21 @ gsl_rng_alloc to gsl_rng_default ;
+: minstd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_minstd @ gsl_rng_alloc to gsl_rng_default ;
+: mrg ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_mrg @ gsl_rng_alloc to gsl_rng_default ;
+: mt19937 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_mt19937 @ gsl_rng_alloc to gsl_rng_default ;
+: mt19937_1999 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_mt19937_1999 @ gsl_rng_alloc to gsl_rng_default ;
+: mt19937_1998 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_mt19937_1998 @ gsl_rng_alloc to gsl_rng_default ;
+: r250 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_r250 @ gsl_rng_alloc to gsl_rng_default ;
+: ran0 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ran0 @ gsl_rng_alloc to gsl_rng_default ;
+: ran1 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ran1 @ gsl_rng_alloc to gsl_rng_default ;
+: ran2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ran2 @ gsl_rng_alloc to gsl_rng_default ;
+: ran3 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ran3 @ gsl_rng_alloc to gsl_rng_default ;
+: rand ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_rand @ gsl_rng_alloc to gsl_rng_default ;
+: rand48 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_rand48 @ gsl_rng_alloc to gsl_rng_default ;
+: random128_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random128_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random128_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random128_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random128_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random128_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: random256_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random256_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random256_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random256_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random256_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random256_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: random32_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random32_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random32_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random32_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random32_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random32_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: random64_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random64_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random64_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random64_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random64_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random64_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: random8_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random8_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random8_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random8_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random8_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random8_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: random_bsd ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random_bsd @ gsl_rng_alloc to gsl_rng_default ;
+: random_glibc2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random_glibc2 @ gsl_rng_alloc to gsl_rng_default ;
+: random_libc5 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_random_libc5 @ gsl_rng_alloc to gsl_rng_default ;
+: randu ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_randu @ gsl_rng_alloc to gsl_rng_default ;
+: ranf ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranf @ gsl_rng_alloc to gsl_rng_default ;
+: ranlux ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlux @ gsl_rng_alloc to gsl_rng_default ;
+: ranlux389 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlux389 @ gsl_rng_alloc to gsl_rng_default ;
+: ranlxd1 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlxd1 @ gsl_rng_alloc to gsl_rng_default ;
+: ranlxd2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlxd2 @ gsl_rng_alloc to gsl_rng_default ;
+: ranlxs0 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlxs0 @ gsl_rng_alloc to gsl_rng_default ;
+: ranlxs1 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlxs1 @ gsl_rng_alloc to gsl_rng_default ;
+: ranlxs2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranlxs2 @ gsl_rng_alloc to gsl_rng_default ;
+: ranmar ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_ranmar @ gsl_rng_alloc to gsl_rng_default ;
+: slatec ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_slatec @ gsl_rng_alloc to gsl_rng_default ;
+: taus ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_taus @ gsl_rng_alloc to gsl_rng_default ;
+: taus2 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_taus2 @ gsl_rng_alloc to gsl_rng_default ;
+: taus113 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_taus113 @ gsl_rng_alloc to gsl_rng_default ;
+: transputer ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_transputer @ gsl_rng_alloc to gsl_rng_default ;
+: tt800 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_tt800 @ gsl_rng_alloc to gsl_rng_default ;
+: uni ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_uni @ gsl_rng_alloc to gsl_rng_default ;
+: uni32 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_uni32 @ gsl_rng_alloc to gsl_rng_default ;
+: vax ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_vax @ gsl_rng_alloc to gsl_rng_default ;
+: waterman14 ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_waterman14 @ gsl_rng_alloc to gsl_rng_default ;
+: zuf ( -- ) gsl_rng_default 0<> if gsl-free then
+    [func'] _gsl_rng_zuf @ gsl_rng_alloc to gsl_rng_default ;
+\ : default ( -- ) gsl_rng_default 0<> if gsl-free then
+\    [func'] _gsl_rng_default @ gsl_rng_alloc to gsl_rng_default ;
 
 \ words for actual generation of random numbers
 : gsl-randomg ( -- n )
@@ -474,20 +693,30 @@ gsl_rng_types_setup  value gsl_rng_array(
 : gsl-clone ( -- *gsl_rng )
     gsl_rng_default gsl_rng_clone ;
 : gsl-gaussian ( -- df )
-    gsl_rng_default !1 gsl_ran_gaussian ;
+    gsl_rng_default !1 gsl_ran_gaussian_ratio_method ;
 : gsl-discrete ( *gsl_ran_discrete -- n )
     gsl_rng_default swap gsl_ran_discrete ;
 
 \ vectors and matrices
+0 constant GSL_VECTOR_TYPE
+1 constant GSL_MATRIX_TYPE
+: gsltypeof ' >body cell + @ ;
 
 : fvector ( n -- | -- id addr )
-    create
+    create    
     gsl_vector_calloc ,
+    GSL_VECTOR_TYPE ,
   does> @ ;
+
+\ allocate a nameless vector
+: :] ( # -- addr ) gsl_vector_calloc ;
+\ allocate a nameless matrix
+: :]] ( # # -- addr ) gsl_matrix_calloc ;
 
 : ]@ ( addr i -- df ) gsl_vector_get ;
 : ]! ( df addr i -- ) gsl_vector_set ;
 : ]data ( addr -- *data ) gsl_vector data @ ;
+: ]stride ( addr -- *data ) gsl_vector stride @ ;
 : ]fill ( df addr -- ) gsl_vector_set_all ;
 : ]erase ( addr -- ) gsl_vector_set_zero ;
 : ]+ ( *gsl_vector *gsl_vector -- ) gsl_vector_add drop ;
@@ -497,11 +726,12 @@ gsl_rng_types_setup  value gsl_rng_array(
 : ]outer* ( *gsl_vector *gsl_vector -- *gsl_matrix )
     over ]size over ]size gsl_matrix_calloc dup >r !1
     gsl_blas_dger drop r> ;
-\ no control for divizion by zero (I get segfaults)
+\ no control for division by zero in gsl (is it NAN now?)
 : ]/ ( *gsl_vector *gsl_vector -- ) gsl_vector_div throw ;
 : ]clone ( *gsl_vector -- *gsl_vector )
     dup gsl_vector size @ gsl_vector_alloc
     dup -rot swap gsl_vector_memcpy drop ;
+' gsl_sort_vector alias ]sort ( v[ -- )
 
 : ]add ( *gsl_vector *gsl_vector -- *gsl_vector )
     ]clone dup -rot swap ]+ ;
@@ -512,21 +742,106 @@ gsl_rng_types_setup  value gsl_rng_array(
 : ]div ( *gsl_vector *gsl_vector -- *gsl_vector )
     swap ]clone dup -rot swap ]/ ;
 
+\ "*, /, +, -" constant to a vector
 : ]*c ( df *gsl_vector -- ) gsl_vector_scale drop ;
-: ].+ ( df *gsl_vector -- ) gsl_vector_add_constant drop ;
-: ]max ( *gsl_vector -- ) gsl_vector_max ;
-: ]min ( *gsl_vector -- ) gsl_vector_min ;
-: ]imax ( *gsl_vector -- ) gsl_vector_max_index ;
-: ]imin ( *gsl_vector -- ) gsl_vector_min_index ;
+: ]/c ( df *gsl_vector -- ) 1/f ]*c ;
+: ]+c ( df *gsl_vector -- ) gsl_vector_add_constant drop ;
+: ]-c ( df *gsl_vector -- ) fnegate ]+c ;
+
+\ extrema finding words
+: ]max ( *gsl_vector -- f:max ) gsl_vector_max ;
+: ]min ( *gsl_vector -- f:min ) gsl_vector_min ;
+: ]minmax ( *gsl_vector -- f:min f:max )
+    >r 0. sp@ >r 0. sp@ >r r> r> r> -rot gsl_vector_minmax fd>f fd>f ;
+: ]imax ( *gsl_vector -- max_idx ) gsl_vector_max_index ;
+: ]imin ( *gsl_vector -- min_idx ) gsl_vector_min_index ;
+: ]iminmax ( *gsl_vector -- min max )
+    sp@ >r 0 sp@ >r 0 rot 2r> gsl_vector_minmax_index ;
+
 : ]copy] ( *gsl_vector_dest *gsl_vector_src -- ) gsl_vector_memcpy drop ;
 : ]negate !-1.0 ]*c ;
-    
+: ]ones ( n -- *gsl_vector ) :] dup 1e ]fill ;
+
+: ]]slice ( *gsl_matrix x y n m -- *gsl_matrix )
+    gsl_matrix_alloc_from_matrix ;
+: ]slice ( *gsl_vector offset length stride -- *gsl_vector )
+    gsl_vector_alloc_from_vector ;
+
+: ]map ( *v -- ) ( word ) 
+    ' swap dup ]size 0 do
+        2dup i ]@ execute
+        dup i ]!
+    loop 2drop ;
+
+: (]map) ( *v xt -- )
+    swap dup ]size 0 do
+        2dup i ]@ execute
+        dup i ]!
+    loop 2drop ;
+
+: ]abs ( *v -- ) ['] fabs (]map) ;
+
+: ]indgen ( *v -- )
+    dup ]size 0 do i s>f dup i ]! loop drop ;
+
+: ]null? ( *gsl_vector -- 0/-1 ) gsl_vector_isnull negate ;
+: ]pos? ( *gsl_vector -- 0/-1 ) gsl_vector_ispos negate ;
+: ]neg? ( *gsl_vector -- 0/-1 ) gsl_vector_isneg negate ;
+
+
+\ FFT                                                            19jan08sp
+: ]fft! ( *gsl_vector -- )
+    dup ]size >r dup ]stride >r ]data r> r>
+    dup find-fft-cache if
+        dup gsl_fft_precomputes r_wavetable @
+        swap gsl_fft_precomputes workspace @    
+    else
+        drop
+        dup cache-fft
+        dup gsl_fft_precomputes r_wavetable @
+        swap gsl_fft_precomputes workspace @
+    then    
+    gsl_fft_real_transform throw ;
+: ]fft ( *gsl_vector -- *gsl_vector )
+    ]clone dup ]fft! ;
+: ]ifft! ( *gsl_vector --  )
+    dup ]size >r dup ]stride >r ]data r> r>
+    dup find-fft-cache if
+        dup gsl_fft_precomputes hc_wavetable @
+        swap gsl_fft_precomputes workspace @
+    else
+        drop
+        dup cache-fft
+        dup gsl_fft_precomputes hc_wavetable @
+        swap gsl_fft_precomputes workspace @
+    then    
+    gsl_fft_hc_inverse throw ;
+: ]ifft ( *gsl_vector -- *gsl_vector )
+    ]clone dup ]ifft! ;
+\ multiply two half complex vectors
+\ store result in the first - needed for convolution
+: ]hc*! ( *gsl_vector *gsl_vector -- )
+    2dup 0 ]@ 0 ]@ f* over 0 ]!
+    dup ]size dup %1 and not + 1 do
+        2dup
+        dup i ]@ i 1+ ]@
+        dup i ]@ i 1+ ]@ z*
+        over dup i 1+ ]! i ]!
+    2 +loop
+    dup ]size %1 and not if
+        2dup
+        dup ]size 1- dup >r ]@ dup r@ ]@ f* r> ]!
+    then
+    2drop ;
+
+\ pseudomatrices and vectors
 : pvector ( *data n -- *gsl_vector )
     sizeof gsl_vector allocate throw
     dup >r dup 1 swap gsl_vector stride !
     gsl_vector size ! r@
     gsl_vector data ! r@
     0 swap gsl_vector owner ! r> ;
+
 : pmatrix! ( *data tda n m *pmatrix -- *gsl_matrix )
     dup >r gsl_matrix size2 !
     r@ gsl_matrix size1 !
@@ -546,19 +861,34 @@ gsl_rng_types_setup  value gsl_rng_array(
     create
     gsl_permutation_calloc ,
   does> @ ;
-: }@ ( *gsl_permutation i -- n ) gsl_permutation_get ;
+: :}    ( n -- *gsl_permutation ) gsl_permutation_calloc ;
+: }@    ( *gsl_permutation i -- n ) gsl_permutation_get ;
 : }data ( *gsl_permutation -- *data ) gsl_block data @ ;
+: }size ( *gsl_permutation -- *data ) gsl_block size @ ;
 : }free ( *gsl_permutation -- ) gsl_permutation_free ;
+: }sign ( *gsl_permutation -- 1/-1 )
+    1 over dup }size 0 do
+        dup i }@ i <> if swap negate swap then
+    loop drop ;
+: }>[ ( p{ -- p[ )
+    dup }size :] dup ]size 0 do 2dup swap i }@ s>f i ]! loop nip ;
+: ]isort ( *gsl_vector -- *gsl_permutation )
+    dup ]size :} dup >r 
+    swap gsl_sort_vector_index throw r> ;
+: ]kisort ( *gsl_vector k -- *vector )
+    dup vector* dup >r
+    -rot swap gsl_sort_vector_smallest_index throw r> ;
 
 \ matrices
 
 : fmatrix ( n m -- | -- id addr )
     create
     gsl_matrix_calloc ,
+    GSL_MATRIX_TYPE ,
   does> @ ;
 
-: free_pseudomatrix ( pmatrix/pvector -- )
-    free throw ;
+: free_pseudomatrix ( pmatrix/pvector -- ) free throw ;
+
 create free_matrix ' free_pseudomatrix , ' gsl_matrix_free ,
 create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
@@ -572,14 +902,17 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 : ]]*@ ( *gsl_matrix i j -- *[i,j] ) gsl_matrix_ptr ;
 : ]]! ( *gsl_matrix i j df -- ) gsl_matrix_set ;
 : ]]fill ( addr df -- ) gsl_matrix_set_all ;
+: ]]erase ( addr -- ) gsl_matrix_set_zero ;
 : ]]size1 gsl_matrix size1 @ ;
 : ]]size2 gsl_matrix size2 @ ;
 : ]]dim ( *gsl_matrix -- m n ) dup ]]size1 swap ]]size2 ;
-: ]]dim. ( *gsl_matrix -- ) ]]dim swap . 8 emit ." x" . cr ;
+: ]]dim. ( *gsl_matrix -- ) ]]dim swap . ." x" . cr ;
 : ]]data ( *gsl_matrix -- addr) gsl_matrix data @ ;
 : ]]tda gsl_matrix tda @ ;
 : ]]block gsl_matrix block @ ;
+: ]]owner gsl_matrix owner @ ;
 : ]]copy]] ( *gsl_matrix_dest *gsl_matrix_src -- ) gsl_matrix_memcpy drop ;
+: ]]'copy]] ( *gsl_matrix_dest *gsl_matrix_src -- ) gsl_matrix_transpose_memcpy drop ;
 \ : ]]row ( *gsl_matrix idx -- *gsl_vector ) gsl_matrix_row ;
 \ : ]]col ( *gsl_matrix idx -- *gsl_vector ) gsl_matrix_column ;
 : ]]>]  ( *gsl_vector *gsl_matrix i -- ) gsl_matrix_get_col drop ;
@@ -597,6 +930,7 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     gsl_matrix_mul_elements drop ;
 : ]]*c ( *gsl_matrix df -- )
     gsl_matrix_scale drop ;
+: ]]+c ( df *gsl_matrix -- ) gsl_matrix_add_constant drop ;
 : ]]clone ( *gsl_matrix -- *gsl_matrix )
     dup dup gsl_matrix size1 @ swap gsl_matrix size2 @
     gsl_matrix_alloc
@@ -608,11 +942,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 : ]]- ( *gsl_matrix *gsl_matrix -- *gsl_matrix )
     swap ]]clone dup -rot swap ]]sub! ;
-
-\ allocate a nameless vector
-: :] ( # -- addr ) gsl_vector_calloc ;
-\ allocate a nameless matrix
-: :]] ( # # -- addr ) gsl_matrix_calloc ;
+: ]]null? ( *gsl_matrix -- 0/-1 ) gsl_matrix_isnull negate ;
+: ]]pos?  ( *gsl_matrix -- 0/-1 ) gsl_matrix_ispos  negate ;
+: ]]neg?  ( *gsl_matrix -- 0/-1 ) gsl_matrix_isneg  negate ;
 
 \ blas
 
@@ -651,19 +983,32 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
         2swap 2dup
         ]]size1 swap ]]size2 swap
         exit
-    then ;    
+    then ;
+
+create samemattable ' noop , ' ]]clone ,
+: samemat (  *gsl_matrix *gsl_matrix -- 1/0 *gsl_matrix )
+    dup -rot = abs dup -rot cells samemattable + @ execute ; macro
+
 : ]]mul (  *gsl_matrix *gsl_matrix n n n -- *gsl_matrix )
     !1 !0 action?
     gsl_matrix_alloc dup >r
     gsl_blas_dgemm drop r> ;
 : ]]* (  *gsl_matrix *gsl_matrix -- *gsl_matrix )
-    CblasNoTrans CblasNoTrans 0 ]]mul ;
+    2dup samemat dup rot 2>r nip
+    CblasNoTrans CblasNoTrans 0 ]]mul
+    2r> if ]]free else drop then ;
 : ]]'* (  *gsl_matrix *gsl_matrix -- *gsl_matrix )
-    CblasTrans CblasNoTrans 1 ]]mul ;
+    2dup samemat dup rot 2>r nip
+    CblasTrans CblasNoTrans 1 ]]mul
+    2r> if ]]free else drop then ;    
 : ]]*' (  *gsl_matrix *gsl_matrix -- *gsl_matrix )
-    CblasNoTrans CblasTrans 2 ]]mul ;
+    2dup samemat dup rot 2>r nip
+    CblasNoTrans CblasTrans 2 ]]mul
+    2r> if ]]free else drop then ;        
 : ]]'*' (  *gsl_matrix *gsl_matrix -- *gsl_matrix )
-    CblasTrans CblasTrans 3 ]]mul ;
+    2dup samemat dup rot 2>r nip
+    CblasTrans CblasTrans 3 ]]mul
+    2r> if ]]free else drop then ;        
 
 : ]]mul! (  n n *gsl_matrix *gsl_matrix *gsl_matrix -- )
     !1 !0 gsl_blas_dgemm drop ;
@@ -676,10 +1021,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 
 : ]]*] ( *gsl_matrix *gsl_vector -- *gsl_vector )
-    over ]]size1 gsl_vector_calloc >r
+    over ]]size1 gsl_vector_alloc >r
     CblasNoTrans -rot r@ !1 !0 gsl_blas_dgemv drop r> ;
 : ]]'*] ( *gsl_matrix *gsl_vector -- *gsl_vector )
-    over ]]size1 gsl_vector_calloc >r
+    over ]]size1 gsl_vector_alloc >r
     CblasTrans -rot r@ !1 !0 gsl_blas_dgemv drop r> ;
 
 : ]]i ( *gsl_matrix -- )
@@ -781,6 +1126,9 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     over ]]size2 r@ gsl_vector size !
     0 ]]data_ij r@ gsl_vector data !
     0 r@ gsl_vector owner ! r> ;
+\ assumes all dimensions are set correctly
+: ]]row! ( *gsl_vector *gsl_matrix n -- )
+    rot >r 2dup >#rows 0 ]]data_ij r> gsl_vector data ! ;
 : ]]col ( *gsl_matrix n -- *gsl_vector )
     2dup >#cols
     sizeof gsl_vector allocate throw >r
@@ -789,6 +1137,10 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     over ]]block r@ gsl_vector block !    
     0 swap ]]data_ij r@ gsl_vector data !
     0 r@ gsl_vector owner ! r> ;
+: ]]rfill ( f:n *gsl_matrix i -- ) ]]row dup ]fill ]free ;
+: ]]cfill ( f:n *gsl_matrix i -- ) ]]col dup ]fill ]free ;
+
+
 : ]]submat ( *gsl_matrix n1 n2 m1 m2 -- *gsl_matrix )
     { m[[ n1 n2 m1 m2 |
     sizeof gsl_matrix allocate throw >r
@@ -797,6 +1149,7 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     m[[ n1 m1 ]]data_ij r@ gsl_matrix data  !
     m[[ ]]tda           r@ gsl_matrix tda   !    
     0                   r@ gsl_matrix owner ! r> } ;
+    
 : ?square ( *gsl_matrix -- )
     dup ]]size1 swap ]]size2 <> abort" ERROR: Not a square matrix!" ;
 : ]]diag ( *gsl_matrix n1 n2 -- *gsl_vector )
@@ -808,8 +1161,6 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
         ]]block d[ gsl_vector block !    
     0 d[ gsl_vector owner !
     d[ } ;
-    
-
 
 \ with input matrix replaced by the result
 : ]]gsl-svd ( *gsl_matrix -- *gsl_matrix *gsl_vector )
@@ -834,18 +1185,37 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
 
 
 : ]]alu ( *gsl_matrix -- *gsl_permutation ) ( matrix replaced with its lu )
-    { a[[ |
+    { a[[ | 
     CblasRowMajor a[[ ]]size1 a[[ ]]size2 a[[ ]]data a[[ ]]size1 dup
     gsl_permutation_alloc dup >r }data
     clapack_dgetrf throw r> } ;
+\ the following version is for pure lapack when no ATLAS is available
+\ : ]]alu ( *gsl_matrix -- *gsl_permutation ) ( matrix replaced with its lu )
+\    0 0 0 3 ivector* { a[[ v( |
+\     a[[ ]]dim v( 1 )! v( 0 )!
+\     v( 0 *) v( 1 *) a[[ ]]data
+\     v( 1 *) v( 0 )@ gsl_permutation_alloc dup >r }data
+\     v( 2 *) dgetrf r> v( )free } ;
+    
 : ]]ainv ( *gsl_matrix *gsl_permutation -- )
-    ( LU of a matrix replaced with its inverse )
+    \ LU of a matrix replaced with its inverse 
     { a[[ t{ |
     CblasRowMajor a[[ ]]size2 a[[ ]]data a[[ ]]size1 t{ }data
     clapack_dgetri throw } ;
 : ]]ainvert ( *gsl_matrix -- *gsl_matrix )
+    [IFDEF] отладка
+        dup ?square
+    [THEN]
     ]]clone dup dup >r ]]alu dup >r ]]ainv r> }free r> ;
-\ calculates the work needed for dgesvd_ ( see man dgesvd )
+: ]]det ( *gsl_matrix -- f:determinant )
+    [IFDEF] отладка
+        dup ?square
+    [THEN]
+    ]]clone dup ]]alu >r 1e0
+    dup ]]size1 0 do dup i dup ]]@ f* loop ]]free
+    \ compute permutation sign
+    r> }sign s>f f* }free ;
+\ calculates the work needed for dgesvd ( see man dgesvd )
 : lwork ( m n -- c )
     2dup max -rot min 3 * over + swap 5 * max ;
 \ this svd returns U MxM so eats a lot of memory
@@ -871,7 +1241,7 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     dup gsl_vector_alloc dup >r
     ]data swap p[ 6 cells + ! p[ 6 cells +
     p[ 7 cells +
-    dgesvd_
+    dgesvd
     r> ]free p[ free throw A[[ ]]free
     U[[ V[[ W[ } } ;
 
@@ -899,9 +1269,29 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     dup gsl_vector_alloc dup >r
     ]data swap p[ 6 cells + ! p[ 6 cells +
     p[ 7 cells +
-    dgesvd_
+    dgesvd
     r> ]free p[ free throw
     A[[ V[[ W[ } } ;
+
+\ in place Cholesky decomposition
+| 4 cell 8 * vector chol( \ a vector that simplifies parameter passing
+: choldc-errors ( i -- )
+    dup 0= if drop exit then
+    dup 0< if abs ." Argument " . ." is set incorrectly!" abort then
+    ." Leading minor of order " . ." is not positive definite!" abort ;
+: ]]choldc! ( *gsl_matrix -- int )
+    chol( 0 *) swap dup ]]dim chol( 2 )! chol( 1 )!
+    ]]data chol( 1 *) swap chol( 2 *) chol( 3 *)
+    dpotrf chol( 3 )@ ;
+\ A = U^T U
+: ]]choldcU! ( *gsl_matrix -- int ) 'U chol( 0 )! ]]choldc! ;
+\ A = L L^T
+: ]]choldcL! ( *gsl_matrix -- int ) 'L chol( 0 )! ]]choldc! ;
+\ Cholesky preserving the original matrix
+: ]]choldcU  ( *gsl_matrix -- *gsl_matrix )
+    ]]clone dup ]]choldcu! choldc-errors ;
+: ]]choldcL  ( *gsl_matrix -- *gsl_matrix )
+    ]]clone dup ]]choldcL! choldc-errors ;
 
 
 : ]diag[[ ( *gsl_vector -- *gsl_matrix )
@@ -910,19 +1300,25 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
         2dup swap i ]@ i i ]]!
     loop nip ;
 
+: ]print\ ( *gsl_vector -- )
+    dup ]size 0 do dup i ]@ fx. loop drop ;
 : ]print ( *gsl_vector -- )
-    dup ]size 0 do dup i ]@ fs. loop drop cr ;
+    precision swap
+    5 set-precision
+    ]print\ cr set-precision ;
 : ]]print ( *gsl_matrix -- )
-    cr
+    cr precision swap
+    5 set-precision
     dup ]]size1 0 do
         \ i . ." :  "
         dup ]]size2 0 do
             dup
-            j i ]]@ f.
+            j i ]]@ fs.
         loop
         cr
     loop
-    drop ;
+    drop set-precision ;
+
 : ]]row-print ( *gsl_matrix i -- )
     cr
     over gsl_matrix size2 @ 0 do
@@ -948,26 +1344,53 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
             gsl-randomu
             ]]data i dfloats + df!
     loop drop ;
+: ]]randn ( *gsl_matrix -- )
+    dup dup ]]size1 swap ]]size2 * 0 do
+            dup
+            gsl-gaussian
+            ]]data i dfloats + df!
+    loop drop ;
+' ]]randomize alias ]]randu
+
 : ]randomize ( *gsl_vector -- )
     dup ]size 0 do
             dup
             gsl-randomu
             i ]!
     loop drop ;
+: ]randn ( *gsl_vector -- ) \ zero mean unit variance
+    dup ]size 0 do dup gsl-gaussian i ]! loop drop ;
+' ]randomize alias ]randu
+
 : ]mean ( *gsl_vector -- f )
-    dup ]size 1 swap gsl_stats_mean ;
+    dup ]stride swap dup ]size swap ]data
+    rot rot gsl_stats_mean ;
 
 : ]variance ( *gsl_vector -- f )
-    dup ]size 1 swap gsl_stats_variance ;
+    dup ]stride swap dup ]size swap ]data
+    rot rot gsl_stats_variance ;
 
 : ]sd ( *gsl_vector -- f )
-    dup ]size 1 swap gsl_stats_sd ;
+    dup ]stride swap dup ]size swap ]data    
+    rot rot gsl_stats_sd ;
 
 : ]skew ( *gsl_vector -- f )
-    dup ]size 1 swap gsl_stats_skew ;
+    dup ]stride swap dup ]size swap ]data    
+    rot rot gsl_stats_skew ;
 
 : ]kurtosis ( *gsl_vector -- f )
-    dup ]size 1 swap gsl_stats_kurtosis ;
+    dup ]stride swap dup ]size swap ]data        
+    rot rot gsl_stats_kurtosis ;
+
+\ Add Gaussian noise to a vector. Standard deviation of the noise
+\ is % of vectors variance
+: %>r ( -- ) 100e f/ ; \ % to ratio
+: ]jstdv ( f:ratio m[ -- f:stdv )
+    dup ]variance
+    fdup f0= if dup ]max f+ then f* drop ; \ for constant vectors
+: ]rnd-clone ( f:stdv m[ -- c[ ) ]clone dup ]randn dup ]*c ;
+: ]jitter+ ( f:% v[ -- )
+    %>r dup ]jstdv dup ]rnd-clone >r r@ ]+ r> ]free ;
 
 : ]]gsl-lu ( *gsl_matrix -- *gsl_matrix *gsl_permutation )
     1 sp@ rot ]]clone dup >r dup ]]size1 gsl_permutation_calloc dup >r rot
@@ -990,42 +1413,6 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     m[[ ]]size1 m[[ ]]size2 * dfloats  m[[ ]]T dup s>f ]]data swap
     r> write-file throw  f>s ]]free } ;
 
-\ saving and restoring floating point stack
-0 value tempfloat 0 value tempfloat2
-: pushfstack
-    fdepth dup gsl_vector_alloc to tempfloat
-    0 ?do
-        tempfloat i ]!
-    loop ;
-: savefloat2
-    fdepth dup gsl_vector_alloc to tempfloat2 0
-    ?do
-        tempfloat2 i ]!
-    loop ;
-
-: restorefloat
-    0 tempfloat ]size
-    ?do
-        i 0= if leave then
-        tempfloat i 1- ]@ -1
-    +loop tempfloat ]free ;
-
-: restorefloat2
-    0 tempfloat2 ]size
-    ?do
-        i 0= if leave then      
-        tempfloat2 i 1- ]@ -1
-    +loop tempfloat2 ]free ;
-
-: popfstack
-    fdepth 0<> if
-        savefloat2
-        restorefloat
-        restorefloat2
-        exit
-    then
-    restorefloat ;   
-
 \ these words do not work with float matrices but are needed for
 \ scientific calculations, that's why they are in this module
 
@@ -1046,11 +1433,41 @@ create free_vector ' free_pseudomatrix , ' gsl_vector_free ,
     R> * R> + *
     +
     ALIGNED ;
+: h->[[ ( hmatrix -- gsl_matrix )
+    dup }}row-size 3 swap gsl_matrix_alloc
+    dup ]]size2 0 do
+        3 0 do
+          2dup swap i j }} w@ s>f i j ]]!  
+        loop
+    loop nip ;
+
+\ some sequencing code
+: arange ( f:start f:end f:step -- x[ )
+    f-rot
+    fswap fdup f>r f- fover f/ f>s :] fr>
+    dup ]size 0 do
+        dup fover i s>f f* fover f+ i ]!
+    loop fdrop fdrop ;
+: product ( x[ -- f:P )
+    !1 dup ]size 0 do
+        dup i ]@ f*
+    loop drop ;
 
 \ initializing random number generator to some value in order to have
 \ it available upon loading of gsl
 mt19937
+\ choose n elements out of m possibilities
+: rnd-choose ( n m -- s[ )
+    gsl_rng_default -rot    
+    0e s>f 1e arange dup >r over :] dup >r
+    ]data -rot dup ]data swap ]size 1 dfloats
+    gsl_ran_choose throw r> r> ]free ;
+: )randperm ( *v( -- )
+    gsl_rng_default swap
+    dup )size over )type 8 / gsl_ran_shuffle ;
+: )>] ( v( -- v[ )
+    dup )size :] over )size 0 do 2dup swap i )@ s>f i ]! loop nip ;
 
-previous previous previous
+previous previous previous previous previous
 
 Module;
