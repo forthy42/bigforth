@@ -119,7 +119,7 @@ float.fm: float.fb forthker.fi $(SYSSRC)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs include float.fb m' float savemod float $(BYE)"
 
-CPYDIST = bigforth/{README,COPYING,CREDITS}
+CPYDIST = bigforth/{README,COPYING,CREDITS,LGPLv3}
 
 DOSDIST = bigforth/{forthker,bigforth,xbigforth}$(EXE) bigforth/{forthker,bigforth}.fi bigforth/{version.h,minos-version.h}
 

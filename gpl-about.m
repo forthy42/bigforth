@@ -10,7 +10,10 @@ public:
   early open
   early dialog
   early open-app
+  | topindex ptr (topindex-00)
+  | topindex ptr (topindex-01)
   stredit ptr COPYING
+  stredit ptr LGPL
   button ptr gpl-ok
  ( [varstart] )  ( [varend] ) 
 how:
@@ -48,6 +51,11 @@ gpl-about implements
          0 copying edifile !
          1 $10 dpy geometry
   ELSE   drop  THEN
+  s" LGPLv3" r/o open-file
+  0= IF  lgpl assign  lgpl resized
+         0 lgpl edifile !
+         1 $10 dpy geometry
+  ELSE   drop  THEN
   [ previous ] ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             X" bigFORTH is a native code Forth system, MINOS is a GUI library." text-label new 
@@ -70,11 +78,20 @@ gpl-about implements
             X" You should have received a copy of the GNU General Public License" text-label new 
             X" along with this program.  If not, see <http://www.gnu.org/licenses/>." text-label new 
           &2 vabox new vfixbox 
-            1 1 vviewport new  DS[ 
-               (straction stredit new  ^^bind COPYING $42 setup-edit 
-            &1 vabox new ]DS ( MINOS ) 
-            $0 $1 *hfil $0 $1 *vfil glue new 
-          &2 habox new
+              0 -1 flipper X" GPL" topindex new ^^bind (topindex-00)
+              0 0 flipper X" LGPL" topindex new ^^bind (topindex-01)
+              topglue new 
+            &3 harbox new vfixbox 
+                1 1 vviewport new  DS[ 
+                   (straction stredit new  ^^bind COPYING $42 setup-edit 
+                &1 vabox new ]DS ( MINOS ) 
+              &1 habox new panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
+                1 1 vviewport new  DS[ 
+                   (straction stredit new  ^^bind LGPL $40 setup-edit 
+                &1 vabox new ]DS ( MINOS ) 
+              &1 habox new flipbox  panel dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
+            &2 habox new $10  noborderbox  &2 borderbox
+          &2 vabox new
         &5 vabox new &1 vskips
           $10 $1 *hfill $10 $1 *vfil glue new 
           ^^ S[ close ]S ( MINOS ) X"  OK " button new  ^^bind gpl-ok
