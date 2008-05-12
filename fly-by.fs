@@ -102,3 +102,16 @@ FVariable phi0  0e phi0 f!
 : NEAR     538.8e3 1.81e  orbit2 ;
 : cassini  1173e3  5.8e   orbit2 ;
 : rosetta  1954e3  1.327e orbit2 ;
+
+\ considder earth rotation
+
+: set-disc ( -- )
+    s" " test-disc $!
+    disc# 1+ elements test-disc $!len  test-disc $@ erase
+    range fdup disc# 2+ fm/ { f: maxphi f: stepphi }
+    disc# 0 ?DO
+	maxphi stepphi I 1+ disc# 2+ fm*/ f+ phi>pos fswap
+	    I disc dup element x df!
+	           dup element y df!
+	    !0         element z df!
+    LOOP ;

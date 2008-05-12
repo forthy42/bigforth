@@ -322,6 +322,7 @@ $40 Value vismax
     visualize-a+#  $FF $00 $00  draw-vis-array ;
 
 \ test structure
+[THEN]
 
 Variable test-disc
 
@@ -345,8 +346,6 @@ FVariable step# !0.003 step# f!
 	    !0         element z df!
 	LOOP
     slice# +LOOP ;
-
-init-disc
 
 : disc-msum ( -- )
   disc# 0 ?DO  I disc >xyz
@@ -386,6 +385,10 @@ init-disc
       dup element ay+ df!
           element ax+ df!
   pause LOOP ;
+
+[IFDEF] canvas
+
+init-disc
 
 Defer disc-text
 
