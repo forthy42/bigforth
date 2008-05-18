@@ -36,6 +36,7 @@ FVariable GM  5.9736e24 6.67428e-11 f* GM f! \ earth mass
 FVariable epsilon
 FVariable k
 FVariable phi0  0e phi0 f!
+FVariable rho   0e rho  f!
 12.756e6 f2/ FConstant rearth
 
 : >epsilon ( -- )  U f@ f**2 b f@ f* GM f@ f/ !1 f+ fsqrt
@@ -70,6 +71,7 @@ FVariable phi0  0e phi0 f!
 \ integration
 
 : phi>pos ( phi -- x y )  fdup r fswap r,phi>xy ;
+: phi>pos' ( phi -- x y )  fdup r fswap phi0 f@ f+ r,phi>xy ;
 
 : delta-step ( maxphi stephpi -- delta-a )
     fswap fdup r fover phi0 f@ f+ fover delta-a { f: a |
@@ -110,8 +112,8 @@ FVariable phi0  0e phi0 f!
     disc# 1+ elements test-disc $!len  test-disc $@ erase
     range fdup disc# 2+ fm/ { f: maxphi f: stepphi }
     disc# 0 ?DO
-	maxphi stepphi I 1+ disc# 2+ fm*/ f+ phi>pos fswap
-	    I disc dup element x df!
-	           dup element y df!
-	    !0         element z df!
+	maxphi stepphi I 1+ disc# 2+ fm*/ f+ phi>pos' fswap
+	    I disc              dup element x df!
+	    fdup rho f@ fcos f* dup element y df!
+	         rho f@ fsin f*     element z df!
     LOOP ;
