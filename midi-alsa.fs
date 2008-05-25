@@ -297,6 +297,9 @@ midi-player implements
     : rb ( -- c )  mfb c@  1 fileptr +! ;
     : rw ( -- w )  rb   8 << rb or ;
     : rl ( -- l )  rw $10 << rw or ;
+    s" krTM" drop @ Constant 'MTrk
+    s" dhTM" drop @ Constant 'MThd
+    s" FFIR" drop @ Constant 'RIFF
     : read-tracks ( tracklen format ntrks division -- )
         &10000 * division !
         link[] track @ IF  dispose[] track  THEN
@@ -310,7 +313,7 @@ midi-player implements
     : >tracks ( -- )
         rl dup 'RIFF = IF  drop $10 fileptr +! rl  THEN
         dup 'MThd = IF  drop rl rw rw rw read-tracks  EXIT
-        THEN ;
+        THEN  drop ;
     : patch-buf ( n -- addr )  note-buf @ + ;
 
 \ playing                                              31dec97py
