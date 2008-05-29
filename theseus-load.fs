@@ -153,6 +153,11 @@ also minos-load definitions
         s"  ]SN ( MINOS ) " content scan-strings self
     endwith ;
 
+: SF[   drop S" "
+    fstroke-des new fstroke-des with assign
+        s"  ]SF ( MINOS ) " content scan-strings self
+    endwith ;
+
 : CV[
     canvas-des new canvas-des with s" " assign
         s"  ]CV ( MINOS ) " content scan-strings
@@ -169,7 +174,10 @@ also minos-load definitions
         s"  new"            parse-string cname  $!
         null endwith ;
 
-: ]N ( d -- ) number-des new number-des with assign self endwith ;
+: ]N ( d -- o ) number-des new number-des with assign self endwith ;
+also float
+: ]F ( f -- o ) f>fd float-des new float-des with assign self endwith ;
+previous
 : ]TERM ( d -- ) term-des new term-des with assign self endwith ;
 : SC[ ( o 0 n -- o o )
     scaler-des new scaler-des with assign pos ! drop self endwith
@@ -507,6 +515,7 @@ also dos
      cur status resized <rebox> <redpy> ;
 
 : (load-minos ( addr u -- )  loading on
+[ also float ] f-init [ previous ]
     2dup cur file-name $!
     r/o open-file throw $1000 input-file
     Onlyforth minos also minos-load also

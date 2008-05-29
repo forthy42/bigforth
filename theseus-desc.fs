@@ -284,12 +284,35 @@ how:
         ^ cur bind num
         0 SN[ text@ cur num assign ]SN get s" Number:"
         infotextfield new
-    ;
+        dup F bind edit-string ;
     : null ( -- addr u )  0. ;
     : make ( -- addr u ) get ;
     : dump ( -- )  base push decimal
         get ." &" 0 d.r ." . ]N ( MINOS ) " ;
 class;
+
+also float
+
+descriptor class float-des
+    1 floats var content
+  how:
+    : init ( -- ) null assign ;
+    : dispose ( -- ) super dispose ;
+    : assign ( f -- )  fd>f content f!
+        item self 0= ?EXIT
+        DELAY get item assign  item resized  changed ;
+    : get ( -- )  content f@ f>fd ;
+    
+    : edit-field ( -- o )  ^ F cur bind num
+        0 SF[ text@ cur num assign ]SF
+        get s" Float:" infotextfield new
+        dup F bind edit-string ;
+    : null ( -- f ) 0e f>fd ;
+    : make ( -- f )  get ;
+    : dump ( -- ) get fd>f f. ." ]F ( MINOS ) " ;
+class;
+
+previous
 
 : try-icon ( addr u -- icon )
     2dup icon?  ?dup  IF  nip nip icon@  EXIT  THEN
@@ -573,6 +596,12 @@ how:
     : dump ( -- )
         ." ^^ SN[ " get type ."  ]SN ( MINOS ) " ;
     : post-dump ( -- ) ;
+class;
+
+nstroke-des class fstroke-des
+  how:
+    : dump
+        ." ^^ FN[ " get type ."  ]FN ( MINOS ) " ;
 class;
 
 descriptor class display-des

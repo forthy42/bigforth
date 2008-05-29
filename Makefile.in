@@ -58,7 +58,7 @@ XSRC	= startx.fb minos.fs oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  minos-base.fs displays.fs minos-fonts.fs vdisplays.fs \
 	  actors.fs widgets.fs minos-boxes.fs minos-buttons.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
-	  resources.fs
+	  resources.fs minos-float.fs
 
 all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
 

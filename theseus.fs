@@ -1,6 +1,11 @@
 \ graphical widget editor                              14sep97py
 
 [IFUNDEF] fileop  include fileop.fb  [THEN]
+also minos [IFUNDEF] float-action
+    previous include minos-float.fs
+[ELSE]
+    previous
+[THEN]
 
 [IFDEF] x11  \needs xconst | import xconst
 [THEN]
@@ -1102,6 +1107,9 @@ s" Tab-Infotext"    font-entity tableinfotextfield stroke-des text-des string-de
 s" Number"          font-entity textfield          nstroke-des number-des
 s" Infonumber"      font-entity infotextfield      nstroke-des number-des string-des
 s" Tab-Infonumber"  font-entity tableinfotextfield nstroke-des number-des string-des
+s" Float"           font-entity textfield          fstroke-des float-des
+s" Infofloat"       font-entity infotextfield      fstroke-des float-des string-des
+s" Tab-Infofloat"   font-entity tableinfotextfield fstroke-des float-des string-des
 endgroup
 
 group slides:
