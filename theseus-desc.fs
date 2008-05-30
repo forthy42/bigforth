@@ -309,7 +309,7 @@ descriptor class float-des
         dup F bind edit-string ;
     : null ( -- f ) 0e f>fd ;
     : make ( -- f )  get ;
-    : dump ( -- ) get fd>f f. ." ]F ( MINOS ) " ;
+    : dump ( -- ) get fd>f fe. ." ]F ( MINOS ) " ;
 class;
 
 previous
@@ -600,8 +600,10 @@ class;
 
 nstroke-des class fstroke-des
   how:
+    : null ( -- ) 0 SF[ ]SF ;
+    : make ( -- ) null ;
     : dump
-        ." ^^ FN[ " get type ."  ]FN ( MINOS ) " ;
+        ." ^^ SF[ " get type ."  ]SF ( MINOS ) " ;
 class;
 
 descriptor class display-des

@@ -511,7 +511,7 @@ class;
 \ number input field                                   27apr98py
 edit-action class number-action
 public: cell var nbase
-how:    : ># ( d -- addr u ) base push nbase @ base ! tuck dabs
+how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
           <# #S  nbase @ $10 = IF  '$ hold  THEN
                  nbase @ %10 = IF  '% hold  THEN  rot sign  #> ;
         : key ( key sh -- ) drop base push nbase @ base !
