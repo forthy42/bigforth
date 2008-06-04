@@ -659,7 +659,7 @@ how:    : assign ( addr u -- ) text assign ;
 \ info-menu                                            02dec00py
         : init  ( widget addr len -- )
           text-label new bind info  bind callw
-          0 ST[ ]ST callw self combined with childs get endwith
+          callw self combined with childs get endwith 0 ST[ ]ST
                     textfield new dup bind text
           0 text edit ds !
             ^ M[ clicked ]M :down tributton new bind tri
