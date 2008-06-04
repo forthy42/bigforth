@@ -37,7 +37,7 @@ toggle-actor implements
               &2 vabox new panel
             &1 habox new flipbox  dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
                 ^^ ST[  ]ST ( MINOS ) S" " S" Var:" infotextfield new 
-                ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Num:" infotextfield new 
+                ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Num:" infotextfield new 
               &2 varbox new panel
             &1 habox new flipbox  dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
                 ^^ ST[  ]ST ( MINOS ) S" " S" Fetch:" infotextfield new 

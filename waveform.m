@@ -211,7 +211,7 @@ wave-form implements
 previous previous previous ( [methodend] ) 
   : widget  ( [dumpstart] )
               $10 $1 *hfill $0 $1 *vfill glue new 
-              ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Steps" infotextfield new  ^^bind distance
+              ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Steps" infotextfield new  ^^bind distance
               $10 $1 *hfill $0 $1 *vfill glue new 
             &3 vabox new hfixbox  &1 hskips
               $10 $1 *hfill $0 $1 *vfill glue new 

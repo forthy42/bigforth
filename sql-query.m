@@ -51,12 +51,12 @@ sql implements
   sql-db self  IF  sql-db dispose  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ ST[  ]ST ( MINOS ) T" test" S" Data base:" tableinfotextfield new  ^^bind db
-          ^^ ST[  ]ST ( MINOS ) T" " S" Select:" tableinfotextfield new  ^^bind querys
-          ^^ ST[  ]ST ( MINOS ) T" product" S" From:" tableinfotextfield new  ^^bind froms
-          ^^ ST[  ]ST ( MINOS ) T" " S" Where:" tableinfotextfield new  ^^bind where
-            ^^ ST[  ]ST ( MINOS ) T" " S" Order:" infotextfield new  ^^bind order-by
-            ^^ ST[  ]ST ( MINOS ) T" " S" Using:" infotextfield new  ^^bind using
+          ^^ T" test" ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
+          ^^ T" " ST[  ]ST ( MINOS ) S" Select:" tableinfotextfield new  ^^bind querys
+          ^^ T" product" ST[  ]ST ( MINOS ) S" From:" tableinfotextfield new  ^^bind froms
+          ^^ T" " ST[  ]ST ( MINOS ) S" Where:" tableinfotextfield new  ^^bind where
+            ^^ T" " ST[  ]ST ( MINOS ) S" Order:" infotextfield new  ^^bind order-by
+            ^^ T" " ST[  ]ST ( MINOS ) S" Using:" infotextfield new  ^^bind using
           &2 habox new vfixbox  &1 hskips
             ^^ S[ do-query ]S ( MINOS )  TT" Start query" S" Query" button new  ^^bind query
             ^^ S[ close ]S ( MINOS )  TT" Close query dialog" S" Close" button new  ^^bind ok

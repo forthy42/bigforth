@@ -28,8 +28,8 @@ adjust implements
       repos endwith
   super show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ ST[  ]ST ( MINOS ) T" " S" Pathes" infotextfield new  ^^bind path#
-        ^^ ST[  ]ST ( MINOS ) T" py" S" ID" infotextfield new  ^^bind id#
+        ^^ T" " ST[  ]ST ( MINOS ) S" Pathes" infotextfield new  ^^bind path#
+        ^^ T" py" ST[  ]ST ( MINOS ) S" ID" infotextfield new  ^^bind id#
           $10 $1 *hfill $10 $1 *vfil glue new 
           ^^ S[ id# get path# get s" xbigforth.ini" adjust-path-id
 id# get path# get  s" bigforth.ini" adjust-path-id

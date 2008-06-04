@@ -142,6 +142,18 @@ midi-player implements
 	      cinfo snd_seq_client_info name >len type cr
 	      list-ports
       REPEAT ;
+  : search-ports ( -- )  cinfo @ pinfo c! -1 pinfo 1+ c!
+      BEGIN  seq @ pinfo query_next_port  0= WHILE
+	      pinfo snd_seq_port_info capability @ $42 = \ player
+	      wavetable 0= waveport 0= and and IF
+		  pinfo snd_seq_port_info client c@ to wavetable
+		  pinfo snd_seq_port_info port c@ to waveport
+	      THEN
+      REPEAT ;
+  : search-clients ( -- )  cinfo off  0 to wavetable  0 to waveport
+      BEGIN  seq @ cinfo query_next_client  0= WHILE
+	      search-ports
+      REPEAT ;
   : set-ev-header ( command -- )
               [ ev snd_seq_event type      ] ALiteral c!
       port @  [ ev snd_seq_event source 1+ ] ALiteral c!
@@ -157,7 +169,7 @@ midi-player implements
   : seq-open ( -- )
       open-seq create-port
       alloc-queue set-name 64k-buffer
-      list-clients connect-seq ;
+      search-clients connect-seq ;
   : seq-close ( -- ) seq @ close drop seq off ;
 
 \ Timer and tempo                                      06jul02py

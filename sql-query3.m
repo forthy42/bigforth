@@ -45,13 +45,13 @@ sql implements
   sql-db self  IF  sql-db dispose  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ ST[  ]ST ( MINOS ) T" test" S" Data base:" tableinfotextfield new  ^^bind db
-        ^^ ST[  ]ST ( MINOS ) T" customer" S" Table" tableinfotextfield new  ^^bind table
-        ^^ ST[  ]ST ( MINOS ) T" " S" Name" tableinfotextfield new  ^^bind #name
-        ^^ ST[  ]ST ( MINOS ) T" " S" Street" tableinfotextfield new  ^^bind #street
-        ^^ ST[  ]ST ( MINOS ) T" " S" Country" tableinfotextfield new  ^^bind #country
-        ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Zip" tableinfotextfield new  ^^bind #zip
-        ^^ ST[  ]ST ( MINOS ) T" " S" Town" tableinfotextfield new  ^^bind #town
+        ^^ T" test" ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
+        ^^ T" customer" ST[  ]ST ( MINOS ) S" Table" tableinfotextfield new  ^^bind table
+        ^^ T" " ST[  ]ST ( MINOS ) S" Name" tableinfotextfield new  ^^bind #name
+        ^^ T" " ST[  ]ST ( MINOS ) S" Street" tableinfotextfield new  ^^bind #street
+        ^^ T" " ST[  ]ST ( MINOS ) S" Country" tableinfotextfield new  ^^bind #country
+        ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Zip" tableinfotextfield new  ^^bind #zip
+        ^^ T" " ST[  ]ST ( MINOS ) S" Town" tableinfotextfield new  ^^bind #town
           ^^ S[ do-insert ]S ( MINOS ) S" Insert" button new 
           ^^ S[ close ]S ( MINOS ) S" Close" button new 
         &2 hatbox new &1 hskips

@@ -9,11 +9,11 @@ also float also minos definitions
 
 number-action class float-action
   how:
-    : >#f ( fd -- addr u ) fd>f base push nbase @ base !
+    : >#f ( f -- addr u ) base push nbase @ base !
 	fa-precision set-precision fx$ ;
-    : store ( fd -- ) >#f edit assign ;
-    : fetch ( -- fd ) edit get base push nbase @ base ! >float
-	IF  f>fd  ELSE  0.  THEN ;
+    : store ( f -- ) >#f edit assign ;
+    : fetch ( -- f ) edit get base push nbase @ base ! >float
+	0= IF  !0  THEN ;
 class;
 
 : ]#f ( key sys ) postpone ; (textfield postpone endwith
@@ -26,6 +26,6 @@ class;
 ' :[ alias SF[                               immediate restrict
 : ]SF postpone ]: float-action postpone new ;
                                              immediate restrict
-' f>fd alias ]F 
+' noop alias ]F 
 
 previous previous definitions

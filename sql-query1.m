@@ -34,8 +34,8 @@ sql implements
   sql-db entry-box
   querydpy with assign resized endwith ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ ST[  ]ST ( MINOS ) T" test" S" Data base:" infotextfield new  ^^bind db
-          ^^ ST[  ]ST ( MINOS ) T" " S" Query:" infotextfield new  ^^bind querys
+          ^^ T" test" ST[  ]ST ( MINOS ) S" Data base:" infotextfield new  ^^bind db
+          ^^ T" " ST[  ]ST ( MINOS ) S" Query:" infotextfield new  ^^bind querys
             ^^ S[ do-query ]S ( MINOS )  TT" Start query" S" Query" button new  ^^bind query
             ^^ S[ close ]S ( MINOS )  TT" Close query dialog" S" Close" button new  ^^bind ok
             ^^ S[ sql open ]S ( MINOS )  TT" Open new dialog" S" New" button new  ^^bind new-sql

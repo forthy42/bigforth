@@ -180,13 +180,13 @@ previous ( [methodend] )
         $1 $1 *hfilll $1 $1 *vfilll rule new 
         M: help-menu widget S"  Help " menu-title new 
       &4 hbox new vfixbox  &2 borderbox
-            ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Captured: White" infotextfield new  ^^bind white
-            ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Black" infotextfield new  ^^bind black
+            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Captured: White" infotextfield new  ^^bind white
+            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Black" infotextfield new  ^^bind black
           &2 hatab new &1 hskips
-            ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Territory: White" infotextfield new  ^^bind white#
-            ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Black" infotextfield new  ^^bind black#
+            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Territory: White" infotextfield new  ^^bind white#
+            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Black" infotextfield new  ^^bind black#
           &2 hatab new &1 hskips
-            ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Handicap" infotextfield new  ^^bind handicap
+            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Handicap" infotextfield new  ^^bind handicap
             ^^ S[ s" pass" go-write ]S ( MINOS ) S" Pass" button new 
             ^^ S[ s" back" go-write
 s" back" go-write ]S ( MINOS ) S" Back" button new 

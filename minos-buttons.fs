@@ -560,8 +560,8 @@ class;
 
 habox class textfield
 public: (textfield ptr edit
-how:    : init ( act xxx -- )
-          rot s" " (textfield new
+how:    : init ( xxx act -- )
+          s" " (textfield new
           bind edit  assign  5 edit ds !  edit self
           1 super init -2 borderw c! ;
         : assign ( xxx -- ) edit callback store ;
@@ -576,7 +576,7 @@ class;
 
 textfield class infotextfield
 public: text-label ptr info
-how:    : init ( act xxx addr2 u2 -- )
+how:    : init ( xxx act addr2 u2 -- )
           text-label new bind info
           rot s" " (textfield new
           bind edit assign  5 edit ds !
@@ -590,9 +590,9 @@ class;
 hatab class tableinfotextfield
 public: (textfield ptr edit
         text-label ptr info
-how:    : init ( act xxx addr2 u2 -- )
+how:    : init ( xxx act addr2 u2 -- )
           text-label new bind info
-          rot s" " (textfield new
+          s" " (textfield new
           bind edit  assign  5 edit ds !
           0 1 *fil 2dup glue new
           info self 1 habox new hfixbox 2 habox new hfixbox

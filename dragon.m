@@ -128,7 +128,7 @@ dragon implements
                   ^^ &20 &40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 
                   ^^ &60 &100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
                   $0 $1 *hfill $0 $1 *vfill rule new 
-                  ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" Frames per second:" infotextfield new  ^^bind fps
+                  ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Frames per second:" infotextfield new  ^^bind fps
                   $0 $1 *hfill $0 $1 *vfill rule new 
                 &5 vabox new &2 borderbox
                   ^^ &100 &100 SC[ scale-x ! ]SC ( MINOS )  TT" Scale X" hscaler new 

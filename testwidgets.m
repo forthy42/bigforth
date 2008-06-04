@@ -88,8 +88,8 @@ class;
 calc implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" A:" infotextfield new  ^^bind a#
-        ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" B:" infotextfield new  ^^bind b#
+        ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" A:" infotextfield new  ^^bind a#
+        ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" B:" infotextfield new  ^^bind b#
           ^^ S[ a# get b# get d+ r# assign ]S ( MINOS ) S" +" button new 
           ^^ S[ a# get b# get d- r# assign ]S ( MINOS ) S" -" button new 
           ^^ S[ a# get b# get d* r# assign ]S ( MINOS ) S" *" button new 
@@ -98,7 +98,7 @@ calc implements
           ^^ S[ r# get a# assign ]S ( MINOS ) S" >A" button new 
           ^^ S[ r# get b# assign ]S ( MINOS ) S" >B" button new 
         &7 hatbox new &1 hskips
-        ^^ SN[  ]SN ( MINOS ) &0. ]N ( MINOS ) S" R:" infotextfield new  ^^bind r#
+        ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" R:" infotextfield new  ^^bind r#
       &4 vabox new panel
     ( [dumpend] ) ;
   : init  ^>^^  assign  widget 1 super init ;
@@ -256,7 +256,7 @@ test-widgets implements
                       &1 habox new ]D ( MINOS ) 
                     &1 habox new -&2 borderbox
                   &2 habox new &1 hskips
-                  ^^ ST[  ]ST ( MINOS ) T" " S" Text:" infotextfield new  ^^bind tex
+                  ^^ T" " ST[  ]ST ( MINOS ) S" Text:" infotextfield new  ^^bind tex
                     ^^ 0 &64 &16 SL[ extend under dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
                     ^^ 0 &64 &16 SL[ extend under dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
                   &2 habox new
