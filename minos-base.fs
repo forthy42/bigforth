@@ -526,7 +526,6 @@ how:    : init ( -- )
           super dispose ;
         : close ( -- )  dpy @ XCloseDisplay drop ;
 	: color ( i --  n )
-\	    Colortable $FD cells + colarray @ @ $FD cells + 3 cells move
 	    $FF and cells colarray @ @ + @ ;
         : font@ ( i --  n )  cells fontarray @ @ + @ ;
 
@@ -713,10 +712,10 @@ public: cell var fontarray      cell var colarray
 
 \ win32 Resource                                       28jul07py
 how:    : init ( -- )   0 GetModuleHandle inst !
-          $400 NewHandle colarray !
-          $400 NewHandle penarray !
-          $400 NewHandle rgbarray !
-           $40 NewHandle fontarray !
+          $100 cells NewHandle colarray !
+          $100 cells NewHandle penarray !
+          $100 cells NewHandle rgbarray !
+           $10 cells NewHandle fontarray !
           [ IDC_HELP IDC_ARROW - 1+ cells ] Literal
           dup NewHandle cursors ! cursors @ @ swap erase
           GetDesktopWindow get-gc

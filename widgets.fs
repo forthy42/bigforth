@@ -377,15 +377,22 @@ class;
 
 \ Canvas helper words                                  04jun08py
 
-: col'  screen xrc colarray @ @ ;
-
-: c+mask ( color mask -- rgb ) >r
-    dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
-: rgb# ( r g b -- rgb )
-    blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
-: rgb>pen ( r g b -- penc )
-    rgb# col' $FF cells + ! $FF ;
-: rgb>fill ( r g b -- fillc )
-    rgb# col' $FE cells + ! $FE ;
-: rgb>back ( r g b -- backc )
-    rgb# col' $FD cells + ! $FD ;
+[IFDEF] x11
+    : col'  screen xrc colarray @ @ ;
+    
+    : c+mask ( color mask -- rgb ) >r
+	dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
+    : rgb# ( r g b -- rgb )
+	blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
+    : rgb>pen ( r g b -- penc )
+	rgb# col' $FF cells + ! $FF ;
+    : rgb>fill ( r g b -- fillc )
+	rgb# col' $FE cells + ! $FE ;
+    : rgb>back ( r g b -- backc )
+	rgb# col' $FD cells + ! $FD ;
+[THEN]
+[IFDEF] win32
+    ' rgb> Alias rgb>pen
+    ' rgb> Alias rgb>fill
+    ' rgb> Alias rgb>back
+[THEN]
