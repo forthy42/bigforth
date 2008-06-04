@@ -52,8 +52,8 @@ descriptors implements
             ELSE  true  THEN
         LOOP  drop scratch count ;
     : edit-field ( -- o )
-        0 ST[ text@ >current-name ]ST
-        name $@ item self >class" rightcase
+	name $@ 0 ST[ text@ >current-name ]ST
+	item self >class" rightcase
         infotextfield new dup F bind name-string
         content @ @ 1+ 1 ?DO  content @ Ith
             descriptor with edit-field endwith  LOOP
@@ -113,9 +113,9 @@ how:
         fnt with X-font name-string endwith $@
         dup IF  .'  font" ' type .' "'  ELSE  2drop  THEN ;
     : font-selector ( -- )
-        0 ST[ text@ tmp-contents $! ]ST
         fnt self IF  fnt with X-font name-string endwith $@
             ELSE  s" "  THEN
+        0 ST[ text@ tmp-contents $! ]ST
         s" Font:" infotextfield new
         0 1 *fill *hglue new
         ^ S[ tmp-contents $@ nip fnt self 0= and
@@ -132,8 +132,8 @@ how:
             s" Font Selection" assign show ^
         endwith bind chooser ;
     : edit-field ( -- o )
-        0 ST[ text@ >current-name ]ST
-        name $@ item self >class" rightcase infotextfield new dup
+	name $@ 0 ST[ text@ >current-name ]ST
+	item self >class" rightcase infotextfield new dup
         ^ S[ font-selector ]S s" Change Font" button new 1 habox new hfixbox
         2 habox new hskip
         swap F bind name-string
@@ -199,8 +199,8 @@ how:
     : get ( -- addr n )  content $@ ;
     
     : edit-field ( -- o )  ^ F cur bind string
-        0 ST[ text@ pad place pad count cur string assign ]ST
-        get s" String:" infotextfield new
+        get 0 ST[ text@ pad place pad count cur string assign ]ST
+        s" String:" infotextfield new
         dup F bind edit-string ;
     : null ( -- addr u )  s" String" ;
     : make ( -- addr u )  get ;
@@ -211,8 +211,8 @@ string-des class text-des
 how:
     : init ( -- ) s" Text" assign ;
     : edit-field ( -- o )  ^ F cur bind text
-        0 ST[ text@ pad place pad count cur text assign ]ST
-        get s" Text" infotextfield new
+        get 0 ST[ text@ pad place pad count cur text assign ]ST
+        s" Text" infotextfield new
     ;
     : assign ( addr n -- )  content $!
         item self 0= ?EXIT
@@ -231,8 +231,8 @@ how:
     : make ( -- widget )  null ;
     : dump ( -- ) ." M: " get type ."  widget " ;
     : edit-field ( -- o )  ^ F cur bind text
-        0 ST[ text@ pad place pad count cur text assign ]ST
-        get s" Menu:" infotextfield new ;
+        get 0 ST[ text@ pad place pad count cur text assign ]ST
+        s" Menu:" infotextfield new ;
 class;
 
 descriptor class char-des
@@ -245,9 +245,9 @@ how:
         ELSE  1 umin  content move  THEN ;
     : get ( -- addr u ) content 1 ;
     : edit-field ( -- o )  ^ F cur bind string
-        0 ST[ text@ dup 1- 0 max /string
+        get 0 ST[ text@ dup 1- 0 max /string
               cur string assign ]ST
-        get s" Text:" infotextfield new ;
+        s" Text:" infotextfield new ;
     : null ( -- char ) bl ;
     : make ( -- char ) bl ;
     : dump ( -- ) space
@@ -258,8 +258,8 @@ class;
 descriptor class 2char-des
 how:
     : edit-field ( -- o )
-        0 ST[ ]ST s" +" s" On-Char:" infotextfield new
-        0 ST[ ]ST s" -" s" Off-Char:" infotextfield new
+        t" +" 0 ST[ ]ST s" On-Char:" infotextfield new
+        t" -" 0 ST[ ]ST s" Off-Char:" infotextfield new
         2 habox new 1 hskips ;
     : null ( -- char- char+ ) '- '+ ;
     : make ( -- char- char+ ) '- '+ ;
@@ -282,7 +282,7 @@ how:
         DELAY get item assign  item resized  changed ;
     : edit-field ( -- o )
         ^ cur bind num
-        0 SN[ text@ cur num assign ]SN get s" Number:"
+        get 0 SN[ text@ cur num assign ]SN s" Number:"
         infotextfield new
         dup F bind edit-string ;
     : null ( -- addr u )  0. ;
@@ -304,8 +304,8 @@ descriptor class float-des
     : get ( -- )  content f@ f>fd ;
     
     : edit-field ( -- o )  ^ F cur bind num
-        0 SF[ text@ cur num assign ]SF
-        get s" Float:" infotextfield new
+        get 0 SF[ text@ cur num assign ]SF
+        s" Float:" infotextfield new
         dup F bind edit-string ;
     : null ( -- f ) 0e f>fd ;
     : make ( -- f )  get ;
@@ -326,8 +326,8 @@ string-des class icon-des
 how:
     : edit-field ( -- o )
         ^ cur bind icon
-        0 ST[ text@ cur icon assign ]ST
-        content $@ s" Icon:" infotextfield new ;
+        content $@ 0 ST[ text@ cur icon assign ]ST
+        s" Icon:" infotextfield new ;
     : null ( -- icon )  test-icon ;
     : make ( -- icon )  get try-icon ;
     : assign ( addr n -- )  content $!
@@ -342,10 +342,10 @@ public:
 how:
     : edit-field ( -- o )
         ^ cur bind icon
-        0 ST[ text@ cur icon get 2swap 2drop cur icon assign ]ST
-        content $@ s" On-Icon:" infotextfield new
-        0 ST[ text@ cur icon get 2drop 2swap cur icon assign ]ST
-        content2 $@ s" Off-Icon:" infotextfield new
+        content $@ 0 ST[ text@ cur icon get 2swap 2drop cur icon assign ]ST
+        s" On-Icon:" infotextfield new
+        content2 $@ 0 ST[ text@ cur icon get 2drop 2swap cur icon assign ]ST
+        s" Off-Icon:" infotextfield new
         2 hatbox new 1 hskips ;
     : null ( -- icon1 icon2 )  off-icon on-icon ;
     : make ( -- icon1 icon2 )  get try-icon >r try-icon r> swap ;
@@ -383,11 +383,11 @@ class;
 glue-des class hglue-des
 how:
     : edit-field ( -- o ) ^ cur bind hglue
-        0 SN[ text@ drop cur hglue get rot drop cur hglue assign ]SN
-        pixels @ extend s" HPixels:"
+        pixels @ extend 0 SN[ text@ drop cur hglue get rot drop cur hglue assign ]SN
+        s" HPixels:"
             infotextfield new
-        0 SN[ cur hglue get nip text@ drop swap cur hglue assign ]SN
-        fills @  extend s" Fills:"
+        fills @  extend 0 SN[ cur hglue get nip text@ drop swap cur hglue assign ]SN
+        s" Fills:"
             infotextfield new
         ^ TN[ 0 quantity ]T[ get assign ]TN
             s" pixel" rbutton new
@@ -412,11 +412,11 @@ class;
 glue-des class vglue-des
 how:
     : edit-field ( -- o ) ^ cur bind vglue
-        0 SN[ text@ drop cur vglue get rot drop cur vglue assign ]SN
-        pixels @ extend s" VPixels:"
+        pixels @ extend 0 SN[ text@ drop cur vglue get rot drop cur vglue assign ]SN
+        s" VPixels:"
            infotextfield new
-        0 SN[ cur vglue get nip text@ drop swap cur vglue assign ]SN
-        fills @  extend s" Fills:"
+        fills @  extend 0 SN[ cur vglue get nip text@ drop swap cur vglue assign ]SN
+        s" Fills:"
              infotextfield new
         ^ TN[ 0 quantity ]T[ get assign ]TN
              s" pixel" rbutton new
@@ -459,11 +459,11 @@ how:
     : make  get ;
     : edit-field ( -- o )
         ^ cur bind num
-        0 SN[ text@ drop 1 max cur num get nip cur num assign ]SN
-              w @ 0 s" W:"
+        w @ 0 0 SN[ text@ drop 1 max cur num get nip cur num assign ]SN
+              s" W:"
         infotextfield new
-        0 SN[ cur num get drop text@ drop 1 max cur num assign ]SN
-              h @ 0 s" H:"
+        h @ 0 0 SN[ cur num get drop text@ drop 1 max cur num assign ]SN
+              s" H:"
         infotextfield new 2 habox new hskip
     ;
     : dump  base push hex
@@ -479,7 +479,7 @@ how:
         endwith  changed ;
     : edit-field ( -- o )
         ^ cur bind num
-        0 SN[ text@ drop cur num assign ]SN get 0 s" Line width:"
+        get 0 SN[ text@ drop cur num assign ]SN 0 s" Line width:"
         infotextfield new ;
     : null (straction  $40 linew ! ;
     : make (straction ;
@@ -499,8 +499,8 @@ how:
     : assign-tip ( addr u -- )  tooltip-string $! ;
     : add-code   ( addr u -- )  content $+line ;
     : tooltip-field ( -- o )
-        0 ST[ text@ cur action with assign-tip endwith ]ST
-        get-tip s" Tooltip:" infotextfield new ;
+        get-tip 0 ST[ text@ cur action with assign-tip endwith ]ST
+        s" Tooltip:" infotextfield new ;
     : edit-field ( -- o )  ^ F cur bind action
         s" Code:" text-label new
         0 1 *fill 2dup glue new
@@ -649,8 +649,8 @@ how:
     : get-tip    ( -- addr u )  tooltip-string $@ ;
     : assign-tip ( addr u -- )  tooltip-string $! ;
     : tooltip-field ( -- o )
-        0 ST[ text@ cur toggle with assign-tip endwith ]ST
-	get-tip s" Tooltip:" infotextfield new ;
+        get-tip 0 ST[ text@ cur toggle with assign-tip endwith ]ST
+	s" Tooltip:" infotextfield new ;
     : edit-field ( -- o )
         ^ F cur bind toggle
         0 TN[ 0 typ ]T[ toggle-on$  0 typ$ code-string text!
@@ -725,11 +725,11 @@ how:
     : init 1 hstep ! 1 vstep ! ;
     : edit-field ( -- o )
         ^ F cur bind step
-        0 SN[ ]SN
-        get drop 0 s" Hstep:" infotextfield new
+        get drop 0 0 SN[ ]SN
+        s" Hstep:" infotextfield new
         dup F bind edit-string
-        0 SN[ ]SN
-        get nip  0 s" Vstep:" infotextfield new
+        get nip  0 0 SN[ ]SN
+        s" Vstep:" infotextfield new
         2 habox new 1 hskips ;
     : get  hstep @ vstep @ ;
     : assign ( hstep vstep -- )  vstep ! hstep ! ;
@@ -756,11 +756,11 @@ how:
     : init &10 steps ! &1 width ! ;
     : edit-field ( -- o )
         ^ F cur bind slider
-        0 SN[ text@ drop cur slider get nip cur slider assign ]SN
-        get drop 0 s" Steps:" infotextfield new
+        get drop 0 0 SN[ text@ drop cur slider get nip cur slider assign ]SN
+        s" Steps:" infotextfield new
         dup F bind edit-string 
-        0 SN[ cur slider get drop text@ drop cur slider assign ]SN
-        get nip 0 s" Width:" infotextfield new
+        get nip 0 0 SN[ cur slider get drop text@ drop cur slider assign ]SN
+        s" Width:" infotextfield new
         2 habox new 1 hskips ;
     : get ( -- steps width )  steps @ width @ ;
     : assign ( steps width -- )  2dup width ! steps !
@@ -806,14 +806,14 @@ how:
 	item !resized  item resized ;
     : edit-field ( -- o )
         ^ F cur bind slider
-        0 SN[ text@ drop cur slider assign ]SN
-        get 0 s" Steps:" infotextfield new
-        0 SN[ text@ drop cur slider with offset! endwith ]SN
-        h-offset @ s>d s" Offset:" infotextfield new
-        0 SN[ text@ drop cur slider with text*! endwith ]SN
-        text*/ cell+ @ s>d s" Scale:" infotextfield new
-        0 SN[ text@ drop cur slider with text/! endwith ]SN
-        text*/ @ s>d s" Div:" infotextfield new
+        get 0 0 SN[ text@ drop cur slider assign ]SN
+        s" Steps:" infotextfield new
+        h-offset @ s>d 0 SN[ text@ drop cur slider with offset! endwith ]SN
+        s" Offset:" infotextfield new
+        text*/ cell+ @ s>d 0 SN[ text@ drop cur slider with text*! endwith ]SN
+        s" Scale:" infotextfield new
+        text*/ @ s>d 0 SN[ text@ drop cur slider with text/! endwith ]SN
+        s" Div:" infotextfield new
         4 habox new hskip
         dup F bind edit-string ;
     : null ( -- actor ) cur pane self pos @ &9 scale-var new ;
@@ -858,14 +858,14 @@ how:
         cur-descs self F bind all-descs ;
     : make null ;
     : edit-field ( -- o )
-        0 ST[ text@ >current-name ]ST
-        name $@ s" Component"
+        name $@ 0 ST[ text@ >current-name ]ST
+        s" Component"
         tableinfotextfield new dup F bind name-string
-        0 ST[ text@ cur-descs with cname $! cname $@ item assign endwith ]ST
-        cname $@ s" Class"
+        cname $@ 0 ST[ text@ cur-descs with cname $! cname $@ item assign endwith ]ST
+        s" Class"
         tableinfotextfield new dup F bind edit-string
-        0 ST[ text@ cur-descs with cparam $! endwith ]ST
-        cparam $@ s" Params"
+        cparam $@ 0 ST[ text@ cur-descs with cparam $! endwith ]ST
+        s" Params"
         tableinfotextfield new dup F bind code-string
         3 vabox new panel ;
 class;

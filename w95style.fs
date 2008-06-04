@@ -206,7 +206,7 @@ class;
 info-menu implements
     : init  ( widget addr len dpy -- )
         text-label new bind info  bind callw
-        0 ST[ ]ST callw self combined with childs get endwith
+        callw self combined with childs get endwith 0 ST[ ]ST
         textfield new dup bind text 0 borderbox
         0 text edit ds !
         ^ M[ clicked ]M 3 tributton new bind tri

@@ -575,7 +575,7 @@ forward replace-it'
     stredit resized ;
 
 : setmaxlen  S" Set Line Length" MODAL:
-  ^ SN[ ]SN edit-o @ >o LineLen o> 0
+  ^ edit-o @ >o LineLen o> 0 SN[ ]SN
                      s" Line Length:" infotextfield new
   2fill over   S[ !len   ]S s"   OK  " button new dup >r
   2skip 3 pick S[ cancel ]S s" Cancel" button new

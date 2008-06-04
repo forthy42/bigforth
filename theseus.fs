@@ -483,9 +483,9 @@ resource:dialog implements
                 ELSE  name-field get send-keys s" -classes.fs" send-keys  THEN
                 #cr send-key
              ]S s" Edit decl" menu-entry new  1 habox new hfixbox
-             ^ ST[ CF-field get class-file $! ]ST
              class-file @
              IF  class-file $@  ELSE  s" "  THEN
+             ^ ST[ CF-field get class-file $! ]ST
              ( s" CF:" info) textfield new dup bind CF-field  2 habox new
              ^ S[ s" ed " send-keys
                 implementation-file $@?
@@ -493,9 +493,9 @@ resource:dialog implements
                 ELSE  name-field get send-keys s" .fs" send-keys  THEN
                 #cr send-key
              ]S s" Edit impl" menu-entry new  1 habox new hfixbox
-             ^ ST[ IF-field get implementation-file $! ]ST
              implementation-file @
              IF  implementation-file $@  ELSE  s" "  THEN
+             ^ ST[ IF-field get implementation-file $! ]ST
              ( s" SF:" info) textfield new dup bind IF-field  2 habox new
              dialog-stack self IF  9  ELSE  7  THEN  vabox new
              2 borderbox dup >r [IFDEF] x11 dpy get-win swap [THEN]
@@ -505,9 +505,9 @@ resource:dialog implements
            icon" icons/menu" icon-but new dup bind menu-icon
 
         5 hatbox new hfixbox
-        0 ST[ ]ST s" No Title" s" Title:" infotextfield new
+        t" No Title" 0 ST[ ]ST s" Title:" infotextfield new
             dup bind title-field
-        0 ST[ ]ST anonymous-component s" Name:"  infotextfield new
+        anonymous-component 0 ST[ ]ST s" Name:"  infotextfield new
             dup bind name-field
         2 habox new 2 borderbox
         2 super init self ( rzbox) drop ;
@@ -875,14 +875,14 @@ Variable reenter
     8 vabox new
     box-setting
         s" box name:" text-label new
-        0 ST[ text@ cur cur-box-name update-name ]ST
-          S" " textfield new dup cur bind cur-box-edit
+        t" " 0 ST[ text@ cur cur-box-name update-name ]ST
+          textfield new dup cur bind cur-box-edit
         s" display name:" text-label new
-        0 ST[ cur cur-dpy self IF
+        t" " 0 ST[ cur cur-dpy self IF
                   text@ cur cur-dpy with
                       descriptors name $! endwith
               THEN ]ST
-          S" " textfield new dup cur bind cur-dpy-edit
+          textfield new dup cur bind cur-dpy-edit
     4 vabox new
     3 vabox new panel 2 borderbox hfixbox vfixbox
     dup cur bind status  ]D
