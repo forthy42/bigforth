@@ -850,9 +850,9 @@ how:    AVariable file<=
         : panel-line ( info l file l path l -- widget )
           >real-path
           ^ ST[ reloader self close-it default! ]ST
-          -rot s" Path:" tableinfotextfield new bind path
+          s" Path:" tableinfotextfield new bind path
           2swap ^ ST[ oker self close-it default! ]ST
-          4 -roll  tableinfotextfield new bind file
+          -rot  tableinfotextfield new bind file
           path self  file self   sort-title self  2fill
           ^ S[ s" ."  !path ]S dot-dir    icon-but new
                                    dup bind reloader

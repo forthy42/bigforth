@@ -32,7 +32,7 @@ class;
 result implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ ST[  ]ST ( MINOS ) S" " S" Choice" infotextfield new  ^^bind choice
+        T" " ^^ ST[  ]ST ( MINOS ) S" Choice" infotextfield new  ^^bind choice
           ^^ S[ bye ]S ( MINOS ) S" OK" button new  ^^bind choice-ok
           ^^ S[ close ]S ( MINOS ) S" Cancel" button new 
         &2 hatbox new &1 hskips

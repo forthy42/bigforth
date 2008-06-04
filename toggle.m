@@ -28,20 +28,20 @@ toggle-actor implements
             0 0 flipper S" Toggle-State" topindex new ^^bind (topindex-03)
             topglue new 
           &5 harbox new
-                ^^ ST[  ]ST ( MINOS ) S" " S" On:" infotextfield new 
-                ^^ ST[  ]ST ( MINOS ) S" " S" Off:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" On:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" Off:" infotextfield new 
               &2 varbox new panel
             &1 habox new dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
-                ^^ ST[  ]ST ( MINOS ) S" " S" Var:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" Var:" infotextfield new 
                 $10 $1 *hfil $1 $1 *vfill glue new 
               &2 vabox new panel
             &1 habox new flipbox  dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
-                ^^ ST[  ]ST ( MINOS ) S" " S" Var:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" Var:" infotextfield new 
                 &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Num:" infotextfield new 
               &2 varbox new panel
             &1 habox new flipbox  dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
-                ^^ ST[  ]ST ( MINOS ) S" " S" Fetch:" infotextfield new 
-                ^^ ST[  ]ST ( MINOS ) S" " S" Store:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" Fetch:" infotextfield new 
+                T" " ^^ ST[  ]ST ( MINOS ) S" Store:" infotextfield new 
               &2 varbox new panel
             &1 habox new flipbox  dup ^^ with C[ (topindex-03) ]C ( MINOS ) endwith 
           &4 habox new $10  noborderbox  &2 borderbox
