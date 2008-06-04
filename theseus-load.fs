@@ -176,7 +176,7 @@ also minos-load definitions
 
 : ]N ( d -- o ) number-des new number-des with assign self endwith ;
 also float
-: ]F ( f -- o ) f>fd float-des new float-des with assign self endwith ;
+: ]F ( f -- o ) float-des new float-des with assign self endwith ;
 previous
 : ]TERM ( d -- ) term-des new term-des with assign self endwith ;
 : SC[ ( o 0 n -- o o )

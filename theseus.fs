@@ -1101,15 +1101,15 @@ s" Topindex"     ref-entity topindex       index-des string-des
 endgroup
 
 group fields:
-s" Text"            font-entity textfield          stroke-des text-des
-s" Infotext"        font-entity infotextfield      stroke-des text-des string-des
-s" Tab-Infotext"    font-entity tableinfotextfield stroke-des text-des string-des
-s" Number"          font-entity textfield          nstroke-des number-des
-s" Infonumber"      font-entity infotextfield      nstroke-des number-des string-des
-s" Tab-Infonumber"  font-entity tableinfotextfield nstroke-des number-des string-des
-s" Float"           font-entity textfield          fstroke-des float-des
-s" Infofloat"       font-entity infotextfield      fstroke-des float-des string-des
-s" Tab-Infofloat"   font-entity tableinfotextfield fstroke-des float-des string-des
+s" Text"            font-entity textfield          text-des stroke-des
+s" Infotext"        font-entity infotextfield      text-des stroke-des string-des
+s" Tab-Infotext"    font-entity tableinfotextfield text-des stroke-des string-des
+s" Number"          font-entity textfield          number-des nstroke-des
+s" Infonumber"      font-entity infotextfield      number-des nstroke-des string-des
+s" Tab-Infonumber"  font-entity tableinfotextfield number-des nstroke-des string-des
+s" Float"           font-entity textfield          float-des fstroke-des
+s" Infofloat"       font-entity infotextfield      float-des fstroke-des string-des
+s" Tab-Infofloat"   font-entity tableinfotextfield float-des fstroke-des string-des
 endgroup
 
 group slides:

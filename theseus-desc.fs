@@ -298,18 +298,18 @@ descriptor class float-des
   how:
     : init ( -- ) null assign ;
     : dispose ( -- ) super dispose ;
-    : assign ( f -- )  fd>f content f!
+    : assign ( f -- )  content f!
         item self 0= ?EXIT
         DELAY get item assign  item resized  changed ;
-    : get ( -- )  content f@ f>fd ;
+    : get ( -- )  content f@ ;
     
     : edit-field ( -- o )  ^ F cur bind num
         get 0 SF[ text@ cur num assign ]SF
         s" Float:" infotextfield new
         dup F bind edit-string ;
-    : null ( -- f ) 0e f>fd ;
+    : null ( -- f ) 0e ;
     : make ( -- f )  get ;
-    : dump ( -- ) get fd>f fe. ." ]F ( MINOS ) " ;
+    : dump ( -- ) get fe. ." ]F ( MINOS ) " ;
 class;
 
 previous
