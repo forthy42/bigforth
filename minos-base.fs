@@ -77,7 +77,7 @@ Create Colortable
        3 gray , 6 gray , \ Highlight/shadow border label
        6 gray , 0 gray , \ Text color/Cursor in focus
        4 gray , 3 gray , \ Text color/Cursor defocus
-       $F0 cells allot
+       here $F0 cells dup allot erase
 : !rgbs ( -- )  dp push  Colortable $10 cells + dp !
   rgbs DO i >rgb , LOOP ; \ standard colors
 
@@ -100,15 +100,22 @@ Create syscolors 6 c, 2 c, 6 c, 3 c, 6 c, 2 c, 6 c, 3 c,
 
 \ Color system - TrueColor                             05jun06py
 $FFFF Value alpha
+$FF0000 Value red##
+$00FF00 Value green##
+$0000FF Value blue##
 : >subc ( 16bcol mask -- color )
   swap dup $10 << or  alpha dup $10 << or um* nip 1+
   over um* nip 1+ and ;
 : make-rgbs ( vis array end start -- )
+    3 pick
+    dup Visual red_mask @   to red##
+    dup Visual green_mask @ to green##
+        Visual blue_mask @  to blue##
   ?DO  Colortable I cells + c@+ c@+ c@
        cfix -rot  cfix swap  cfix
-       4 pick Visual red_mask   @ >subc -rot
-       4 pick Visual green_mask @ >subc -rot
-       4 pick Visual blue_mask  @ >subc or or
+       red##   >subc -rot
+       green## >subc -rot
+       blue##  >subc or or
        2 pick Visual red_mask @+ @+ @ or or tuck and
        alpha rot invert >subc or
        over ! cell+  LOOP  2drop ;
@@ -507,8 +514,8 @@ public: cell var fontarray      cell var colarray
 \ XResource                                            28jul07py
 
 how:    : init ( -- )
-          $400 NewHandle colarray !
-           $40 NewHandle fontarray !
+          $100 cells NewHandle colarray !
+           $10 cells NewHandle fontarray !
           XC_num_glyphs cells NewHandle cursors !
           cursors @ @ XC_num_glyphs cells erase
           scratch 0= IF  scratch# & scratch Handle!  THEN ;
@@ -518,7 +525,9 @@ how:    : init ( -- )
               cursors   @ DisposHandle  THEN
           super dispose ;
         : close ( -- )  dpy @ XCloseDisplay drop ;
-        : color ( i --  n )  $FF and cells colarray @ @ + @ ;
+	: color ( i --  n )
+\	    Colortable $FD cells + colarray @ @ $FD cells + 3 cells move
+	    $FF and cells colarray @ @ + @ ;
         : font@ ( i --  n )  cells fontarray @ @ + @ ;
 
 \ XResource                                            17sep07py

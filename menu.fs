@@ -61,7 +61,7 @@ also MINOS also
     s" Help" menu-entry new
     key" [IFUNDEF] tip1  include tip.m [THEN] tip1 open"
     s" Tips" menu-entry new
-    ^ S[ gpl-about open ]S s" About" menu-entry new
+    ^ S[ bigforth-about open ]S s" About" menu-entry new
     3 vabox new 2 borderbox
     [IFDEF] win32 s"  ? " [ELSE] s"  Help " [THEN]
     menu-title new add-help ;

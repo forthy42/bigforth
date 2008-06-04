@@ -188,8 +188,8 @@ how:    : dispose  clicks HandleOff
 [IFDEF] x11
         : drawable ( -- gc win dpy ) xrc gc @ xwin @ xrc dpy @ ;
         : set-font ( n -- )  xrc font@ bind cur-font ;
-        : set-color ( color -- )  ?clip $FF and dup $10 <
-          over cells Pixmaps + @ and ?dup
+        : set-color ( color -- )  ?clip $FF and dup $10 u<
+          IF  dup cells Pixmaps + @  ELSE  0  THEN ?dup
           IF    nip  tx @ ty @ rot xrc set-tile
           ELSE  xrc color xrc set-color  THEN ;
         : set-cursor ( n -- )
