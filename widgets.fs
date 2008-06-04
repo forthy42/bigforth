@@ -384,15 +384,22 @@ class;
 	dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
     : rgb# ( r g b -- rgb )
 	blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
-    : rgb>pen ( r g b -- penc )
-	rgb# col' $FF cells + ! $FF ;
-    : rgb>fill ( r g b -- fillc )
-	rgb# col' $FE cells + ! $FE ;
-    : rgb>back ( r g b -- backc )
-	rgb# col' $FD cells + ! $FD ;
+    : color! ( rgb n -- )  >r col' r@ cells + ! r> ;
 [THEN]
 [IFDEF] win32
-    ' rgb> Alias rgb>pen
-    ' rgb> Alias rgb>fill
-    ' rgb> Alias rgb>back
+    : brushs'  screen xrc colarray @ @ ;
+    : pens'    screen xrc penarray @ @ ;
+    : rgbs'    screen xrc rgbarray @ @ ;
+
+    : rgb# ( r g b -- rgb )  swap 8 << or swap $10 << or ;
+    : color! ( rgb n -- )  >r Colortable r@ cells + !
+	rgbs' r@ 1 bounds get-rgbs
+	pens' r@ 1 bounds get-pens
+	brushs' r> 1 bounds get-brushs ;
 [THEN]
+: rgb>pen ( r g b -- penc )
+    rgb# $FF color! ;
+: rgb>fill ( r g b -- fillc )
+    rgb# $FE color! ;
+: rgb>back ( r g b -- backc )
+    rgb# $FD color! ;

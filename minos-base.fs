@@ -733,9 +733,9 @@ how:    : init ( -- )   0 GetModuleHandle inst !
         : pen   ( i --  n )  $FF and cells penarray @ @ + @ ;
         : rgb   ( i --  n )  $FF and cells rgbarray @ @ + @ ;
         : colors ( -- )
-          rgbarray @ @ dup $10 get-rgb   $40 + get-strgb
-          colarray @ @ dup $10 get-brush $40 + get-stbrush
-          penarray @ @ dup $10 get-pen   $40 + get-stpen ;
+          rgbarray @ @ dup $10 get-rgb   $10 cells + get-strgb
+          colarray @ @ dup $10 get-brush $10 cells + get-stbrush
+          penarray @ @ dup $10 get-pen   $10 cells + get-stpen ;
         : cursor ( n -- shape )
           dup IDC_ARROW -
           cells cursors @ @ + @ dup IF  nip EXIT  THEN
