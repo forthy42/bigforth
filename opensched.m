@@ -166,10 +166,10 @@ graphs implements
   &100 /mod &100 /mod 0 year assign 0 month assign 0 day assign
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ T" " ST[  ]ST ( MINOS ) S" Task Graph:" infotextfield new  ^^bind task
-            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" End Year" infotextfield new  ^^bind year
-            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
-            ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
+          T" " ^^ ST[  ]ST ( MINOS ) S" Task Graph:" infotextfield new  ^^bind task
+            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" End Year" infotextfield new  ^^bind year
+            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
+            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
           &3 habox new &1 hskips -&1 borderbox
         &2 vabox new &1 vskips
           $10 $2 *hfilll $10 $1 *vfil glue new 
@@ -237,10 +237,10 @@ project implements
   dup $20 and IF  vacs set   THEN  drop
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ T" " ST[  ]ST ( MINOS ) S" Project Prefix:" infotextfield new  ^^bind prefix
-          ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Start Year" infotextfield new  ^^bind year
-          ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
-          ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
+        T" " ^^ ST[  ]ST ( MINOS ) S" Project Prefix:" infotextfield new  ^^bind prefix
+          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Start Year" infotextfield new  ^^bind year
+          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
+          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
         &3 hatab new &1 hskips -&1 borderbox
             S" Reports:" text-label new 
             ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Text" tbutton new  ^^bind text

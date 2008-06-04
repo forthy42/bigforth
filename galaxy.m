@@ -183,7 +183,7 @@ redraw-galaxy ]SC ( MINOS )  TT" Background intensity" hscaler new
                       $0 $1 *hfil $0 $1 *vfil glue new 
                         ^^ &3 &7 SC[ $100 swap << to star# make-galaxy ]SC ( MINOS )  TT" 2^(9+n) stars" hscaler new 
                           $0 $1 *hfil $0 $1 *vfil glue new 
-                          ^^ &10. ]N ( MINOS ) SN[  ]SN ( MINOS ) textfield new  ^^bind iterations
+                          &10. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) textfield new  ^^bind iterations
                           $0 $1 *hfil $0 $1 *vfil glue new 
                         &3 vabox new hfixbox  &1 hskips
                       &2 habox new vfixbox 

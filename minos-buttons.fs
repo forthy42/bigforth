@@ -578,7 +578,7 @@ textfield class infotextfield
 public: text-label ptr info
 how:    : init ( xxx act addr2 u2 -- )
           text-label new bind info
-          rot s" " (textfield new
+          s" " (textfield new
           bind edit assign  5 edit ds !
           info self 1 habox new hfixbox
           edit self 1 habox new -2 borderbox

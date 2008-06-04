@@ -44,8 +44,8 @@ class;
 login-1 implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ T" " ST[  ]ST ( MINOS ) S" Name" infotextfield new  ^^bind name
-          ^^ T" " ST[  ]ST ( MINOS ) S" Passwort" infotextfield new  ^^bind passwort
+          T" " ^^ ST[  ]ST ( MINOS ) S" Name" infotextfield new  ^^bind name
+          T" " ^^ ST[  ]ST ( MINOS ) S" Passwort" infotextfield new  ^^bind passwort
             ^^ S[ ." login " name get type
 ."  with Passwort " passwort get type cr  ]S ( MINOS ) S" Log mich ein" button new  ^^bind log-in
             ^^ S[ close ]S ( MINOS ) S" Lass es sein" button new  ^^bind cancel

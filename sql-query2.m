@@ -41,11 +41,11 @@ sql implements
   sql-db self  IF  sql-db dispose  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ T" test" ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
-        ^^ T" product" ST[  ]ST ( MINOS ) S" Table:" tableinfotextfield new  ^^bind table
-        ^^ T" " ST[  ]ST ( MINOS ) S" name" tableinfotextfield new  ^^bind #name
-        ^^ T" " ST[  ]ST ( MINOS ) S" version" tableinfotextfield new  ^^bind #version
-        ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" price" tableinfotextfield new  ^^bind #price
+        T" test" ^^ ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
+        T" product" ^^ ST[  ]ST ( MINOS ) S" Table:" tableinfotextfield new  ^^bind table
+        T" " ^^ ST[  ]ST ( MINOS ) S" name" tableinfotextfield new  ^^bind #name
+        T" " ^^ ST[  ]ST ( MINOS ) S" version" tableinfotextfield new  ^^bind #version
+        &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" price" tableinfotextfield new  ^^bind #price
           ^^ S[ do-insert ]S ( MINOS ) S" Insert" button new 
           ^^ S[ close ]S ( MINOS ) S" Close" button new 
         &2 hatbox new &1 hskips

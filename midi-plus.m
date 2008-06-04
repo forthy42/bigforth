@@ -72,7 +72,7 @@ midi implements
      endwith
   endwith pause ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ T" " ST[  ]ST ( MINOS ) S" Datei:" infotextfield new  ^^bind filename
+          T" " ^^ ST[  ]ST ( MINOS ) S" Datei:" infotextfield new  ^^bind filename
             ^^ S[ ?player player start scheduled on draw ]S ( MINOS ) S" Play" button new  ^^bind play-it
             ^^ S[ ?player player stop 1 scheduled ! ]S ( MINOS ) S" Stop" button new  ^^bind stop-it
             ^^ S[ 1 scheduled !

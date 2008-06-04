@@ -34,7 +34,7 @@ midi implements
   midi-path @ IF  midi-path [ also memory ] HandleOff [ previous ] THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ T" " ST[  ]ST ( MINOS ) S" Datei:" infotextfield new  ^^bind filename
+        T" " ^^ ST[  ]ST ( MINOS ) S" Datei:" infotextfield new  ^^bind filename
           ^^ S[ ?player player start ]S ( MINOS )  TT" Play"  icon" icons/play" icon-but new  ^^bind play-it
           ^^ S[ ?player player stop ]S ( MINOS )  TT" Stop"  icon" icons/stop" icon-but new  ^^bind stop-it
           ^^ S[ s" MIDI" s" " midi-path @

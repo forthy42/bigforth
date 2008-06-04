@@ -37,7 +37,7 @@ lamp-field implements
 : aus ( i j -- )  >r >r 0 0 0 r> r> lamp! ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         CV[ ^ draw-lamps ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $100 $1 *hfil $100 $1 *vfil canvas new  ^^bind field
-          ^^ &0. ]N ( MINOS ) SN[  ]SN ( MINOS ) S" Welchen" infotextfield new  ^^bind which
+          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Welchen" infotextfield new  ^^bind which
           ^^ S[ which get drop 8 /mod an field draw ]S ( MINOS ) S" An" button new 
           ^^ S[ which get drop 8 /mod aus field draw ]S ( MINOS ) S" Aus" button new 
           ^^ S[ close ]S ( MINOS ) S" Ende" button new 
