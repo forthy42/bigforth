@@ -391,11 +391,14 @@ class;
     : pens'    screen xrc penarray @ @ ;
     : rgbs'    screen xrc rgbarray @ @ ;
 
+    : ?del ( addr -- addr )
+	dup @ ?dup IF  DeleteObject drop  THEN ;
+    
     : rgb# ( r g b -- rgb )  8 << or 8 << or ;
     : color! ( rgb n -- n ) >r Colortable r@ cells + !
-        rgbs'   r@ cells + r@ 1 bounds get-rgbs
-        pens'   r@ cells + r@ 1 bounds get-pens
-        brushs' r@ cells + r@ 1 bounds get-brushs r> ;
+        rgbs'   r@ cells +      r@ 1 bounds get-rgbs
+        pens'   r@ cells + ?del r@ 1 bounds get-pens
+        brushs' r@ cells + ?del r@ 1 bounds get-brushs r> ;
 [THEN]
 : rgb>pen ( r g b -- penc )
     rgb# $FF color! ;

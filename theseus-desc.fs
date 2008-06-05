@@ -479,7 +479,7 @@ how:
         endwith  changed ;
     : edit-field ( -- o )
         ^ cur bind num
-        get 0 SN[ text@ drop cur num assign ]SN 0 s" Line width:"
+        get 0 0 SN[ text@ drop cur num assign ]SN s" Line width:"
         infotextfield new ;
     : null (straction  $40 linew ! ;
     : make (straction ;
