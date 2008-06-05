@@ -381,9 +381,9 @@ class;
     : col'  screen xrc colarray @ @ ;
     
     : c+mask ( color mask -- rgb ) >r
-	dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
+        dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
     : rgb# ( r g b -- rgb )
-	blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
+        blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
     : color! ( rgb n -- )  >r col' r@ cells + ! r> ;
 [THEN]
 [IFDEF] win32
@@ -391,11 +391,11 @@ class;
     : pens'    screen xrc penarray @ @ ;
     : rgbs'    screen xrc rgbarray @ @ ;
 
-    : rgb# ( r g b -- rgb )  swap 8 << or swap $10 << or ;
-    : color! ( rgb n -- )  >r Colortable r@ cells + !
-	rgbs' r@ 1 bounds get-rgbs
-	pens' r@ 1 bounds get-pens
-	brushs' r> 1 bounds get-brushs ;
+    : rgb# ( r g b -- rgb )  8 << or 8 << or ;
+    : color! ( rgb n -- n ) >r Colortable r@ cells + !
+        rgbs'   r@ cells + r@ 1 bounds get-rgbs
+        pens'   r@ cells + r@ 1 bounds get-pens
+        brushs' r@ cells + r@ 1 bounds get-brushs r> ;
 [THEN]
 : rgb>pen ( r g b -- penc )
     rgb# $FF color! ;
