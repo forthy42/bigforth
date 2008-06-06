@@ -239,20 +239,20 @@ static char bigforth_header[] =
 #endif
 ;
 
-#define DEFAULTDICT 0x0040000
+#define DEFAULTDICT 0x0080000
 
 int bfdat[10]=
 {
   0,          /* mroot    */
   0,          /* heaps    */
   DEFAULTDICT,  /* dictionary size */
-  0x0080000,  /* Minimal  */
-  0x0800000,  /* Maximal  */
-  0x0010000,  /* Stacklen */
+  0x00080000,  /* Minimal  */
+  0x04000000,  /* Maximal  */
+  0x00010000,  /* Stacklen */
   1,          /* argc     */
   0,          /* argv     */
   0,          /* env      */
-  0x0001000,  /* Return stack len */
+  0x00001000,  /* Return stack len */
 };
 
 int recovery[32];
