@@ -89,7 +89,7 @@ Create color  sizeof XColor allot
   ?DO  Colortable I cells + c@+ c@+ c@
        cfix -rot  cfix swap  cfix
        color XColor red  w!+ w!+ w!
-       color 2over XAllocColor drop
+       2dup swap color XAllocColor drop
        color @ over ! cell+  LOOP  drop 2drop ;
 : get-color ( cmap dpy array size -- )  0 get-rgbs ;
 : get-stcolor ( cmap dpy array -- )  !rgbs  rgbs get-rgbs ;

@@ -7,13 +7,19 @@ also DOS
 library libX11 libX11.so.6
 library libXext libXext.so.6 \ depends libX11
 
-previous
-
 base @ hex
 
 ' noop alias has-utf8
 ' noop alias has-png
 ' noop alias has-xft
+
+legacy off
+
+libX11 XAllocColor ptr int ptr (int) XAllocColor     ( color colormap dpy -- status )
+
+legacy on
+
+previous
 
 \ -1 libX11 _XPrivDisplay               _XPrivDisplay   ( -- addr )
 \ -1 libX11 _Xdebug                       _Xdebug         ( -- addr )
@@ -120,7 +126,6 @@ C libX11 XCreateWindow                  XCreateWindow   ( attribs valuemask visu
 3 libX11 XAddHosts                      XAddHosts       ( num hosts dpy -- r )
 2 libX11 XAddToExtensionList            XAddToExtensionList     ( extdata structure -- r )
 2 libX11 XAddToSaveSet                  XAddToSaveSet   ( w dpy -- r )
-3 libX11 XAllocColor                    XAllocColor     ( color colormap dpy -- status )
 7 libX11 XAllocColorCells               XAllocColorCells        ( pixels pixels_r planes planemask_r contig colormap dpy -- status )
 B libX11 XAllocColorPlanes              XAllocColorPlanes       ( bmask_r gmask_r rmask_r blues greens reds colors pixels_r contig colormap dpy -- status )
 5 libX11 XAllocNamedColor               XAllocNamedColor        ( exact_def_r screen_def_r cname colormap dpy -- status )
