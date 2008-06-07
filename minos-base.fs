@@ -142,14 +142,14 @@ previous
 \ X timer correction                                   07jan07py
 
 : get-tds ( win dpy count -- min max )
-  scratch 2over XGetWindowAttributes drop
+  over 3 pick scratch XGetWindowAttributes drop
   PropertyChangeMask
   scratch XSetWindowAttributes event_mask dup @ >r !
-  scratch 2over CWEventMask -rot XChangeWindowAttributes drop
+  over 3 pick CWEventMask scratch XChangeWindowAttributes drop
   $7FFFFFFF $80000000 rot 0
   ?DO  2over get-td tuck max -rot min swap  LOOP 2swap
   r> scratch XSetWindowAttributes event_mask !
-  scratch CWEventMask 2swap XChangeWindowAttributes drop ;
+  swap CWEventMask scratch XChangeWindowAttributes drop ;
 
 NotUseful ( WhenMapped ) Value backing-mode
 
@@ -378,7 +378,7 @@ Forward screen-sync
 Forward screen-ic!
 
 : .Xerror" ( -- )
-  $80 strerrbuf err-event XErrorEvent error_code c@ err-dpy @
+  err-dpy @ err-event XErrorEvent error_code c@ strerrbuf $80
   XGetErrorText drop strerrbuf >len
   ." X Error: " type cr  err-dpy off ;
 : .Xerror ( -- )  screen-sync  err-dpy @ 0= ?EXIT  .Xerror" ;

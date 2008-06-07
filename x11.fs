@@ -15,8 +15,6 @@ base @ hex
 
 legacy off
 
-libX11 XLoadQueryFont ptr ptr (ptr) XLoadQueryFont  ( dpy name -- fontstruct )
-libX11 XAllocColor ptr int ptr (int) XAllocColor     ( color colormap dpy -- status )
 libX11 XGetModifierMapping ptr (int) XGetModifierMapping     ( dpy -- modmap )
 libX11 XNewModifiermap int (int) XNewModifiermap ( maxkeys -- modmap )
 libX11 XInitImage ptr (int) XInitImage      ( image -- status )
@@ -133,6 +131,12 @@ libX11 XrmGetFileDatabase ptr (int) XrmGetFileDatabase      ( filename -- dbase 
 libX11 XrmGetStringDatabase ptr (int) XrmGetStringDatabase    ( string -- dbase )
 libX11 XrmLocaleOfDatabase ptr (int) XrmLocaleOfDatabase     ( dbase -- string )
 
+libX11 XLoadQueryFont ptr ptr (ptr) XLoadQueryFont  ( dpy name -- fontstruct )
+libX11 XAllocColor ptr int ptr (int) XAllocColor     ( color colormap dpy -- status )
+libX11 XGetWindowAttributes ptr int int (int) XGetWindowAttributes    ( dpy win windows_attributes_r -- status )
+libX11 XChangeWindowAttributes ptr int int int (int) XChangeWindowAttributes ( dpy win valuemask attributes -- r )
+libX11 XGetErrorText ptr int ptr int (int) XGetErrorText   ( dpy code buffer_r length -- r )
+
 legacy on
 
 previous
@@ -216,7 +220,6 @@ B libX11 XAllocColorPlanes              XAllocColorPlanes       ( bmask_r gmask_
 6 libX11 XChangePointerControl          XChangePointerControl   ( threshold accel_denom accel_num do_thres do_accel dpy -- r )
 8 libX11 XChangeProperty                XChangeProperty ( elements data mode format type property w dpy -- r )
 3 libX11 XChangeSaveSet                 XChangeSaveSet  ( change_mode w dpy -- r )
-4 libX11 XChangeWindowAttributes        XChangeWindowAttributes ( attributes valuemask w dpy -- r )
 4 libX11 XCheckIfEvent                  XCheckIfEvent   ( arg predicate event_return dpy -- flag )
 3 libX11 XCheckMaskEvent                XCheckMaskEvent ( event_r event_mask dpy -- flag )
 3 libX11 XCheckTypedEvent               XCheckTypedEvent        ( event_r event_type dpy -- flag )
@@ -276,7 +279,6 @@ B libX11 XCopyPlane                     XCopyPlane      ( plane dy dx h w y x gc
 2 libX11 XFreePixmap                    XFreePixmap     ( pixmap dpy -- r )
 D libX11 XGeometry                      XGeometry       ( hr wr yr xr yadder xadder fh fw bw default_pos pos screen dpy -- n )
 6 libX11 XGetErrorDatabaseText          XGetErrorDatabaseText   ( int buffer_r default_string message name dpy -- r )
-4 libX11 XGetErrorText                  XGetErrorText   ( length buffer_r code dpy -- r )
 3 libX11 XGetFontProperty               XGetFontProperty        ( value_r atom fontstruct -- flag )
 4 libX11 XGetGCValues                   XGetGCValues    ( values_r valuemask gc dpy -- status )
 9 libX11 XGetGeometry                   XGetGeometry    ( depth_r borderw_r h_r w_r y_r x_r root_r d dpy -- status )
@@ -288,7 +290,6 @@ D libX11 XGeometry                      XGeometry       ( hr wr yr xr yadder xad
 5 libX11 XGetScreenSaver                XGetScreenSaver ( allow_exposures_r prefer_blanking_r interval_r timeout_r dpy -- r )
 3 libX11 XGetTransientForHint           XGetTransientForHint    ( prop_w_r w dpy -- status )
 C libX11 XGetWindowProperty             XGetWindowProperty      ( prop_r bytes_after_r nitems_r actual_format_r actual_typer req_type delete length offset property w dpy -- n )
-3 libX11 XGetWindowAttributes           XGetWindowAttributes    ( windows_attributes_r w dpy -- status )
 9 libX11 XGrabButton                    XGrabButton     ( cursor confine_to keyboard_mode pointer_mode owner_events grab_window modifiers button dpy -- r )
 8 libX11 XGrabKey                       XGrabKey        ( keyboard_mode pointer_mode owner_events grab_events grab_window modifiers keycode dpy -- r )
 6 libX11 XGrabKeyboard                  XGrabKeyboard   ( time keyboard_mode pointer_mode owner_events grab_window dpy -- n )
