@@ -544,7 +544,7 @@ how:    : init ( -- )
 \ XResource                                            03jul07py
         Create visinfo sizeof XVisualInfo allot
         : best-visual ( -- vis depth screen )
-          0 0 sp@ pad 0 dpy @ XGetVisualInfo
+          0 0 sp@ >r dpy @ 0 pad r> XGetVisualInfo
           swap sizeof XVisualInfo * bounds
           4 0 DO  TrueColor I vis# + c@ 8 = + 1+ StaticGray DO
                   2dup ?DO  I XVisualInfo depth @ K vis# + c@ =
@@ -560,8 +560,8 @@ how:    : init ( -- )
 \ XResource                                            11aug99py
 
         : best-cmap ( -- cmap )
-          AllocNone vis @
-          dpy @ screen @ RootWindow dpy @ XCreateColormap ;
+	  dpy @ dup screen @ RootWindow vis @ AllocNone
+	  XCreateColormap ;
         : tmp-win ( -- win )
           dpy @ XFlush  0 dpy @ XSync 2drop
           cmap @ xswa XSetWindowAttributes colormap !
@@ -576,7 +576,7 @@ how:    : init ( -- )
 
 \ XResource                                            22oct07py
 
-        : best-im ( -- im )  0 0 0 dpy @ XOpenIM dup xim !
+        : best-im ( -- im )  dpy @ 0 0 0 XOpenIM dup xim !
           IF  0 0
               sp@ 0 swap XNQueryInputStyle xim @ XGetIMValues_1
               drop dup >r w@+ 2+ @ swap cells bounds ?DO
