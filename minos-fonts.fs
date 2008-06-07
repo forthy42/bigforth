@@ -8,7 +8,7 @@ public: cell var name-string
         cell var ascent
 how:    : assign ( addr u -- )  name-string $!
           0 name-string $@ + c!  name-string $@ drop
-          screen xrc dpy @  XLoadQueryFont
+          screen xrc dpy @ swap XLoadQueryFont
           dup 0= abort" Font not found"
 \          dup 0<= IF  drop 0 screen xrc font@
 \                      with id @ endwith  THEN
