@@ -563,7 +563,7 @@ how:    : init ( -- )
 	  dpy @ dup screen @ RootWindow vis @ AllocNone
 	  XCreateColormap ;
         : tmp-win ( -- win )
-          dpy @ XFlush  0 dpy @ XSync 2drop
+          dpy @ XFlush  dpy @ 0 XSync
           cmap @ xswa XSetWindowAttributes colormap !
           0      xswa XSetWindowAttributes background_pixel !
           1      xswa XSetWindowAttributes border_pixel !
@@ -572,7 +572,7 @@ how:    : init ( -- )
 	  CWBackPixel CWBorderPixel or CWColormap or
 	  xswa XCreateWindow
 
-          dpy @ XFlush  0 dpy @ XSync 2drop ;
+          dpy @ XFlush  dpy @ 0 XSync ;
 
 \ XResource                                            22oct07py
 

@@ -387,10 +387,10 @@ how:    : dispose  clicks HandleOff
                        0= IF  childs handle-event  THEN
                 REPEAT  childs size-event  \ drop
           THEN  rdrop ;
-        : sync ( -- )  0 xrc dpy @ XSync drop ;
-        : mouse ( -- x y b )  0 sp@ >r 0 sp@ >r 0 sp@
-          r> r> dummy dup dup dup xwin @ xrc dpy @
-          XQueryPointer drop 8 >> ;             [THEN]
+        : sync ( -- )  xrc dpy @ 0 XSync ;
+	: mouse ( -- x y b )  0 sp@ >r 0 sp@ >r 0 sp@ >r
+	  drawable' drop dummy dup dup dup r> r> r>
+          XQueryPointer drop swap rot 8 >> ;    [THEN]
 
 \ Display                                              18oct98py
 
@@ -437,10 +437,11 @@ how:    : dispose  clicks HandleOff
 
         :noname ( -- ) \ cr 'd emit 'o emit
           event XKeyEvent time @ event-time !
-          comp_stat look_key $FF look_chars event
-[IFDEF] has-utf8  xrc ic @ dup
+[IFDEF] has-utf8  xrc ic @ ?dup >r [THEN]
+          event look_chars $FF look_key comp_stat
+[IFDEF] has-utf8  r>
           IF    Xutf8LookupString
-          ELSE  drop XLookupString  THEN
+          ELSE  XLookupString  THEN
 [ELSE]    XLookupString  [THEN]
           ?dup IF  look_chars swap bounds ?DO
                    I xc@+ swap >r event XKeyEvent state @ keyed
@@ -558,7 +559,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              16jan05py
 
-: rest-request { n addr mode format type }
+: rest-request { addr n mode format type }
     xrc dpy @
     event XSelectionRequestEvent requestor @
     event XSelectionRequestEvent property @ dup >r
@@ -566,9 +567,9 @@ how:    : dispose  clicks HandleOff
     XChangeProperty drop sync
   r> xev XSelectionEvent property ! ;
 : string-request ( -- )
-  (@select swap PropModeReplace 8 XA_STRING rest-request ;
+  (@select PropModeReplace 8 XA_STRING rest-request ;
 : string8-request ( -- )
-  (@select swap PropModeReplace 8 XA_STRING8 rest-request ;
+  (@select PropModeReplace 8 XA_STRING8 rest-request ;
 : compound-request ( -- )  string-request ;
 
 \ Display                                              23apr06py
@@ -576,7 +577,7 @@ how:    : dispose  clicks HandleOff
 | Create 'string XA_STRING , XA_STRING8 ,
 : target-request ( -- )
   XA_STRING8 XA_STRING 'string 2!
-  2 'string PropModeReplace &32 4 rest-request ;
+  'string 2 PropModeReplace &32 4 rest-request ;
 
 \ Display                                              16jan05py
         :noname \ cr  ." Selection Request "
@@ -586,7 +587,7 @@ how:    : dispose  clicks HandleOff
           xev XSelectionEvent requestor 6 cells move
           xev XSelectionEvent property off
           SelectionNotify xev XSelectionEvent type !
-          event XSelectionRequestEvent target @ xrc dpy @
+          xrc dpy @ event XSelectionRequestEvent target @
           XGetAtomName >len  BEGIN \ output push display
           2dup s" STRING"  str= IF  string8-request LEAVE  THEN
       2dup s" UTF8_STRING" str= IF  string-request  LEAVE  THEN
@@ -597,8 +598,9 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              07jan05py
 
-          xev 0 0 event XSelectionRequestEvent requestor @
-          xrc dpy @ XSendEvent drop ;
+          xrc dpy @
+	  event XSelectionRequestEvent requestor @
+          0 0 xev XSendEvent drop ;
         SelectionRequest cells Handlers + !
 
 \ Display                                              07jan07py

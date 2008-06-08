@@ -33,16 +33,16 @@ how:    : init ( -- ) ;
 
 \ backing store                                        11nov06py
 [IFDEF] x11
-        : create-pixmap ( -- )   xwin @
-          IF  xwin @ xrc dpy @ XFreePixmap drop xwin off  THEN
+        : free-pixmap ( -- )
+          xwin @  IF  xrc dpy @ xwin @ XFreePixmap xwin off  THEN ;
+        : create-pixmap ( -- )  free-pixmap
           xpict @ IF  screen xrc dpy @ xpict @
                       XRenderFreePicture xpict off  THEN
           noback @ ?EXIT  xrc depth @
           h @ 1 max w @ 1 max dpy get-win xrc dpy @
           XCreatePixmap xwin ! ;
         : dispose ( -- )  child self  IF  child dispose  THEN
-          xwin @  IF  xwin @ xrc dpy @ XFreePixmap drop  THEN
-          super dispose ;
+          free-pixmap super dispose ;
         : ?xpict ( -- )  xpict @ ?EXIT  xrc dpy @ xwin @
           over PictStandardRGB24 XRenderFindStandardFormat
           $800 pict_attrib XRenderCreatePicture xpict ! ;
@@ -215,8 +215,7 @@ how:    : init ( depth w h dpy -- )
         : draw ( -- ) ;
 [IFDEF] x11
         : create-pixmap ( depth w h -- ) over2 xrc depth !
-          2dup h ! w ! xwin @
-          IF  xwin @ xrc dpy @ XFreePixmap drop xwin off  THEN
+          2dup h ! w ! free-pixmap
           swap dpy get-win xrc dpy @
           XCreatePixmap xwin ! ;
         : get ( -- addr w h )

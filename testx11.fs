@@ -21,7 +21,7 @@ Forth
   win dpy XStoreName drop
   win dpy XSelectInput drop
   win dpy XMapWindow drop
-  0 dpy XSync drop ;
+  dpy 0 XSync ;
 
 open-x
 0

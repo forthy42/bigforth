@@ -39,7 +39,7 @@ how:    : init  ( sx sy -- )  noback on  super init
                      r@ dummy r@ cell+ r> 2 cells + dummy dummy
                      dummy xwin @ xrc dpy @ XGetGeometry drop
                      * * 3 >> maxpixmap + TO maxpixmap
-                     xwin @ xrc dpy @ XFreePixmap drop  THEN
+                     xrc dpy @ xwin @ XFreePixmap  THEN
           xwin off  noback @ ?EXIT
           xrc depth @
           dup h @ w @ * * 3 >> dup

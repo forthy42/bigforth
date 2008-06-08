@@ -21,9 +21,9 @@ how:    : assign ( addr u -- )  name-string $!
         | Variable font_d
         | Variable font_a
         | Variable dir_r
-        : size ( addr u -- w h )  >r >r
-          text_r font_d font_a dir_r
-          r> r> swap id @ XTextExtents drop
+        : size ( addr u -- w h )  id @ -rot
+          dir_r font_a font_d text_r
+          XTextExtents
           font_d @ font_a @ +
           text_r XCharStruct rbearing wx@
           text_r XCharStruct lbearing wx@ -
@@ -37,7 +37,7 @@ how:    : assign ( addr u -- )  name-string $!
           2swap swap text_i XTextItem chars 2!
           ascent @ +
           r> displays with
-             1 text_i 2swap swap drawable  XDrawText drop
+	    2>r drawable' 2r> text_i 1 XDrawText
           endwith ;
 class;
 
@@ -47,9 +47,9 @@ class;
 \ X fonts 16 bit                                       24oct99py
 
 X-font class X-font16
-how:    : size ( addr u -- w h )  >r >r
-          text_r font_d font_a dir_r
-          r> r> 2/ swap id @ XTextExtents16 drop
+how:    : size ( addr u -- w h )  2/ id @ -rot
+          dir_r font_a font_d text_r
+          XTextExtents16
           font_d @ font_a @ +
           text_r XCharStruct rbearing wx@
           text_r XCharStruct lbearing wx@ -
@@ -62,7 +62,7 @@ how:    : size ( addr u -- w h )  >r >r
           2swap 2/ swap text_i XTextItem chars 2!
           ascent @ +
           r> displays with
-             1 text_i 2swap swap drawable  XDrawText16 drop
+	    2>r drawable' 2r> text_i 1 XDrawText16
           endwith ;
 class;
 

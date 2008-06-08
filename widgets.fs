@@ -122,8 +122,8 @@ public: cell var shape          cell var image
 how:    : init ( file len -- ) super init  assign ;
         : dispose-image ( -- )
 [IFDEF] x11
-          shape @ ?dup IF screen xrc dpy @ XFreePixmap drop THEN
-          image @ ?dup IF screen xrc dpy @ XFreePixmap drop THEN
+          shape @ ?dup IF screen xrc dpy @ swap XFreePixmap  THEN
+          image @ ?dup IF screen xrc dpy @ swap XFreePixmap  THEN
  [THEN]   shape off image off ;
         : assign ( file len -- )  dispose-image
           read-icon  h ! w !

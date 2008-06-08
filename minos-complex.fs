@@ -72,7 +72,7 @@ how:
                              glxwin off  THEN
           glxpm  @ ?dup  IF  over swap glXDestroyGLXPixmap
                              glxpm  off  THEN
-          pixmap @ ?dup  IF  over XFreePixmap drop
+          pixmap @ ?dup  IF  over swap XFreePixmap
                              pixmap off  THEN
           cmap   @ ?dup  IF  over XFreeColormap drop
                              cmap   off  THEN  drop ;
