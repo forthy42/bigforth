@@ -133,10 +133,10 @@ also dos
 : XTime ( -- time )  timeval timezone gettimeofday
   timeval 2@ &1000 * swap &1000 / + ;
 previous
-: get-td ( win dpy -- n )  >r >r
-  S" round delay trip" swap 0 8 &31 &16 r> r> 2dup >r >r
+: get-td ( win dpy -- n ) { win dpy }
+  dpy win &16 &31 8 0 S" round delay trip"
   XChangeProperty drop
-  scratch PropertyChangeMask r> r> XWindowEvent drop
+  scratch PropertyChangeMask win dpy XWindowEvent drop
   XTime scratch XPropertyEvent time @ - ;
 
 \ X timer correction                                   07jan07py
@@ -377,7 +377,7 @@ Code X-error  R:  4 SP D) AX mov  AX err-dpy A#) mov
 Forward screen-sync
 Forward screen-ic!
 
-: .Xerror" ( -- )
+: .Xerror" ( -- )  output push display
   err-dpy @ err-event XErrorEvent error_code c@ strerrbuf $80
   XGetErrorText drop strerrbuf >len
   ." X Error: " type cr  err-dpy off ;
@@ -567,10 +567,10 @@ how:    : init ( -- )
           cmap @ xswa XSetWindowAttributes colormap !
           0      xswa XSetWindowAttributes background_pixel !
           1      xswa XSetWindowAttributes border_pixel !
-
-          xswa CWBackPixel CWBorderPixel or CWColormap or
-          vis @ InputOutput depth @ 2 &100 dup 0 0
-          dpy @ screen @ RootWindow dpy @ XCreateWindow
+	  dpy @ dup screen @ RootWindow  0 0 &100 dup
+	  2 depth @ InputOutput vis @
+	  CWBackPixel CWBorderPixel or CWColormap or
+	  xswa XCreateWindow
 
           dpy @ XFlush  0 dpy @ XSync 2drop ;
 
@@ -657,7 +657,7 @@ how:    : init ( -- )
 	  dpy @ cmap @ colarray @ @ #rgbs @ 0 XFreeColors drop ;
         : cursor ( n -- shape )
           dup cells cursors @ @ + @ dup IF  nip EXIT  THEN
-          drop dup dpy @ XCreateFontCursor tuck swap cells
+          drop dpy @ over XCreateFontCursor tuck swap cells
           cursors @ @ + ! ;
 
 \ XResource                                            27jun02py
@@ -666,10 +666,10 @@ how:    : init ( -- )
           dup cur-color !
                     [ xgc XGCValues foreground ] ALiteral !
           FillSolid [ xgc XGCValues fill_style ] ALiteral !
-          xgc  [ GCForeground GCFillStyle or ] Literal
-          gc @ dpy @ XChangeGC drop ;
+	  dpy @ gc @ [ GCForeground GCFillStyle or ] Literal xgc
+	  XChangeGC drop ;
         : set-function ( n -- )
-          gc @ dpy @ XSetFunction drop ;
+          dpy @ gc @ rot XSetFunction drop ;
         : get-gc ( win -- )
           1 depth @ &24 min << 1-
                     [ xgc XGCValues background ] ALiteral !
@@ -816,11 +816,12 @@ Variable selection
 [IFDEF] x11
 Variable own-selection
 
-: post-selection ( addr n win dpy -- ) swap >r >r
-  swap 2dup r@ XStoreBytes drop
-  PropModeReplace 8 XA_STRING 9 r@ DefaultRootWindow
-  r@ XChangeProperty drop
-  event-time @ r> r> 1 rot XSetSelectionOwner drop
+: post-selection ( addr n win dpy -- ) { win dpy }
+  2dup dpy -rot XStoreBytes drop
+  >r >r
+  dpy dpy DefaultRootWindow 9 &31 ( XA_STRING ) 8 PropModeReplace
+  r> r> XChangeProperty drop
+  dpy 1 win event-time @ XSetSelectionOwner drop
   own-selection on ;
 
 \ selection                                            23apr06py
@@ -829,15 +830,17 @@ Forward screen-event
 : wait-for-select ( -- flag )  got-selection off
   &5000 after  BEGIN  screen-event
            timeout? got-selection @ or UNTIL  drop ;
-: fetch-property ( prop win dpy -- )
-  over2 0= IF  str-selection @ IF  2drop drop got-selection on
+: fetch-property ( prop win dpy -- ) { prop win dpy }
+  prop 0=  IF  str-selection @ IF  got-selection on
                                    str-selection off  EXIT  THEN
-            str-selection on >r nip CurrentTime swap
-            1 XA_STRING8 1 r> XConvertSelection drop  EXIT  THEN
-  >r >r >r 0 sp@ >r 0 sp@ >r 0 sp@ >r 0 sp@ >r 0 sp@
-  r> r> r> r> AnyPropertyType 1 $10000 0 r> r> r>
+	       str-selection on dpy
+	       1 XA_STRING8 1 win CurrentTime
+	       XConvertSelection drop  EXIT  THEN
+  0 sp@ >r 0 sp@ >r 0 sp@ >r 0 sp@ >r 0 sp@ >r
+  dpy win prop 0 $10000 1 AnyPropertyType
+  r> r> r> r> r>
   XGetWindowProperty 0=
-  IF  nip dup >r swap +select 2drop r> XFree drop
+  IF  2drop nip over >r +select r> XFree drop
   ELSE  drop 2drop 2drop  THEN  got-selection on ;
 
 \ selection                                            23apr06py
@@ -846,10 +849,11 @@ Forward screen-event
   own-selection @
   IF    2drop
   ELSE  >r  selection HandleOff
-        1 r@ XGetSelectionOwner 0=
-        IF    0 sp@ r> XFetchBytes tuck swap +select XFree 2drop
-        ELSE  event-time @ swap
-              1 XA_STRING 1 r> XConvertSelection drop
+        r@ 1 XGetSelectionOwner 0=
+        IF    0 sp@ r> swap XFetchBytes tuck swap +select XFree 2drop
+	ELSE  r> swap >r
+	      1 XA_STRING 1 r> event-time @
+              XConvertSelection drop
               wait-for-select
         THEN
   THEN  (@select ;

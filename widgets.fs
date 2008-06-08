@@ -144,9 +144,10 @@ xresource implements
                     [ xgc XGCValues tile         ] ALiteral !
           swap      [ xgc XGCValues ts_x_origin  ] ALiteral 2!
           FillTiled [ xgc XGCValues fill_style   ] ALiteral !
-          xgc [ GCTile GCTileStipXOrigin or
-                GCTileStipYOrigin or GCFillStyle or ] Literal
-          gc @ dpy @ XChangeGC drop ;   class;  [THEN]
+	  dpy @ gc @
+          [ GCTile GCTileStipXOrigin or
+            GCTileStipYOrigin or GCFillStyle or ] Literal xgc
+	  XChangeGC drop ;   class;  [THEN]
 
 \ Icon                                                 26oct07py
 widget class icon

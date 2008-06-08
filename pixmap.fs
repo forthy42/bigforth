@@ -329,12 +329,12 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 
 [IFDEF] x11
 : fix-color { shape pixmap w h |
-    4 screen drawable nip XSetFunction drop
+    screen drawable' nip 4 XSetFunction drop
     1 pixmap-format XPixmapFormatValues depth @ << 1-
     screen drawable nip XSetBackground drop
     1 0 0 h w 0 0 screen drawable nip shape pixmap rot
           XCopyPlane drop
-    3 screen drawable nip XSetFunction drop
+    screen drawable' nip 3 XSetFunction drop
     } ;
 [THEN]
 

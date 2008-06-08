@@ -12,7 +12,7 @@ Variable pixmap
 attribs shape pixmap 0" /usr/X11R6/include/X11/pixmaps/xterm-linux.xpm"
 screen xwin @ dpy0 dpy @ XpmReadFileToPixmap .
 
-: set-fun  ( n -- )  win0 drawable nip XSetFunction drop ;
+: set-fun  ( n -- )  win0 drawable' nip rot XSetFunction drop ;
 
 : draw-icon ( x y -- ) { x y |
   0 win0 drawable nip XSetForeground drop

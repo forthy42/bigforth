@@ -24,9 +24,10 @@ how:    : xinc  child xinc ;
         : set-protocol ( -- )
           0 0" WM_DELETE_WINDOW" xrc dpy @ XInternAtom
           wm_delete_window !
-          1 wm_delete_window 1 &32 4
-             0 0" WM_PROTOCOLS" xrc dpy @ XInternAtom
-             xwin @ xrc dpy @ XChangeProperty drop ;
+	  xrc dpy @ xwin @
+	  0 0" WM_PROTOCOLS" xrc dpy @ XInternAtom
+	  4 &32 1 wm_delete_window 1
+	  XChangeProperty drop ;
         :noname  event XClientMessageEvent data @
           wm_delete_window @ =  IF  close  THEN ;
         ClientMessage cells Handlers + !
@@ -86,9 +87,11 @@ how:    : xinc  child xinc ;
 \ window                                               23jan07py
 
         : make-window ( n -- )  >r  set-xswa
-          xswa  xswavals r> or  xrc get-visual 0 swap
-          border-size @ border-size off
-          h @ 1 max w @ 1 max 0 0 dpy xwin @ xrc dpy @
+	  xrc dpy @ dpy xwin @
+	  0 0 w @ 1 max h @ 1 max
+	  border-size @ border-size off
+	  xrc get-visual 0 rot
+	  xswavals r> or xswa
           XCreateWindow xwin !   set-protocol set-hint
           xwin @ xrc get-ic ;
 [THEN]

@@ -25,11 +25,11 @@ public: ptr dpy                 ptr childs
         cell var xft-draw
 
 \ Display                                              11nov06py
+        early drawable          early drawable'
         method line             method text
         method image            method box
         method mask             method fill
         method stroke           method drawer
-        method drawable         \ method ximage
         method mouse            method screenpos
         method trans            method trans'
         method transback        method sync
@@ -187,6 +187,7 @@ how:    : dispose  clicks HandleOff
 
 [IFDEF] x11
         : drawable ( -- gc win dpy ) xrc gc @ xwin @ xrc dpy @ ;
+        : drawable' ( -- dpy win gc ) xrc dpy @ xwin @ xrc gc @ ;
         : set-font ( n -- )  xrc font@ bind cur-font ;
         : set-color ( color -- )  ?clip $FF and dup $10 u<
           IF  dup cells Pixmaps + @  ELSE  0  THEN ?dup
@@ -556,10 +557,12 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              16jan05py
 
-: rest-request ( n addr mode format type -- )
-  event XSelectionRequestEvent property @ dup >r
-  event XSelectionRequestEvent requestor @
-  xrc dpy @ XChangeProperty drop sync
+: rest-request { n addr mode format type }
+    xrc dpy @
+    event XSelectionRequestEvent requestor @
+    event XSelectionRequestEvent property @ dup >r
+    type format mode addr n
+    XChangeProperty drop sync
   r> xev XSelectionEvent property ! ;
 : string-request ( -- )
   (@select swap PropModeReplace 8 XA_STRING rest-request ;

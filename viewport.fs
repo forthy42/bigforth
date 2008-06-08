@@ -13,8 +13,8 @@ how:    : make-win ( wino -- win )  >r
           defocuscol @ @ xrc color
               xswa XSetWindowAttributes background_pixel !
           event-mask   xswa XSetWindowAttributes event_mask !
-          xswa xswavals CopyFromParent dup 0 0
-          1 1 0 0 r> xrc dpy @ XCreateWindow ;
+          xrc dpy @ r>  0 0 1 1  0 0  CopyFromParent dup
+          xswavals xswa XCreateWindow ;
         : init ( sx sy -- )  super init
           maxclicks 8* cell+ clicks 2dup Handle! @ swap erase
           self dpy get-dpy displays with dpy append endwith

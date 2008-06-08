@@ -92,11 +92,14 @@ how:
           dpyscreen BlackPixel dup
               xswa XSetWindowAttributes border_pixel !
               xswa XSetWindowAttributes background_pixel !
-          event-mask  xswa XSetWindowAttributes event_mask !
-          xswa glxvals   visinfo @ XVisualInfo visual @
-          InputOutput    visinfo @ XVisualInfo depth  @ 0
-          h @ 1 max w @ 1 max y @ x @
-          dpy get-win dpy xrc dpy @  XCreateWindow
+
+	  event-mask  xswa XSetWindowAttributes event_mask !
+
+	  dpy xrc dpy @ dpy get-win
+	  x @ y @ w @ 1 max h @ 1 max
+	  0           visinfo @ XVisualInfo depth  @
+	  InputOutput visinfo @ XVisualInfo visual @
+	  glxvals xswa XCreateWindow
           self over window-stub new bind stub ;
 
 \ OpenGL canvas                                        09dec07py

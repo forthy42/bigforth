@@ -629,11 +629,11 @@ how:    : init ( -- )
 
 vrtsizer class vsizer
 how:    : drawxorline
-[IFDEF] x11    9 dpy drawable nip XSetFunction drop [THEN]
+[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN]
           x @ y @ vsized vsize @ vsize' @
           relation? IF  -  ELSE  swap -  THEN  -
           h @ 2/ + w @ 1 color @ 8 >> dpy box
-[IFDEF] x11    3 dpy drawable nip XSetFunction drop [THEN] ;
+[IFDEF] x11    dpy drawable' nip 3 XSetFunction drop [THEN] ;
 class;
 
 vrtsizer class vxrtsizer
@@ -644,11 +644,11 @@ class;
 
 hrtsizer class hsizer
 how:    : drawxorline
-[IFDEF] x11    9 dpy drawable nip XSetFunction drop [THEN]
+[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN]
           x @ hsized hsize @ hsize' @
           relation? IF  -  ELSE  swap -  THEN  -
           w @ 2/ + y @ 1 h @ color @ 8 >> dpy box
-[IFDEF] x11    3 dpy drawable nip XSetFunction drop [THEN] ;
+[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN] ;
 class;
 
 hrtsizer class hxrtsizer
