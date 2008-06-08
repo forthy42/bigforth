@@ -63,7 +63,7 @@ Variable events
 
 : handle-event ( flag -- )
   IF  dpy XPending  ELSE  true  THEN
-  IF  event dpy XNextEvent drop 1 events +!
+  IF  dpy event XNextEvent 1 events +!
       event @ cells Handlers + perform  THEN ;
 
 Variable comp_stat 0 ,

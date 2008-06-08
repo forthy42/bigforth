@@ -196,33 +196,34 @@ how:    : dispose  clicks HandleOff
         : set-cursor ( n -- )
           cur-cursor @ over = IF  drop  EXIT  THEN
           dup cur-cursor !
-          xrc cursor drawable rot drop XDefineCursor drop ;
+          xrc cursor drawable' drop rot XDefineCursor drop ;
         : set-linewidth ( n -- ) >r
-          1 0 0 r> drawable nip XSetLineAttributes drop ;
+	  drawable' nip r> 0 0 1 XSetLineAttributes drop ;
 
 \ Display                                              21aug99py
 
         : line ( x y x y color -- )  set-color
-          swap 2swap swap drawable XDrawLine drop ;
+          2>r 2>r drawable' 2r> 2r> XDrawLine ;
         : text ( addr u x y color -- )  set-color
           self cur-font draw ;
         : box ( x y w h color -- )  set-color \ clip-box
-          swap 2swap swap drawable XFillRectangle drop ;
+          2>r 2>r drawable' 2r> 2r> XFillRectangle ;
         : fill ( x y array n color -- )  set-color
           2swap swap 2over drop w!+ w!
-          CoordModePrevious Complex 2swap swap
-          drawable XFillPolygon drop ;
+	  2>r drawable' 2r> Complex CoordModePrevious
+	  XFillPolygon ;
         : stroke ( x y array n color -- )  set-color
           2swap swap 2over drop w!+ w!
-          CoordModePrevious -rot swap drawable XDrawLines drop ;
+	  2>r drawable' 2r> CoordModePrevious XDrawLines ;
 
 \ Display                                              11nov06py
 
-        : clip-mask ( y x w -- )  drawable nip XSetClipMask drop
-          drawable nip XSetClipOrigin drop ;
+        : clip-mask ( y x w -- )
+	  drawable' nip rot XSetClipMask
+          drawable' nip 2swap swap XSetClipOrigin ;
         : mask { xs ys w h x y win1 win2 |  ?clip
           win1 0= IF
-              y x h w ys xs drawable win2 swap XCopyArea drop
+	      drawable' win2 -rot xs ys w h x y XCopyArea
 [IFDEF] xrender  ELSE  win1 -1 = IF
               ?xpict ?pclip
               xrc dpy @ 3 win2 0 xpict @ xs ys xs ys x y w h
@@ -231,16 +232,16 @@ how:    : dispose  clicks HandleOff
 \ Display                                              21mar04py
 
           ELSE  clip-is @ 0= IF  y x win1 clip-mask
-              y x h w ys xs drawable win2 swap XCopyArea drop
+	      drawable' win2 -rot xs ys w h x y XCopyArea
               0 0 0 clip-mask
           ELSE  1 xrc set-function  0 xrc set-color
               1 y x h w ys xs drawable win1 swap XCopyPlane drop
               6 xrc set-function
-              y x h w ys xs drawable win2 swap XCopyArea drop
+	      drawable' win2 -rot xs ys w h x y XCopyArea
               3 xrc set-function
           THEN THEN [IFDEF] xrender THEN [THEN] } ;
         : image { xs ys w h x y win |  ?clip
-          y x h w ys xs drawable win swap XCopyArea drop } ;
+	  drawable' win -rot xs ys w h x y XCopyArea } ;
 [THEN]
 
 \ Display                                              27jun02py
@@ -304,7 +305,7 @@ how:    : dispose  clicks HandleOff
 \ Display       Clipping rectangle x11                 12may02py
 [IFDEF] x11
         : rect>reg ( rect -- r )  XCreateRegion
-          dup >r tuck swap XUnionRectWithRegion drop r> ;
+          dup >r dup XUnionRectWithRegion r> ;
         : clip-r? ( -- )  clipregion @ clip-r @ <>
           clip-r @ and  IF  clip-r @ XDestroyRegion drop  THEN ;
 
@@ -313,9 +314,9 @@ how:    : dispose  clicks HandleOff
                           XIntersectRegion drop r>
                     ELSE  drop clipregion @  THEN
           ELSE  dup IF    rect>reg
-                    ELSE  drop None drawable nip XSetClipMask
-                          drop clip-r off EXIT  THEN
-          THEN  dup clip-r ! drawable nip XSetRegion drop ;
+                    ELSE  drop drawable' nip None XSetClipMask
+                          clip-r off EXIT  THEN
+          THEN  dup clip-r ! drawable' nip rot XSetRegion ;
 [THEN]
 
 \ Display       Clipping rectangle win32               20oct99py
@@ -343,7 +344,7 @@ how:    : dispose  clicks HandleOff
 \          ." : add region " 4 0 DO I pick . LOOP
           clipregion @ dup 0= IF  drop XCreateRegion  THEN  >r
           swap 2swap swap  xrect  w!+ w!+ w!+ w!
-          r@ dup xrect  XUnionRectWithRegion drop
+          xrect r@ dup  XUnionRectWithRegion
           clipregion @ clip-r @ = IF  r@ clip-r !  THEN
           r> clipregion ! ;
 
@@ -357,8 +358,8 @@ how:    : dispose  clicks HandleOff
               IF  xywh 2drop rw @ rh @ resize  THEN  draw
               -1 rw !  -1 rh !  THEN
           clipregion @
-          IF  clipregion @ dup >r
-              xrc gc @ xrc dpy @ XSetRegion drop   draw
+          IF  clipregion @ >r
+              drawable' nip r@ XSetRegion   draw
               clip-r? clipregion off  clip-r off
               r> XDestroyRegion drop  0 clip-rect  THEN
           nextwin goto size-event ;
@@ -377,11 +378,11 @@ how:    : dispose  clicks HandleOff
 \ Display                                              07jan07py
 [IFDEF] x11
         : get-event ( mask -- ) dup >r
-          IF  BEGIN  event r@ xrc dpy @ XCheckMaskEvent  WHILE
+          IF  BEGIN  xrc dpy @ r@ event XCheckMaskEvent  WHILE
                      0 event XFilterEvent
                      0= IF  childs handle-event  THEN  REPEAT
           ELSE  BEGIN  xrc dpy @  XPending  WHILE
-                       event xrc dpy @ XNextEvent drop
+                       xrc dpy @ event XNextEvent
                        0 event XFilterEvent
                        0= IF  childs handle-event  THEN
                 REPEAT  childs size-event  \ drop
