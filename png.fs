@@ -124,7 +124,7 @@ $FF w,
 : read-png ( fd -- pixmap mask w h )
     read-png-image 4 and IF
         screen xrc dpy @ { img w h dpy |
-        $20 h w screen xwin @ dpy XCreatePixmap
+        dpy screen xwin @ w h $20 XCreatePixmap
         ARGB32 @ 0= IF
             dpy PictStandardARGB32 XRenderFindStandardFormat
             ARGB32 $20 move  THEN

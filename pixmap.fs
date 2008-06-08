@@ -196,8 +196,8 @@ Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
     data 0 ZPixmap pixmap-format XPixmapFormatValues depth @
     dpy dup DefaultScreen DefaultVisual
     dpy XCreateImage
-    pixmap-format XPixmapFormatValues depth @
-    h w screen xwin @ dpy XCreatePixmap
+    dpy screen xwin @ w h
+    pixmap-format XPixmapFormatValues depth @ XCreatePixmap
     { img pix |
       h w 0 0 0 0 img screen drawable nip pix swap XPutImage drop
       img XImage data off  img XDestroyImage
@@ -227,8 +227,8 @@ Create values sizeof XGCValues allot
         data 0 XYPixmap bitmap-format XPixmapFormatValues depth @
         dpy dup DefaultScreen DefaultVisual
         dpy XCreateImage
-        bitmap-format XPixmapFormatValues depth @
-        h w screen xwin @ dpy XCreatePixmap
+	dpy screen xwin @ w h
+        bitmap-format XPixmapFormatValues depth @ XCreatePixmap
         { img pix |
           h w 0 0 0 0 img
           dpy pix 0 values XCreateGC dup >r

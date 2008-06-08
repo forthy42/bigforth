@@ -38,8 +38,8 @@ how:    : init ( -- ) ;
         : create-pixmap ( -- )  free-pixmap
           xpict @ IF  screen xrc dpy @ xpict @
                       XRenderFreePicture xpict off  THEN
-          noback @ ?EXIT  xrc depth @
-          h @ 1 max w @ 1 max dpy get-win xrc dpy @
+          noback @ ?EXIT   xrc dpy @
+	  dpy get-win  w @ 1 max  h @ 1 max  xrc depth @
           XCreatePixmap xwin ! ;
         : dispose ( -- )  child self  IF  child dispose  THEN
           free-pixmap super dispose ;
@@ -216,7 +216,7 @@ how:    : init ( depth w h dpy -- )
 [IFDEF] x11
         : create-pixmap ( depth w h -- ) over2 xrc depth !
           2dup h ! w ! free-pixmap
-          swap dpy get-win xrc dpy @
+          2>r >r xrc dpy @ dpy get-win r> 2r> rot
           XCreatePixmap xwin ! ;
         : get ( -- addr w h )
           ZPixmap -1 h @ w @ 0 0 xwin @ xrc dpy @ XGetImage ;
