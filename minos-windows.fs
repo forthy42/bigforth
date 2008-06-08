@@ -129,7 +129,7 @@ how:    : xinc  child xinc ;
           title $off
           xwin @  IF
 [IFDEF] x11           xrc ic @ dup IF  XDestroyIC  THEN  drop
-                      xwin @ xrc dpy @ XDestroyWindow drop
+                      xrc dpy @ xwin @ XDestroyWindow drop
 [THEN]
 [IFDEF] win32         xwin @ DestroyWindow drop
                       dpy handle-event
@@ -487,7 +487,7 @@ how:    : make-window  ( attrib -- )
           ELSE  ReleaseCapture drop  app-win @ re-time  THEN ;
  [THEN] : dispose ( -- )
           title $off
-[IFDEF] x11  xwin @ IF xwin @ xrc dpy @ XDestroyWindow drop THEN
+[IFDEF] x11  xwin @ IF xrc dpy @ xwin @ XDestroyWindow drop THEN
  [THEN] [IFDEF] win32
           xwin @  IF  xwin @ DestroyWindow drop  THEN
  [THEN]   self dpy delete  displays :: dispose ;

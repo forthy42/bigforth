@@ -231,7 +231,7 @@ Create values sizeof XGCValues allot
         h w screen xwin @ dpy XCreatePixmap
         { img pix |
           h w 0 0 0 0 img
-          values 0 pix dpy XCreateGC dup >r
+          dpy pix 0 values XCreateGC dup >r
           pix dpy XPutImage drop
           r> dpy XFreeGC drop
           img XImage data off  img XDestroyImage   data DisposPtr

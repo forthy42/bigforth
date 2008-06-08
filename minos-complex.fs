@@ -68,7 +68,7 @@ how:
 
 \ OpenGL canvas                                        09dec07py
         : destroy-pixmap ( -- ) dpy xrc dpy @
-          glxwin @ ?dup  IF  over XDestroyWindow drop
+          glxwin @ ?dup  IF  over swap XDestroyWindow drop
                              glxwin off  THEN
           glxpm  @ ?dup  IF  over swap glXDestroyGLXPixmap
                              glxpm  off  THEN

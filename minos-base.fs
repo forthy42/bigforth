@@ -577,8 +577,8 @@ how:    : init ( -- )
 \ XResource                                            22oct07py
 
         : best-im ( -- im )  dpy @ 0 0 0 XOpenIM dup xim !
-          IF  0 0
-              sp@ 0 swap XNQueryInputStyle xim @ XGetIMValues_1
+          IF  0 0 sp@ >r xim @ XNQueryInputStyle r> 0
+              XGetIMValues_1
               drop dup >r w@+ 2+ @ swap cells bounds ?DO
                   I @ dup XIMPreedit and 0<>
                   swap XIMStatusNothing and
@@ -590,16 +590,16 @@ how:    : init ( -- )
 
         : get-ic ( win -- ) xim @ 0= IF  drop  EXIT  THEN
           ic @ IF
-             0 swap XNFocusWindow ic @ XSetICValues_1 drop
-             EXIT  THEN  >r
-          0 ( r@ XNClientWindow ) r> XNFocusWindow
-          0 spot XNSpotLocation
-            fontset @ XNFontSet 0 XVaCreateNestedList_2 >r
-          r@ XNPreeditAttributes
-          im @ XNInputStyle xim @ XCreateIC_3 dup ic !
-          screen-ic!
-          r> XFree drop
-          ic @ ?dup IF  XSetICFocus drop  THEN ;
+             >r ic @ XNFocusWindow r> 0 XSetICValues_1 drop
+             EXIT  THEN
+	  0 XNFontSet fontset @ XNSpotLocation spot 0
+	  XVaCreateNestedList_2 { win list }
+	  xim @ XNInputStyle im @ XNPreeditAttributes
+	  list XNFocusWindow win 0 ( r@ XNClientWindow )
+	  XCreateIC_3 dup ic !
+	  screen-ic!
+	  list XFree drop
+	  ic @ ?dup IF  XSetICFocus drop  THEN ;
 
 \ XResource                                            22mar03py
 
@@ -611,12 +611,12 @@ how:    : init ( -- )
           dpy @ screen @ DefaultGC         gc !
           best-visual over dpy @ screen @ DefaultDepth <>
           IF    screen ! depth ! vis !  best-cmap cmap !
-                xgc 0 tmp-win dup >r dpy @ XCreateGC gc !
-                r> dpy @ XDestroyWindow drop
+	        dpy @ tmp-win dup >r 0 xgc XCreateGC gc !
+                dpy @ r> XDestroyWindow drop
           ELSE  drop depth ! dpy @ screen @ DefaultVisual vis !
                 xswavals xswavalvis xor to xswavals drop
           THEN  best-im im !
-          0 &38 dpy @ XKeycodeToKeysym drop ;
+          dpy @ &38 0 XKeycodeToKeysym drop ;
 
 \ XResource                                            01jan05py
 
@@ -638,7 +638,7 @@ how:    : init ( -- )
 \ XResource                                            19dec04py
 
         : fontset! ( addr -- )  >r
-          0 sp@ >r 0 sp@ >r 0 sp@ r> r> r> dpy @
+          0 sp@ >r 0 sp@ >r 0 sp@ >r dpy @ r> r> swap r> r> swap 2swap
           XCreateFontSet fontset ! 2drop XFreeStringList drop ;
 \          0 ?DO  ." Missing charset: " dup Ith >len type cr
 \          LOOP  drop ;
@@ -654,7 +654,7 @@ how:    : init ( -- )
                cmap @ dpy @ colarray @ @ $10 cells + get-stcolor
           THEN rgbs drop #rgbs ! ;
         : free-colors  vis @ Visual class @ TrueColor >= ?EXIT
-          0 #rgbs @ colarray @ @ cmap @ dpy @ XFreeColors drop ;
+	  dpy @ cmap @ colarray @ @ #rgbs @ 0 XFreeColors drop ;
         : cursor ( n -- shape )
           dup cells cursors @ @ + @ dup IF  nip EXIT  THEN
           drop dup dpy @ XCreateFontCursor tuck swap cells
@@ -673,7 +673,7 @@ how:    : init ( -- )
         : get-gc ( win -- )
           1 depth @ &24 min << 1-
                     [ xgc XGCValues background ] ALiteral !
-          xgc GCBackground rot dpy @ XCreateGC gc ! !font ;
+	  dpy @ swap GCBackground xgc XCreateGC gc ! !font ;
         : get-visual ( -- visual depth )
           vis @ depth @ ;
 

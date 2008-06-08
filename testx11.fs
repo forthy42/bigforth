@@ -73,7 +73,7 @@ Create look_chars 4 allot
 :noname ( -- )
   ." key pressed: " event XKeyEvent keycode @ .
                     event XKeyEvent state @ .
-		    0 event XKeyEvent keycode @ dpy XKeycodeToKeysym .
+		    dpy event XKeyEvent keycode @ 0 XKeycodeToKeysym .
 \		    comp_stat look_key 3 look_chars event XLookupString
 \		    IF  look_chars c@  ELSE  look_key @  THEN
 		    . cr
