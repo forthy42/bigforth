@@ -18,7 +18,8 @@ Forth
   dpy XDefaultScreenOfDisplay  to screen ;
 
 : simple-win ( events cstring -- )
-  0 0 1 $100 $200 0 0 dpy XDefaultRootWindow dpy XCreateSimpleWindow  to win
+    dpy dup XDefaultRootWindow
+    0 0 $200 $100 1 0 0 XCreateSimpleWindow  to win
   dpy win rot XStoreName
   dpy win rot XSelectInput
   dpy win XMapWindow

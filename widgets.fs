@@ -76,9 +76,9 @@ how:    : >callback ( cb -- )
 [IFDEF] x11 : focus  dpy self 0= ?EXIT
           dpy xrc self 0= ?EXIT dpy xrc ic @ 0= ?EXIT
           xywh nip + dpy trans' swap  spot w!+ w!
-          0 spot XNSpotLocation 0 XVaCreateNestedList_1 >r
-          0 r@ XNPreeditAttributes dpy xrc ic @
-            XSetICValues_1 drop r> XFree drop ;  [THEN]
+          0 XNSpotLocation spot 0 XVaCreateNestedList_1 >r
+          dpy xrc ic @ XNPreeditAttributes r@ 0
+          XSetICValues_1 drop r> XFree drop ;  [THEN]
 
 \ widget                                               19oct99py
         : shadow ( -- lc sc )

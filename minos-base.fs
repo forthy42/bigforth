@@ -594,8 +594,8 @@ how:    : init ( -- )
              EXIT  THEN
 	  0 XNFontSet fontset @ XNSpotLocation spot 0
 	  XVaCreateNestedList_2 { win list }
-	  xim @ XNInputStyle im @ XNPreeditAttributes
-	  list XNFocusWindow win 0 ( r@ XNClientWindow )
+	  xim @ XNInputStyle im @ XNPreeditAttributes list
+	  XNFocusWindow win ( XNClientWindow r@ ) 0
 	  XCreateIC_3 dup ic !
 	  screen-ic!
 	  list XFree drop

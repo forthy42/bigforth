@@ -44,15 +44,15 @@ how:    : xinc  child xinc ;
           NormalState WMhints XWMhints initial_state !
           [ InputHint StateHint or ] Literal
           WMhints XWMHints flags !
-          WMhints xwin @ xrc dpy @ XSetWMHints drop ;
+          xrc dpy @ xwin @ WMhints XSetWMHints ;
         : set-icon ( o -- )
           icon-pixmap with 0 0 draw-at endwith
           >r >r 2drop 2drop 2drop r> r>
           WMhints XWMHints icon_pixmap !
-          WMhints XWMHints icon_mask   !
-          [ IconPixmapHint IconMaskHint or ] Literal
+          dup WMhints XWMHints icon_mask !
+	  IconPixmapHint swap -1 <> IF  IconMaskHint or  THEN
           WMhints XWMHints flags !
-          WMhints xwin @ xrc dpy @ XSetWMHints drop ;
+          xrc dpy @ xwin @ WMhints XSetWMHints ;
 
 \ window                                               19dec04py
 
@@ -82,7 +82,7 @@ how:    : xinc  child xinc ;
           over  hints XSizeHints min_height !
           +     hints XSizeHints max_height !
           y @ x @ hints XSizeHints x 2!
-          hints xwin @ xrc dpy @ XSetWMNormalHints drop ;
+          xrc dpy @ xwin @ hints XSetWMNormalHints ;
 
 \ window                                               23jan07py
 
@@ -186,9 +186,8 @@ how:    : xinc  child xinc ;
           & viewport @ innerwin class?
           IF  sliderview new  THEN ;
         : focus  [IFDEF] x11
-          xrc ic @ dup IF  >r
-                           0 xwin @ XNFocusWindow
-                           xwin @ XNClientWindow r@
+          xrc ic @ dup IF  dup >r XNFocusWindow xwin @
+	                   XNClientWindow xwin @ 0
                            XSetICValues_2 drop
                            r> XSetICFocus
           THEN  drop  [THEN]
@@ -251,13 +250,13 @@ how:    : xinc  child xinc ;
         Create 'textprop 0 , 0 , 8 , 1 ,
         : !title ( -- )  0 title $@ + c!
           0" MINOS" title $@ drop sp@
-          xwin @ xrc dpy @ XSetClassHint drop 2drop
+          xrc dpy @ xwin @ rot XSetClassHint 2drop
           XA_STRING title @ cell+ 'textprop 2!
           title @ @ 'textprop 3 cells + !
-          xrc dpy @ 0" _NET_WM_NAME" 0 XInternAtom
-          'textprop xwin @ xrc dpy @ XSetTextProperty drop
-          xrc dpy @ 0" _NET_WM_ICON_NAME" 0 XInternAtom
-          'textprop xwin @ xrc dpy @ XSetTextProperty drop
+	  xrc dpy @ xwin @ 'textprop
+	  over2 0" _NET_WM_NAME" 0 XInternAtom  XSetTextProperty
+	  xrc dpy @ xwin @ 'textprop
+          over2 0" _NET_WM_ICON_NAME" 0 XInternAtom  XSetTextProperty
           xrc dpy @ xwin @ title @ cell+ XStoreName
           xrc dpy @ xwin @ title @ cell+ XSetIconName ;
         : title!  ( addr u -- ) title $!  !title ;

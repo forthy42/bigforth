@@ -311,7 +311,7 @@ how:    : dispose  clicks HandleOff
 
         : clip-rect ( rect -- )  clip-r? clipregion @
           IF    dup IF    rect>reg >r r@ clipregion @ r@
-                          XIntersectRegion drop r>
+                          XIntersectRegion r>
                     ELSE  drop clipregion @  THEN
           ELSE  dup IF    rect>reg
                     ELSE  drop drawable' nip None XSetClipMask
@@ -379,11 +379,11 @@ how:    : dispose  clicks HandleOff
 [IFDEF] x11
         : get-event ( mask -- ) dup >r
           IF  BEGIN  xrc dpy @ r@ event XCheckMaskEvent  WHILE
-                     0 event XFilterEvent
+                     event 0 XFilterEvent
                      0= IF  childs handle-event  THEN  REPEAT
           ELSE  BEGIN  xrc dpy @  XPending  WHILE
                        xrc dpy @ event XNextEvent
-                       0 event XFilterEvent
+                       event 0 XFilterEvent
                        0= IF  childs handle-event  THEN
                 REPEAT  childs size-event  \ drop
           THEN  rdrop ;

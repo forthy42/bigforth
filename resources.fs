@@ -431,7 +431,7 @@ minos
   screen self window new window with  dup >r make-alert
   r> title$ assign
 [IFDEF] x11
-  0" Alert" dup sp@ xwin @ xrc dpy @ XSetClassHint drop 2drop
+  0" Alert" dup sp@ xrc dpy @ xwin @ rot XSetClassHint 2drop
 [THEN]
   mousemap  stop ( dispose ) endwith  alert# @ ;
 
