@@ -74,7 +74,7 @@ how:
                              glxpm  off  THEN
           pixmap @ ?dup  IF  over swap XFreePixmap
                              pixmap off  THEN
-          cmap   @ ?dup  IF  over XFreeColormap drop
+          cmap   @ ?dup  IF  over swap XFreeColormap
                              cmap   off  THEN  drop ;
         : set-context ( -- )
           dpy xrc dpy @ glxpm @ glxwin @ or
@@ -625,7 +625,9 @@ minos
           D[ terminal new dup F bind term ]D
       s" bigFORTH Dialog" assign
       terminal-menu
-      map-size 2@ geometry  show endwith
+      map-size 2@ geometry
+      map-pos 2@ d0= 0= IF  map-pos 2@ repos  THEN
+      show endwith
   MaxScroll term scrollback
   event-task task's term dup @
   0= IF  term self swap !  ELSE  drop  THEN

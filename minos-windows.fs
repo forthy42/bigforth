@@ -22,10 +22,10 @@ how:    : xinc  child xinc ;
 [IFDEF] x11
         Variable wm_delete_window
         : set-protocol ( -- )
-          0 0" WM_DELETE_WINDOW" xrc dpy @ XInternAtom
+          xrc dpy @ 0" WM_DELETE_WINDOW" 0 XInternAtom
           wm_delete_window !
 	  xrc dpy @ xwin @
-	  0 0" WM_PROTOCOLS" xrc dpy @ XInternAtom
+	  xrc dpy @ 0" WM_PROTOCOLS" 0 XInternAtom
 	  4 &32 1 wm_delete_window 1
 	  XChangeProperty drop ;
         :noname  event XClientMessageEvent data @
@@ -35,7 +35,7 @@ how:    : xinc  child xinc ;
 \ window transient subclassing                         13nov99py
 
         : set-parent ( win -- )
-          xwin @ xrc dpy @ XSetTransientForHint drop ;
+          xrc dpy @ xwin @ rot XSetTransientForHint ;
 
 \ window                                               16aug98py
         Create WMhints sizeof XWMHints allot
@@ -145,11 +145,10 @@ how:    : xinc  child xinc ;
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
           shown @  shown on  set-hints  \ dpy sync
-          IF  x @ y @ d0=
-              IF    h @ w @ xwin @ xrc dpy @ XResizeWindow drop
-              ELSE  h @ w @ y @ x @ xwin @ xrc dpy @
-                    XMoveResizeWindow drop  THEN  dpy sync  THEN
-          xwin @ xrc dpy @ XMapRaised drop ;
+          IF  xrc dpy @ xwin @  xywh 2over d0=
+              IF    2drop XResizeWindow
+              ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
+          xrc dpy @ xwin @ XMapRaised ;
 [THEN]
 
 \ window                                               13nov99py
@@ -170,7 +169,7 @@ how:    : xinc  child xinc ;
 
         : hide ( -- )  shown off  child hide \ ?app
 [IFDEF] x11
-          xwin @ xrc dpy @ XUnmapWindow drop  [THEN]
+          xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [IFDEF] win32
           SW_HIDE xwin @ ShowWindow drop  [THEN] ;
         : stop  up@ app !  F stop ;
@@ -255,12 +254,12 @@ how:    : xinc  child xinc ;
           xwin @ xrc dpy @ XSetClassHint drop 2drop
           XA_STRING title @ cell+ 'textprop 2!
           title @ @ 'textprop 3 cells + !
-          0 0" _NET_WM_NAME" xrc dpy @ XInternAtom
+          xrc dpy @ 0" _NET_WM_NAME" 0 XInternAtom
           'textprop xwin @ xrc dpy @ XSetTextProperty drop
-          0 0" _NET_WM_ICON_NAME" xrc dpy @ XInternAtom
+          xrc dpy @ 0" _NET_WM_ICON_NAME" 0 XInternAtom
           'textprop xwin @ xrc dpy @ XSetTextProperty drop
-          title @ cell+ xwin @ xrc dpy @ XStoreName drop
-          title @ cell+ xwin @ xrc dpy @ XSetIconName drop ;
+          xrc dpy @ xwin @ title @ cell+ XStoreName
+          xrc dpy @ xwin @ title @ cell+ XSetIconName ;
         : title!  ( addr u -- ) title $!  !title ;
         : title+! ( addr u -- ) title $+! !title ;  [THEN]
 
@@ -300,7 +299,7 @@ how:    : xinc  child xinc ;
 [IFDEF] x11
         : re-size ( -- )
           rw @ rh @ w @ h @ d= 0= IF
-              h @ w @ xwin @ xrc dpy @ XResizeWindow drop
+              xrc dpy @ xwin @ w @ h @ XResizeWindow
           THEN ;
 [THEN]
 [IFDEF] win32
@@ -327,7 +326,7 @@ how:    : xinc  child xinc ;
 
         : repos ( x y -- )   2dup y ! x !
 [IFDEF] x11   set-hints
-          swap xwin @ xrc dpy @ XMoveWindow drop sync ; [THEN]
+          xrc dpy @ xwin @ 2swap XMoveWindow sync ; [THEN]
 [IFDEF] win32
           >r >r 0 h @ w @ r> r> swap
           xwin @ MoveWindow drop ;  [THEN]
@@ -396,16 +395,16 @@ how:    : init ( widget win -- )  xwin !  title off
           xwin @ xrc get-gc  0 set-font
           maxclicks 8* cell+ clicks 2dup Handle! @ swap erase ;
         : resize-win ( -- )  h @ w @ y @ x @ or or or 0= ?EXIT
-[IFDEF] win32  SWP_NOZORDER SWP_SHOWWINDOW or  [THEN]
+[IFDEF] win32  SWP_NOZORDER SWP_SHOWWINDOW or
           h @ w @ y @ x @
-[IFDEF] win32  owner @ IF  HWND_TOPMOST  ELSE  0  THEN
+          owner @ IF  HWND_TOPMOST  ELSE  0  THEN
           xwin @ SetWindowPos  [THEN]
-[IFDEF] x11    xwin @ xrc dpy @ XMoveResizeWindow  [THEN] drop ;
+[IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] drop ;
 
 \ event handler for sub-window                         20nov07py
         : show ( -- )  resize-win
 [IFDEF] win32  SWP_SHOWWINDOW xwin @ ShowWindow drop [THEN]
-[IFDEF] x11    xwin @ xrc dpy @ XMapWindow drop  [THEN] ;
+[IFDEF] x11    xrc dpy @ xwin @ XMapWindow  [THEN] ;
         : dispose-it ( -- )  self cleanup
           self dpy get-dpy with dpy delete endwith
           title $off
@@ -466,16 +465,17 @@ how:    : make-window  ( attrib -- )
 [IFDEF] x11
         Variable grab-win       grab-win on
         : Xgrab ( win -- )  grab-win @ map? ! grab-win !
-          CurrentTime None dup GrabModeAsync GrabModeAsync
+	  xrc dpy @ grab-win @ 0
           [ ButtonPressMask ButtonReleaseMask PointerMotionMask
             or or ] Literal
-          0 grab-win @ xrc dpy @ XGrabPointer drop
-          CurrentTime RevertToParent
-          grab-win @ xrc dpy @ XSetInputFocus drop ;
+	  GrabModeAsync dup  None dup  CurrentTime
+	  XGrabPointer drop
+	  xrc dpy @ grab-win @ RevertToParent CurrentTime
+	  XSetInputFocus ;
         : grab  xwin @ Xgrab ;
         : ungrab ( -- )  map? @ dup grab-win !
           dup -1 <>  IF  Xgrab map? off  EXIT  THEN drop
-          CurrentTime xrc dpy @ XUngrabPointer drop map? off ;
+          xrc dpy @ CurrentTime XUngrabPointer map? off ;
 [THEN]
 
 \ frame                                                27jun02py

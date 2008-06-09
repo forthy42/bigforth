@@ -9,7 +9,8 @@ X11 also XConst also
 0 Value screen
 0 Value win
 
-dos 1 libc getenv getenv
+dos legacy on
+1 libc getenv getenv
 Forth
 
 : open-x ( -- )
@@ -18,9 +19,9 @@ Forth
 
 : simple-win ( events cstring -- )
   0 0 1 $100 $200 0 0 dpy XDefaultRootWindow dpy XCreateSimpleWindow  to win
-  win dpy XStoreName drop
-  win dpy XSelectInput drop
-  win dpy XMapWindow drop
+  dpy win rot XStoreName
+  dpy win rot XSelectInput
+  dpy win XMapWindow
   dpy 0 XSync ;
 
 open-x

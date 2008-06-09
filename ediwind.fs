@@ -312,8 +312,9 @@ class;
   REPEAT  drop 0 ;
 
 [IFDEF] x11
-: mousexy!  0 0 0 0 window xwin @ 0 window xrc dpy @
-  XWarpPointer drop ;
+: mousexy! ( x y -- ) 2>r
+  window xrc dpy @ 0 window xwin @ 0 0 0 0 2r>
+  XWarpPointer ;
 [ELSE]
 : mousexy!  2drop ;
 [THEN]

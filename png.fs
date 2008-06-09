@@ -129,10 +129,10 @@ $FF w,
             dpy PictStandardARGB32 XRenderFindStandardFormat
             ARGB32 $20 move  THEN
         ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture { pixmap rgba32 mpict |
-        w 4* $20 h w img 0 ZPixmap $20 dpy dup DefaultScreen DefaultVisual dpy
+	dpy dup dup DefaultScreen DefaultVisual $20 ZPixmap 0 img w h $20 w 4*
         XCreateImage  dpy pixmap 0 0 XCreateGC { ximg gc |
-        h w 0 0 0 0 ximg gc pixmap dpy XPutImage drop
-        gc dpy XFreeGC drop
+        dpy pixmap gc ximg 0 0 0 0 w h XPutImage
+        dpy gc XFreeGC
         ximg XImage data off  ximg XDestroyImage   img DisposPtr
         mpict -1 w h } } }
     ELSE

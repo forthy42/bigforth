@@ -114,9 +114,10 @@ include resources.fs
      s" DISPLAY" env$ 0= IF drop s" :0.0" THEN open connect
      colors ^ endwith
   displays new bind screen
-  0 0" STRING" screen xrc dpy @ XInternAtom to XA_STRING8
-  0 maxascii $80 = IF  0" UTF8_STRING"  ELSE  0" STRING"  THEN
-  screen xrc dpy @ XInternAtom to XA_STRING
+  screen xrc dpy @ 0" STRING" 0 XInternAtom to XA_STRING8
+  screen xrc dpy @
+  maxascii $80 = IF  0" UTF8_STRING"  ELSE  0" STRING"  THEN  0
+  XInternAtom to XA_STRING
   screen timeoffset  screen xrc timeoffset !
   screen xrc calibrate  XTime screen lastcal !
   normal-font
@@ -155,13 +156,13 @@ cold: set-exceptions win-init ;
 \ init sequence                                        10apr04py
 [IFDEF] x11
 : "geometry ( addr u -- ) scratch 0place
-  0 0 0 0 sp@ dup cell+ dup cell+ dup cell+ scratch
+  0 sp@ >r 0 0 0 scratch r> dup cell- dup cell- dup cell-
   XParseGeometry >r
   r@ [ WidthValue HeightValue or ] Literal tuck and =
   IF  map-size 2!  ELSE  2drop  THEN
   r> [ XValue YValue or ] Literal tuck and =
-  IF  map-pos  2!  ELSE  2drop  THEN ;
-: -geometry ( -- )  bl word count "geometry ;
+  IF  map-pos  2!  ELSE  2drop  THEN  2 ;
+: -geometry ( -- )  bl word count "geometry drop ;
 
 also -options definitions
 ' "geometry Alias -geometry

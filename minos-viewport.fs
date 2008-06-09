@@ -36,10 +36,10 @@ how:    : init  ( sx sy -- )  noback on  super init
 [IFDEF] x11
         : create-pixmap ( -- )
           xwin @ IF  0 0 0 sp@ >r
-                     r@ dummy r@ cell+ r> 2 cells + dummy dummy
-                     dummy xwin @ xrc dpy @ XGetGeometry drop
-                     * * 3 >> maxpixmap + TO maxpixmap
-                     xrc dpy @ xwin @ XFreePixmap  THEN
+	      xrc dpy @ xwin @  dummy dup dup
+	      r> dup cell+  dummy  over cell+  XGetGeometry drop
+	      * * 3 >> maxpixmap + TO maxpixmap
+	      xrc dpy @ xwin @ XFreePixmap  THEN
           xwin off  noback @ ?EXIT
           xrc depth @
           dup h @ w @ * * 3 >> dup

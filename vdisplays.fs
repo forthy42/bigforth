@@ -219,7 +219,7 @@ how:    : init ( depth w h dpy -- )
           2>r >r xrc dpy @ dpy get-win r> 2r> rot
           XCreatePixmap xwin ! ;
         : get ( -- addr w h )
-          ZPixmap -1 h @ w @ 0 0 xwin @ xrc dpy @ XGetImage ;
+          xrc dpy @ xwin @ 0 0 w @ h @ -1 ZPixmap XGetImage w @ h @ ;
 [THEN]
 
 \ pixmap                                               28oct06py

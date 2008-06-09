@@ -136,7 +136,7 @@ previous
 : get-td ( win dpy -- n ) { win dpy }
   dpy win &16 &31 8 0 S" round delay trip"
   XChangeProperty drop
-  scratch PropertyChangeMask win dpy XWindowEvent drop
+  dpy win PropertyChangeMask scratch XWindowEvent
   XTime scratch XPropertyEvent time @ - ;
 
 \ X timer correction                                   07jan07py

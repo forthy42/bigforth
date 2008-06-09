@@ -235,7 +235,7 @@ how:    : dispose  clicks HandleOff
 	      drawable' win2 -rot xs ys w h x y XCopyArea
               0 0 0 clip-mask
           ELSE  1 xrc set-function  0 xrc set-color
-              1 y x h w ys xs drawable win1 swap XCopyPlane drop
+	      drawable' win1 -rot xs ys w h x y 1 XCopyPlane
               6 xrc set-function
 	      drawable' win2 -rot xs ys w h x y XCopyArea
               3 xrc set-function

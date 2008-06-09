@@ -15,7 +15,7 @@ Create flip-byte  $100 0 [DO] [I] (flip-byte c, [LOOP]
 
 : xpm2pbm ( filename -- )
     icon-pixmap new icon-pixmap with
-        ZPixmap 1 h @ w @ 0 0 shape @ screen xrc dpy @ XGetImage
+        screen xrc dpy @ shape @ 0 0 w @ h @ 1 ZPixmap XGetImage
     endwith
     { img |
       ." P4" cr ." # Icon shape" cr

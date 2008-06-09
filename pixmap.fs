@@ -27,7 +27,7 @@ Create bitmap-format here sizeof XPixmapFormatValues
 : get-pixmap-format ( -- )
     pixmap-format sizeof XPixmapFormatValues erase
     bitmap-format sizeof XPixmapFormatValues erase
-    0 sp@ screen xrc dpy @ XListPixmapFormats
+    0 sp@ screen xrc dpy @ swap XListPixmapFormats
     tuck swap sizeof XPixmapFormatValues * bounds
     ?DO
         I XPixmapFormatValues bits_per_pixel @
@@ -189,17 +189,17 @@ Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
 : create-pixmap ( data size w h -- pixmap w h )
   pixmap-bits screen xrc dpy @
   { data size w h bits dpy |
-    w bits * pixmap-format XPixmapFormatValues depth @
-    1 = IF  8  ELSE  pixmap-format XPixmapFormatValues scanline_pad @  THEN
-    h w
     data size w pixels dpy trans bits cells + perform
-    data 0 ZPixmap pixmap-format XPixmapFormatValues depth @
-    dpy dup DefaultScreen DefaultVisual
-    dpy XCreateImage
+    dpy dup dup DefaultScreen DefaultVisual
+    pixmap-format XPixmapFormatValues depth @
+    ZPixmap 0 data w h
+    pixmap-format XPixmapFormatValues depth @
+    1 = IF  8  ELSE  pixmap-format XPixmapFormatValues scanline_pad @  THEN
+    w bits * XCreateImage
     dpy screen xwin @ w h
     pixmap-format XPixmapFormatValues depth @ XCreatePixmap
     { img pix |
-      h w 0 0 0 0 img screen drawable nip pix swap XPutImage drop
+      screen drawable' nip pix swap img 0 0 0 0 w h XPutImage
       img XImage data off  img XDestroyImage
       pix w h } } ;
 
@@ -219,21 +219,21 @@ Create values sizeof XGCValues allot
 
 : readP4.1 ( fd w h -- pixmap )
     { fd w h |
-      w bits bitmap-format XPixmapFormatValues scanline_pad @ h w
       w bits h * dup NewPtr  screen xrc dpy @
       { size data dpy |
         data size fd read-file throw drop
         dpy BitmapBitOrder 0= IF  data size <>.8  THEN
-        data 0 XYPixmap bitmap-format XPixmapFormatValues depth @
-        dpy dup DefaultScreen DefaultVisual
-        dpy XCreateImage
+	dpy dup dup DefaultScreen DefaultVisual
+	bitmap-format XPixmapFormatValues depth @
+	XYPixmap 0 data
+	w h bitmap-format XPixmapFormatValues scanline_pad @
+	w bits  XCreateImage
 	dpy screen xwin @ w h
         bitmap-format XPixmapFormatValues depth @ XCreatePixmap
         { img pix |
-          h w 0 0 0 0 img
-          dpy pix 0 values XCreateGC dup >r
-          pix dpy XPutImage drop
-          r> dpy XFreeGC drop
+          dpy pix 2dup 0 values XCreateGC dup >r
+          img 0 0 0 0 w h XPutImage
+          dpy r> XFreeGC
           img XImage data off  img XDestroyImage   data DisposPtr
           pix w h } } } ;
 [THEN]
@@ -330,10 +330,10 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 [IFDEF] x11
 : fix-color { shape pixmap w h |
     screen drawable' nip 4 XSetFunction drop
-    1 pixmap-format XPixmapFormatValues depth @ << 1-
-    screen drawable nip XSetBackground drop
-    1 0 0 h w 0 0 screen drawable nip shape pixmap rot
-          XCopyPlane drop
+    screen drawable' nip
+    1 pixmap-format XPixmapFormatValues depth @ << 1- XSetBackground
+    screen drawable' nip pixmap shape rot
+    0 0 w h 0 0 1 XCopyPlane
     screen drawable' nip 3 XSetFunction drop
     } ;
 [THEN]

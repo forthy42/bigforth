@@ -15,7 +15,7 @@ screen xwin @ dpy0 dpy @ XpmReadFileToPixmap .
 : set-fun  ( n -- )  win0 drawable' nip rot XSetFunction drop ;
 
 : draw-icon ( x y -- ) { x y |
-  0 win0 drawable nip XSetForeground drop
-  1 set-fun 1 y x 100 100 0 0 win0 drawable shape @ swap XCopyPlane drop
+  win0 drawable' nip 0 XSetForeground drop
+  1 set-fun  win0 drawable' shape @ -rot x y 100 100 0 0 1 XCopyPlane drop
   6 set-fun   0 0 100 100 x y pixmap @ win0 drawimage
   3 set-fun } ;

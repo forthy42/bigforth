@@ -24,16 +24,17 @@ how:    : make-win ( wino -- win )  >r
         : screenpos ( -- x y )  dpy screenpos
           orgx @ hstep @ * x @ -
           orgy @ vstep @ * y @ - p- ;
-        : resize-win ( -- )  h @ w @
-          orgy @ vstep @ * negate orgx @ hstep @ * negate
-          xwin @ xrc dpy @ XMoveResizeWindow drop ;
-        : resize-win2 ( -- )  sh @ sw @ y @ x @
-          xwin2 @ xrc dpy @ XMoveResizeWindow drop ;
+        : resize-win ( -- )
+	  xrc dpy @ xwin @
+          orgx @ hstep @ * negate orgy @ vstep @ * negate  w @ h @
+	  XMoveResizeWindow ;
+        : resize-win2 ( -- )
+          xrc dpy @ xwin2 @ x @ y @ sw @ sh @ XMoveResizeWindow ;
         : show ( -- )  resize-win resize-win2
-          xwin @ xrc dpy @ XMapWindow drop
-          xwin2 @ xrc dpy @ XMapWindow drop ;
+          xrc dpy @ xwin @ XMapWindow
+          xrc dpy @ xwin2 @ XMapWindow ;
         : hide ( -- )
-          xwin2 @ xrc dpy @ XUnmapWindow drop ;
+          xrc dpy @ xwin2 @ XUnmapWindow ;
         : resize ( x y w h -- )  super resize
           draw? @ 0= ?EXIT
           resize-win resize-win2 ;

@@ -315,12 +315,12 @@ how:    : inside? ( x y -- ) 2dup super inside?
           over icon w @ u< over icon h @ u< and
           IF
 [IFDEF] x11   icon shape @ -1 = IF
-                    >r >r ZPixmap -1 1 1 r> r> swap
-                    icon image @ 1- dpy xrc dpy @ XGetImage >r
+		    dpy xrc dpy @ icon image @ 1- 2swap 1 1 -1 ZPixmap
+		    XGetImage >r
                     r@ IF  0 0 r@ XGetPixel r> XDestroyImage
                            0< >r  THEN
-              ELSE  >r >r ZPixmap 1 1 1 r> r> swap
-                    icon shape @ dpy xrc dpy @ XGetImage >r
+              ELSE  dpy xrc dpy @ icon shape @ 2swap 1 1 1 ZPixmap
+		    XGetImage >r
                     r@ IF  0 0 r@ XGetPixel r> XDestroyImage
                            0<> >r  THEN  THEN            [THEN]
 

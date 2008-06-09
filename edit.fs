@@ -513,7 +513,7 @@ forward replace-it'
       3 hatbox new hskip vskip
     2 r> modal new 0 hskips 0 vskips 2 borderbox
   ( s" " ) assign show ( xwin @ grab )
-  focus r> widget with xywh endwith 2/ swap 2/ swap p+ swap
+  focus r> widget with xywh endwith 2/ swap 2/ swap p+
   2dup 1 0 clicked mousexy!  endwith ;
 
 : replace-it'   ( -- )
