@@ -138,7 +138,9 @@ static void* heapstart=(void*)0x10000000;
 
 #define available_mem(size)        (size=0x0100000)
 #ifndef STACK_ALLOC
-#define alloc_mem(size,heap)       (heap=(int *) GlobalAlloc(GMEM_FIXED, size))
+static void* heapstart=(void*)0x10000000;
+
+#define alloc_mem(size,heap)       (heap=(int *) VirtualAlloc(heapstart, size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_WRITECOPY)); heapstart+=size;
 #else
 int * stackalloc(int size)
 {

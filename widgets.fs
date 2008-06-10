@@ -379,13 +379,16 @@ class;
 \ Canvas helper words                                  04jun08py
 
 [IFDEF] x11
-    : col'  screen xrc colarray @ @ ;
+    : col' ( -- addr )  screen xrc colarray @ @ ;
+    | Variable rgb'
     
     : c+mask ( color mask -- rgb ) >r
         dup 8 << or dup $10 << or r@ um* swap 0< - r> and ;
     : rgb# ( r g b -- rgb )
+	over2 over2 over2 8 << or 8 << or rgb' !
         blue## c+mask >r green## c+mask >r red## c+mask r> r> or or ;
-    : color! ( rgb n -- )  >r col' r@ cells + ! r> ;
+    : color! ( rgb n -- )  >r
+	rgb' @  Colortable r@ cells + !  col' r@ cells + ! r> ;
 [THEN]
 [IFDEF] win32
     : brushs'  screen xrc colarray @ @ ;
