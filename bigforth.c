@@ -140,7 +140,7 @@ static void* heapstart=(void*)0x10000000;
 #ifndef STACK_ALLOC
 static void* heapstart=(void*)0x10000000;
 
-#define alloc_mem(size,heap)       (heap=(int *) VirtualAlloc(heapstart, size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_WRITECOPY)); heapstart+=size;
+#define alloc_mem(size,heap)       (heap=(int *) VirtualAlloc(heapstart, size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE)); heapstart+=size;
 #else
 int * stackalloc(int size)
 {
