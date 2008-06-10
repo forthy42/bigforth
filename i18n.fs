@@ -6,7 +6,7 @@
 
 \ LSIDs
 
-Variable lsids
+AVariable lsids
 0 Value lsid#
 
 : native@ ( lsid -- addr u )  cell+ cell+ @+ swap ;
