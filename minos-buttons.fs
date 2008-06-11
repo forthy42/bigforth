@@ -855,7 +855,7 @@ how:    : #>text ( n -- addr u )  base push decimal
           IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
-              text*/ 2@ swap */ swap text*/ 2@ swap */ swap
+              text*/ 2@ swap */
               reslide  EXIT  THEN                    over #bs =
           IF  2drop get nip nip s>d &10 sm/rem nip o- 0max o+
               reslide  EXIT  THEN                     over '% =
@@ -945,7 +945,7 @@ how:    : #>text ( n -- addr u )  base push decimal
           IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
-              text*/ 2@ swap */ swap text*/ 2@ swap */ swap
+              text*/ 2@ swap */
               reslide  EXIT  THEN                    over #bs =
           IF  2drop get nip nip s>d &10 sm/rem nip o- 0max o+
               reslide  EXIT  THEN                     over '% =
