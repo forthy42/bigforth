@@ -343,7 +343,7 @@ public: cell var curpos         cell var selw
         early 'text+            early 'text-
 how:    0 colors focuscol !     7 colors defocuscol !
         : init  ( dostroke addr len -- )
-          1 selw ! super init ;
+          1 selw ! show? on  super init ;
         : show-you ( -- )  curx 2@ swap 2/ + x @ +
           y @ h @ 1+ 2/ + dpy show-me ;
         : show  show? on  super show ;
@@ -365,8 +365,8 @@ how:    0 colors focuscol !     7 colors defocuscol !
           negate curx +! ;
 
 \ simple text input field                              20feb00py
-        : text! ( -- )  dpy self 0= ?EXIT  show? @ 0= ?EXIT
-          0 text $@ + c!  !resized
+        : text! ( -- )  dpy self 0= ?EXIT  !resized
+          0 text $@ + c!  show? @ 0= ?EXIT
           hglue drop dup w @ <= swap r> = and
 	  IF  draw  ELSE
               parent self 0= ?EXIT  parent resized  THEN

@@ -12,7 +12,7 @@ number-action class float-action
     : >#f ( f -- addr u ) base push nbase @ base !
 	fa-precision set-precision fx$ ;
     : store ( f -- ) >#f edit assign ;
-    : fetch ( -- f ) edit get base push nbase @ base ! >float
+    : fetch ( -- f ) base push nbase @ base ! edit get >float
 	0= IF  !0  THEN ;
 class;
 

@@ -54,10 +54,10 @@ how:    : init  ( sx sy -- )  noback on  super init
         : !steps
           child xinc ?incbase steps cell+ @ * hstep ! minw !
           child yinc ?incbase steps       @ * vstep ! minh ! ;
-        : resized ( -- ) get-glues
+        : resized ( -- ) ~~ get-glues
           hglues cell+ @ sw @ max w !
           vglues cell+ @ sh @ max h !   !steps
-          parent resized ( dpy resized ) ;
+          ~~ parent resized ~~ ( dpy resized ) ;
         : resize ( x y w h -- )  sh ! sw ! y ! x !
           hglues cell+ @ sw @ max w !
           vglues cell+ @ sh @ max h !
