@@ -110,10 +110,21 @@ FVariable rho   0e rho  f!
 : set-disc ( -- )
     s" " test-disc $!
     disc# 1+ elements test-disc $!len  test-disc $@ erase
-    range fdup disc# 2+ fm/ { f: maxphi f: stepphi }
+    range fdup fnegate fswap disc# 2/ 1+ fm/ { f: maxphi f: stepphi }
     disc# 0 ?DO
-	maxphi stepphi I 1+ disc# 2+ fm*/ f+ phi>pos' fswap
+	maxphi stepphi I 1+ fm* f+ phi>pos' fswap
 	    I disc              dup element x df!
 	    fdup rho f@ fcos f* dup element y df!
 	         rho f@ fsin f*     element z df!
     LOOP ;
+
+: .element ( addr -- ) ." ("
+    dup element x df@ fx.
+    dup element y df@ fx.
+    dup element z df@ fx. ." ) <"
+    dup element ax df@ fx.
+    dup element ay df@ fx.
+    dup element az df@ fx. ." > ["
+    dup element ax+ df@ fx.
+    dup element ay+ df@ fx.
+    dup element az+ df@ fx. ." ]" drop cr ;

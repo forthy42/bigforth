@@ -88,7 +88,7 @@ FVariable oldgauss !0 oldgauss f!
 \ units: kg, meters, seconds
 \ rotations per day
 
-: set-earth ( -- )  6.37739715e6 6.35607896e6 -5.31800028336E-9
+: set-earth ( -- )  6.37739715e6 6.35607896e6 fover 5.31800028336e-9 f*
     { f: d1 f: d2 f: as |
     star# 0 ?DO
 	BEGIN  frnd f2* !1 f-
@@ -97,14 +97,14 @@ FVariable oldgauss !0 oldgauss f!
 	    fover2 f**2 fover2 f**2 f+ fover f**2 f+
 	    !1 f> WHILE  fdrop fdrop fdrop  REPEAT
 	I star
-	!0           dup element ax df!
+	!0           dup element az df!
 	fover  as f* dup element ay df!
-	fdup   as f* dup element az df!
-	d1 f* dup element z df!
+	fdup   as f* dup element ax df!
+	d1 f* dup element x df!
 	d1 f* dup element y df!
-	d2 f*     element x df!
+	d2 f*     element z df!
     LOOP }
-    331950e 149450e f**2 f/ msum+ f! ;
+    331950e 149450e6 f**2 f/ msum+ f! ;
 
 Variable spiral-dist spiral-dist on
 
