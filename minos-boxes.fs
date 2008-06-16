@@ -182,7 +182,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : -flip  attribs c@ :flip or         attribs c!
           hide parent !resized parent resized ;
         : +flip  attribs c@ :flip invert and attribs c!
-          show parent !resized parent resized draw ;
+          parent !resized parent resized show draw ;
 
 \ combined widgets                                     21mar00py
 
