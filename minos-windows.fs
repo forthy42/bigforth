@@ -397,8 +397,8 @@ how:    : init ( widget win -- )  xwin !  title off
 [IFDEF] win32  SWP_NOZORDER SWP_SHOWWINDOW or
           h @ w @ y @ x @
           owner @ IF  HWND_TOPMOST  ELSE  0  THEN
-          xwin @ SetWindowPos  [THEN]
-[IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] drop ;
+          xwin @ SetWindowPos drop  [THEN]
+[IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] ;
 
 \ event handler for sub-window                         20nov07py
         : show ( -- )  resize-win

@@ -86,7 +86,7 @@ how:
         : new-window   xswa sizeof XSetWindowAttributes erase
           AllocNone visinfo @ XVisualInfo visual @
           dup dpy xrc vis @ <> canvas-mode 4 and or
-          IF    dpy drawable rot drop XCreateColormap dup cmap !
+          IF    dpy drawable' drop 2swap swap XCreateColormap dup cmap !
           ELSE  2drop dpy xrc cmap @  THEN
               xswa XSetWindowAttributes colormap !
           dpyscreen BlackPixel dup
@@ -107,9 +107,10 @@ how:
         : new-pixmap ( -- )  glxwin @ ?EXIT  glxpm @ ?EXIT
           dpy xwin @ dpy get-win = canvas-mode 2 and 0= and  IF
               new-window glxwin ! rendered off  EXIT THEN
+	  dpy xrc dpy @ dpy get-win
+          w @ 4 max 3 + -4 and h @ 4 max
           visinfo @ XVisualInfo depth @
-          h @ 4 max w @ 4 max 3 + -4 and
-          dpy get-win dpy xrc dpy @ XCreatePixmap dup pixmap !
+	  XCreatePixmap dup pixmap !
           dpy xrc dpy @ visinfo @ rot glxCreateGLXPixmap
           glxpm ! rendered off ;
         : show ( -- )  shown @ shown on ?EXIT

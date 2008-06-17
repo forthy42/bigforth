@@ -150,7 +150,7 @@ libX11 XChangeWindowAttributes [ 4 ] ints (int) XChangeWindowAttributes ( dpy wi
 libX11 XGetErrorText [ 4 ] ints (int) XGetErrorText   ( dpy code buffer_r length -- r )
 libX11 XSupportsLocale (int) XSupportsLocale ( -- flag )
 libX11 XGetVisualInfo [ 4 ] ints (int) XGetVisualInfo  ( dpy vinfo_mask vinfo_templ nitems_r -- vinfo* )
-libX11 XCreateColormap [ 4 ] ints (int) XCreateColormap ( alloc visual w dpy -- colormap )
+libX11 XCreateColormap [ 4 ] ints (int) XCreateColormap ( dpy w visual alloc -- colormap )
 libX11 XOpenIM [ 4 ] ints (int) XOpenIM ( dpy rdb res_name res_class -- XIM )
 libX11 XGetIMValues_1 [ 4 ] ints (ptr) XGetIMValues    ( im ... -- string )
 libX11 XGetIMValues_2 [ 6 ] ints (ptr) XGetIMValues    ( im ... -- string )

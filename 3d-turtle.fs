@@ -807,7 +807,7 @@ class;
             r@ displays with xywh $10 box endwith
             0 0 r@ draw r>
 	    endwith ( greymap )
-        pixmap with get dispose endwith
+        pixmap with get 2drop dispose endwith
         dup >r map>addrwh
         create-mipmap1 r> XDestroyImage drop
         r> 3d-text new ;
