@@ -588,7 +588,7 @@ resource:dialog implements
     : add-box ( o -- )
         topbox self dup cur bind box cur bind topbox addinstead ;
     : >cur ( -- )
-        cur topbox self bind topbox ;
+        cur topbox self bind topbox topbox show ;
 class;
 
 resource:menu-window implements
