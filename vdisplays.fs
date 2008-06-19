@@ -3,6 +3,7 @@
 displays class backing
 public: gadget ptr child        method create-pixmap
         cell var noback         cell var closing
+        cell var shown
         2 cells var hglues      2 cells var vglues
 [IFDEF] win32                   cell var oldbm      [THEN]
 
@@ -93,7 +94,8 @@ how:    : init ( -- ) ;
           2swap 2over super resize 0 0 2swap child resize
           r> r> w @ h @ d= 0=  xwin @ 0= noback @ 0= and or
           IF create-pixmap draw? dup push off child draw THEN ;
-        : draw ( -- ) xwin @ noback @ 0= and redraw-all @ 0= and
+        : draw ( -- )  shown @ 0= ?EXIT
+	  xwin @ noback @ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
                 [IFDEF] win32  xrc dc @ dpy image
                 [ELSE]  xpict @  IF  -1 xpict @ dpy mask
@@ -167,8 +169,8 @@ how:    : init ( -- ) ;
           IF  pointed leave 0 bind pointed  THEN ;
         : set-cursor ( n -- )  dpy set-cursor ;
         : set-font ( font -- ) dup dpy set-font super set-font ;
-        : show  child show ;
-        : hide  child hide ;
+        : show  shown on  child show ;
+        : hide  shown off child hide ;
         : focus    child focus     ;
         : defocus  child defocus   ;
 
