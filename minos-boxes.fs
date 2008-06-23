@@ -8,6 +8,8 @@ $10 Constant :notshadow
 $20 Constant :norshadow
 $40 Constant :nobshadow
 $80 Constant :nolshadow
+
+$0 Constant #hidden
 
 \ combined widgets                                     27may00py
 
@@ -16,6 +18,7 @@ public: gadget ptr childs       cell var n
         2 cells var hglues      2 cells var vglues
         1 var hskip             1 var vskip
         1 var borderw           1 var attribs
+        cell var flags
         gadget ptr active       cell var tab-steps
         method compose          method (clicked
         early hskip@            early vskip@
@@ -54,7 +57,8 @@ how:    : >box  'nil bind childs  'nil bind active
                 self childs bind parent
           ELSE  childs append  THEN  1 n +! ( resized ) ;
 
-        : ?nodraw ( -- flag )  attribs c@ :flip and ;
+        : ?nodraw ( -- flag )  attribs c@ :flip and 0<>
+	  flags #hidden bit@ or ;
 
 \ combined widgets                                     29aug99py
 
@@ -111,8 +115,8 @@ how:    : >box  'nil bind childs  'nil bind active
         : dispose dispose-childs tab-step-off super dispose ;
         : focus    ?nodraw ?EXIT  ALLCHILDS  focus   ;
         : defocus  ?nodraw ?EXIT  ALLCHILDS  defocus ;
-        : show     ?nodraw ?EXIT  ALLCHILDS  show ;
-        : hide     ALLCHILDS  hide ;
+        : show     flags #hidden -bit ?nodraw ?EXIT  ALLCHILDS  show ;
+        : hide     flags #hidden +bit ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
         : handle-key?  active handle-key? ;
         : !resized  0. hglues 2!  0. vglues 2!  tab-step-off

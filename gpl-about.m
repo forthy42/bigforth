@@ -92,7 +92,7 @@ gpl-about implements
          1 $10 dpy geometry
   ELSE   drop  THEN
   floater self vfixbox drop floater resized
-  [ previous ] ; ( [methodend] ) 
+  super show [ previous ] ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             X" This program is free software; you can redistribute it and/or modify" text-label new 
             X" it under the terms of the GNU General Public License as published by" text-label new 
