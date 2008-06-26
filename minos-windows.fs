@@ -141,13 +141,13 @@ how:    : xinc  child xinc ;
 \ window                                               09aug04py
 
 [IFDEF] x11
-        : show   ( -- )  child show
+        : show   ( -- )
           h @ w @ d0= IF  xywh resize THEN
           flags #hidden bit@  flags #hidden -bit  set-hints  \ dpy sync
           0= IF  xrc dpy @ xwin @  xywh 2over d0=
               IF    2swap 2drop XResizeWindow
               ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
-          xrc dpy @ xwin @ XMapRaised ;
+          xrc dpy @ xwin @ XMapRaised  child show ;
 [THEN]
 
 \ window                                               13nov99py
