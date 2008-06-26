@@ -63,7 +63,8 @@ how:    : init  ( sx sy -- )  noback on  super init
           vglues cell+ @ sh @ max h !
           & glue @ child class? 0=
           IF  0 0 w @ h @ child resize create-pixmap  xwin @
-              IF    draw? push draw? off  child draw  THEN
+              IF    flags #draw 2dup bit@ >r -bit  child draw
+	            r> IF  flags #draw +bit  THEN  THEN
           THEN  hslide -rot - min  vslide -rot - min org 2! ;
 
 \ viewport                                             28mar99py
@@ -76,7 +77,7 @@ how:    : init  ( sx sy -- )  noback on  super init
         : dpy!  bind dpy  xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
 [IFDEF] x11     get-win xrc get-gc  [THEN]
-          0 clip-rect  draw? on
+          0 clip-rect  flags #draw +bit
           self child dpy!
           child hglue 2dup hglues 2! drop
           child vglue 2dup vglues 2! drop  !steps
@@ -196,17 +197,17 @@ how:    : init  ( sx sy -- )  noback on  super init
 \ viewport                                             20oct99py
         : line ( x y x y color -- )  >r  2dup inclip?
           IF  xwin @  IF  2over 2over r@ super super line  THEN
-              draw? @ IF  2over trans' 2over trans' r@
+              flags #draw bit@ IF  2over trans' 2over trans' r@
                           <clip dpy line clip>  THEN  THEN
           rdrop 2drop 2drop ;
         : text ( addr u x y color -- )  >r 2dup inclip?
           IF  xwin @  IF  2over 2over r@ super super text  THEN
-              draw? @ IF  2over 2over trans' r@
+              flags #draw bit@ IF  2over 2over trans' r@
                           <clip dpy text clip>  THEN  THEN
           rdrop 2drop 2drop ;
         : box ( x y w h color -- ) >r
           xwin @  IF  2over 2over r@ super super box  THEN
-          draw? @ IF  2over trans' 2over clip
+          flags #draw bit@ IF  2over trans' 2over clip
                       r@ <clip  dpy box  clip>  THEN
           rdrop 2drop 2drop ;
 
@@ -214,7 +215,7 @@ how:    : init  ( sx sy -- )  noback on  super init
         : image ( x y w h x y win -- ) >r 2dup inclip?
           IF  xwin @  IF  [ 5 ] [FOR] 5 pick [NEXT] r@
                           super super image  THEN
-              draw? @ IF  r@ xwin @ =
+              flags #draw bit@ IF  r@ xwin @ =
                           IF    draw
                         ELSE [ 5 ] [FOR] 5 pick [NEXT] trans' r@
                                <clip dpy image clip>  THEN THEN
@@ -222,7 +223,7 @@ how:    : init  ( sx sy -- )  noback on  super init
         : mask ( x y w h x y win1 win2 -- ) 2over inclip?
           IF  xwin @ IF  [ 7 ] [FOR] 7 pick [NEXT]
                          super super mask  THEN
-              draw? @
+              flags #draw bit@
               IF  [ 5 ] [FOR] 7 pick [NEXT] trans' 7 pick 7 pick
                   <clip dpy mask clip>  THEN
           THEN  2drop 2drop 2drop 2drop ;
@@ -231,7 +232,7 @@ how:    : init  ( sx sy -- )  noback on  super init
         : ximage ( x y w h x y win -- ) >r  2dup inclip?
           IF  xwin @  IF  [ 5 ] [FOR] 5 pick [NEXT] r@
                           super super ximage  THEN
-              draw? @ IF  r@ xwin @ =
+              flags #draw bit@ IF  r@ xwin @ =
                           IF    draw
                        ELSE  [ 5 ] [FOR] 5 pick [NEXT] trans' r@
                                <clip dpy ximage clip>  THEN THEN
@@ -240,17 +241,17 @@ how:    : init  ( sx sy -- )  noback on  super init
 \ viewport                                             28jun98py
         : fill ( x y addr n color -- )  >r  2over inclip?
           IF  xwin @  IF  2over 2over r@ super super fill  THEN
-              draw? @ IF  2over trans' 2over r@
+              flags #draw bit@ IF  2over trans' 2over r@
                           <clip dpy fill clip>  THEN
           THEN  rdrop 2drop 2drop ;
         : stroke ( x y addr n color -- )  >r  2over inclip?
           IF xwin @  IF  2over 2over r@ super super stroke  THEN
-             draw? @ IF  2over trans' 2over r@
+             flags #draw bit@ IF  2over trans' 2over r@
                          <clip dpy stroke clip>  THEN
           THEN  rdrop 2drop 2drop ;
         : drawer ( x y o xt -- )
           xwin @  IF  2over 2over super super drawer  THEN
-          draw? @ IF  2over trans' 2over
+          flags #draw bit@ IF  2over trans' 2over
                       <clip dpy drawer clip>  THEN
           2drop 2drop ;
 
@@ -412,7 +413,7 @@ how:    0 border-at v!
           IF    viewp noback @ IF  viewp draw  THEN
           ELSE  viewp noback @ 0= IF
                 viewp create-pixmap
-                viewp draw? dup push off
+                viewp flags #draw dup push off
                 viewp child draw  THEN  THEN ;
         : sresize ( x y w h -- x y w h )
           viewp org 2@ >r >r
@@ -432,15 +433,15 @@ how:    0 border-at v!
 \        : >parent  parent resized ;
         : resize ( x y w h -- )
           & viewport @ inner class?
-          IF  viewp noback dup @ >r on viewp draw? off
+          IF  viewp noback dup @ >r on viewp flags #draw -bit
               glues @ >r  viewp org 2@ >r >r
               2over 2over xS xywh- viewp resize glue-off
               r> r> viewp org 2!  glues? dup r@ or
               IF  >r sresize glues? r> <> IF  sresize  THEN
-                  glues? r> <>  r> viewp noback ! viewp draw? on
+                  glues? r> <>  r> viewp noback ! viewp flags #draw +bit
                   IF    >parent parent draw
                   THEN  2drop 2drop  ?portwin EXIT
-              THEN  drop rdrop  r> viewp noback ! viewp draw? on
+              THEN  drop rdrop  r> viewp noback ! viewp flags #draw +bit
           THEN  super resize ;
 class;
 

@@ -337,17 +337,14 @@ button class (textfield
 public: cell var curpos         cell var selw
         cell var curx           cell var curw
         cell var old-h          cell var ds
-        cell var show?
         method ins              method del
         method c                method cur!
         early 'text+            early 'text-
 how:    0 colors focuscol !     7 colors defocuscol !
         : init  ( dostroke addr len -- )
-          1 selw ! show? on  super init ;
+          1 selw !  super init ;
         : show-you ( -- )  curx 2@ swap 2/ + x @ +
           y @ h @ 1+ 2/ + dpy show-me ;
-        : show  show? on  super show ;
-        : hide  show? off super hide ;
         : hglue  textwh @ xS +
           1- ds @ >> 1+ ds @ << dup old-h ! 1 *fil ;
         : vglue  texth  @                   1 *fil ;
@@ -366,7 +363,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
 
 \ simple text input field                              20feb00py
         : text! ( -- )  dpy self 0= ?EXIT  !resized
-          0 text $@ + c!  show? @ 0= ?EXIT
+          0 text $@ + c!  flags #hidden bit@ ?EXIT
           hglue drop dup w @ <= swap r> = and
 	  IF  draw  ELSE
               parent self 0= ?EXIT  parent resized  THEN

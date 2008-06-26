@@ -259,6 +259,14 @@ Variable (bezier#
   2drop r> r> >bezier >r 2dup (lastp 2!
   r> 0 ?DO  poly#  LOOP ;
 
+\ flags                                                26jun08py
+
+$0 Constant #hidden
+$1 Constant #exposed
+$2 Constant #moved
+$3 Constant #pending
+$4 Constant #draw
+
 \ gadget                                               06feb00py
 
 0 Value ^^
@@ -267,6 +275,7 @@ Variable (bezier#
 debugging class gadget
 public: cell var x              cell var y
         cell var w              cell var h
+        cell var flags
         static /step            static shadowcol
         static focuscol         static defocuscol
         ptr widgets             ptr parent
@@ -338,8 +347,8 @@ how:    &40 /step V!            4 colors shadowcol !
         : moved  ( x y -- )  2drop ;
         : text! ( addr n -- )  2drop ;
         : font! ( font -- ) drop ;
-        : show ;
-        : hide ;
+        : show flags #hidden -bit ;
+        : hide flags #hidden +bit ;
         : resized  parent resized ;
 class;
 

@@ -5,10 +5,9 @@ public: ptr dpy                 ptr childs
         cell var xwin           cell var cur-cursor
         cell var rw             cell var rh
         cell var mx             cell var my
-        cell var mb             cell var exposed
+        cell var mb
         cell var !moved         cell var clicks
         cell var lastclick      cell var lasttime
-        cell var pending        cell var draw?
         cell var tx             cell var ty
         cell var clipregion     cell var counter
         cell var clip-is        cell var clip-should
@@ -456,7 +455,7 @@ how:    : dispose  clicks HandleOff
         MappingNotify cells Handlers + !
         : click^ ( -- event )  clicks @ @+ swap 8* + ;
         : transclick ( x y -- x' y' ) ;
-        : sendclick ( count event -- )  pending on  click^ >r >r
+        : sendclick ( count event -- )  flags #pending +bit  click^ >r >r
           r@ XButtonEvent state @
           r@ XButtonEvent button @ $80 swap << xor
           r@ XButtonEvent x @
@@ -471,16 +470,16 @@ how:    : dispose  clicks HandleOff
         : in-time? ( time flag -- flag )
           lasttime @ rot - swap lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
-        : samepos? ( event -- flag )  pending @
+        : samepos? ( event -- flag )  flags #pending bit@
           IF    XButtonEvent x @+ @  click^ w@+ w@ p-
                 dup * swap dup * + samepos <
           ELSE  drop false  THEN ;
         : moreclicks ( -- )
           clicks @ @ maxclicks 1- < negate clicks @ +! ;
         : flush-queue ( -- )  XTime xrc timeoffset @ @ +
-          lasttime @ - twoclicks > pending @ and
+          lasttime @ - twoclicks > flags #pending bit@ and
           IF  click^ 6+ w@ 1 and
-              IF  moreclicks  THEN  pending off  THEN  ;
+              IF  moreclicks  THEN  flags #pending -bit  THEN  ;
         : +clicks ( -- ) click^ 6+ dup w@ 2+ -2 and swap w! ;
 
 \ Display                                              09mar99py
@@ -495,8 +494,8 @@ how:    : dispose  clicks HandleOff
                          click^ 5 + dup c@ rot or swap c!
                    ELSE  click^ 6 + w@ -2 and 1+ event sendclick
                          lastclick on
-                   THEN  EXIT  THEN   event !xyclick pending off
-          THEN  pending @  IF  moreclicks  THEN
+                   THEN  EXIT  THEN   event !xyclick flags #pending -bit
+          THEN  flags #pending bit@  IF  moreclicks  THEN
           1 event sendclick lastclick on ;
           ButtonPress cells Handlers + !
 
@@ -513,8 +512,9 @@ how:    : dispose  clicks HandleOff
                     THEN  THEN  EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
-          pending @ 0= IF  pending push  THEN
-          2 event sendclick  lastclick off ;
+          flags #pending bit@ 0= >r
+	  2 event sendclick  lastclick off
+	  r> IF  flags #pending -bit  THEN ;
           ButtonRelease cells Handlers + !
 
 \ Display                                              28jun98py
@@ -532,7 +532,7 @@ how:    : dispose  clicks HandleOff
         :noname
           event XExposeEvent x @+ @+ @+ @  add-region
 \         event XExposeEvent count @ 0= IF ."  draw"  draw  THEN
-          exposed on ;
+          flags #exposed +bit ;
         dup Expose         cells Handlers + !
             GraphicsExpose cells Handlers + !
 \        :noname  pointed self
@@ -605,7 +605,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              07jan07py
 
-        :noname  exposed on ;  NoExpose cells Handlers + !
+        :noname  flags #exposed +bit ;  NoExpose cells Handlers + !
         :noname ( -- ) \ resize request
            event XConfigureEvent x @ x !
            event XConfigureEvent y @ y !
@@ -614,9 +614,9 @@ how:    : dispose  clicks HandleOff
         ConfigureNotify cells Handlers + !
         ' focus    FocusIn  cells Handlers + !
         ' defocus  FocusOut cells Handlers + !
-        : >exposed ( -- )  sync  exposed off
+        : >exposed ( -- )  sync  flags #exposed -bit
           BEGIN  ( ExposureMask ) 0 get-event
-                 pause  exposed @  UNTIL ;
+                 pause  flags #exposed bit@  UNTIL ;
 
 \ Display                                              02aug98py
         :noname ( -- )
@@ -631,7 +631,7 @@ how:    : dispose  clicks HandleOff
           xrc dc @ >r  paint xwin @ BeginPaint xrc dc !
           Xform0 xrc dc @ SetWorldTransform drop
           draw  paint xwin @ EndPaint drop  r> xrc dc !
-          2drop 2drop 0 exposed on ;         WM_PAINT Handler@ !
+          2drop 2drop 0 flags #exposed +bit ;         WM_PAINT Handler@ !
         :noname  3 pick >lohi y ! x ! DefWindowProc ;
                                              WM_MOVE  Handler@ !
         :noname  2drop 2drop close 0 ;       WM_CLOSE Handler@ !
@@ -702,7 +702,7 @@ private:
         : !xyclick ( event -- )  click^ >r
           MSG lparam @ >lohi swap r> w!+ w! ;
         : sendclick ( count event -- )
-          pending on  click^ >r
+          flags #pending +bit  click^ >r
           dup MSG wparam @ >mshift swap
               MSG lparam @ >lohi swap r> w!+ w!+ w!+ w! ;
 
@@ -710,16 +710,16 @@ private:
         : in-time? ( time flag -- flag )
           lasttime @ rot swap - swap lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
-        : samepos? ( event -- flag )  pending @
+        : samepos? ( event -- flag )  flags #pending bit@
           IF    MSG lparam @ >lohi ( swap ) click^ w@+ w@ p-
                 dup * swap dup * + samepos <
           ELSE  drop false  THEN ;
         : moreclicks ( -- )
           clicks @ @ maxclicks 1- < negate clicks @ +! ;
         : flush-queue ( -- )  GetTickCount
-          lasttime @ - twoclicks > pending @ and
+          lasttime @ - twoclicks > flags #pending bit@ and
           IF  click^ 6+ w@ 1 and
-              IF  moreclicks  THEN  pending off
+              IF  moreclicks  THEN  flags #pending -bit
               ( ReleaseCapture drop )  THEN  ;
         : +clicks ( -- ) click^ 6+ dup w@ 2+ -2 and swap w! ;
 
@@ -733,8 +733,8 @@ private:
                    IF   event MSG wparam @ >mshift click^ 4 + w!
                    ELSE  click^ 6 + w@ -2 and 1+ event sendclick
                          lastclick on
-                   THEN  0 EXIT  THEN event !xyclick pending off
-          THEN  pending @  IF  moreclicks  THEN
+                   THEN  0 EXIT  THEN event !xyclick flags #pending -bit
+          THEN  flags #pending bit@  IF  moreclicks  THEN
           1 event sendclick lastclick on 0 ;
                                    dup WM_LBUTTONDOWN Handler@ !
                                    dup WM_RBUTTONDOWN Handler@ !
@@ -752,8 +752,9 @@ private:
                     THEN  THEN 0 EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
-          pending @ 0= IF  pending push  THEN
-          2 event sendclick  lastclick off 0 ;
+          flags #pending bit@ 0= >r
+	  2 event sendclick  lastclick off 0
+	  r> IF  flags #pending -bit  THEN ;
                                    dup WM_LBUTTONUP   Handler@ !
         dup WM_RBUTTONUP   Handler@ !  WM_MBUTTONUP   Handler@ !
 
@@ -761,7 +762,7 @@ private:
         : >wshift ( fwkeys -- count mstate ) dup >r >mshift
           r@ 0< $1000 and or  r@ 0> $800 and or
           r> 16 >> &60 / abs swap ;
-        : sendwheel ( event -- )  pending on
+        : sendwheel ( event -- )  flags #pending +bit
           dup MSG wparam @ >wshift drop 0 ?DO
              dup   MSG wparam @ >wshift nip I 2+ swap
              over2 MSG lparam @ >lohi y @ - swap x @ -
@@ -769,7 +770,7 @@ private:
              moreclicks
           2 +LOOP drop ;
         :noname ( lparam wparam msg win -- ) moved!
-          pending @ IF  moreclicks pending off  THEN
+          flags #pending bit@ IF  moreclicks flags #pending -bit  THEN
           event MSG time @  lasttime !
           2drop 2drop event sendwheel 0 ;
                                         WM_MOUSEWHEEL Handler@ !

@@ -4,8 +4,7 @@ displays class window
 public: gadget ptr child        cell var title
         method make-window      method decoration
         gadget ptr innerwin     & innerwin viewport asptr viewp
-        cell var shown          cell var closing
-        cell var app
+        cell var closing        cell var app
         method title!           method title+!
         method stop             method set-icon
         method set-parent
@@ -68,7 +67,7 @@ how:    : xinc  child xinc ;
           event-mask   xswa XSetWindowAttributes event_mask ! ;
 
 \ window                                               28oct06py
-        : set-hints  shown @ 0= ?EXIT  x @ y @ d0= 0= 5 and
+        : set-hints  flags #hidden bit@ ?EXIT  x @ y @ d0= 0= 5 and
           $178  or hints XSizeHints flags !
           yinc  xinc rot swap
                 hints XSizeHints width_inc 2!
@@ -142,10 +141,10 @@ how:    : xinc  child xinc ;
 \ window                                               09aug04py
 
 [IFDEF] x11
-        : show   ( -- )  child show
+        : show   ( -- )  super show child show
           h @ w @ d0= IF  xywh resize THEN
-          shown @  shown on  set-hints  \ dpy sync
-          IF  xrc dpy @ xwin @  xywh 2over d0=
+          flags #hidden bit@  flags #hidden -bit  set-hints  \ dpy sync
+          0= IF  xrc dpy @ xwin @  xywh 2over d0=
               IF    2drop XResizeWindow
               ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
           xrc dpy @ xwin @ XMapRaised ;
@@ -156,7 +155,7 @@ how:    : xinc  child xinc ;
 [IFDEF] win32
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
-          shown on   SWP_NOZORDER SWP_SHOWWINDOW or
+          flags #hidden -bit   SWP_NOZORDER SWP_SHOWWINDOW or
           owner @ IF  SWP_NOACTIVATE or  THEN
           h @ w @ 0 0 sp@ >r 0 style @ r>
           AdjustWindowRect drop p-
@@ -167,7 +166,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               01nov06py
 
-        : hide ( -- )  shown off  child hide \ ?app
+        : hide ( -- )  flags #hidden +bit  child hide \ ?app
 [IFDEF] x11
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [IFDEF] win32
@@ -497,7 +496,7 @@ how:    : make-window  ( attrib -- )
 \ window without border                                29aug98py
 
         : show ( x y -- )
-          y ! x !  shown on  super show ;
+          y ! x !  flags #hidden -bit  super show ;
         : set-dpys ( widget -- )  recursive
           BEGIN  dup 0<> over 'nil <> and  WHILE  ^ swap >o
                  widget bind dpy   widget widgets self

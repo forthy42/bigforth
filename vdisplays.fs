@@ -3,7 +3,6 @@
 displays class backing
 public: gadget ptr child        method create-pixmap
         cell var noback         cell var closing
-        cell var shown
         2 cells var hglues      2 cells var vglues
 [IFDEF] win32                   cell var oldbm      [THEN]
 
@@ -28,7 +27,7 @@ how:    : init ( -- ) ;
           bind dpy  xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
 [IFDEF] x11     get-win xrc get-gc  [THEN]
-          0 clip-rect  draw? on  child self 0= ?EXIT
+          0 clip-rect  flags #draw +bit  child self 0= ?EXIT
           self child dpy!  !resized
           child xywh  resize ;
 
@@ -93,8 +92,9 @@ how:    : init ( -- ) ;
         : resize ( x y w h -- )   w @ h @ >r >r
           2swap 2over super resize 0 0 2swap child resize
           r> r> w @ h @ d= 0=  xwin @ 0= noback @ 0= and or
-          IF create-pixmap draw? dup push off child draw THEN ;
-        : draw ( -- )  shown @ 0= ?EXIT
+	  IF  create-pixmap flags #draw 2dup bit@ >r -bit
+	      child draw r> IF flags #draw +bit THEN THEN ;
+        : draw ( -- )  flags #hidden bit@ ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
                 [IFDEF] win32  xrc dc @ dpy image
@@ -108,33 +108,33 @@ how:    : init ( -- ) ;
         : handle-key?  child handle-key? ;
 
 \ backing store                                        20oct99py
-        : line ( x y x y color -- )  draw? @
+        : line ( x y x y color -- )  flags #draw bit@
           IF  !txy >r 2over trans' 2over trans' r@
               dpy line r> !t00  THEN
           xwin @ 0= IF  drop 2drop 2drop  EXIT  THEN
           super line ;
-        : text ( addr u x y color -- )  draw? @
+        : text ( addr u x y color -- )  flags #draw bit@
           IF  !txy >r  2over 2over trans' r@ dpy text
               r> !t00 THEN
           xwin @ 0= IF  drop 2drop 2drop  EXIT  THEN
           super text ;
-        : box ( x y w h color -- )  draw? @ IF
+        : box ( x y w h color -- )  flags #draw bit@ IF
           !txy >r 2over trans' 2over r@ dpy box r> !t00 THEN
           xwin @ 0= IF  drop 2drop 2drop  EXIT  THEN
           super box ;
 
 \ backing store                                        01mar98py
-        : image ( x y w h x y win -- )  draw? @
+        : image ( x y w h x y win -- )  flags #draw bit@
           IF  [ 5 ] [FOR] 6 pick [NEXT] trans' 6 pick
               dpy image  THEN
           xwin @ 0= IF  drop 2drop 2drop 2drop  EXIT  THEN
           super image ;
-\        : ximage ( x y w h x y win -- )  draw? @
+\        : ximage ( x y w h x y win -- )  flags #draw bit@
 \          IF  [ 5 ] [FOR] 6 pick [NEXT] trans' 6 pick
 \              dpy ximage  THEN
 \          xwin @ 0= IF  drop 2drop 2drop 2drop  EXIT  THEN
 \          super ximage ;
-        : mask ( x y w h x y win1 win2 -- )  draw? @
+        : mask ( x y w h x y win1 win2 -- )  flags #draw bit@
           IF  [ 5 ] [FOR] 7 pick [NEXT] trans' 7 pick 7 pick
               dpy mask  THEN
           xwin @ 0= IF  2drop 2drop 2drop 2drop  EXIT  THEN
@@ -142,16 +142,16 @@ how:    : init ( -- ) ;
 
 \ backing store                                        11nov06py
 
-        : fill ( x y addr n color -- )  draw? @ IF
+        : fill ( x y addr n color -- )  flags #draw bit@ IF
           !txy >r 2over trans' 2over r@ dpy fill r> !t00 THEN
           xwin @ 0= IF  drop 2drop 2drop  EXIT  THEN
           super fill ;
-        : stroke ( x y addr n color -- )  draw? @ IF
+        : stroke ( x y addr n color -- )  flags #draw bit@ IF
           !txy >r 2over trans' 2over r@ dpy stroke r> !t00 THEN
           xwin @ 0= IF  drop 2drop 2drop  EXIT  THEN
           super stroke ;
 
-        : drawer ( x y o xt -- )  draw? @
+        : drawer ( x y o xt -- )  flags #draw bit@
           IF   !txy 2over trans' 2over dpy drawer !t00  THEN
           xwin @ 0= IF  2drop 2drop  EXIT  THEN  super drawer ;
         : set-linewidth  dup dpy set-linewidth
@@ -169,8 +169,8 @@ how:    : init ( -- ) ;
           IF  pointed leave 0 bind pointed  THEN ;
         : set-cursor ( n -- )  dpy set-cursor ;
         : set-font ( font -- ) dup dpy set-font super set-font ;
-        : show  shown on  child show ;
-        : hide  shown off child hide ;
+        : show  flags #hidden -bit  child show ;
+        : hide  flags #hidden +bit  child hide ;
         : focus    child focus     ;
         : defocus  child defocus   ;
 
@@ -206,7 +206,7 @@ how:    displays :: line ( x y x y color -- )
         : keyed  super keyed draw ;
         : clicked  super clicked draw ;
         : resize  super resize
-          draw? @ IF  child draw draw  THEN ;   class;
+          flags #draw bit@ IF  child draw draw  THEN ;   class;
 
 \ pixmap                                               28oct06py
 
@@ -339,7 +339,7 @@ how:    : drops  cells sp@ + cell+ sp! ;
           xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
 [IFDEF] x11     get-win xrc get-gc  [THEN]
-          0 clip-rect  draw? on
+          0 clip-rect  flags #draw +bit
           first?  IF  self child dpy!  THEN
           !resized  child xywh  resize ;
         : assign ( widget -- )  set-child

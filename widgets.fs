@@ -292,7 +292,7 @@ class;
 rule class canvas
 public: defer drawer            defer pixel
         cell var angle          cell var coord
-        cell var color          cell var shown
+        cell var color
         cell var dx             cell var dy
         2 cells var sw          2 cells var sh
         cell var xp             cell var yp
@@ -321,7 +321,7 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
        : pixel, xp 2@ p+ 2dup xp 2! wextend swap wextend pixel ;
         : dx+ ( d -- n )  dx @ extend d+ swap dup dx ! 0< - ;
         : dy+ ( d -- n )  dy @ extend d+ swap dup dy ! 0< - ;
-        : draw  shown @ 0= ?EXIT  clear  ^ drawer ;
+        : draw  flags #hidden bit@ ?EXIT  clear  ^ drawer ;
         : fd ( n -- ) >r angle @ sincos
           r@ negate m* sh 2@ d* $10 d>> dy+
           swap   r> m* sw 2@ d* $10 d>> dx+ pixel, ;
@@ -341,8 +341,6 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
         : dhome! ( dx dy -- ) dx off  dy off  angle off
           sh 2@ d* dy+ -rot sw 2@ d* dx+ y @ x @ p+ xp 2! ;
         : home! ( p -- )  0 tuck dhome! ;
-        : show  shown on ;
-        : hide  shown off ;
         : steps ( w h -- )
           $00000000 h @ 1- rot ud/mod sh 2! drop
           $00000000 w @ 1- rot ud/mod sw 2! drop ;
