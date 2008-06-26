@@ -144,7 +144,7 @@ how:    : xinc  child xinc ;
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
           flags #shown bit@  super show  set-hints  \ dpy sync
-          IF  xrc dpy @ xwin @  xywh 2over d0=
+          0= IF  xrc dpy @ xwin @  xywh 2over d0=
               IF    2swap 2drop XResizeWindow
               ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
           xrc dpy @ xwin @ XMapRaised ;
