@@ -94,7 +94,7 @@ how:    : init ( -- ) ;
           r> r> w @ h @ d= 0=  xwin @ 0= noback @ 0= and or
 	  IF  create-pixmap flags #draw 2dup bit@ >r -bit
 	      child draw r> IF flags #draw +bit THEN THEN ;
-        : draw ( -- )  flags #hidden bit@ ?EXIT
+        : draw ( -- )  flags #shown bit@ 0= ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
                 [IFDEF] win32  xrc dc @ dpy image
@@ -169,8 +169,8 @@ how:    : init ( -- ) ;
           IF  pointed leave 0 bind pointed  THEN ;
         : set-cursor ( n -- )  dpy set-cursor ;
         : set-font ( font -- ) dup dpy set-font super set-font ;
-        : show  flags #hidden -bit  child show ;
-        : hide  flags #hidden +bit  child hide ;
+        : show  super show  child show ;
+        : hide  super hide  child hide ;
         : focus    child focus     ;
         : defocus  child defocus   ;
 

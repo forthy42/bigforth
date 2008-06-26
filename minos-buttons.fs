@@ -363,7 +363,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
 
 \ simple text input field                              20feb00py
         : text! ( -- )  dpy self 0= ?EXIT  !resized
-          0 text $@ + c!  flags #hidden bit@ ?EXIT
+          0 text $@ + c!  flags #shown bit@ 0= ?EXIT
           hglue drop dup w @ <= swap r> = and
 	  IF  draw  ELSE
               parent self 0= ?EXIT  parent resized  THEN

@@ -67,7 +67,7 @@ how:    : xinc  child xinc ;
           event-mask   xswa XSetWindowAttributes event_mask ! ;
 
 \ window                                               28oct06py
-        : set-hints  flags #hidden bit@ ?EXIT  x @ y @ d0= 0= 5 and
+        : set-hints  flags #shown bit@ 0= ?EXIT  x @ y @ d0= 0= 5 and
           $178  or hints XSizeHints flags !
           yinc  xinc rot swap
                 hints XSizeHints width_inc 2!
@@ -141,13 +141,13 @@ how:    : xinc  child xinc ;
 \ window                                               09aug04py
 
 [IFDEF] x11
-        : show   ( -- )
+        : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
-          flags #hidden bit@  flags #hidden -bit  set-hints  \ dpy sync
-          0= IF  xrc dpy @ xwin @  xywh 2over d0=
+          flags #shown bit@  super show  set-hints  \ dpy sync
+          IF  xrc dpy @ xwin @  xywh 2over d0=
               IF    2swap 2drop XResizeWindow
               ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
-          xrc dpy @ xwin @ XMapRaised  child show ;
+          xrc dpy @ xwin @ XMapRaised ;
 [THEN]
 
 \ window                                               13nov99py
@@ -155,7 +155,7 @@ how:    : xinc  child xinc ;
 [IFDEF] win32
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
-          flags #hidden -bit   SWP_NOZORDER SWP_SHOWWINDOW or
+          super show   SWP_NOZORDER SWP_SHOWWINDOW or
           owner @ IF  SWP_NOACTIVATE or  THEN
           h @ w @ 0 0 sp@ >r 0 style @ r>
           AdjustWindowRect drop p-
@@ -166,7 +166,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               01nov06py
 
-        : hide ( -- )  flags #hidden +bit  child hide \ ?app
+        : hide ( -- )  super hide  child hide \ ?app
 [IFDEF] x11
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [IFDEF] win32
@@ -495,8 +495,7 @@ how:    : make-window  ( attrib -- )
 
 \ window without border                                29aug98py
 
-        : show ( x y -- )
-          y ! x !  flags #hidden -bit  super show ;
+        : show ( x y -- )  y ! x !  super show ;
         : set-dpys ( widget -- )  recursive
           BEGIN  dup 0<> over 'nil <> and  WHILE  ^ swap >o
                  widget bind dpy   widget widgets self
