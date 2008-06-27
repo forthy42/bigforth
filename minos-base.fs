@@ -266,6 +266,8 @@ $1 Constant #exposed
 $2 Constant #moved
 $3 Constant #pending
 $4 Constant #draw
+$5 Constant #closing
+$6 Constant #noback
 
 \ gadget                                               06feb00py
 

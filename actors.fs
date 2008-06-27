@@ -69,8 +69,7 @@ class;
 toggle-var class toggle-bit
 public: cell var bit
 how:    : fetch ( -- n )  addr @ bit @ bit@ ;
-        : store ( n -- )  >r addr @ bit @
-          r> IF  +bit  ELSE  -bit  THEN
+        : store ( n -- )  addr @ bit @ bit!
           xt @ called send ;
         : assign ( addr bit -- ) bit ! addr ! ;
 class;

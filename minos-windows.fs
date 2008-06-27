@@ -4,7 +4,7 @@ displays class window
 public: gadget ptr child        cell var title
         method make-window      method decoration
         gadget ptr innerwin     & innerwin viewport asptr viewp
-        cell var closing        cell var app
+        cell var app
         method title!           method title+!
         method stop             method set-icon
         method set-parent
@@ -316,9 +316,10 @@ how:    : xinc  child xinc ;
           child-resize  child-moved
 \          rw @ rh @  child-size?  d= 0=  IF  draw  THEN
           set-hints dpy sync  re-size ;
-        : close  ( -- )  closing push closing @ closing on
+        : close  ( -- )  flags #closing bit@ dup >r flags #closing +bit
           IF    hide ['] dispose self &10 after schedule
-          ELSE  innerwin close  THEN ;
+	  ELSE  innerwin close  THEN
+	  r> flags #closing bit! ;
 
 \ window                                               15jul01py
 
