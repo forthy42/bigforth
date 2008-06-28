@@ -7,7 +7,7 @@ public: gadget ptr child        method create-pixmap
 
 \ backing                                              28aug99py
 
-how:    : init ( -- ) ;
+how:    : init ( -- ) ( flags #noback +bit ) ;
         : schedule ( xt o time -- )  dpy schedule ;
         : invoke ( -- time )  dpy invoke ;
         : cleanup ( o -- )  dpy cleanup ;
@@ -92,7 +92,7 @@ how:    : init ( -- ) ;
           2swap 2over super resize 0 0 2swap child resize
           r> r> w @ h @ d= 0=  xwin @ 0= flags #noback bit@ 0= and or
 	  IF  create-pixmap flags #draw 2dup bit@ >r -bit
-	      child draw r> IF flags #draw +bit THEN THEN ;
+	      child draw r> flags #draw bit!  THEN ;
         : draw ( -- )  flags #shown bit@ 0= ?EXIT
 	  xwin @ flags #noback bit@ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
