@@ -321,7 +321,7 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
        : pixel, xp 2@ p+ 2dup xp 2! wextend swap wextend pixel ;
         : dx+ ( d -- n )  dx @ extend d+ swap dup dx ! 0< - ;
         : dy+ ( d -- n )  dy @ extend d+ swap dup dy ! 0< - ;
-        : draw  flags #shown bit@ 0= ?EXIT  clear  ^ drawer ;
+        : draw  flags #hidden bit@ ?EXIT  clear  ^ drawer ;
         : fd ( n -- ) >r angle @ sincos
           r@ negate m* sh 2@ d* $10 d>> dy+
           swap   r> m* sw 2@ d* $10 d>> dx+ pixel, ;

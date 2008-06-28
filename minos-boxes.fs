@@ -55,7 +55,7 @@ how:    : >box  'nil bind childs  'nil bind active
           ELSE  childs append  THEN  1 n +! ( resized ) ;
 
         : ?nodraw ( -- flag )  attribs c@ :flip and 0<>
-	  flags #shown bit@ 0= or ;
+	  flags #hidden bit@ or ;
 
 \ combined widgets                                     29aug99py
 

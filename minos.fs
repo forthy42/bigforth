@@ -39,7 +39,6 @@ $7FFFFFFF | Constant mi
 : 0min dup 0< and ;
 Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
 Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
-: bit! ( bit addr u -- )  rot IF  +bit  ELSE  -bit  THEN ;
 
 \ class utility                                        01jan00py
 | : cell-@  dup IF cell- @ THEN ;

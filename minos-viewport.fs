@@ -16,7 +16,7 @@ public: cell var sw             cell var sh
         method xpos!            method ypos!
 
 \ viewport                                             28mar99py
-how:    : init  ( sx sy -- )  flags #noback +bit  super init
+how:    : init  ( sx sy -- )  noback on  super init
           2dup steps 2! vstep ! hstep ! ;
         : trans ( x y -- x' y' )
           orgx @ hstep @ * x @ -
@@ -40,7 +40,7 @@ how:    : init  ( sx sy -- )  flags #noback +bit  super init
 	      r> dup cell+  dummy  over cell+  XGetGeometry drop
 	      * * 3 >> maxpixmap + TO maxpixmap
 	      xrc dpy @ xwin @ XFreePixmap  THEN
-          xwin off  flags #noback bit@ ?EXIT
+          xwin off  noback @ ?EXIT
           xrc depth @
           dup h @ w @ * * 3 >> dup
           maxpixmap > IF  2drop EXIT  THEN
@@ -64,7 +64,7 @@ how:    : init  ( sx sy -- )  flags #noback +bit  super init
           & glue @ child class? 0=
           IF  0 0 w @ h @ child resize create-pixmap  xwin @
               IF    flags #draw 2dup bit@ >r -bit  child draw
-	            r> flags #draw bit!  THEN
+	            r> IF  flags #draw +bit  THEN  THEN
           THEN  hslide -rot - min  vslide -rot - min org 2! ;
 
 \ viewport                                             28mar99py
@@ -410,8 +410,8 @@ how:    0 border-at v!
           viewp hslide -rot - min  viewp vslide -rot - min
           viewp org 2!
           viewp xwin @
-          IF    viewp flags #noback bit@ IF  viewp draw  THEN
-          ELSE  viewp flags #noback bit@ 0= IF
+          IF    viewp noback @ IF  viewp draw  THEN
+          ELSE  viewp noback @ 0= IF
                 viewp create-pixmap
                 viewp flags #draw dup push off
                 viewp child draw  THEN  THEN ;
@@ -433,15 +433,15 @@ how:    0 border-at v!
 \        : >parent  parent resized ;
         : resize ( x y w h -- )
           & viewport @ inner class?
-          IF  viewp flags #noback 2dup bit@ >r +bit viewp flags #draw -bit
+          IF  viewp noback dup @ >r on viewp flags #draw -bit
               glues @ >r  viewp org 2@ >r >r
               2over 2over xS xywh- viewp resize glue-off
               r> r> viewp org 2!  glues? dup r@ or
               IF  >r sresize glues? r> <> IF  sresize  THEN
-                  glues? r> <>  r> viewp flags #noback bit! viewp flags #draw +bit
+                  glues? r> <>  r> viewp noback ! viewp flags #draw +bit
                   IF    >parent parent draw
                   THEN  2drop 2drop  ?portwin EXIT
-              THEN  drop rdrop  r> viewp flags #noback bit! viewp flags #draw +bit
+              THEN  drop rdrop  r> viewp noback ! viewp flags #draw +bit
           THEN  super resize ;
 class;
 

@@ -261,13 +261,11 @@ Variable (bezier#
 
 \ flags                                                26jun08py
 
-$0 Constant #shown
+$0 Constant #hidden
 $1 Constant #exposed
 $2 Constant #moved
 $3 Constant #pending
 $4 Constant #draw
-$5 Constant #closing
-$6 Constant #noback
 
 \ gadget                                               06feb00py
 
@@ -349,8 +347,8 @@ how:    &40 /step V!            4 colors shadowcol !
         : moved  ( x y -- )  2drop ;
         : text! ( addr n -- )  2drop ;
         : font! ( font -- ) drop ;
-        : show flags #shown +bit ;
-        : hide flags #shown -bit ;
+        : show flags #hidden -bit ;
+        : hide flags #hidden +bit ;
         : resized  parent resized ;
 class;
 

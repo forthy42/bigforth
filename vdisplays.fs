@@ -2,12 +2,13 @@
 
 displays class backing
 public: gadget ptr child        method create-pixmap
+        cell var noback         cell var closing
         2 cells var hglues      2 cells var vglues
 [IFDEF] win32                   cell var oldbm      [THEN]
 
 \ backing                                              28aug99py
 
-how:    : init ( -- ) ( flags #noback +bit ) ;
+how:    : init ( -- ) ;
         : schedule ( xt o time -- )  dpy schedule ;
         : invoke ( -- time )  dpy invoke ;
         : cleanup ( o -- )  dpy cleanup ;
@@ -37,7 +38,7 @@ how:    : init ( -- ) ( flags #noback +bit ) ;
         : create-pixmap ( -- )  free-pixmap
           xpict @ IF  screen xrc dpy @ xpict @
                       XRenderFreePicture xpict off  THEN
-          flags #noback bit@ ?EXIT   xrc dpy @
+          noback @ ?EXIT   xrc dpy @
 	  dpy get-win  w @ 1 max  h @ 1 max  xrc depth @
           XCreatePixmap xwin ! ;
         : dispose ( -- )  child self  IF  child dispose  THEN
@@ -52,7 +53,7 @@ how:    : init ( -- ) ( flags #noback +bit ) ;
 [IFDEF] win32
         : create-pixmap ( -- )
           xwin @  IF  xwin @ DeleteObject drop xwin off  THEN
-          flags #noback bit@ ?EXIT
+          noback @ ?EXIT
           h @ 1 max w @ 1 max
           screen xrc dc @ CreateCompatibleBitmap xwin !
           screen xrc dc @ CreateCompatibleDC xrc dc !
@@ -90,11 +91,11 @@ how:    : init ( -- ) ( flags #noback +bit ) ;
 \ backing store                                        11nov06py
         : resize ( x y w h -- )   w @ h @ >r >r
           2swap 2over super resize 0 0 2swap child resize
-          r> r> w @ h @ d= 0=  xwin @ 0= flags #noback bit@ 0= and or
+          r> r> w @ h @ d= 0=  xwin @ 0= noback @ 0= and or
 	  IF  create-pixmap flags #draw 2dup bit@ >r -bit
-	      child draw r> flags #draw bit!  THEN ;
-        : draw ( -- )  flags #shown bit@ 0= ?EXIT
-	  xwin @ flags #noback bit@ 0= and redraw-all @ 0= and
+	      child draw r> IF flags #draw +bit THEN THEN ;
+        : draw ( -- )  flags #hidden bit@ ?EXIT
+	  xwin @ noback @ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
                 [IFDEF] win32  xrc dc @ dpy image
                 [ELSE]  xpict @  IF  -1 xpict @ dpy mask
@@ -168,8 +169,8 @@ how:    : init ( -- ) ( flags #noback +bit ) ;
           IF  pointed leave 0 bind pointed  THEN ;
         : set-cursor ( n -- )  dpy set-cursor ;
         : set-font ( font -- ) dup dpy set-font super set-font ;
-        : show  super show  child show ;
-        : hide  super hide  child hide ;
+        : show  flags #hidden -bit  child show ;
+        : hide  flags #hidden +bit  child hide ;
         : focus    child focus     ;
         : defocus  child defocus   ;
 
@@ -186,9 +187,8 @@ how:    : init ( -- ) ( flags #noback +bit ) ;
         : !resized ( -- ) xrc !font
           0 set-font  child !resized  get-glues ;
         : transback  xwin @ 0= IF trans' dpy transback  THEN ;
-        : close  flags #closing bit@ dup >r flags #closing +bit
-	  IF  dpy close  ELSE  child close  THEN
-	  r> flags #closing bit! ;
+        : close  closing push closing @ closing on
+          IF  dpy close  ELSE  child close  THEN ;
         : set-hints  dpy set-hints ;            class;
 
 \ doublebuffer                                         28mar99py
@@ -287,7 +287,7 @@ how:    : drops  cells sp@ + cell+ sp! ;
 
 \ beamer                                               28mar99py
 
-        : init ( first next -- )  flags #noback +bit
+        : init ( first next -- )  noback on
           super init  bind nextb  bind firstb
           firstb self 0= IF  ^ bind firstb  THEN
           enable on ;

@@ -5,7 +5,8 @@ public: ptr dpy                 ptr childs
         cell var xwin           cell var cur-cursor
         cell var rw             cell var rh
         cell var mx             cell var my
-        cell var mb             cell var clicks
+        cell var mb
+        cell var !moved         cell var clicks
         cell var lastclick      cell var lasttime
         cell var tx             cell var ty
         cell var clipregion     cell var counter
@@ -416,8 +417,8 @@ how:    : dispose  clicks HandleOff
           0 get-event
           childs schedule-event
           ( invoke ) ;
-        : moved!  flags #moved +bit ;
-        : moved?  ( -- flag )  flags #moved bit@ flags #moved -bit ;
+        : moved!  !moved on ;
+        : moved?  ( -- flag )  !moved @ !moved off ;
         : get-dpy ( -- addr )  ^ ;
         : mxy! ( mx my -- ) my ! mx ! ;
 
@@ -511,9 +512,9 @@ how:    : dispose  clicks HandleOff
                     THEN  THEN  EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
-          flags #pending bit@ >r
+          flags #pending bit@ 0= >r
 	  2 event sendclick  lastclick off
-	  r> flags #pending bit! ;
+	  r> IF  flags #pending -bit  THEN ;
           ButtonRelease cells Handlers + !
 
 \ Display                                              28jun98py
@@ -751,9 +752,9 @@ private:
                     THEN  THEN 0 EXIT  THEN  click^ 6+ w@  1 and
               ELSE true THEN  \ output push display .button
           IF  event !xyclick +clicks moreclicks  THEN
-          flags #pending bit@ >r
+          flags #pending bit@ 0= >r
 	  2 event sendclick  lastclick off 0
-	  r> flags #pending bit! ;
+	  r> IF  flags #pending -bit  THEN ;
                                    dup WM_LBUTTONUP   Handler@ !
         dup WM_RBUTTONUP   Handler@ !  WM_MBUTTONUP   Handler@ !
 

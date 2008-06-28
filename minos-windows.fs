@@ -4,7 +4,7 @@ displays class window
 public: gadget ptr child        cell var title
         method make-window      method decoration
         gadget ptr innerwin     & innerwin viewport asptr viewp
-        cell var app
+        cell var closing        cell var app
         method title!           method title+!
         method stop             method set-icon
         method set-parent
@@ -67,7 +67,7 @@ how:    : xinc  child xinc ;
           event-mask   xswa XSetWindowAttributes event_mask ! ;
 
 \ window                                               28oct06py
-        : set-hints  flags #shown bit@ 0= ?EXIT  x @ y @ d0= 0= 5 and
+        : set-hints  flags #hidden bit@ ?EXIT  x @ y @ d0= 0= 5 and
           $178  or hints XSizeHints flags !
           yinc  xinc rot swap
                 hints XSizeHints width_inc 2!
@@ -141,13 +141,13 @@ how:    : xinc  child xinc ;
 \ window                                               09aug04py
 
 [IFDEF] x11
-        : show   ( -- )  child show
+        : show   ( -- )
           h @ w @ d0= IF  xywh resize THEN
-          flags #shown bit@  super show  set-hints  \ dpy sync
+          flags #hidden bit@  flags #hidden -bit  set-hints  \ dpy sync
           0= IF  xrc dpy @ xwin @  xywh 2over d0=
               IF    2swap 2drop XResizeWindow
               ELSE  XMoveResizeWindow  THEN  dpy sync  THEN
-          xrc dpy @ xwin @ XMapRaised ;
+          xrc dpy @ xwin @ XMapRaised  child show ;
 [THEN]
 
 \ window                                               13nov99py
@@ -155,7 +155,7 @@ how:    : xinc  child xinc ;
 [IFDEF] win32
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
-          super show   SWP_NOZORDER SWP_SHOWWINDOW or
+          flags #hidden -bit   SWP_NOZORDER SWP_SHOWWINDOW or
           owner @ IF  SWP_NOACTIVATE or  THEN
           h @ w @ 0 0 sp@ >r 0 style @ r>
           AdjustWindowRect drop p-
@@ -166,7 +166,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               01nov06py
 
-        : hide ( -- )  super hide  child hide \ ?app
+        : hide ( -- )  flags #hidden +bit  child hide \ ?app
 [IFDEF] x11
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [IFDEF] win32
@@ -316,10 +316,9 @@ how:    : xinc  child xinc ;
           child-resize  child-moved
 \          rw @ rh @  child-size?  d= 0=  IF  draw  THEN
           set-hints dpy sync  re-size ;
-        : close  ( -- )  flags #closing bit@ dup >r flags #closing +bit
+        : close  ( -- )  closing push closing @ closing on
           IF    hide ['] dispose self &10 after schedule
-	  ELSE  innerwin close  THEN
-	  r> flags #closing bit! ;
+          ELSE  innerwin close  THEN ;
 
 \ window                                               15jul01py
 
@@ -401,7 +400,7 @@ how:    : init ( widget win -- )  xwin !  title off
 [IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] ;
 
 \ event handler for sub-window                         20nov07py
-        : show ( -- )  resize-win super super show
+        : show ( -- )  resize-win
 [IFDEF] win32  SWP_SHOWWINDOW xwin @ ShowWindow drop [THEN]
 [IFDEF] x11    xrc dpy @ xwin @ XMapWindow  [THEN] ;
         : dispose-it ( -- )  self cleanup
@@ -496,7 +495,8 @@ how:    : make-window  ( attrib -- )
 
 \ window without border                                29aug98py
 
-        : show ( x y -- )  y ! x !  super show ;
+        : show ( x y -- )
+          y ! x !  flags #hidden -bit  super show ;
         : set-dpys ( widget -- )  recursive
           BEGIN  dup 0<> over 'nil <> and  WHILE  ^ swap >o
                  widget bind dpy   widget widgets self

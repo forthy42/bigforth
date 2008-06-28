@@ -195,7 +195,7 @@ test-widgets implements
     cv1task @ IF  draw-cv1 drop  EXIT  THEN
     1 $1000 dup NewTask dup cv1task !  pass
     canvas with
-        flags #shown +bit
+        shown on
         BEGIN  ^ draw-cv1 dpy sync
             IF
                 BEGIN
