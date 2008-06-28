@@ -401,7 +401,7 @@ how:    : init ( widget win -- )  xwin !  title off
 [IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] ;
 
 \ event handler for sub-window                         20nov07py
-        : show ( -- )  resize-win
+        : show ( -- )  resize-win super super show
 [IFDEF] win32  SWP_SHOWWINDOW xwin @ ShowWindow drop [THEN]
 [IFDEF] x11    xrc dpy @ xwin @ XMapWindow  [THEN] ;
         : dispose-it ( -- )  self cleanup
