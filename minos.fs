@@ -82,13 +82,16 @@ Patch .class
 [defined] unix [IF]
 \ Loadscreen for X11                                   21sep07py
 
-\needs x11      include x11.fs
-\needs xrender  include xrender.fs
-\needs xpm      include xpm.fs
-\needs opengl   include opengl.fs
-\needs xconst   | import xconst
-\needs glconst  | import glconst
-
+    [defined] VFXFORTH [IF]
+	include vfx-minos/x11.fs
+    [ELSE]
+	\needs x11      include x11.fs
+	\needs xrender  include xrender.fs
+	\needs xpm      include xpm.fs
+	\needs opengl   include opengl.fs
+	\needs xconst   | import xconst
+	\needs glconst  | import glconst
+    [THEN]
 Onlyforth
 Module MINOS
 Memory also x11 also xrender also xconst also Forth also MINOS
