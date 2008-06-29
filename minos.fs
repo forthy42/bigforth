@@ -20,6 +20,17 @@
 
 \ generic loadscreen                                   21sep07py
 
+[defined] VFXFORTH [IF]
+    include vfx-minos/oof.fs
+    include vfx-minos/lambda.fs
+    include vfx-minos/helper.fs
+    include sincos.fs
+    include vfx-minos/points.fs
+\    include vfx-minos/qsort.fs
+    include vfx-minos/string.fs
+    include vfx-minos/xchar.fs
+    include i18n.fs
+[ELSE]
 \needs {        include locals.fs
 \needs object   include oof.fb
 \needs :[       include lambda.fs
@@ -29,6 +40,7 @@ include sincos.fs
 \needs $!       include string.fs
 \needs xc@+     include utf-8.fs
 \needs l"       include i18n.fs
+[THEN]
 [IFUNDEF] >class"
 \ useful utilities                                     09jan00py
 
@@ -59,7 +71,7 @@ Patch .class
 [THEN]
 
 
-[IFDEF] unix
+[defined] unix [IF]
 \ Loadscreen for X11                                   21sep07py
 
 \needs x11      include x11.fs
@@ -75,7 +87,7 @@ Memory also x11 also xrender also xconst also Forth also MINOS
 
 
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
 
 \ Loadscreen for win32                                 21sep07py
 
@@ -108,7 +120,7 @@ include resources.fs
 : clear-resources  ( -- )
   clear-icons  clear-fonts  0 bind term ;
 
-[IFDEF] x11  also DOS
+[defined] x11 [IF]  also DOS
 : win-init ( -- ) !time clear-resources
   xresource new  xresource with
      s" DISPLAY" env$ 0= IF drop s" :0.0" THEN open connect
@@ -127,7 +139,7 @@ previous                                        [THEN]
 
 \ win-init                                             07jan07py
 
-[IFDEF] win32
+[defined] win32 [IF]
 ficon: minos-win icons/minos1+.icn"
 : win-init ( -- )  clear-resources
   xresource new xresource with
@@ -146,15 +158,15 @@ ficon: minos-win icons/minos1+.icn"
 
 main: ['] WINi/o IS standardi/o ;
 
-[IFDEF] x11
+[defined] x11 [IF]
 cold: win-init ;
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
 cold: set-exceptions win-init ;
 [THEN]
 
 \ init sequence                                        10apr04py
-[IFDEF] x11
+[defined] x11 [IF]
 : "geometry ( addr u -- ) scratch 0place
   0 sp@ >r 0 0 0 scratch r> dup cell- dup cell- dup cell-
   XParseGeometry >r
@@ -170,12 +182,12 @@ previous definitions
 export minos -geometry ;
 [THEN]
 
-[IFDEF] unix
+[defined] unix [IF]
 include xstyle.fs
 toss toss toss toss toss
 Module;
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
 include xstyle.fs
 include w95style.fs
 toss toss toss

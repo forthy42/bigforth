@@ -82,7 +82,7 @@ Create Colortable
   rgbs DO i >rgb , LOOP ; \ standard colors
 
 \ Color system - RGB table  X11 version                09aug99py
-[IFDEF] x11
+[defined] x11 [IF]
 Create color  sizeof XColor allot
        DoRed DoGreen DoBlue or or color XColor flags c!
 : get-rgbs ( cmap dpy array end start -- )
@@ -156,7 +156,7 @@ NotUseful ( WhenMapped ) Value backing-mode
 [THEN]
 
 \ Color system - RGB table  win32 version              24oct99py
-[IFDEF] win32
+[defined] win32 [IF]
 
 Create sys-colors
        COLOR_WINDOWTEXT dup , ,
@@ -213,7 +213,7 @@ $001100A6 Value :srcand         $00440328 Value :srcor
 [THEN]
 
 \ keyboard handling                                    22aug99py
-[IFDEF] x11
+[defined] x11 [IF]
 : shift-keys? ( key -- flag )  dup $FF7E $FF80 within
   over $FFE1 $FFEF within or  swap $FE00 $FE10 within or ;
 Create xswa sizeof XSetWindowAttributes allot
@@ -224,7 +224,7 @@ CWBackPixmap or CWBorderPixmap or             Value xswavalvis
 CWBackPixel CWBorderPixel or CWColormap or CWEventMask or
                                               Constant glxvals
 XC_top_left_arrow Value mouse_cursor            [THEN]
-[IFDEF] win32   : shift-keys? ( key -- flag )  drop false ;
+[defined] win32 [IF]   : shift-keys? ( key -- flag )  drop false ;
 IDC_ARROW         Value mouse_cursor            [THEN]
 2Variable txy   0 0 txy 2!      Variable spot
 Patch get-sys-colors    ' (get-sys-colors IS get-sys-colors
@@ -233,12 +233,12 @@ Patch get-sys-colors    ' (get-sys-colors IS get-sys-colors
 
 Variable (poly'
 Variable (poly#
-[IFDEF] win32   Variable (poly''  [THEN]
+[defined] win32 [IF]   Variable (poly''  [THEN]
 2Variable (lastp
 
 : <poly ( x y -- x y )  (poly# off (poly' @ 0=
   IF  $1000 NewPtr (poly' !
-      [IFDEF] win32  $2008 NewPtr (poly'' !  (poly' @ off [THEN]
+      [defined] win32 [IF]  $2008 NewPtr (poly'' !  (poly' @ off [THEN]
   THEN   2dup (lastp 2! ;
 : poly' ( -- addr )  (poly' @ (poly# @ cells + ;
 : poly, ( dx dy -- )  2dup (lastp 2@ p+ (lastp 2!
@@ -353,7 +353,7 @@ how:    &40 /step V!            4 colors shadowcol !
 class;
 
 \ Event data structure                                 09mar99py
-[IFDEF] x11
+[defined] x11 [IF]
 Create Handlers  MappingNotify [FOR] ' noop A, [NEXT]
         KeyPressMask  KeyReleaseMask or \ KeymapStateMask or
         ButtonPressMask or ButtonReleaseMask or
@@ -370,7 +370,7 @@ Variable event-time
 $20 Constant maxclicks
 
 \ Error handling                                       09jan00py
-[IFDEF] x11
+[defined] x11 [IF]
 Create err-event here sizeof XEvent dup allot erase
 Variable err-dpy
 Code X-error  R:  4 SP D) AX mov  AX err-dpy A#) mov
@@ -397,7 +397,7 @@ Forward screen-ic!
 [THEN]
 
 \ Event data structure                                 29jul07py
-[IFDEF] win32
+[defined] win32 [IF]
 Create event sizeof MSG allot
 Create Handler 0 A,
 
@@ -485,11 +485,11 @@ how:
 class;
 
 Defer new-font
-[IFDEF] x11   Defer new-font16  [THEN]
+[defined] x11 [IF]   Defer new-font16  [THEN]
 
 \ XResource                                            03jul07py
 
-[IFDEF] x11
+[defined] x11 [IF]
 Create vis# $8 c, $10 c, $20 c, $18 c,
 debugging class xresource
 public: cell var fontarray      cell var colarray
@@ -703,7 +703,7 @@ class;
 [THEN]
 
 \ win32 Resource                                       20apr99py
-[IFDEF] win32
+[defined] win32 [IF]
 debugging class xresource
 public: cell var fontarray      cell var colarray
         cell var penarray       cell var cursors
@@ -822,7 +822,7 @@ Variable selection
 
 \ selection                                            16jan05py
 
-[IFDEF] x11
+[defined] x11 [IF]
 Variable own-selection
 
 : post-selection ( addr n win dpy -- ) { win dpy }
@@ -869,7 +869,7 @@ Forward screen-event
 [THEN]
 
 \ selection                                            28jul07py
-[IFDEF] win32
+[defined] win32 [IF]
 : post-selection ( addr u win dpy -- ) 2drop
   0 OpenClipboard drop  EmptyClipboard drop
   dup IF  >utf16

@@ -58,6 +58,14 @@ $6487F Constant 2pi
 
 : sincos ( n -- sin cos )  dup sin swap cos ;
 
-Code d>> ( d n -- )
-     AX CX mov  AX pop  DX pop  
-     AX DX shrd   AX sar  DX push  Next end-code
+[defined] VFXFORTH [IF]
+    \ *** Steve: Write a better d>> ***
+    : ud/mod ( d n -- n d )
+	>r 0 r@ um/mod r> swap >r um/mod r> ;
+    : d>> ( d n -- d' )
+	1 swap lshift ud/mod rot drop ;
+[ELSE]
+    Code d>> ( d n -- d' )
+	AX CX mov  AX pop  DX pop  
+	AX DX shrd   AX sar  DX push  Next end-code
+[THEN]

@@ -19,18 +19,18 @@ AVariable lsids
 : (l")  r> dup cell+ cell+ @+ + aligned >r ;
 : (l2)  r> @+ >r ; 
 
-: append ( addr list -- )
+: append-list ( addr list -- )
     BEGIN  dup @  WHILE  @  REPEAT  ! ;
 
 : s, ( addr u -- )  dup , here swap dup allot move align ;
 : l, ( addr u -- )
-    here lsids append 0 A, lsid# dup , 1+ to lsid# s, ;
+    here lsids append-list 0 A, lsid# dup , 1+ to lsid# s, ;
 
 : LLiteral  2dup search-lsid dup  IF
         nip nip postpone (l2) A,
     ELSE  drop postpone (l") l,  THEN ; immediate
 
-: L" ( "lsid<">" -- lsid ) '" parse
+: L" ( "lsid<">" -- lsid ) '"' parse
     state @ IF  postpone LLiteral
     ELSE  2dup search-lsid dup  IF
             nip nip
@@ -38,7 +38,7 @@ AVariable lsids
     THEN  ; immediate
 
 \ deliberately unique string
-: LU" ( "lsid<">" -- lsid ) '" parse
+: LU" ( "lsid<">" -- lsid ) '"' parse
     state @ IF  postpone (l") l,
     ELSE  align here >r l, r>
     THEN  ; immediate
@@ -92,7 +92,7 @@ Variable last-namespace
 
 : locale! ( addr u lsid -- ) >r
     2dup r@ locale@ str= IF  rdrop 2drop  EXIT  THEN
-    r> id#@ here locale' append 0 A, , s, ;
+    r> id#@ here locale' append-list 0 A, , s, ;
 
 : native-file ( fid -- ) >r
     BEGIN  pad $1000 r@ read-line throw  WHILE
@@ -110,8 +110,12 @@ Variable last-namespace
 : included-native ( addr u -- )  r/o open-file throw
     native-file ;
 
-: include-locale ( -- )  use isfile@ locale-file ;
-: include-native ( -- )  use isfile@ native-file ;
+[defined] getpathspec 0= [IF]
+    : getpathspec ( -- fd )  use isfile@ ;
+[THEN]
+
+: include-locale ( -- )  getpathspec locale-file ;
+: include-native ( -- )  getpathspec native-file ;
 
 \ easy use
 
@@ -124,14 +128,50 @@ Vocabulary macros
 
 L" <>" AConstant delimiters
 
+[defined] lastxt [IF]
 : macro:  Create s" " here 0 , $! DOES> $@ ;
 
+[defined] ">tib [IF]
 : set-macro ( addr1 len1 addr2 len2 -- )
     2dup & macros search-wordlist IF  nip nip >body $!
     ELSE
 	get-current & macros set-current -rot ">tib -rot macro:
 	lastxt >body $! set-current
     THEN ;
+[ELSE]
+    [defined] nextname [IF]
+	: set-macro ( addr1 len1 addr2 len2 -- )
+	    2dup & macros search-wordlist IF  nip nip >body $!
+	    ELSE
+		get-current & macros set-current -rot nextname -rot macro:
+		lastxt >body $! set-current
+	    THEN ;
+    [ELSE]
+	Variable macro-string
+	: set-macro ( addr1 len1 addr2 len2 -- )
+	    2dup & macros search-wordlist IF  nip nip >body $!
+	    ELSE
+		get-current & macros set-current -rot
+		s" macro: " macro-string $! macro-string $+! -rot
+		macro-string $@ evaluate
+		lastxt >body $! set-current
+	    THEN ;
+    [THEN]
+[ELSE]
+    Variable last-macro
+    Variable macro-string
+    
+    : macro:  Create s" " here dup last-macro ! 0 , $! DOES> $@ ;
+    : set-macro ( addr1 len1 addr2 len2 -- )
+	2dup & macros search-wordlist IF  nip nip >body $!
+	ELSE
+	    get-current & macros set-current -rot
+	    s" macro: " macro-string $! macro-string $+! -rot
+	    macro-string $@ evaluate
+	    last-macro @ $! set-current
+	THEN ;
+[THEN]
+
 
 Variable macro$
 
