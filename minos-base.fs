@@ -1,12 +1,19 @@
 \ Color system                                         06jan05py
 
-Create colors
+[defined] VFXFORTH [IF]
+    : CellArray Create  DOES>  swap cells + ;
+    CellArray colors
+[ELSE]
+    Create colors
+[THEN]
        $0001 , $0203 ,  \ focus and defocus for buttons
        $0405 , $0607 ,  \ focus and defocus for labels
        $0809 , $0A0B ,  \ border colors
        $0C0D , $0E0F ,  \ color for texts&cursor
        $0D0D , $0D0D ,  \ revers text&cursor colors
+[defined] VFXFORTH 0= [IF]
 DOES>  swap cells + ;
+[THEN]
 
 Variable redraw-all             redraw-all off
 \ Variable kbstate
@@ -22,30 +29,30 @@ $4000 Constant scratch#
 \ Color system - RGB table                             25mar99py
 
 $FF Value red   $FF Value green $FF Value blue
-&90 Value contrast
+#90 Value contrast
 -1 Value twoborders
 : set-col ( r g b -- ) to blue to green to red ;
-: grayish ( -- )   $C0 $C0 $C0 set-col &92 to contrast ;
-: redish  ( -- )   $CE $43 $10 set-col &90 to contrast ;
-: bluish  ( -- )   $37 $CE $FC set-col &90 to contrast ;
-: bisquish ( -- )  $E6 $D8 $A3 set-col &90 to contrast ;
+: grayish ( -- )   $C0 $C0 $C0 set-col #92 to contrast ;
+: redish  ( -- )   $CE $43 $10 set-col #90 to contrast ;
+: bluish  ( -- )   $37 $CE $FC set-col #90 to contrast ;
+: bisquish ( -- )  $E6 $D8 $A3 set-col #90 to contrast ;
 
 grayish
 
 \ Color system - RGB table                             31mar99py
 
-: +contrast ( n -- )  &100 swap 0 ?DO  contrast &100 */  LOOP ;
-: -contrast ( n -- )  &100 swap 0 ?DO  &100 contrast */  LOOP ;
+: +contrast ( n -- )  #100 swap 0 ?DO  contrast #100 */  LOOP ;
+: -contrast ( n -- )  #100 swap 0 ?DO  #100 contrast */  LOOP ;
 : cx ( n -- ) dup 0< IF negate -contrast ELSE +contrast THEN
   $FF min ;
-Create graytable   -$10 cx c,  -3 cx c,  -1 cx c,
+Create graytable   $-10 cx c,  -3 cx c,  -1 cx c,
                       0 cx c,   7 cx c,   6 cx c,   0 c,
-: re-gray  6 7 0 -1 -3 -$10
+: re-gray  6 7 0 -1 -3 $-10
   6 0 DO  cx graytable I + c!  LOOP ;
 : rgb ( r g b -- rgb )  8 << or 8 << or ;
 : gray  ( n -- rgb )  graytable + c@ >r
-  r@ red &100 */ $FF min  r@ green &100 */ $FF min
-  r> blue &100 */ $FF min  rgb ;
+  r@ red #100 */ $FF min  r@ green #100 */ $FF min
+  r> blue #100 */ $FF min  rgb ;
 
 \ Color>RGB RGB>color                                  01jan05py
 
@@ -124,17 +131,17 @@ $0000FF Value blue##
 
 \ X timer correction                                   23apr06py
 
-&060 Value sameclick
-&150 Value twoclicks
-&6 Value samepos
-&31 Value XA_STRING
-&31 Value XA_STRING8
+#060 Value sameclick
+#150 Value twoclicks
+#6 Value samepos
+#31 Value XA_STRING
+#31 Value XA_STRING8
 also dos
 : XTime ( -- time )  timeval timezone gettimeofday
-  timeval 2@ &1000 * swap &1000 / + ;
+  timeval 2@ #1000 * swap #1000 / + ;
 previous
 : get-td ( win dpy -- n ) { win dpy }
-  dpy win &16 &31 8 0 S" round delay trip"
+  dpy win #16 #31 8 0 S" round delay trip"
   XChangeProperty drop
   dpy win PropertyChangeMask scratch XWindowEvent
   XTime scratch XPropertyEvent time @ - ;
@@ -201,9 +208,9 @@ Create sys-colors
 : get-stpen ( array -- )        rgbs get-pens ;
 : get-strgb ( array -- )        !rgbs  rgbs get-rgbs ;
 
-&060 Value sameclick
-&150 Value twoclicks
-&6 Value samepos
+#060 Value sameclick
+#150 Value twoclicks
+#6 Value samepos
 Variable emulate-3button
 $001100A6 Value :srcand         $00440328 Value :srcor
 
@@ -302,7 +309,7 @@ public: cell var x              cell var y
         method moved            method leave
 
 \ widget class                                         27jun02py
-how:    &40 /step V!            4 colors shadowcol !
+how:    #40 /step V!            4 colors shadowcol !
         0 colors focuscol !     1 colors defocuscol !
         : repos  ( x y -- )  y ! x ! ;
         : range  ( n min glue -- n' )  over >r + min r> max ;
@@ -576,7 +583,7 @@ how:    : init ( -- )
           cmap @ xswa XSetWindowAttributes colormap !
           0      xswa XSetWindowAttributes background_pixel !
           1      xswa XSetWindowAttributes border_pixel !
-	  dpy @ dup screen @ RootWindow  0 0 &100 dup
+	  dpy @ dup screen @ RootWindow  0 0 #100 dup
 	  2 depth @ InputOutput vis @
 	  CWBackPixel CWBorderPixel or CWColormap or
 	  xswa XCreateWindow
@@ -625,7 +632,7 @@ how:    : init ( -- )
           ELSE  drop depth ! dpy @ screen @ DefaultVisual vis !
                 xswavals xswavalvis xor to xswavals drop
           THEN  best-im im !
-          dpy @ &38 0 XKeycodeToKeysym drop ;
+          dpy @ #38 0 XKeycodeToKeysym drop ;
 
 \ XResource                                            01jan05py
 
@@ -680,7 +687,7 @@ how:    : init ( -- )
         : set-function ( n -- )
           dpy @ gc @ rot XSetFunction drop ;
         : get-gc ( win -- )
-          1 depth @ &24 min << 1-
+          1 depth @ #24 min << 1-
                     [ xgc XGCValues background ] ALiteral !
 	  dpy @ swap GCBackground xgc XCreateGC gc ! !font ;
         : get-visual ( -- visual depth )
@@ -828,7 +835,7 @@ Variable own-selection
 : post-selection ( addr n win dpy -- ) { win dpy }
   2dup dpy -rot XStoreBytes drop
   >r >r
-  dpy dpy DefaultRootWindow 9 &31 ( XA_STRING ) 8 PropModeReplace
+  dpy dpy DefaultRootWindow 9 #31 ( XA_STRING ) 8 PropModeReplace
   r> r> XChangeProperty drop
   dpy 1 win event-time @ XSetSelectionOwner drop
   own-selection on ;
@@ -837,7 +844,7 @@ Variable own-selection
 Variable got-selection          Variable str-selection
 Forward screen-event
 : wait-for-select ( -- flag )  got-selection off
-  &5000 after  BEGIN  screen-event
+  #5000 after  BEGIN  screen-event
            timeout? got-selection @ or UNTIL  drop ;
 : fetch-property ( prop win dpy -- ) { prop win dpy }
   prop 0=  IF  str-selection @ IF  got-selection on
@@ -892,7 +899,7 @@ Forward screen-event
 
 : -select ( -- )  selection HandleOff ;
 
-&30 Value minwait
+#30 Value minwait
 
 0 Value event-task
 
