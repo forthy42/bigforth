@@ -276,7 +276,7 @@ ficon: backtext-d-pm pattern/backtext-d"
 : (normal-font ( -- )  screen xrc with
   S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
   0 font!  \ normal font
-S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
+  S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
   1 font!  \ terminal font
   S" -adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
   2 font!  \ icon font

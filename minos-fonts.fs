@@ -23,7 +23,12 @@ how:    : assign ( addr u -- )  name-string $!
         | Variable dir_r
         : size ( addr u -- w h )  id @ -rot
           dir_r font_a font_d text_r
-          XTextExtents
+	    [IFDEF] has-utf8' \ incomplete
+		maxascii $80 =
+		IF  Xutf8TextExtents  ELSE  XTextExtents  THEN
+	    [ELSE]
+		XTextExtents
+	    [THEN]
           font_d @ font_a @ +
           text_r XCharStruct rbearing wx@
           text_r XCharStruct lbearing wx@ -
@@ -37,7 +42,13 @@ how:    : assign ( addr u -- )  name-string $!
           2swap swap text_i XTextItem chars 2!
           ascent @ +
           r> displays with
-	    2>r drawable' 2r> text_i 1 XDrawText
+	    2>r drawable' 2r> text_i 1
+	    [IFDEF] has-utf8'
+		maxascii $80 =
+		IF  Xutf8DrawText  ELSE  XDrawText  THEN
+	    [ELSE]
+		XDrawText
+	    [THEN]
           endwith ;
 class;
 
