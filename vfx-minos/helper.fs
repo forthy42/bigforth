@@ -68,3 +68,7 @@ Variable (i)
 [THEN]
 
 : \needs postpone [defined] IF postpone \ THEN ;
+
+: ,0"   ( -- )  '"' parse  here swap dup allot move 0 c, ;
+
+: onlyforth  only forth ;

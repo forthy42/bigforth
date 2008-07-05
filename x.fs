@@ -991,7 +991,7 @@ struct{
  cell bell_pitch   cell bell_duration
  cell led_mask
  cell global_auto_repeat
- 32 auto_repeats
+ 32 string auto_repeats
 } XKeyboardState
 
 /* Data structure for XGetMotionEvents.  */
@@ -1166,7 +1166,7 @@ struct{
  cell send_event /* true if this came from a SendEvent request */
  ptr display /* Display the event was read from */
  cell window
- &32  key_vector
+ &32 string key_vector
 } XKeymapEvent 
 
 struct{
@@ -1408,7 +1408,7 @@ struct{
  cell window
  cell message_type
  cell format
- &20 data
+ &20 string data
 } XClientMessageEvent
 
 struct{
@@ -1478,7 +1478,7 @@ struct{ {
 | struct XMappingEvent xmapping
 | struct XErrorEvent xerror
 | struct XKeymapEvent xkeymap
-| &96 pad
+| &96 string pad
 } } XEvent
 
 : XAllocID ( dpy -- id )  dup >r Display resource_alloc perform rdrop ; macro

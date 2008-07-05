@@ -30,6 +30,7 @@
     include vfx-minos/string.fs
     include vfx-minos/xchar.fs
     include i18n.fs
+    include vfx-minos/struct.fs
 [ELSE]
 \needs {        include locals.fs
 \needs object   include oof.fb
@@ -84,6 +85,7 @@ Patch .class
 
     [defined] VFXFORTH [IF]
 	include vfx-minos/x11.fs
+	include vfx-minos/xrender.fs
     [ELSE]
 	\needs x11      include x11.fs
 	\needs xrender  include xrender.fs

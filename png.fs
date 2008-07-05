@@ -73,7 +73,7 @@ byte interlace_type
 byte channels
 byte pixel_depth
 byte spare_byte
-8 signature
+8 string signature
 } png_info_struct
 
 Variable color_type

@@ -563,8 +563,6 @@ libX11 XrmParseCommand [ 6 ] ints (int) XrmParseCommand ( argv_io argc_io name t
 
 libXext XShmPutImage [ &11 ] ints (int) XShmPutImage            ( send_event h w dy dx sy sx im gc win dpy -- status )
 
-legacy on
-
 previous
 
 base !

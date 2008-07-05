@@ -33,8 +33,8 @@ also (struct definitions
 previous definitions
 
 | : struct-parse
-    find dup IF    >r execute r> 0> ?exit
-             ELSE  drop number drop  THEN
+    find dup IF    >r execute r> 0> ?EXIT
+             ELSE  drop number drop  EXIT  THEN
     >in @ name w@ $5C01 = IF drop + ELSE >in ! .struct' THEN
     [ lastcfa @ ] ALiteral IS parser ;
 : struct{ ( -- )
@@ -46,3 +46,4 @@ previous definitions
 \ 4 constant cell
 cell constant ptr
 8 constant double
+: string ;

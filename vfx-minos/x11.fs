@@ -548,12 +548,8 @@ extern: int XrmParseCommand( int , int , int , int , int , int ); ( argv_io argc
 
 extern: int XShmPutImage( int , int , int , int , int , int , int , int , int , int , int ); ( send_event h w dy dx sy sx im gc win dpy -- status )
 
-previous
-
 base !
 
 include Xstring.fs
 
 previous definitions
-
-.( End loading X11 stuff) cr
