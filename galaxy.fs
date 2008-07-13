@@ -36,6 +36,7 @@ Variable stars
 : star ( i -- )  elements stars @ cell+ + ; macro
 
 $100 Value star#
+$000 Value central#
 
 : init-stars ( -- )  s" " stars $!
   star# 1+ elements stars $!len  stars $@ erase ;
@@ -104,7 +105,10 @@ FVariable oldgauss !0 oldgauss f!
 	d1 f* dup element y df!
 	d2 f*     element z df!
     LOOP }
-    331950e 149450e6 f**2 f/ msum+ f! ;
+    star# 0.13e fm* f>s to central#
+    331950e 149450e6 f**2 f/ \ sun
+    7.349e22 5.974e24 f/ 384.400e6 f**2 f/ f+ \ moon, smaller
+    msum+ f! ;
 
 Variable spiral-dist spiral-dist on
 
@@ -193,8 +197,6 @@ Code vscale ( f1 f2 f3 fs -- f1' f2' f3' )
 Code v+ ( v1 v2 -- )
      3 STP fadd  3 STP fadd  3 STP fadd  Next end-code macro
 
-$000 Value central#
- 
 : set-msum ( -- )
   star# 0 ?DO  I star dup >xyz
       >x df@ >y df@ >z df@ vabs 1/f central# fm*

@@ -128,3 +128,5 @@ FVariable rho   0e rho  f!
     dup element ax+ df@ fx.
     dup element ay+ df@ fx.
     dup element az+ df@ fx. ." ]" drop cr ;
+
+$1000 to star# init-stars set-earth near set-disc disc-msum disc-a+
