@@ -99,9 +99,9 @@ how:    : dispose  clicks HandleOff
                           IF  count type  THEN  "error off
                           cr ['] .except catch drop
                           cr ['] .back   catch drop  THEN
-                 depth r> <> IF  ~~  THEN  clearstack
 [IFDEF] x11      err-dpy @ IF  .Xerror  THEN  ?calib   [THEN]
                  ['] invoke catch drop do-idle
+                 depth r> <> IF  ~~  THEN  clearstack
           AGAIN ;
         : set-hints ;
 
