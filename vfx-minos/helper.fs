@@ -8,6 +8,9 @@ vocabulary memory
 
 also memory definitions
 : NewPtr ( len -- addr )  allocate throw ;
+: NewHandle ( len -- addr )  NewPtr 1 cells NewPtr tuck ! ;
+: DisposPtr ( addr -- )  free throw ;
+: DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
 : Handle! ( len addr -- )  >r NewPtr r> ! ;
 : HandleOff ( addr -- )  dup @ free throw off ;
 previous definitions
@@ -72,3 +75,38 @@ Variable (i)
 : ,0"   ( -- )  '"' parse  here swap dup allot move 0 c, ;
 
 : onlyforth  only forth ;
+
+: perform @ execute ;
+
+: macro ; \ indicates macro
+
+: Module  >in @ Vocabulary >in !
+    get-order get-current swap 1+ set-order
+    also ' execute also definitions ;
+
+: Module;  previous previous definitions previous ;
+
+: c@+ count swap ;
+: w@+ dup w@ swap 2+ ;
+: @+ dup @ swap cell+ ;
+
+: c!+  tuck c! char+ ;
+: w!+  tuck w! 2+ ;
+: !+  tuck ! cell+ ;
+
+: wextend dup $8000 and negate or ;
+
+: wx@ w@ wextend ;
+: wx@+ dup wx@ swap 2+ ;
+
+: v! ! ;
+
+\ bit words
+
+: +bit ( addr n -- ) 8 /mod swap >r + 1 r> lshift over c@ or swap c! ;
+: -bit ( addr n -- ) 8 /mod swap >r + 1 r> lshift invert over c@ and swap c! ;
+: bit@ ( addr n -- ) 8 /mod swap >r + 1 r> lshift swap c@ and 0<> ;
+
+\ Address marker
+
+synonym AValue Value

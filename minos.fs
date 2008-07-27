@@ -86,6 +86,7 @@ Patch .class
     [defined] VFXFORTH [IF]
 	include vfx-minos/x11.fs
 	include vfx-minos/xrender.fs
+	include x.fs
     [ELSE]
 	\needs x11      include x11.fs
 	\needs xrender  include xrender.fs

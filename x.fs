@@ -102,7 +102,7 @@ base @ decimal
 
 /* *************************************************************** 
  * EVENT DEFINITIONS 
- *****************************************************************/
+ **************************************************************** */
 
 /* Input Event Masks. Used as event-mask window attribute and as arguments
    to Grab requests.  Not to be confused with event names.  */
@@ -300,7 +300,7 @@ PointerRoot Constant RevertToPointerRoot
 
 /* ***************************************************************
  * ERROR CODES 
- *****************************************************************/
+ **************************************************************** */
 
 0 Constant Success /* everything's okay */
 1 Constant BadRequest /* bad request code */
@@ -334,7 +334,7 @@ PointerRoot Constant RevertToPointerRoot
 
 /* ***************************************************************
  * WINDOW DEFINITIONS 
- *****************************************************************/
+ **************************************************************** */
 
 /* Window classes used by CreateWindow */
 /* Note that CopyFromParent is already defined as 0 above */
@@ -433,7 +433,7 @@ PointerRoot Constant RevertToPointerRoot
 
 /* ***************************************************************
  * GRAPHICS DEFINITIONS
- *****************************************************************/
+ **************************************************************** */
 
 /* graphics functions, as in GC.alu */
 
@@ -543,7 +543,7 @@ $f Constant GXset /* 1 */
 22 Constant GCLastBit 
 /* ***************************************************************
  * FONTS 
- *****************************************************************/
+ **************************************************************** */
 
 /* used in QueryFont -- draw direction */
 
@@ -554,7 +554,7 @@ $f Constant GXset /* 1 */
 
 /* ***************************************************************
  *  IMAGING 
- *****************************************************************/
+ **************************************************************** */
 
 /* ImageFormat -- PutImage, GetImage */
 
@@ -564,7 +564,7 @@ $f Constant GXset /* 1 */
 
 /* ***************************************************************
  *  COLOR MAP STUFF 
- *****************************************************************/
+ **************************************************************** */
 
 /* For CreateColormap */
 
@@ -580,7 +580,7 @@ $f Constant GXset /* 1 */
 
 /* ***************************************************************
  * CURSOR STUFF
- *****************************************************************/
+ **************************************************************** */
 
 /* QueryBestSize Class */
 
@@ -590,7 +590,7 @@ $f Constant GXset /* 1 */
 
 /* *************************************************************** 
  * KEYBOARD/POINTER STUFF
- *****************************************************************/
+ **************************************************************** */
 
 0 Constant AutoRepeatModeOff 
 1 Constant AutoRepeatModeOn 
@@ -620,7 +620,7 @@ $f Constant GXset /* 1 */
 
 /* ***************************************************************
  * SCREEN SAVER STUFF 
- *****************************************************************/
+ **************************************************************** */
 
 0 Constant DontPreferBlanking 
 1 Constant PreferBlanking 
@@ -640,7 +640,7 @@ $f Constant GXset /* 1 */
 
 /* ***************************************************************
  * HOSTS AND CONNECTIONS
- *****************************************************************/
+ **************************************************************** */
 
 /* for ChangeHosts */
 
@@ -696,7 +696,7 @@ Except as contained in this notice, the name of the X Consortium shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from the X Consortium.
 
-*/
+ */
 
 
 /*
@@ -867,7 +867,7 @@ struct{
     cell depth           /* depth of window */
     ptr visual  /* the associated visual structure */
     cell root         /* root of screen containing window */
-    cell class   /* InputOutput, InputOnly*/
+    cell class   /* InputOutput, InputOnly */
     cell bit_gravity  /* one of bit gravity values */
     cell win_gravity  /* one of the window gravity values */
     cell backing_store  /* NotUseful, WhenMapped, Always */
@@ -875,9 +875,9 @@ struct{
     cell backing_pixel /* value to be used when restoring planes */
     cell save_under  /* boolean, should bits under be saved? */
     ptr colormap  /* color map to be associated with window */
-    cell map_installed  /* boolean, is color map currently installed*/
+    cell map_installed  /* boolean, is color map currently installed */
     cell map_state  /* IsUnmapped, IsUnviewable, IsViewable */
-    cell all_event_masks /* set of events all people have interest in*/
+    cell all_event_masks /* set of events all people have interest in */
     cell your_event_mask /* my event mask */
     cell do_not_propagate_mask /* set of events that should not propagate */
     cell override_redirect /* boolean value for override-redirect */
@@ -1044,12 +1044,12 @@ struct{
  ptr private12
  ptr private13
  ptr private14
- cell max_request_size /* maximum number 32 bit words in request*/
+ cell max_request_size /* maximum number 32 bit words in request */
  ptr db
  ptr private15
- ptr display_name /* "host:display" string used on this connect*/
+ ptr display_name /* "host:display" string used on this connect */
  cell default_screen /* default screen for operations */
- cell nscreens  /* number of screens on this server*/
+ cell nscreens  /* number of screens on this server */
  ptr screens /* pointer to list of screens */
  cell motion_buffer /* size of motion buffer */
  cell private16
@@ -1080,9 +1080,13 @@ struct{
  cell keycode /* detail */
  cell same_screen /* same screen flag */
 } XKeyEvent
-' XKeyEvent Alias XKeyPressedEvent immediate
-' XKeyEvent Alias XKeyReleasedEvent immediate
-
+[defined] VFXFORTH [IF]
+    synonym XKeyPressedEvent XKeyEvent
+    synonym XKeyReleasedEvent XKeyEvent
+[ELSE]
+    ' XKeyEvent Alias XKeyPressedEvent immediate
+    ' XKeyEvent Alias XKeyReleasedEvent immediate
+[THEN]
 struct{
  cell type  /* of event */
  cell serial /* # of last request processed by server */
@@ -1098,9 +1102,13 @@ struct{
  cell button /* detail */
  cell same_screen /* same screen flag */
 } XButtonEvent
-' XButtonEvent Alias XButtonPressedEvent immediate
-' XButtonEvent Alias XButtonReleasedEvent immediate
-
+[defined] VFXFORTH [IF]
+    synonym XButtonPressedEvent XButtonEvent
+    synonym XButtonReleasedEvent XButtonEvent
+[ELSE]
+    ' XButtonEvent Alias XButtonPressedEvent immediate
+    ' XButtonEvent Alias XButtonReleasedEvent immediate
+[THEN]
 struct{
  cell type  /* of event */
  cell serial /* # of last request processed by server */
@@ -1116,7 +1124,11 @@ struct{
  byte is_hint  /* detail */
  cell same_screen /* same screen flag */
 } XMotionEvent
+[defined] VFXFORTH [IF]
+synonym XPointerMovedEvent XMotionEvent
+[ELSE]
 ' XMotionEvent Alias XPointerMovedEvent immediate
+[THEN]
 
 struct{
  cell type  /* of event */
@@ -1139,8 +1151,13 @@ struct{
  cell focus  /* boolean focus */
  cell state /* key or button mask */
 } XCrossingEvent
+[defined] VFXFORTH [IF]
+synonym XEnterWindowEvent XCrossingEvent
+synonym XLeaveWindowEvent XCrossingEvent
+[ELSE]
 ' XCrossingEvent Alias XEnterWindowEvent immediate
 ' XCrossingEvent Alias XLeaveWindowEvent immediate
+[THEN]
 
 struct{
  cell type  /* FocusIn or FocusOut */
@@ -1156,8 +1173,13 @@ struct{
   * NotifyPointerRoot, NotifyDetailNone 
   */
 } XFocusChangeEvent
+[defined] VFXFORTH [IF]
+synonym XFocusInEvent XFocusChangeEvent
+synonym XFocusOutEvent XFocusChangeEvent
+[ELSE]
 ' XFocusChangeEvent Alias XFocusInEvent immediate
 ' XFocusChangeEvent Alias XFocusOutEvent immediate
+[THEN]
 
 /* generated on EnterWindow and FocusIn  when KeyMapState selected */
 struct{
@@ -1166,7 +1188,7 @@ struct{
  cell send_event /* true if this came from a SendEvent request */
  ptr display /* Display the event was read from */
  cell window
- &32 string key_vector
+ #32 string key_vector
 } XKeymapEvent 
 
 struct{
@@ -1408,7 +1430,7 @@ struct{
  cell window
  cell message_type
  cell format
- &20 string data
+ #20 string data
 } XClientMessageEvent
 
 struct{
@@ -1417,10 +1439,9 @@ struct{
  cell send_event /* true if this came from a SendEvent request */
  ptr display /* Display the event was read from */
  cell window  /* unused */
- cell request  /* one of MappingModifier, MappingKeyboard,
-       MappingPointer */
+ cell request  /* one of MappingModifier, MappingKeyboard, MappingPointer */
  cell first_keycode /* first keycode */
- cell count  /* defines range of change w. first_keycode*/
+ cell count  /* defines range of change w. first_keycode */
 } XMappingEvent
 
 struct{
@@ -1478,7 +1499,7 @@ struct{ {
 | struct XMappingEvent xmapping
 | struct XErrorEvent xerror
 | struct XKeymapEvent xkeymap
-| &96 string pad
+| #96 string pad
 } } XEvent
 
 : XAllocID ( dpy -- id )  dup >r Display resource_alloc perform rdrop ; macro
@@ -1512,12 +1533,12 @@ struct{
     cell max_char_or_byte2 /* last character */
     cell min_byte1 /* first row that exists */
     cell max_byte1 /* last row that exists */
-    cell all_chars_exist /* flag if all characters have non-zero size*/
+    cell all_chars_exist /* flag if all characters have non-zero size */
     cell default_char /* char to print for undefined character */
     cell         n_properties   /* how many properties there are */
-    ptr properties /* pointer to array of additional properties*/
-    struct XCharStruct min_bounds /* minimum bounds over all existing char*/
-    struct XCharStruct max_bounds /* maximum bounds over all existing char*/
+    ptr properties /* pointer to array of additional properties */
+    struct XCharStruct min_bounds /* minimum bounds over all existing char */
+    struct XCharStruct max_bounds /* maximum bounds over all existing char */
     ptr per_char /* first_char to last_char information */
     cell  ascent  /* log. extent above baseline for spacing */
     cell  descent /* log. descent below baseline for spacing */
@@ -1915,7 +1936,7 @@ struct{
 
 0 Constant XStringStyle         /* STRING */
 1 Constant XCompoundTextStyle   /* COMPOUND_TEXT */
-2 Constant XTextStyle           /* text in owner's encoding (current locale)*/
+2 Constant XTextStyle           /* text in owner's encoding (current locale) */
 3 Constant XStdICCTextStyle     /* STRING, else COMPOUND_TEXT */
 
 struct{
@@ -1934,6 +1955,8 @@ struct{
  * naive people are more comfortable with them.
  */
 
+[defined] VFXFORTH [IF]
+[ELSE]
 Code XDestroyImage ( image -- )
      AX push  0 XImage destroy_image AX D) call
      1 cells # SP add  AX pop  Next end-code macro
@@ -1953,6 +1976,7 @@ Code XSubImage ( h w y x image -- )
 Code XAddPixel ( value image -- )
      AX push  0 XImage add_pixel AX D) call
      1 cells # SP add  AX pop  Next end-code macro
+[THEN]
 
 /*
  * Compose sequence status structure, used in calling XLookupString.
@@ -2230,7 +2254,7 @@ struct{
  *
  * Context Management
  *
- ****************************************************************/
+ *************************************************************** */
 
 
 /* Associative lookup table return codes */
@@ -2294,7 +2318,7 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from the X Consortium.
 
-*/
+ */
 
 154 Constant XC_num_glyphs
 0 Constant XC_X_cursor

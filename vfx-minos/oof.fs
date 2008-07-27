@@ -179,22 +179,32 @@ types definitions
 4 (method, xxx1  8 (method, xxx2
 4 (defer,  ddd1  8 (defer,  ddd2
 4 (static, sss1  8 (static, sss2
+$84 (method, xxx3  $108 (method, xxx4
+$84 (defer,  ddd3  $108 (defer,  ddd4
+$84 (static, sss3  $108 (static, sss4
 early eee
 
 ' xxx1 ' xxx2 prefix-size Constant method#
 ' ddd1 ' ddd2 prefix-size Constant defer#
 ' sss1 ' sss2 prefix-size Constant static#
 
+' xxx3 ' xxx4 prefix-size Constant method#2
+' ddd3 ' ddd4 prefix-size Constant defer#2
+' sss3 ' sss4 prefix-size Constant static#2
+
 Objects definitions also types
 
 : exec?    ( addr -- flag )
-  ['] xxx1 method# tuck compare 0= ;
+    dup ['] xxx1 method# tuck compare 0=
+    swap ['] xxx3 method#2 tuck compare 0= or ;
 : static?  ( addr -- flag )
-  ['] sss1 static# tuck compare 0= ;
+    dup ['] sss1 static# tuck compare 0=
+    swap ['] sss3 static#2 tuck compare 0= or ;
 : early?   ( addr -- flag )
-  ['] eee  1 tuck compare 0= ;
+    ['] eee  1 tuck compare 0= ;
 : defer?   ( addr -- flag )
-  ['] ddd1 defer# tuck compare 0= ;
+    dup ['] ddd1 defer# tuck compare 0=
+    swap ['] ddd3 defer#2 tuck compare 0= or ;
 
 \ dealing with threads                                 29oct94py
 
@@ -221,11 +231,12 @@ Objects definitions also types
       drop static# + c@ o@ + @  postpone Literal  EXIT THEN
   drop dup early?  IF 1+ dup @ + cell+  THEN  compile, ;
 
+: (findo    ( string -- cfa n )
+    o@ add-order >r find r> drop-order ;
+
 : findo    ( string -- cfa n )
-    o@ add-order >r
-    find
-    ?dup 0= IF drop set-order true abort" method not found!" THEN
-    r> drop-order ;
+    (findo
+    ?dup 0= IF drop true abort" method not found!" THEN ;
 
 false Value method?
 
@@ -361,6 +372,9 @@ Variable ob-interface
     IF    ^+, postpone !
     ELSE  ^ + !  THEN ;
 
+: goto, ( o -- ) \  method? IF  postpone r> postpone drop  THEN
+    false method, ; \ should be tail call optimized
+
 : inherit   ( -- )  bl word findo drop
     dup exec?  IF  method# + c@ dup o@ + @ swap lastob @ + !  EXIT  THEN
     abort" Not a polymorph method!" ;
@@ -473,11 +487,14 @@ types definitions
 
 : : ( <methodname> -- ) \ oof- oof colon
     decl @ abort" HOW: missing! "
-    bl word findo 0= abort" not found"
-    dup exec? over early? or
-    0= abort" not a method"
-    m-name ! :noname ;
-
+    >in @ >r bl word (findo 0=
+    IF  r> >in ! :
+    ELSE  r> drop
+	dup exec? over early? or
+	0= abort" not a method"
+	m-name ! :noname
+    THEN ;
+    
 Forth
 
 : ; ( xt colon-sys -- ) \ oof- oof
@@ -520,6 +537,8 @@ Create object  immediate  0 (class \ do not create as subclass
 	 early     ::  ( "name" -- ) \ object- oof scope
 	 			immediate
          early     class? ( o -- flag ) \ object- oof class-query
+	 early     goto  ( "name" -- ) \ object- oof
+				immediate
 	 early     super  ( "name" -- ) \ object- oof
 				immediate
          early     self ( -- o ) \ object- oof
@@ -569,12 +588,13 @@ how:
     : class?  ( class -- flag )  ^ parent? nip 0<> ;
     : ::      ( -- )
 	state @ IF  ^ true method,  ELSE  inherit  THEN ;
+    : goto    ( -- )       ^ goto, ;
     : super   ( -- )       parento true method, ;
     : is      ( cfa -- )   (is ;
     : self    ( -- obj )   ^ ;
     : init    ( -- )       ;
     
-    : '       ( -- xt )  bl word findo 0= abort" not found!"
+    : '       ( -- xt )  bl word findo drop
 	state @ IF  Fpostpone Literal  THEN ;
     : send    ( xt -- )  execute ;
     : postpone ( -- )  o@ add-order Fpostpone Fpostpone drop-order ;
@@ -655,5 +675,17 @@ Forth definitions
 
 previous previous
 
+: private: ; \ empty stub
+: public: ;  \ empty stub
 
+\ debugging class: also empty stub
 
+object class debugging
+private: early voc-
+public:  early words  early m'      early see
+         early view   early trace'  early debug
+         early view!
+  how:
+    : words F words ;
+    : see F see ;
+class;

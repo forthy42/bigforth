@@ -136,10 +136,18 @@ $0000FF Value blue##
 #6 Value samepos
 #31 Value XA_STRING
 #31 Value XA_STRING8
+[defined] VFXFORTH [IF]
+extern: int gettimeofday ( void * , void * );
+Create timeval 0 , 0 ,
+Create timezone 0 , 0 ,
+: XTime ( -- time )  timeval timezone gettimeofday
+  timeval 2@ #1000 * swap #1000 / + ;
+[ELSE]
 also dos
 : XTime ( -- time )  timeval timezone gettimeofday
   timeval 2@ #1000 * swap #1000 / + ;
 previous
+[THEN]
 : get-td ( win dpy -- n ) { win dpy }
   dpy win #16 #31 8 0 S" round delay trip"
   XChangeProperty drop
@@ -255,7 +263,11 @@ Variable (poly#
 
 \ bezier path                                          22jun02py
 
+[defined] VFXFORTH [IF]
+    include vfx-minos/splines.fs
+[ELSE]
 1 loadfrom splines.fb
+[THEN]
 
 Variable (bezier#
 
@@ -377,7 +389,7 @@ Variable event-time
 $20 Constant maxclicks
 
 \ Error handling                                       09jan00py
-[defined] x11 [IF]
+[defined] x11 [defined] VFXFORTH 0= and [IF]
 Create err-event here sizeof XEvent dup allot erase
 Variable err-dpy
 Code X-error  R:  4 SP D) AX mov  AX err-dpy A#) mov

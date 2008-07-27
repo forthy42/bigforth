@@ -33,6 +33,7 @@ also (struct definitions
 : ptr cell ;
 : double 2 cells struct: ;
 : string chars struct: ;
+: struct struct struct: ;
 
 previous definitions
 
