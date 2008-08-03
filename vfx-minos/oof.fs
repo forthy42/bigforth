@@ -599,10 +599,10 @@ how:
     : send    ( xt -- )  execute ;
     : postpone ( -- )  o@ add-order Fpostpone Fpostpone drop-order ;
     
-    : with ( -- )
+    : with ( -- n )  voc# @
 	state @ oset? 0= and IF  Fpostpone >o  THEN
 	o@ add-order voc# ! false to oset? ;
-    : endwith  Fpostpone o> voc# @ drop-order ;
+    : endwith ( n -- ) Fpostpone o> voc# @ drop-order voc# ! ;
 
     : definitions
 	o@ add-order 1+ voc# ! also types o@ lastob !

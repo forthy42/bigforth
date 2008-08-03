@@ -15,11 +15,11 @@ public: ptr dpy                 ptr childs
         font ptr cur-font       cell var events
 
 \ Display                                              11nov06py
-[IFDEF] xrender
+[defined]  xrender [IF]
         cell var xpict          method ?xpict   [THEN]
-[IFDEF] x11   sizeof XRectangle var xrect
+[defined]  x11 [IF]   sizeof XRectangle var xrect
         cell var lastcal        cell var timeoffset    [THEN]
-[IFDEF] win32   sizeof rect       var xrect
+[defined]  win32 [IF]   sizeof rect       var xrect
         cell var style          cell var owner  [THEN]
         cell var xft-draw
 
@@ -49,7 +49,7 @@ public: ptr dpy                 ptr childs
         method clipx            method clipy
         method geometry         method geometry?
         method >exposed         method child-moved
-[IFDEF] win32                   method win>o     [THEN]
+[defined]  win32 [IF]                   method win>o     [THEN]
         early xS                method mxy!
         method schedule         method invoke
         method cleanup          method do-idle
@@ -67,8 +67,8 @@ how:    : dispose  clicks HandleOff
                      r> schedules-root DelFix
                  ELSE  @  THEN
           REPEAT  drop rdrop ;
-[IFDEF] x11
-        : ?calib ( -- )  lastcal @ 0= XTime lastcal @ - &60000 >
+[defined]  x11 [IF]
+        : ?calib ( -- )  lastcal @ 0= XTime lastcal @ - #60000 >
           or  IF  xrc calibrate XTime lastcal !  THEN ;  [THEN]
 
 \ Display tasking                                      29aug99py
@@ -82,8 +82,15 @@ how:    : dispose  clicks HandleOff
         : invoke ( -- ms )  events @
           IF    events @ cell+ @ timer@ - dup 0<
                 IF    events @ dup @ events ! dup 2 cells + 2@
-                      rot schedules-root DelFix >o send o>
-                ELSE  >us &1000 m/mod nip  THEN
+		      rot schedules-root DelFix
+[defined] VFXFORTH [IF]
+\ !!!FIXME VFX: This is the workaround!!!
+		      >o execute o>
+[ELSE]
+                      object with send endwith
+[THEN]
+\ !!!FIXME VFX: This above breaks with VFX Forth!!!
+		ELSE  >us #1000 m/mod nip  THEN
           ELSE  minwait  THEN  -1 max minwait min ;
         : do-idle ( n -- ) dup 0>
           IF  xrc fid swap idle  ELSE  drop sync  THEN ;
@@ -93,13 +100,13 @@ how:    : dispose  clicks HandleOff
         : event-task  $20000 $10000 NewTask activate
           >tib off $100 newtib  up@ TO event-task
           Onlyforth dynamic   " event-task" r0 @ cell+ !
-[IFDEF] win32    up@ 'event-task !              [THEN]
+[defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
                  ?dup IF  .  "error @ ?dup
                           IF  count type  THEN  "error off
                           cr ['] .except catch drop
                           cr ['] .back   catch drop  THEN
-[IFDEF] x11      err-dpy @ IF  .Xerror  THEN  ?calib   [THEN]
+[defined]  x11 [IF]      err-dpy @ IF  .Xerror  THEN  ?calib   [THEN]
                  ['] invoke catch drop do-idle
                  depth r> <> IF  ~~  THEN  clearstack
           AGAIN ;
@@ -109,11 +116,11 @@ how:    : dispose  clicks HandleOff
 
         : init ( resource -- )  bind xrc  self bind dpy
           'nilscreen bind childs  'nilscreen bind nextwin
-[IFDEF] x11
+[defined]  x11 [IF]
           xrc dpy @ dup xrc screen @ RootWindow xwin !
           xrc screen @ 2dup DisplayWidth  w ! DisplayHeight h !
 [THEN]
-[IFDEF] win32
+[defined]  win32 [IF]
           GetDesktopWindow xwin !
           0 0 0 0 sp@ xwin @ GetWindowRect drop 2drop w ! h !
 [THEN]
@@ -140,7 +147,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              05jan07py
 
-        : get-win [IFDEF] win32  xrc dc @
+        : get-win [defined]  win32 [IF]  xrc dc @
                   [ELSE]  xwin @  [THEN] ;
         : ?clip ( -- )  clip-is @ clip-should @ <>
           IF  0 clip-rect   self >o
@@ -167,7 +174,7 @@ how:    : dispose  clicks HandleOff
 
 \ Xrender extras                                       11nov06py
 
-[IFDEF] xrender
+[defined]  xrender [IF]
         Create pict_attrib sizeof XRenderPictureAttributes allot
         1 pict_attrib XRenderPictureAttributes dither !
         : ?xpict ( -- )  xpict @ ?EXIT  xrc dpy @ xwin @
@@ -184,7 +191,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              11nov06py
 
-[IFDEF] x11
+[defined]  x11 [IF]
         : drawable ( -- gc win dpy ) xrc gc @ xwin @ xrc dpy @ ;
         : drawable' ( -- dpy win gc ) xrc dpy @ xwin @ xrc gc @ ;
         : set-font ( n -- )  xrc font@ bind cur-font ;
@@ -223,7 +230,7 @@ how:    : dispose  clicks HandleOff
         : mask { xs ys w h x y win1 win2 |  ?clip
           win1 0= IF
 	      drawable' win2 -rot xs ys w h x y XCopyArea
-[IFDEF] xrender  ELSE  win1 -1 = IF
+[defined]  xrender [IF]  ELSE  win1 -1 = IF
               ?xpict ?pclip
               xrc dpy @ 3 win2 0 xpict @ xs ys xs ys x y w h
               XRenderComposite  [THEN]
@@ -238,14 +245,14 @@ how:    : dispose  clicks HandleOff
               6 xrc set-function
 	      drawable' win2 -rot xs ys w h x y XCopyArea
               3 xrc set-function
-          THEN THEN [IFDEF] xrender THEN [THEN] } ;
+          THEN THEN [defined]  xrender [IF] THEN [THEN] } ;
         : image { xs ys w h x y win |  ?clip
 	  drawable' win -rot xs ys w h x y XCopyArea } ;
 [THEN]
 
 \ Display                                              27jun02py
 
-[IFDEF] win32
+[defined]  win32 [IF]
         : drawable ( -- dc ) xrc dc @ ;
         : set-font ( n -- )  xrc font@ bind cur-font ;
         : set-color ( color -- )  ?clip
@@ -302,7 +309,7 @@ how:    : dispose  clicks HandleOff
 [THEN]
 
 \ Display       Clipping rectangle x11                 12may02py
-[IFDEF] x11
+[defined]  x11 [IF]
         : rect>reg ( rect -- r )  XCreateRegion
           dup >r dup XUnionRectWithRegion r> ;
         : clip-r? ( -- )  clipregion @ clip-r @ <>
@@ -319,7 +326,7 @@ how:    : dispose  clicks HandleOff
 [THEN]
 
 \ Display       Clipping rectangle win32               20oct99py
-[IFDEF] win32
+[defined]  win32 [IF]
         : clip-rect ( rect -- )  clipregion @
           IF    dup IF    w@+ w@+ w@+ w@ 2over p+
                           swap 2swap swap
@@ -337,7 +344,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              25jan03py
 
-[IFDEF] x11
+[defined]  x11 [IF]
         : add-region ( x y w h -- )
 \          base push cr hex xwin @ . decimal
 \          ." : add region " 4 0 DO I pick . LOOP
@@ -366,7 +373,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              28mar99py
 
-[IFDEF] win32
+[defined]  win32 [IF]
         : size-event ( -- )
           rw @ -1 <> rh @ -1 <> or
           IF  w @ rw @ dup w ! <>  h @ rh @ dup h !  <> or
@@ -375,7 +382,7 @@ how:    : dispose  clicks HandleOff
 [THEN]
 
 \ Display                                              07jan07py
-[IFDEF] x11
+[defined]  x11 [IF]
         : get-event ( mask -- ) dup >r
           IF  BEGIN  xrc dpy @ r@ event XCheckMaskEvent  WHILE
                      event 0 XFilterEvent
@@ -393,7 +400,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              18oct98py
 
-[IFDEF] win32
+[defined]  win32 [IF]
         : check-events ( event -- event )
           ALLCHILDS  dup get-event ;
         : get-event ( event -- )
@@ -423,7 +430,7 @@ how:    : dispose  clicks HandleOff
         : mxy! ( mx my -- ) my ! mx ! ;
 
 \ Display                                              04aug05py
-[IFDEF] x11
+[defined]  x11 [IF]
         :noname  event XMotionEvent time @ event-time !
           event XMotionEvent x @+ @ mxy!
           event XMotionEvent state @ 8 >> mb !  moved! ;
@@ -436,9 +443,9 @@ how:    : dispose  clicks HandleOff
 
         :noname ( -- ) \ cr 'd emit 'o emit
           event XKeyEvent time @ event-time !
-[IFDEF] has-utf8  xrc ic @ ?dup >r [THEN]
+[defined]  has-utf8 [IF]  xrc ic @ ?dup >r [THEN]
           event look_chars $FF look_key comp_stat
-[IFDEF] has-utf8  r>
+[defined]  has-utf8 [IF]  r>
           IF    Xutf8LookupString
           ELSE  XLookupString  THEN
 [ELSE]    XLookupString  [THEN]
@@ -577,7 +584,7 @@ how:    : dispose  clicks HandleOff
 | Create 'string XA_STRING , XA_STRING8 ,
 : target-request ( -- )
   XA_STRING8 XA_STRING 'string 2!
-  'string 2 PropModeReplace &32 4 rest-request ;
+  'string 2 PropModeReplace #32 4 rest-request ;
 
 \ Display                                              16jan05py
         :noname \ cr  ." Selection Request "
@@ -626,7 +633,7 @@ how:    : dispose  clicks HandleOff
 [THEN]
 
 \ Display                                              19jan00py
-[IFDEF] win32        Create paint  $40 allot
+[defined]  win32 [IF]        Create paint  $40 allot
         :noname ( lparam wparam msg win -- ret )
           xrc dc @ >r  paint xwin @ BeginPaint xrc dc !
           Xform0 xrc dc @ SetWorldTransform drop
@@ -761,7 +768,7 @@ private:
 \ mouse wheel                                          01jun07py
         : >wshift ( fwkeys -- count mstate ) dup >r >mshift
           r@ 0< $1000 and or  r@ 0> $800 and or
-          r> 16 >> &60 / abs swap ;
+          r> 16 >> #60 / abs swap ;
         : sendwheel ( event -- )  flags #pending +bit
           dup MSG wparam @ >wshift drop 0 ?DO
              dup   MSG wparam @ >wshift nip I 2+ swap
@@ -812,11 +819,11 @@ class;
 
 displays ptr screen
 
-[IFDEF] x11
+[defined]  x11 [IF]
 : screen-event  ( -- )  0 screen get-event ;
 [THEN]
 
-[IFDEF] win32
+[defined]  win32 [IF]
 : win>o ( win -- o )  screen win>o nip ;
 [THEN]
 

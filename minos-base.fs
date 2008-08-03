@@ -413,6 +413,9 @@ Forward screen-ic!
 : .Xerror~~ screen-sync  err-dpy @ 0= IF  2drop 2drop EXIT  THEN
   (~~) .Xerror" ;
 : x~~  ~~, postpone .Xerror~~ ; immediate
+[ELSE]
+    Defer screen-sync
+    Defer screen-ic!
 [THEN]
 
 \ Event data structure                                 29jul07py
@@ -571,11 +574,12 @@ how:    : init ( -- )
 
 \ XResource                                            03jul07py
         Create visinfo sizeof XVisualInfo allot
-        : best-visual ( -- vis depth screen )
+        : best-visual ( -- vis depth screen ) 0 { vdepth }
           0 0 sp@ >r dpy @ 0 pad r> XGetVisualInfo
           swap sizeof XVisualInfo * bounds
-          4 0 DO  TrueColor I vis# + c@ 8 = + 1+ StaticGray DO
-                  2dup ?DO  I XVisualInfo depth @ K vis# + c@ =
+	  4 0 DO  TrueColor I vis# + c@ dup to vdepth
+		  8 = + 1+ StaticGray DO
+                  2dup ?DO  I XVisualInfo depth @ vdepth =
                             I XVisualInfo class @ J = and
                             IF  rot drop I -rot THEN
           sizeof XVisualInfo +LOOP   LOOP  LOOP   2drop
@@ -633,7 +637,9 @@ how:    : init ( -- )
 
         Create xgc  sizeof XGCValues allot
         : connect ( -- )
-          ['] X-error XSetErrorHandler drop
+	  [defined] X-error [IF]
+	      ['] X-error XSetErrorHandler drop
+	  [THEN]
           dpy @ DefaultScreen          screen !
           dpy @ screen @ DefaultColormap cmap !
           dpy @ screen @ DefaultGC         gc !
@@ -854,7 +860,11 @@ Variable own-selection
 
 \ selection                                            23apr06py
 Variable got-selection          Variable str-selection
-Forward screen-event
+[defined] Forward [IF]
+    Forward screen-event
+[ELSE]
+    Defer screen-event
+[THEN]
 : wait-for-select ( -- flag )  got-selection off
   #5000 after  BEGIN  screen-event
            timeout? got-selection @ or UNTIL  drop ;

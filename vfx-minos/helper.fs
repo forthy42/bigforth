@@ -13,14 +13,24 @@ also memory definitions
 : DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
 : Handle! ( len addr -- )  >r NewPtr r> ! ;
 : HandleOff ( addr -- )  dup @ free throw off ;
+: SetHandleSize ( addr -- ) >r
+    r@ @ swap resize throw r> ! ;
+: DelFix ( addr root -- ) dup @ 2 pick ! ! ;
+: NewFix  ( root len # -- addr )
+  BEGIN  2 pick @ ?dup  0= WHILE  2dup * NewPtr
+         over 0 ?DO  dup 4 pick DelFix 2 pick +  LOOP  drop
+  REPEAT  >r drop r@ @ rot ! r@ swap erase r> ;
+
 previous definitions
 
 synonym AVariable Variable
 synonym A, ,
 synonym AConstant Constant
+synonym ALiteral Literal
 synonym Patch Defer
 synonym << lshift
 synonym >> arshift
+synonym toss previous
 
 : cont >r ;
 : push r> swap dup @ >r >r cont r> r> swap ! ;
@@ -110,3 +120,57 @@ Variable (i)
 \ Address marker
 
 synonym AValue Value
+
+Vocabulary DOS
+
+also DOS definitions
+
+extern: char * setlocale ( int , char * ); ( locale addr -- addr )
+extern: void gettimeofday ( int * , int * ); ( timeval timezone -- )
+
+synonym env$ readenv
+
+Create timeval   0 , 0 ,
+Create timezone  0 , 0 ,
+
+previous definitions
+
+\ zero string
+
+synonym 0" z"
+
+: >len ( addr -- addr u ) dup zstrlen ;
+
+\ special characters
+
+$08 Constant #bs         $0D Constant #cr
+$0A Constant #lf         $1B Constant #esc
+$09 Constant #tab        $07 Constant #bell
+
+\ long division
+
+: ud/mod ( ud1 u2 -- urem udquot )  >r 0 r@ um/mod r> swap >r
+                                    um/mod r> ;
+Synonym m/mod fm/mod
+
+\ timer handling
+
+1 cells User time
+
+also DOS
+: timer@  timeval timezone gettimeofday
+  timeval 2@ swap $CB9CB68 um* nip swap
+  $2000000 um* #675 ud/mod drop nip + ;
+previous
+: ms>time ( ms -- time )
+  $C6D750EB um* $3FFFFFF, d+ 6 lshift swap $1A rshift or ;
+: >us ( time -- dus )  #86400000 um*
+  #1000 um* >r >r #1000 um* r> + r> rot 0< s>d d- ;
+: after ( ms -- time ) ms>time timer@ + ;
+: till ( time -- )
+    BEGIN dup timer@ - 0> WHILE  pause  REPEAT drop ;
+: wait  ( ms -- )    after till ;
+\ synonym ms wait
+: timeout? ( time -- time f )  pause dup timer@ - 0> 0= ;
+Defer idle ' 2drop IS idle
+

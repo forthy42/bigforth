@@ -1955,7 +1955,17 @@ struct{
  * naive people are more comfortable with them.
  */
 
-[defined] VFXFORTH [IF]
+[defined] xcall [IF]
+: XDestroyImage ( image -- )
+    dup XImage destroy_image @ xcall drop drop ;
+: XGetPixel ( y x image -- pixel )
+    dup XImage get_pixel @ xcall >r drop 2drop r> ;
+: XPutPixel ( pixel y x image -- pixel )
+    dup XImage put_pixel @ xcall >r 2drop 2drop r> ;
+: XSubImage ( h w y x image -- )
+    dup XImage sub_image @ xcall 2drop 2drop 2drop ;
+: XAddPixel ( value image -- )
+    dup XImage get_pixel @ xcall drop 2drop ;
 [ELSE]
 Code XDestroyImage ( image -- )
      AX push  0 XImage destroy_image AX D) call
