@@ -63,9 +63,9 @@ Vocabulary types  types also
 3 cells Constant :inum
 
 cell +user op
-: op! ( o -- )  op ! ;
 
 Forth definitions
+: op! ( o -- )  op ! ;
 
 Create ostack 0 , 16 cells allot
 

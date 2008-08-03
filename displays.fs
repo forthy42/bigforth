@@ -97,9 +97,23 @@ how:    : dispose  clicks HandleOff
 
 \ Display tasking                                      09jul00py
 
-        : event-task  $20000 $10000 NewTask activate
-          >tib off $100 newtib  up@ TO event-task
-          Onlyforth dynamic   " event-task" r0 @ cell+ !
+      [defined] VFXFORTH [IF]
+        : do-event
+          up@ TO event-task
+[defined]  win32 [IF]    up@ 'event-task !              [THEN]
+          BEGIN  depth >r ['] handle-event catch
+                 ?dup IF  ." Error" cr  THEN
+[defined]  x11 [IF]    (  err-dpy @ IF  .Xerror  THEN ) ?calib   [THEN]
+                 ['] invoke catch drop do-idle
+                 depth r> <> IF  ~~  THEN  clearstack
+          AGAIN ;
+	  task eventtask
+	  : event-task ['] do-event eventtask initiate ;
+      [ELSE]
+	: event-task  $20000 $10000 NewTask activate
+	  >tib off $100 newtib
+	  Onlyforth dynamic   " event-task" r0 @ cell+ !
+          up@ TO event-task
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
                  ?dup IF  .  "error @ ?dup
@@ -110,6 +124,7 @@ how:    : dispose  clicks HandleOff
                  ['] invoke catch drop do-idle
                  depth r> <> IF  ~~  THEN  clearstack
           AGAIN ;
+      [THEN]
         : set-hints ;
 
 \ Display                                              07jan07py
@@ -159,7 +174,9 @@ how:    : dispose  clicks HandleOff
           x @ y @ swap resize ;
         : geometry? ( -- w h )  w @ h @ ;
         : transback ;    : trans ;   : trans' ;
+\ [defined] VFXFORTH 0= [IF] \ !!!FIXME!!!
         : set-rect ( o -- )  bind pointed ;
+\ [THEN]
 
 \ Display                                              18jul99py
 
@@ -227,7 +244,7 @@ how:    : dispose  clicks HandleOff
         : clip-mask ( y x w -- )
 	  drawable' nip rot XSetClipMask
           drawable' nip 2swap swap XSetClipOrigin ;
-        : mask { xs ys w h x y win1 win2 |  ?clip
+        : mask { xs ys w h x y win1 win2 }  ?clip
           win1 0= IF
 	      drawable' win2 -rot xs ys w h x y XCopyArea
 [defined]  xrender [IF]  ELSE  win1 -1 = IF
@@ -245,9 +262,9 @@ how:    : dispose  clicks HandleOff
               6 xrc set-function
 	      drawable' win2 -rot xs ys w h x y XCopyArea
               3 xrc set-function
-          THEN THEN [defined]  xrender [IF] THEN [THEN] } ;
-        : image { xs ys w h x y win |  ?clip
-	  drawable' win -rot xs ys w h x y XCopyArea } ;
+          THEN THEN [defined]  xrender [IF] THEN [THEN] ;
+        : image { xs ys w h x y win }  ?clip
+	  drawable' win -rot xs ys w h x y XCopyArea ;
 [THEN]
 
 \ Display                                              27jun02py
@@ -298,14 +315,14 @@ how:    : dispose  clicks HandleOff
 
 \        : ?gc ( win -- gc )  dup GetDC dup 0=
 \          IF  drop  ELSE  nip  THEN ;
-        : mask { xs ys w h x y win1 win2 | ?clip
+        : mask { xs ys w h x y win1 win2 } ?clip
           :srcand ys xs win1 \ ?gc
           h w y x drawable BitBlt ?err
           :srcor  ys xs win2 \ ?gc
-          h w y x drawable BitBlt ?err  } ;
-        : image { xs ys w h x y win |      ?clip
+          h w y x drawable BitBlt ?err ;
+        : image { xs ys w h x y win }      ?clip
           $00CC0020 ys xs win \ ?gc
-          h w y x  drawable BitBlt ?err } ;
+          h w y x  drawable BitBlt ?err ;
 [THEN]
 
 \ Display       Clipping rectangle x11                 12may02py
@@ -431,9 +448,9 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              04aug05py
 [defined]  x11 [IF]
-        :noname  event XMotionEvent time @ event-time !
+        :[  event XMotionEvent time @ event-time !
           event XMotionEvent x @+ @ mxy!
-          event XMotionEvent state @ 8 >> mb !  moved! ;
+          event XMotionEvent state @ 8 >> mb !  moved! ]:
         MotionNotify cells Handlers + !
         | 2Variable comp_stat
         | Variable look_key
@@ -441,7 +458,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              04jan07py
 
-        :noname ( -- ) \ cr 'd emit 'o emit
+        :[ ( -- ) \ cr 'd emit 'o emit
           event XKeyEvent time @ event-time !
 [defined]  has-utf8 [IF]  xrc ic @ ?dup >r [THEN]
           event look_chars $FF look_key comp_stat
@@ -452,17 +469,17 @@ how:    : dispose  clicks HandleOff
           ?dup IF  look_chars swap bounds ?DO
                    I xc@+ swap >r event XKeyEvent state @ keyed
                r> I - +LOOP  EXIT  THEN
-          look_key @ event XKeyEvent state @ keyed ;
+          look_key @ event XKeyEvent state @ keyed ]:
         KeyPress cells Handlers + !
 
 \ Display                                              11sep05py
 
-        :noname \ cr ." mapping notify"
-          event XRefreshKeyboardMapping drop ;
+        :[ \ cr ." mapping notify"
+          event XRefreshKeyboardMapping drop ]:
         MappingNotify cells Handlers + !
         : click^ ( -- event )  clicks @ @+ swap 8* + ;
         : transclick ( x y -- x' y' ) ;
-        : sendclick ( count event -- )  flags #pending +bit  click^ >r >r
+	: sendclick ( count event -- )  flags #pending +bit  click^ >r >r
           r@ XButtonEvent state @
           r@ XButtonEvent button @ $80 swap << xor
           r@ XButtonEvent x @
@@ -493,7 +510,7 @@ how:    : dispose  clicks HandleOff
         : .button cr base push hex event XButtonEvent window
           @+ @+ @ swap rot xwin @ 9 .r 9 .r 9 .r 9 .r
           space event XButtonEvent x @+ swap . @ . ;
-        :noname ( -- )  event XButtonEvent time @ event-time !
+        :[ ( -- )  event XButtonEvent time @ event-time !
           event XButtonEvent time @ dup true in-time?
           swap lasttime !  IF   event samepos?
                IF  lastclick @
@@ -503,11 +520,11 @@ how:    : dispose  clicks HandleOff
                          lastclick on
                    THEN  EXIT  THEN   event !xyclick flags #pending -bit
           THEN  flags #pending bit@  IF  moreclicks  THEN
-          1 event sendclick lastclick on ;
+          1 event sendclick lastclick on ]:
           ButtonPress cells Handlers + !
 
 \ Display                                              09mar99py
-        :noname ( -- )  event XButtonEvent time @ event-time !
+        :[ ( -- )  event XButtonEvent time @ event-time !
           event XButtonEvent time @ dup 0 in-time?
           swap lasttime !
           IF  event samepos?  IF  lastclick @
@@ -521,7 +538,7 @@ how:    : dispose  clicks HandleOff
           IF  event !xyclick +clicks moreclicks  THEN
           flags #pending bit@ 0= >r
 	  2 event sendclick  lastclick off
-	  r> IF  flags #pending -bit  THEN ;
+	  r> IF  flags #pending -bit  THEN ]:
           ButtonRelease cells Handlers + !
 
 \ Display                                              28jun98py
@@ -536,32 +553,32 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              04aug05py
 
-        :noname
+        :[
           event XExposeEvent x @+ @+ @+ @  add-region
 \         event XExposeEvent count @ 0= IF ."  draw"  draw  THEN
-          flags #exposed +bit ;
+          flags #exposed +bit ]:
         dup Expose         cells Handlers + !
             GraphicsExpose cells Handlers + !
-\        :noname  pointed self
-\          IF  mx @ my @ pointed moved  THEN ;
+\        :[  pointed self
+\          IF  mx @ my @ pointed moved  THEN ]:
 \        EnterNotify    cells Handlers + !
-        :noname   pointed self
-          IF  pointed leave  0 bind pointed  moved? drop  THEN ;
+        :[   pointed self
+          IF  pointed leave  0 bind pointed  moved? drop  THEN ]:
         LeaveNotify    cells Handlers + !
 
 \ Display                                              23apr06py
 
         Create xev  here  sizeof XEvent  dup allot erase
 
-        :noname \ cr  ." Selection Notify "
+        :[ \ cr  ." Selection Notify "
           event XSelectionRequestEvent time @ event-time !
           event XSelectionEvent property @
           event XSelectionEvent requestor @
-          xrc dpy @ fetch-property ;
+          xrc dpy @ fetch-property ]:
         SelectionNotify cells Handlers + !
 
-        :noname \ cr  ." Selection Clear "
-          own-selection off ;
+        :[ \ cr  ." Selection Clear "
+          own-selection off ]:
         SelectionClear  cells Handlers + !
 
 \ Display                                              16jan05py
@@ -587,7 +604,7 @@ how:    : dispose  clicks HandleOff
   'string 2 PropModeReplace #32 4 rest-request ;
 
 \ Display                                              16jan05py
-        :noname \ cr  ." Selection Request "
+        :[ \ cr  ." Selection Request "
           event XSelectionRequestEvent time @ event-time !
           event xev 4 cells move
           event XSelectionRequestEvent requestor
@@ -607,17 +624,17 @@ how:    : dispose  clicks HandleOff
 
           xrc dpy @
 	  event XSelectionRequestEvent requestor @
-          0 0 xev XSendEvent drop ;
+          0 0 xev XSendEvent drop ]:
         SelectionRequest cells Handlers + !
 
 \ Display                                              07jan07py
 
-        :noname  flags #exposed +bit ;  NoExpose cells Handlers + !
-        :noname ( -- ) \ resize request
+        :[  flags #exposed +bit ]:  NoExpose cells Handlers + !
+        :[ ( -- ) \ resize request
            event XConfigureEvent x @ x !
            event XConfigureEvent y @ y !
            event XConfigureEvent width  @ rw !
-           event XConfigureEvent height @ rh ! ;
+           event XConfigureEvent height @ rh ! ]:
         ConfigureNotify cells Handlers + !
         ' focus    FocusIn  cells Handlers + !
         ' defocus  FocusOut cells Handlers + !
@@ -626,30 +643,30 @@ how:    : dispose  clicks HandleOff
                  pause  flags #exposed bit@  UNTIL ;
 
 \ Display                                              02aug98py
-        :noname ( -- )
-          event sizeof XClientMessageEvent dump ;
+        :[ ( -- )
+          event sizeof XClientMessageEvent dump ]:
         ClientMessage cells Handlers + !
 
 [THEN]
 
 \ Display                                              19jan00py
 [defined]  win32 [IF]        Create paint  $40 allot
-        :noname ( lparam wparam msg win -- ret )
+        :[ ( lparam wparam msg win -- ret )
           xrc dc @ >r  paint xwin @ BeginPaint xrc dc !
           Xform0 xrc dc @ SetWorldTransform drop
           draw  paint xwin @ EndPaint drop  r> xrc dc !
-          2drop 2drop 0 flags #exposed +bit ;         WM_PAINT Handler@ !
-        :noname  3 pick >lohi y ! x ! DefWindowProc ;
+          2drop 2drop 0 flags #exposed +bit ]:         WM_PAINT Handler@ !
+        :[  3 pick >lohi y ! x ! DefWindowProc ]:
                                              WM_MOVE  Handler@ !
-        :noname  2drop 2drop close 0 ;       WM_CLOSE Handler@ !
-        :noname  3 pick WINDOWPOS flags @ SWP_NOSIZE and
+        :[  2drop 2drop close 0 ]:       WM_CLOSE Handler@ !
+        :[  3 pick WINDOWPOS flags @ SWP_NOSIZE and
           IF  DefWindowProc  EXIT  THEN  2drop drop
           WINDOWPOS cx 2@ 0. 0. sp@ 0 style @ rot
           AdjustWindowRect drop p- p- rw ! rh !
-          size-event 0 ;          WM_WINDOWPOSCHANGED Handler@ !
+          size-event 0 ]:          WM_WINDOWPOSCHANGED Handler@ !
 
 \ Display                                              28jul07py
-        :noname 2drop drop { rect |
+        :[ 2drop drop { rect |
           vglue >r hglue >r 0 0 sp@ >r 0 style @ r>
           AdjustWindowRect drop p- rect 2@ p+
           dup r> + 2 pick r> + >r >r
@@ -659,11 +676,11 @@ how:    : dispose  clicks HandleOff
           AdjustWindowRect drop p- rect 2@ p+
           rot over - r@ 2/ + r@ / r> * + -rot swap
               over - r@ 2/ + r@ / r> * + swap
-          rect 2 cells + 2! 0 } ;           WM_SIZING Handler@ !
- \        :noname ( lparam wparam msg win -- ret )
- \        DefWindowProc ;          WM_INPUTLANGCHANGE Handler@ !
- \       :noname ( lparam wparam msg win -- ret )
- \        DefWindowProc ;   WM_INPUTLANGCHANGEREQUEST Handler@ !
+          rect 2 cells + 2! 0 } ]:           WM_SIZING Handler@ !
+ \        :[ ( lparam wparam msg win -- ret )
+ \        DefWindowProc ]:          WM_INPUTLANGCHANGE Handler@ !
+ \       :[ ( lparam wparam msg win -- ret )
+ \        DefWindowProc ]:   WM_INPUTLANGCHANGEREQUEST Handler@ !
 
 \ Display                                              19jan00py
 
@@ -686,15 +703,15 @@ private:
                         $FF51 , $FF52 , $FF53 , $FF54 ,
                         0 ,     0 ,     0 ,     0 ,
                         $0000 , $007F ,
-        :noname 2drop nip dup $21 $2F within
+        :[ 2drop nip dup $21 $2F within
           IF    $21 - cells xkeys + @ ?dup
                 IF  shift@ ?keyed  THEN
-          ELSE  drop  THEN  0 ;            WM_KEYDOWN Handler@ !
-        :noname  2drop nip shift@       ?keyed 0 ;
+          ELSE  drop  THEN  0 ]:            WM_KEYDOWN Handler@ !
+        :[  2drop nip shift@       ?keyed 0 ]:
                                               WM_CHAR Handler@ !
- \       :noname  2drop nip shift@       ?keyed 0 ;
+ \       :[  2drop nip shift@       ?keyed 0 ]:
  \                                        WM_IME_CHAR Handler@ !
-        :noname  2drop nip shift@ ( 8 or )  ?keyed 0 ;
+        :[  2drop nip shift@ ( 8 or )  ?keyed 0 ]:
                                            WM_SYSCHAR Handler@ !
 
 \ Display                                              12aug00py
@@ -731,7 +748,7 @@ private:
         : +clicks ( -- ) click^ 6+ dup w@ 2+ -2 and swap w! ;
 
 \ Display                                              19jan00py
-        :noname ( lparam wparam msg win -- 0 ) ?grab \ add press
+        :[ ( lparam wparam msg win -- 0 ) ?grab \ add press
           SetCapture 2drop 2drop
           event MSG time @ dup true in-time?
           swap lasttime !
@@ -742,13 +759,13 @@ private:
                          lastclick on
                    THEN  0 EXIT  THEN event !xyclick flags #pending -bit
           THEN  flags #pending bit@  IF  moreclicks  THEN
-          1 event sendclick lastclick on 0 ;
+          1 event sendclick lastclick on 0 ]:
                                    dup WM_LBUTTONDOWN Handler@ !
                                    dup WM_RBUTTONDOWN Handler@ !
                                        WM_MBUTTONDOWN Handler@ !
 
 \ Display                                              19jan00py
-        :noname  2drop $13 and 0= IF ReleaseCapture drop THEN
+        :[  2drop $13 and 0= IF ReleaseCapture drop THEN
           ?grab  drop event MSG time @ dup 0 in-time?
           swap lasttime !
           IF  event samepos?  IF  lastclick @
@@ -761,7 +778,7 @@ private:
           IF  event !xyclick +clicks moreclicks  THEN
           flags #pending bit@ 0= >r
 	  2 event sendclick  lastclick off 0
-	  r> IF  flags #pending -bit  THEN ;
+	  r> IF  flags #pending -bit  THEN ]:
                                    dup WM_LBUTTONUP   Handler@ !
         dup WM_RBUTTONUP   Handler@ !  WM_MBUTTONUP   Handler@ !
 
@@ -776,10 +793,10 @@ private:
              click^ w!+ w!+ w!+ w!
              moreclicks
           2 +LOOP drop ;
-        :noname ( lparam wparam msg win -- ) moved!
+        :[ ( lparam wparam msg win -- ) moved!
           flags #pending bit@ IF  moreclicks flags #pending -bit  THEN
           event MSG time @  lasttime !
-          2drop 2drop event sendwheel 0 ;
+          2drop 2drop event sendwheel 0 ]:
                                         WM_MOUSEWHEEL Handler@ !
 
 \ Display                                              12aug00py
@@ -792,25 +809,25 @@ private:
           clicks @ $C + dup 8 - clicks @ @ 8* move
           ( 2over 2over cr . . . . ) ;
 
-        :noname  2drop drop >r
+        :[  2drop drop >r
           vglue + hglue +
           0. sp@ 0 style @ rot AdjustWindowRect drop p-
-          r> $8 + 2! 0 ;
+          r> $8 + 2! 0 ]:
                                      WM_GETMINMAXINFO Handler@ !
 
 \ Display                                              29jul07py
-        :noname ( lparam wparam msg win -- ) ?grab moved!
-          2drop >mshift $FF and mb ! >lohi mxy! 0 ;
+        :[ ( lparam wparam msg win -- ) ?grab moved!
+          2drop >mshift $FF and mb ! >lohi mxy! 0 ]:
                                          WM_MOUSEMOVE Handler@ !
-        :noname  pointed self
+        :[  pointed self
           IF  pointed leave 0 bind pointed  THEN
-          DefWindowProc ;              WM_NCMOUSEMOVE Handler@ !
+          DefWindowProc ]:              WM_NCMOUSEMOVE Handler@ !
 
-        :noname focus   2drop 2drop 0 ;  WM_SETFOCUS  Handler@ !
-        :noname defocus 2drop 2drop 0 ;  WM_KILLFOCUS Handler@ !
-        :noname ( lparam wparam msg win -- )
+        :[ focus   2drop 2drop 0 ]:  WM_SETFOCUS  Handler@ !
+        :[ defocus 2drop 2drop 0 ]:  WM_KILLFOCUS Handler@ !
+        :[ ( lparam wparam msg win -- )
           2drop 2drop get-sys-colors xrc free-colors
-          xrc colors 0 ;            WM_SYSCOLORCHANGE Handler@ !
+          xrc colors 0 ]:            WM_SYSCOLORCHANGE Handler@ !
         : >exposed ;
 [THEN]
 class;

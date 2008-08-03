@@ -174,3 +174,10 @@ previous
 : timeout? ( time -- time f )  pause dup timer@ - 0> 0= ;
 Defer idle ' 2drop IS idle
 
+\ clearstack
+
+: clearstack depth ndrop ;
+
+\ multitasker is needed
+
+include /usr/share/doc/VfxForth/Lib/Lin32/MultiLin32.fth
