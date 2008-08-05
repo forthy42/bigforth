@@ -274,15 +274,39 @@ ficon: backtext-d-pm pattern/backtext-d"
 \ normal font scheme                                   21jun05py
 [IFDEF] x11
 : (normal-font ( -- )  screen xrc with
-  S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
-  0 font!  \ normal font
-  S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
-  1 font!  \ terminal font
-  S" -adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
-  2 font!  \ icon font
-  S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
-  3 font!  \ text font
-  0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" fontset!
+    [IFDEF] has-utf8
+	maxascii $80 = IF
+	    S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso10646-1"
+	    0 font!  \ normal font
+	    S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1"
+	    1 font!  \ terminal font
+	    S" -adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso10646-1"
+	    2 font!  \ icon font
+	    S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso10646-1"
+	    3 font!  \ text font
+	    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" fontset!
+	ELSE
+	    S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
+	    0 font!  \ normal font
+	    S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
+	    1 font!  \ terminal font
+	    S" -adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
+	    2 font!  \ icon font
+	    S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
+	    3 font!  \ text font
+	    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" fontset!
+	THEN
+    [ELSE]
+	S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
+	0 font!  \ normal font
+	S" -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-1"
+	1 font!  \ terminal font
+	S" -adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
+	2 font!  \ icon font
+	S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso8859-1"
+	3 font!  \ text font
+	0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" fontset!
+    [THEN]
   4 cells fontarray @ @ + off
   endwith screen !resized ;
 

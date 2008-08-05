@@ -5,14 +5,17 @@
 font class X-font
 public: cell var name-string
         cell var id
+        cell var fontset
         cell var ascent
 how:    : assign ( addr u -- )  name-string $!
-          0 name-string $@ + c!  name-string $@ drop
-          screen xrc dpy @ swap XLoadQueryFont
+          0 name-string $@ + c!
+          screen xrc dpy @  name-string $@ drop XLoadQueryFont
           dup 0= abort" Font not found"
 \          dup 0<= IF  drop 0 screen xrc font@
 \                      with id @ endwith  THEN
-          dup id ! XFontStruct ascent @ ascent ! ;
+          dup id ! XFontStruct ascent @ ascent !
+          0 sp@ >r 0 sp@ >r 0 sp@ >r screen xrc dpy @  name-string $@ drop
+          r> r> r> XCreateFontSet  fontset !  drop 2drop ;
         : init ( addr u -- )  assign ;
 
 \ X fonts                                              21aug99py
@@ -38,18 +41,25 @@ how:    : assign ( addr u -- )  name-string $!
 
         | Create text_i here sizeof XTextItem dup allot erase
         : draw ( addr u x y dpy -- )
-          >r id @ XFontStruct fid @ text_i XTextItem font !
-          2swap swap text_i XTextItem chars 2!
-          ascent @ +
-          r> displays with
+	    >r
+	    [IFDEF] has-utf8
+		maxascii $80 = IF  fontset @  ELSE
+		    id @ XFontStruct fid @  THEN
+	    [ELSE]
+		id @ XFontStruct fid @
+	    [THEN]
+	    text_i XTextItem font !
+	    2swap swap text_i XTextItem chars 2!
+	    ascent @ +
+	    r> displays with
 	    2>r drawable' 2r> text_i 1
-	    [IFDEF] has-utf8'
+	    [IFDEF] has-utf8
 		maxascii $80 =
 		IF  Xutf8DrawText  ELSE  XDrawText  THEN
 	    [ELSE]
 		XDrawText
 	    [THEN]
-          endwith ;
+	    endwith ;
 class;
 
 : new-x-font ( addr u -- font ) x-font new ;

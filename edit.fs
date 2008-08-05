@@ -146,7 +146,6 @@ stredit implements
         ^ edit-o !
         loadText rows ! 1+ cols !
         gotoline ;
-    
     : init ( action -- )
         term self bind callwind
         actiontable ! 0 super super init
