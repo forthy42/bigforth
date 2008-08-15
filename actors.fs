@@ -41,13 +41,7 @@ how:    : init ( o state xtset xtreset -- )
         : assign ( flag -- )  set? ! ;
         : fetch ( -- flag )  set? @ ;
         : store ( flag -- )  set? !
-          set? @ IF  do-set  ELSE  do-reset  THEN  @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
-      ;
+          set? @ IF  do-set  ELSE  do-reset  THEN  @ called send      ;
         : click  dup 0= IF  2drop 2drop  EXIT  THEN
           toggle  caller >released  drop ;
 class;
@@ -58,13 +52,7 @@ actor class toggle-var
 public: cell var addr           cell var xt
 how:    : init ( o var xt -- ) xt ! assign super init ;
          : fetch ( -- n )  addr @ @ ;
-        : store ( n -- )  addr @ ! xt @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : store ( n -- )  addr @ ! xt @ called send ;
         : assign ( addr -- )  addr ! ;
 class;
 toggle-var class toggle-num
@@ -72,13 +60,7 @@ public: cell var num
 how:    : assign ( o num var -- )  super assign num ! ;
         : !if ( n num addr -- )  rot IF  !  ELSE  nip on  THEN ;
         : fetch ( -- flag ) num @ addr @ @ = ;
-        : store ( n -- )  num @ addr @ !if xt @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : store ( n -- )  num @ addr @ !if xt @ called send ;
 class;
 
 \ toggle bit                                           05mar07py
@@ -88,13 +70,7 @@ public: cell var bit
 how:    : fetch ( -- n )  addr @ bit @ bit@ ;
         : store ( n -- )  >r addr @ bit @
           r> IF  +bit  ELSE  -bit  THEN
-          xt @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+          xt @ called send ;
         : assign ( addr bit -- ) bit ! addr ! ;
 class;
 
@@ -104,33 +80,15 @@ actor class toggle-state
 public: cell var do-store       cell var do-fetch
 how:    : init ( o xtstore xtfetch -- )
           do-fetch ! do-store ! super init ;
-        : fetch ( -- x1 .. xn ) do-fetch @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
-        : store ( x1 .. xn -- ) do-store @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : fetch ( -- x1 .. xn ) do-fetch @ called send ;
+        : store ( x1 .. xn -- ) do-store @ called send ;
 class;
 
 actor class simple
 public: cell var do-it
 how:    : init ( o xt -- ) do-it ! super init ;
         : fetch 0 ;
-        : store do-it @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- drop ;
+        : store do-it @ called send drop ;
 class;
 
 \ actor                                                25sep99py
@@ -140,13 +98,7 @@ class;
 simple class click
 how:    : click  store ;
         : fetch ;
-        : store  do-it @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : store  do-it @ called send ;
 class;
 
 simple class data-act
@@ -162,26 +114,14 @@ public: cell var max
 how:    : init ( o do-store do-fetch max -- )
           assign super init ;
         : assign ( max -- )  max ! ;
-        : fetch  max @ do-fetch @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : fetch  max @ do-fetch @ called send ;
 class;
 
 scale-act class slider-act
 public: cell var step
 how:    \ init ( o do-store do-fetch max step -- )
         : assign  step ! super assign ;
-        : fetch  max @ step @ do-fetch @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : fetch  max @ step @ do-fetch @ called send ;
 class;
 
 \ actor                                                12apr98py
@@ -204,26 +144,14 @@ class;
 scale-var class scale-do
 public: cell var action
 how:    : init ( o n max xt -- ) action ! super init ;
-        : store  super store pos @ action @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : store  super store pos @ action @ called send ;
 class;
 
 
 slider-var class slider-do
 public: cell var action
 how:    : init ( o n max step xt -- ) action ! super init ;
-        : store  super store pos @ action @
-[defined] VFXFORTH [IF]
-          called self >o execute o>
-[ELSE]
-	  called send
-[THEN]
- ;
+        : store  super store pos @ action @ called send ;
 class;
 
 \ actor simplification                                 05mar07py

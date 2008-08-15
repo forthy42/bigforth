@@ -570,7 +570,6 @@ Create object  immediate  0 (class \ do not create as subclass
 	 early     is  ( xt "name" -- ) \ object- oof
 				immediate
 	 early     send ( xt -- ) \ object- oof
-				immediate
 	 early     with ( o -- ) \ object- oof
 				immediate
 	 early     endwith ( -- ) \ object- oof
@@ -616,7 +615,7 @@ how:
     
     : '       ( -- xt )  bl word findo drop
 	state @ IF  Fpostpone Literal  THEN ;
-    : send    ( xt -- )  execute ;
+    : send    ( xt -- )  dup . execute ." Is send" ;
     : postpone ( -- )  o@ add-order Fpostpone Fpostpone drop-order ;
     
     : with ( -- n )  voc# @

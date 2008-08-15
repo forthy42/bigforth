@@ -83,13 +83,7 @@ how:    : dispose  clicks HandleOff
           IF    events @ cell+ @ timer@ - dup 0<
                 IF    events @ dup @ events ! dup 2 cells + 2@
 		      rot schedules-root DelFix
-[defined] VFXFORTH [IF]
-\ !!!FIXME VFX: This is the workaround!!!
-		      >o execute o>
-[ELSE]
                       object with send endwith
-[THEN]
-\ !!!FIXME VFX: This above breaks with VFX Forth!!!
 		ELSE  >us #1000 m/mod nip  THEN
           ELSE  minwait  THEN  -1 max minwait min ;
         : do-idle ( n -- ) dup 0>
