@@ -332,6 +332,9 @@ extern: int XDrawArc( int , int , int , int , int , int , int , int , int ); ( a
 extern: int XDrawArcs( int , int , int , int , int ); ( narcs arcs gc d dpy -- r )
 extern: int XDrawImageString( int , int , int , int , int , int , int ); ( length string y x gc d dpy -- r )
 extern: int XDrawImageString16( int , int , int , int , int , int , int ); ( length string y x gc d dpy -- r )
+[defined] has-utf8 [IF]
+    extern: void Xutf8DrawText( int , int , int , int , int , int , int ); ( dpy d gc x y items nitems -- )
+[THEN]
 extern: int XDrawPoint( int , int , int , int , int ); ( y x gc d dpy -- r )
 extern: int XDrawPoints( int , int , int , int , int , int ); ( mode npoints point gc d dpy -- r )
 extern: int XDrawRectangle( int , int , int , int , int , int , int ); ( h w y x gc d dpy -- r )

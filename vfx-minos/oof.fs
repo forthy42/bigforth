@@ -194,12 +194,14 @@ early eee
 
 Objects definitions also types
 
+: exec1? ['] xxx1 method# tuck compare 0= ;
+: exec2? ['] xxx3 method#2 tuck compare 0= ;
 : exec?    ( addr -- flag )
-    dup ['] xxx1 method# tuck compare 0=
-    swap ['] xxx3 method#2 tuck compare 0= or ;
+    dup exec1? swap exec2? or ;
+: static1? ['] sss1 static# tuck compare 0= ; 
+: static2? ['] sss3 static#2 tuck compare 0= ;
 : static?  ( addr -- flag )
-    dup ['] sss1 static# tuck compare 0=
-    swap ['] sss3 static#2 tuck compare 0= or ;
+    dup static1? swap static2? or ;
 : early?   ( addr -- flag )
     ['] eee  1 tuck compare 0= ;
 : defer?   ( addr -- flag )
@@ -225,18 +227,32 @@ Objects definitions also types
 \ object compiling/executing                           20feb95py
 
 : o, ( xt early? -- )
-  over exec?   over and  IF 
+  over exec1?   over and  IF 
       drop method# + c@ o@ + @  compile,  EXIT  THEN
-  over static? over and  IF 
+  over exec2?   over and  IF 
+      drop method#2 + @ o@ + @  compile,  EXIT  THEN
+  over static1? over and  IF 
       drop static# + c@ o@ + @  postpone Literal  EXIT THEN
+  over static2? over and  IF 
+      drop static#2 + @ o@ + @  postpone Literal  EXIT THEN
   drop dup early?  IF 1+ dup @ + cell+  THEN  compile, ;
 
-: (findo    ( string -- cfa n )
-    o@ add-order >r find r> drop-order ;
+\ : (findo    ( string -- cfa n )
+\     o@ add-order >r find r> drop-order ;
+: (findo    ( string -- cfa n / f ) { string }
+    o@ >r  0  BEGIN  drop
+	r> 2@ swap >r
+	string count rot search-wordlist
+\	string count type dup 0= IF ."  not" THEN ."  found" cr
+	dup r@ 0= or  UNTIL  r> drop ( dup 0= IF
+	    o@ :iface + @ >r  BEGIN  drop
+		r> 2@ swap >r :ilist + @
+		string count rot search-wordlist
+	    dup r@ 0= or  UNTIL  r> drop
+    THEN ) ;
 
 : findo    ( string -- cfa n )
-    (findo
-    ?dup 0= IF drop true abort" method not found!" THEN ;
+    (findo dup 0= IF  true abort" method not found!" THEN ;
 
 false Value method?
 
@@ -376,7 +392,8 @@ Variable ob-interface
     false method, ; \ should be tail call optimized
 
 : inherit   ( -- )  bl word findo drop
-    dup exec?  IF  method# + c@ dup o@ + @ swap lastob @ + !  EXIT  THEN
+    dup exec1?  IF  method# + c@ dup o@ + @ swap lastob @ + !  EXIT  THEN
+    dup exec2?  IF  method#2 + @ dup o@ + @ swap lastob @ + !  EXIT  THEN
     abort" Not a polymorph method!" ;
 
 \ instance variables inside objects                    27dec93py
@@ -488,7 +505,7 @@ types definitions
 : : ( <methodname> -- ) \ oof- oof colon
     decl @ abort" HOW: missing! "
     >in @ >r bl word (findo 0=
-    IF  r> >in ! :
+    IF  r> >in ! m-name off :
     ELSE  r> drop
 	dup exec? over early? or
 	0= abort" not a method"
@@ -499,12 +516,15 @@ Forth
 
 : ; ( xt colon-sys -- ) \ oof- oof
     postpone ;
-    m-name @ dup exec?
+    m-name @ ?dup 0= ?EXIT  dup exec1?
     IF    method# + c@ o@ + !
-    ELSE
-	dup 5 + c@ $C3 = IF  1+ dup >r - 4- r> !  EXIT  THEN
-	>body dup cell+ @ 0< IF  2@ swap o@ + @ + !  EXIT  THEN
-	drop
+    ELSE  dup exec2?
+	IF    method#2 + @ o@ + !
+	ELSE
+	    dup 5 + c@ $C3 = IF  1+ dup >r - 4- r> !  EXIT  THEN
+	    >body dup cell+ @ 0< IF  2@ swap o@ + @ + ~~ !  EXIT  THEN
+	    drop
+	THEN
     THEN ; immediate
 
 previous
@@ -559,8 +579,8 @@ Create object  immediate  0 (class \ do not create as subclass
 				immediate
 	 early     postpone ( "name" -- ) \ object- oof
 				immediate
-	 early     definitions ( -- ) \ object- oof
-	 
+	 early     implements ( -- ) \ object- oof
+
 \ base object class implementation part                23mar95py
 
 how:
@@ -604,7 +624,7 @@ how:
 	o@ add-order voc# ! false to oset? ;
     : endwith ( n -- ) Fpostpone o> voc# @ drop-order voc# ! ;
 
-    : definitions
+    : implements
 	o@ add-order 1+ voc# ! also types o@ lastob !
 	false to oset?   get-current old-current !
 	thread @ set-current ;

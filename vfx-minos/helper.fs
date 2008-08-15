@@ -38,6 +38,7 @@ synonym toss previous
 : & ' >body state @ IF postpone Literal THEN ; immediate
 
 : u>= u< 0= ;
+: u<= u> 0= ;
 : @+ dup @ swap cell+ ;
 : rdrop r> r> drop >r ;
 
@@ -178,6 +179,18 @@ Defer idle ' 2drop IS idle
 
 : clearstack depth ndrop ;
 
+\ constant adders
+
+: 6+ 6 + ;
+
 \ multitasker is needed
 
 include /usr/share/doc/VfxForth/Lib/Lin32/MultiLin32.fth
+
+\ keyboard state
+
+Variable kbshift
+
+\ compile only
+
+: restrict ;

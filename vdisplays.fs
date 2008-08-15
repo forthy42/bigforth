@@ -4,7 +4,7 @@ displays class backing
 public: gadget ptr child        method create-pixmap
         cell var noback         cell var closing
         2 cells var hglues      2 cells var vglues
-[IFDEF] win32                   cell var oldbm      [THEN]
+[defined] win32 [IF]                   cell var oldbm      [THEN]
 
 \ backing                                              28aug99py
 
@@ -26,13 +26,13 @@ how:    : init ( -- ) ;
         : dpy! ( dpy -- )
           bind dpy  xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
-[IFDEF] x11     get-win xrc get-gc  [THEN]
+[defined] x11 [IF]     get-win xrc get-gc  [THEN]
           0 clip-rect  flags #draw +bit  child self 0= ?EXIT
           self child dpy!  !resized
           child xywh  resize ;
 
 \ backing store                                        11nov06py
-[IFDEF] x11
+[defined] x11 [IF]
         : free-pixmap ( -- )
           xwin @  IF  xrc dpy @ xwin @ XFreePixmap xwin off  THEN ;
         : create-pixmap ( -- )  free-pixmap
@@ -50,7 +50,7 @@ how:    : init ( -- ) ;
 
 \ backing store                                        11nov06py
 
-[IFDEF] win32
+[defined] win32 [IF]
         : create-pixmap ( -- )
           xwin @  IF  xwin @ DeleteObject drop xwin off  THEN
           noback @ ?EXIT
@@ -68,7 +68,9 @@ how:    : init ( -- ) ;
 
         : child-dispose  child self IF child dispose THEN ;
         : set-child ( widget -- )  0 bind pointed
+[defined] .except [IF]
           ['] child-dispose catch IF .except THEN
+[ELSE]    child-dispose  [THEN]
           bind child  self child bind parent
           dpy self 0= IF  rdrop  THEN ;
         : rest-child ( -- )  get-glues  child xywh  resize ;
@@ -97,7 +99,7 @@ how:    : init ( -- ) ;
         : draw ( -- )  flags #hidden bit@ ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
           IF    0 0 w @ h @ x @ y @
-                [IFDEF] win32  xrc dc @ dpy image
+                [defined] win32 [IF]  xrc dc @ dpy image
                 [ELSE]  xpict @  IF  -1 xpict @ dpy mask
                         ELSE  xwin @ dpy image  THEN  [THEN]
           ELSE  child draw  THEN ;
@@ -125,7 +127,7 @@ how:    : init ( -- ) ;
 
 \ backing store                                        01mar98py
         : image ( x y w h x y win -- )  flags #draw bit@
-          IF  [ 5 ] [FOR] 6 pick [NEXT] trans' 6 pick
+          IF  6 pick 6 pick 6 pick 6 pick 6 pick 6 pick trans' 6 pick
               dpy image  THEN
           xwin @ 0= IF  drop 2drop 2drop 2drop  EXIT  THEN
           super image ;
@@ -135,7 +137,7 @@ how:    : init ( -- ) ;
 \          xwin @ 0= IF  drop 2drop 2drop 2drop  EXIT  THEN
 \          super ximage ;
         : mask ( x y w h x y win1 win2 -- )  flags #draw bit@
-          IF  [ 5 ] [FOR] 7 pick [NEXT] trans' 7 pick 7 pick
+          IF  7 pick 7 pick 7 pick 7 pick 7 pick 7 pick trans' 7 pick 7 pick
               dpy mask  THEN
           xwin @ 0= IF  2drop 2drop 2drop 2drop  EXIT  THEN
           super mask ;
@@ -215,7 +217,7 @@ public: method map@
 how:    : init ( depth w h dpy -- )
           screen self dpy! xrc clone bind xrc ;
         : draw ( -- ) ;
-[IFDEF] x11
+[defined] x11 [IF]
         : create-pixmap ( depth w h -- ) over2 xrc depth !
           2dup h ! w ! free-pixmap
           2>r >r xrc dpy @ dpy get-win r> 2r> rot
@@ -226,7 +228,7 @@ how:    : init ( depth w h dpy -- )
 
 \ pixmap                                               28oct06py
 
-[IFDEF] win32
+[defined] win32 [IF]
         : create-pixmap ( depth w h -- )  h ! w ! drop
           super create-pixmap ;
 \ !!!FIXME!!! This doesn't work!
@@ -259,13 +261,13 @@ how:    : drops  cells sp@ + cell+ sp! ;
           nextb self IF  r> nextb goto box
           ELSE  rdrop 2drop 2drop  THEN ;
         : image ( x y w h x y win -- )
-          enable @ IF [ 6 ] [FOR] 6 pick [NEXT] super image THEN
+          enable @ IF  6 pick 6 pick 6 pick 6 pick 6 pick 6 pick 6 pick super image THEN
           nextb self IF nextb goto image  ELSE  7 drops  THEN ;
 \        : ximage ( x y w h x y win -- )
 \        enable @ IF [ 6 ] [FOR] 6 pick [NEXT] super ximage THEN
 \         nextb self IF nextb goto ximage  ELSE  7 drops  THEN ;
         : mask ( x y w h x y win1 win2 -- )
-          enable @ IF [ 7 ] [FOR] 7 pick [NEXT] super mask  THEN
+          enable @ IF 7 pick 7 pick 7 pick 7 pick 7 pick 7 pick 7 pick 7 pick super mask  THEN
           nextb self IF nextb goto mask  ELSE   8 drops  THEN ;
 
 \ beamer                                               11nov06py
@@ -338,7 +340,7 @@ how:    : drops  cells sp@ + cell+ sp! ;
         : dpy! ( dpy -- )  bind dpy
           xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
-[IFDEF] x11     get-win xrc get-gc  [THEN]
+[defined] x11 [IF]     get-win xrc get-gc  [THEN]
           0 clip-rect  flags #draw +bit
           first?  IF  self child dpy!  THEN
           !resized  child xywh  resize ;

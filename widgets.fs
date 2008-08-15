@@ -46,7 +46,7 @@ how:    : >callback ( cb -- )
                            dup >timeout  dpy click?  UNTIL  drop
                     dpy click nip nip nip 1 and 0=  UNTIL
                 rdrop dpy moved!
-          ELSE  &50 after >timeout  THEN ;
+          ELSE  #50 after >timeout  THEN ;
 
 \ draw shadow                                          25mar99py
 
@@ -55,25 +55,26 @@ how:    : >callback ( cb -- )
           dup 1 =  IF  dup r> dpy box    EXIT  THEN  >r
           <poly r@ 0 poly, 0 r@ - r> poly, poly> r> dpy fill ;
         : (drawshadow ( lightcol shadowcol n x y w h -- )
-          { n x y w h | n 0< IF  swap  THEN  n abs  { lc sc n |
+	  { lc sc n x y w h }
+	    n 0< IF  lc sc to lc to sc n negate to n  THEN
              x         y         w n - n      lc dpy box
              x         y n +     n     h n -  lc dpy box
              x         y h + n - w     n      sc dpy box
              x w + n - y         n     h n -  sc dpy box
              x w + n - y         n            lc draw-edge
-             x         y h + n - n            lc draw-edge } } ;
+             x         y h + n - n            lc draw-edge ;
 
 \ draw shadow                                          27jan07py
          : 2+?  dup $10 < IF  2+  THEN ;
-         : drawshadow ( lc sc n x y w h -- )
-           4 pick abs twoborders u<= IF  (drawshadow
-           ELSE { lc sc n x y w h |
+         : drawshadow  { lc sc n x y w h }
+           4 pick abs twoborders u<= IF  lc sc n x y w h (drawshadow
+           ELSE
                 n IF  lc    sc n         x y w h (drawshadow
                       lc 2+? sc 2+? n 0< 2* 1+
                                          x y w h (drawshadow
-                THEN }
+                THEN
            THEN ;
-[IFDEF] x11 : focus  dpy self 0= ?EXIT
+[defined] x11 [IF] : focus  dpy self 0= ?EXIT
           dpy xrc self 0= ?EXIT dpy xrc ic @ 0= ?EXIT
           xywh nip + dpy trans' swap  spot w!+ w!
           0 XNSpotLocation spot 0 XVaCreateNestedList_1 >r
@@ -109,8 +110,13 @@ simple class drag
 how:    : click  toggle ;
 class;
 
+[defined] alias [IF]
 ' :[ alias R[  immediate restrict
 ' :[ alias M[  immediate restrict
+[ELSE]
+    synonym R[ :[
+    synonym M[ :[
+[THEN]
 : ]R  postpone ]: rep    postpone new ;      immediate restrict
 : ]M  postpone ]: drag   postpone new ;      immediate restrict
 
@@ -121,13 +127,13 @@ public: cell var shape          cell var image
         method draw-at
 how:    : init ( file len -- ) super init  assign ;
         : dispose-image ( -- )
-[IFDEF] x11
+[defined] x11 [IF]
           shape @ ?dup IF screen xrc dpy @ swap XFreePixmap  THEN
           image @ ?dup IF screen xrc dpy @ swap XFreePixmap  THEN
  [THEN]   shape off image off ;
         : assign ( file len -- )  dispose-image
           read-icon  h ! w !
-[IFDEF] win32  2 0 DO  swap  screen xrc dc @
+[defined] win32 [IF]  2 0 DO  swap  screen xrc dc @
           CreateCompatibleDC tuck SelectObject drop  LOOP
 [THEN]    shape ! image ! ;
 
@@ -137,7 +143,7 @@ how:    : init ( file len -- ) super init  assign ;
           0 0 xywh 2swap 2drop r> r> shape @ image @ ;
         : draw  xywh 2drop draw-at dpy mask ;
 class;
-[IFDEF] x11
+[defined] x11 [IF]
 xresource implements
         : set-tile ( x y pixmap -- )  \ -1 cur-color !
           icon-pixmap with image @ endwith
@@ -158,7 +164,7 @@ how:    : init ( ficon -- )  super init assign ;
         : draw   xywh defocuscol @ @ dpy box
           xywh 2drop picture draw-at dpy mask ;
 class;
-[IFDEF] x11
+[defined] x11 [IF]
 icon-pixmap class memory-pixmap
 how:    : assign ( data w h -- )  dispose-image
           2dup * pixels -rot
@@ -317,7 +323,7 @@ public: defer drawer            defer pixel
 
 \ canvas                                               22jun02py
 how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
-         >callback IS drawer down &360 coord ! $0D030C color ! ;
+         >callback IS drawer down #360 coord ! $0D030C color ! ;
        : pixel, xp 2@ p+ 2dup xp 2! wextend swap wextend pixel ;
         : dx+ ( d -- n )  dx @ extend d+ swap dup dx ! 0< - ;
         : dy+ ( d -- n )  dy @ extend d+ swap dup dy ! 0< - ;
@@ -376,7 +382,7 @@ class;
 
 \ Canvas helper words                                  04jun08py
 
-[IFDEF] x11
+[defined] x11 [IF]
     : col' ( -- addr )  screen xrc colarray @ @ ;
     | Variable rgb'
     
@@ -388,7 +394,7 @@ class;
     : color! ( rgb n -- )  >r
 	rgb' @  Colortable r@ cells + !  col' r@ cells + ! r> ;
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
     : brushs'  screen xrc colarray @ @ ;
     : pens'    screen xrc penarray @ @ ;
     : rgbs'    screen xrc rgbarray @ @ ;

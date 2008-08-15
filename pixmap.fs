@@ -6,7 +6,7 @@
 \ \needs xconst import xconst
 \ xconst also
 
-also dos also [IFDEF] x11  xpm also  [THEN]
+also dos also [defined] x11 [IF]  xpm also  [THEN]
 \ minos also forth
 
 : pixels   dup 2* + ;   macro
@@ -18,7 +18,7 @@ also dos also [IFDEF] x11  xpm also  [THEN]
 [ELSE]  : t@  @ 8 >> $FFFFFF and ; macro
 [THEN]
 
-[IFDEF] x11    
+[defined] x11 [IF]    
 Create pixmap-format here sizeof XPixmapFormatValues
        dup allot erase
 Create bitmap-format here sizeof XPixmapFormatValues
@@ -41,7 +41,7 @@ Create bitmap-format here sizeof XPixmapFormatValues
     XFree drop ;
 [THEN]
 
-[IFDEF] win32 
+[defined] win32 [IF] 
 Variable pixel-bits
 
 : get-pixmap-format ( -- )
@@ -82,7 +82,7 @@ Create trigger
     dpy ImageByteOrder 0= IF data size &24 / <>.8  THEN
     2drop drop } ;
 
-[IFDEF] old_trans.8
+[defined] old_trans.8 [IF]
 Code cs+!  ( n addr -- )
     DX pop  DL AX ) add
     b IF  DL DL test 0>=  IF  .b $FF # AX ) mov  THEN
@@ -182,7 +182,7 @@ Create colcorrect 3 allot
 
 Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
 
-[IFDEF] x11
+[defined] x11 [IF]
 : pixmap-bits ( -- n )
   pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >> ;
 
@@ -203,7 +203,7 @@ Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
       img XImage data off  img XDestroyImage
       pix w h } } ;
 
-[IFDEF] has-png  include png.fs [THEN]
+[defined] has-png [IF]  include png.fs [THEN]
 
 : readP6 ( fd w h -- pixmap w h )
     { fd w h |
@@ -238,7 +238,7 @@ Create values sizeof XGCValues allot
           pix w h } } } ;
 [THEN]
 
-[IFDEF] win32
+[defined] win32 [IF]
 Create bminfohead  sizeof BITMAPINFOHEADER allot
 Create bminfo      sizeof BITMAPINFOHEADER allot  0 , $FFFFFF ,
 sizeof BITMAPINFOHEADER dup bminfohead ! bminfo !
@@ -327,7 +327,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     IF  2drop r@ read-P4 r> close-file throw  EXIT  THEN
     2drop r> close-file true abort" Unsupported format" throw ;
 
-[IFDEF] x11
+[defined] x11 [IF]
 : fix-color { shape pixmap w h |
     screen drawable' nip 4 XSetFunction drop
     screen drawable' nip
@@ -338,7 +338,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     } ;
 [THEN]
 
-[IFDEF] win32
+[defined] win32 [IF]
 | : >gc ( win -- gc )
      screen xrc dc @ CreateCompatibleDC tuck SelectObject drop ;
 $00BB0226 Value :fixand
@@ -366,7 +366,7 @@ $00BB0226 Value :fixand
 
 \ read Xpm icons                                       30jul97py
 
-[IFDEF] x11
+[defined] x11 [IF]
 
 Create Xpmattribs sizeof XpmAttributes allot
         XpmSize XpmReturnPixels + \ XpmColormap +
@@ -402,11 +402,11 @@ Variable icon-base
     IF  nip nip  true  ELSE  drop false  THEN ;
 
 : (read-icon ( addr u -- pixmap1 pixmap2 w h )
-[IFDEF] read-png
+[defined] read-png [IF]
     s" .png" suffix? IF  read-png  EXIT  THEN
 [THEN]
     s" .icn" suffix? IF  read-icn  EXIT  THEN
-[IFDEF] x11
+[defined] x11 [IF]
     s" .xpm" suffix? IF  read-xpm  EXIT  THEN
 [THEN]
     s" .ppm" suffix? IF  read-ppm  EXIT  THEN
@@ -427,4 +427,4 @@ constant xh constant xw constant xshape constant xpixmap
 : xpm 0 0  xw xh  0 0 xshape xpixmap term dpy mask ;
 [THEN]
 
-[IFDEF] x11   toss  [THEN]  toss toss
+[defined] x11 [IF]   toss  [THEN]  toss toss

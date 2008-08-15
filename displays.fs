@@ -174,9 +174,7 @@ how:    : dispose  clicks HandleOff
           x @ y @ swap resize ;
         : geometry? ( -- w h )  w @ h @ ;
         : transback ;    : trans ;   : trans' ;
-\ [defined] VFXFORTH 0= [IF] \ !!!FIXME!!!
         : set-rect ( o -- )  bind pointed ;
-\ [THEN]
 
 \ Display                                              18jul99py
 
@@ -216,12 +214,13 @@ how:    : dispose  clicks HandleOff
           IF  dup cells Pixmaps + @  ELSE  0  THEN ?dup
           IF    nip  tx @ ty @ rot xrc set-tile
           ELSE  xrc color xrc set-color  THEN ;
+        : set-linewidth ( n -- ) >r
+	  drawable' nip r> 0 0 1 XSetLineAttributes drop ;
         : set-cursor ( n -- )
           cur-cursor @ over = IF  drop  EXIT  THEN
           dup cur-cursor !
-          xrc cursor drawable' drop rot XDefineCursor drop ;
-        : set-linewidth ( n -- ) >r
-	  drawable' nip r> 0 0 1 XSetLineAttributes drop ;
+	  xrc cursor drawable' drop rot XDefineCursor drop
+      ;
 
 \ Display                                              21aug99py
 
@@ -612,13 +611,13 @@ how:    : dispose  clicks HandleOff
           xev XSelectionEvent property off
           SelectionNotify xev XSelectionEvent type !
           xrc dpy @ event XSelectionRequestEvent target @
-          XGetAtomName >len  BEGIN \ output push display
+          XGetAtomName >len  1 0 DO \ output push display
           2dup s" STRING"  str= IF  string8-request LEAVE  THEN
       2dup s" UTF8_STRING" str= IF  string-request  LEAVE  THEN
           2dup s" TARGETS" str= IF  target-request  LEAVE  THEN
           2dup s" COMPOUND_TEXT" str=
                                 IF  compound-request LEAVE THEN
-          DONE  ( 2dup type cr ) 2drop
+          LOOP  ( 2dup type cr ) 2drop
 
 \ Display                                              07jan05py
 
@@ -837,7 +836,12 @@ class;
 displays ptr screen
 
 [defined]  x11 [IF]
-: screen-event  ( -- )  0 screen get-event ;
+    [defined] VFXFORTH [IF]
+	: (screen-event  ( -- )  0 screen get-event ;
+	' (screen-event IS screen-event
+    [ELSE]
+	: screen-event  ( -- )  0 screen get-event ;
+    [THEN]
 [THEN]
 
 [defined]  win32 [IF]
@@ -846,9 +850,11 @@ displays ptr screen
 
 \ font implementation                                  21aug99py
 
+[defined] VFXFORTH 0= [IF] \ !!!FIXME VFX: confuses VFX
 font implements
         : display  >r color @
           r@ displays with  set-color  endwith
           addr @ u @ 2swap r> draw ;
 class;
+[THEN]
 

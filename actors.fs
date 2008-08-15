@@ -42,7 +42,12 @@ how:    : init ( o state xtset xtreset -- )
         : fetch ( -- flag )  set? @ ;
         : store ( flag -- )  set? !
           set? @ IF  do-set  ELSE  do-reset  THEN  @
-          called send ;
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+      ;
         : click  dup 0= IF  2drop 2drop  EXIT  THEN
           toggle  caller >released  drop ;
 class;
@@ -53,7 +58,13 @@ actor class toggle-var
 public: cell var addr           cell var xt
 how:    : init ( o var xt -- ) xt ! assign super init ;
          : fetch ( -- n )  addr @ @ ;
-        : store ( n -- )  addr @ ! xt @ called send ;
+        : store ( n -- )  addr @ ! xt @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
         : assign ( addr -- )  addr ! ;
 class;
 toggle-var class toggle-num
@@ -61,7 +72,13 @@ public: cell var num
 how:    : assign ( o num var -- )  super assign num ! ;
         : !if ( n num addr -- )  rot IF  !  ELSE  nip on  THEN ;
         : fetch ( -- flag ) num @ addr @ @ = ;
-        : store ( n -- )  num @ addr @ !if xt @ called send ;
+        : store ( n -- )  num @ addr @ !if xt @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 \ toggle bit                                           05mar07py
@@ -71,7 +88,13 @@ public: cell var bit
 how:    : fetch ( -- n )  addr @ bit @ bit@ ;
         : store ( n -- )  >r addr @ bit @
           r> IF  +bit  ELSE  -bit  THEN
-          xt @ called send ;
+          xt @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
         : assign ( addr bit -- ) bit ! addr ! ;
 class;
 
@@ -81,15 +104,33 @@ actor class toggle-state
 public: cell var do-store       cell var do-fetch
 how:    : init ( o xtstore xtfetch -- )
           do-fetch ! do-store ! super init ;
-        : fetch ( -- x1 .. xn ) do-fetch @ called send ;
-        : store ( x1 .. xn -- ) do-store @ called send ;
+        : fetch ( -- x1 .. xn ) do-fetch @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
+        : store ( x1 .. xn -- ) do-store @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 actor class simple
 public: cell var do-it
 how:    : init ( o xt -- ) do-it ! super init ;
         : fetch 0 ;
-        : store do-it @ called send drop ;
+        : store do-it @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ drop ;
 class;
 
 \ actor                                                25sep99py
@@ -99,7 +140,13 @@ class;
 simple class click
 how:    : click  store ;
         : fetch ;
-        : store  do-it @ called send ;
+        : store  do-it @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 simple class data-act
@@ -115,14 +162,26 @@ public: cell var max
 how:    : init ( o do-store do-fetch max -- )
           assign super init ;
         : assign ( max -- )  max ! ;
-        : fetch  max @ do-fetch @ called send ;
+        : fetch  max @ do-fetch @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 scale-act class slider-act
 public: cell var step
 how:    \ init ( o do-store do-fetch max step -- )
         : assign  step ! super assign ;
-        : fetch  max @ step @ do-fetch @ called send ;
+        : fetch  max @ step @ do-fetch @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 \ actor                                                12apr98py
@@ -145,23 +204,53 @@ class;
 scale-var class scale-do
 public: cell var action
 how:    : init ( o n max xt -- ) action ! super init ;
-        : store  super store pos @ action @ called send ;
+        : store  super store pos @ action @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 
 slider-var class slider-do
 public: cell var action
 how:    : init ( o n max step xt -- ) action ! super init ;
-        : store  super store pos @ action @ called send ;
+        : store  super store pos @ action @
+[defined] VFXFORTH [IF]
+          called self >o execute o>
+[ELSE]
+	  called send
+[THEN]
+ ;
 class;
 
 \ actor simplification                                 05mar07py
 
-' :[ alias S[                                immediate restrict
-' :[ alias DT[                               immediate restrict
-' :[ alias T[                                immediate restrict
-' :[ alias TS[                               immediate restrict
-' :[ alias CK[                               immediate restrict
+[defined] VFXFORTH [IF]
+    synonym S[ :[
+    synonym DT[ :[
+    synonym T[ :[
+    synonym TS[ :[
+    synonym CK[ :[
+    synonym SC[ :[
+    synonym SL[ :[
+    synonym ]T[ :[
+    synonym CP[ noop immediate
+    synonym ]CP noop immediate
+[ELSE]
+    ' :[ alias S[                                immediate restrict
+    ' :[ alias DT[                               immediate restrict
+    ' :[ alias T[                                immediate restrict
+    ' :[ alias TS[                               immediate restrict
+    ' :[ alias CK[                               immediate restrict
+    ' :[ alias SC[                               immediate restrict
+    ' :[ alias SL[                               immediate restrict
+    ' :[ alias ]T[                               immediate restrict
+    ' noop Alias CP[ immediate
+    ' noop Alias ]CP immediate
+[THEN]
 : ]S  postpone ]: simple postpone new ;      immediate restrict
 : ]DT postpone ]: data-act postpone new ;    immediate restrict
 : ]T  postpone ]: toggle postpone new ;      immediate restrict
@@ -174,18 +263,14 @@ class;
 
 \ other simplifications                                05mar07py
 : C[ ;                                       immediate restrict
-' :[ alias SC[                               immediate restrict
-' :[ alias SL[                               immediate restrict
 : ]SC  postpone ]: scale-do postpone new ;   immediate restrict
 : ]SL  postpone ]: slider-do postpone new ;  immediate restrict
 : TV[  ;                                     immediate restrict
 : TB[  ;                                     immediate restrict
 : TN[  ;                                     immediate restrict
-' :[ alias ]T[                               immediate restrict
 : ]TV  postpone ]: toggle-var postpone new ; immediate restrict
 : ]TB  postpone ]: toggle-bit postpone new ; immediate restrict
 : ]TN  postpone ]: toggle-num postpone new ; immediate restrict
-' noop Alias CP[ immediate      ' noop Alias ]CP immediate
 : DF[ postpone dup postpone >o ;             immediate restrict
 : ]DF postpone o> ;                          immediate restrict
 

@@ -1,7 +1,6 @@
-
 \ X fonts                                              07dec04py
 
-[IFDEF] x11
+[defined] x11 [IF]
 font class X-font
 public: cell var name-string
         cell var id
@@ -26,7 +25,7 @@ how:    : assign ( addr u -- )  name-string $!
         | Variable dir_r
         : size ( addr u -- w h )  id @ -rot
           dir_r font_a font_d text_r
-	    [IFDEF] has-utf8' \ incomplete
+	    [defined] has-utf8' [IF] \ incomplete
 		maxascii $80 =
 		IF  Xutf8TextExtents  ELSE  XTextExtents  THEN
 	    [ELSE]
@@ -42,7 +41,7 @@ how:    : assign ( addr u -- )  name-string $!
         | Create text_i here sizeof XTextItem dup allot erase
         : draw ( addr u x y dpy -- )
 	    >r
-	    [IFDEF] has-utf8
+	    [defined] has-utf8 [IF]
 		maxascii $80 = IF  fontset @  ELSE
 		    id @ XFontStruct fid @  THEN
 	    [ELSE]
@@ -53,7 +52,7 @@ how:    : assign ( addr u -- )  name-string $!
 	    ascent @ +
 	    r> displays with
 	    2>r drawable' 2r> text_i 1
-	    [IFDEF] has-utf8
+	    [defined] has-utf8 [IF]
 		maxascii $80 =
 		IF  Xutf8DrawText  ELSE  XDrawText  THEN
 	    [ELSE]
@@ -78,6 +77,7 @@ how:    : size ( addr u -- w h )  2/ id @ -rot
 
 \ X fonts 16 bit                                       26may02py
 
+[defined] VFXFORTH 0= [IF] \ !!!FIXME VFX: confuses VFX
         : draw ( addr u x y dpy -- )
           >r id @ XFontStruct fid @ text_i XTextItem font !
           2swap 2/ swap text_i XTextItem chars 2!
@@ -85,6 +85,7 @@ how:    : size ( addr u -- w h )  2/ id @ -rot
           r> displays with
 	    2>r drawable' 2r> text_i 1 XDrawText16
           endwith ;
+[THEN]
 class;
 
 : new-x-font16 ( -- font ) x-font16 new ;
@@ -94,7 +95,7 @@ class;
 
 \ win-font                                             28jul07py
 
-[IFDEF] win32
+[defined] win32 [IF]
 font class win-font
 public: cell var name-string
         cell var id
