@@ -194,3 +194,8 @@ Variable kbshift
 \ compile only
 
 : restrict ;
+
+\ loops
+
+: FOR  0 postpone Literal postpone swap postpone DO ; immediate
+: NEXT  -1 postpone Literal postpone +LOOP ; immediate

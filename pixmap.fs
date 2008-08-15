@@ -34,7 +34,7 @@ Create bitmap-format here sizeof XPixmapFormatValues
         dup 1 =
         IF  I bitmap-format sizeof XPixmapFormatValues move  THEN
         screen xrc depth @ I XPixmapFormatValues depth @ =
-        IF    &24 min pixmap-format XPixmapFormatValues bits_per_pixel @ >
+        IF    #24 min pixmap-format XPixmapFormatValues bits_per_pixel @ >
               IF  I pixmap-format sizeof XPixmapFormatValues move  THEN
         ELSE  drop  THEN
         sizeof XPixmapFormatValues +LOOP
@@ -67,7 +67,7 @@ Create trigger
         $3000 , $B000 , $1000 , $9000 ,
         $F000 , $7000 , $D000 , $5000 ,
 
-: trans.1  { data size line dpy |
+: trans.1  { data size line dpy }
     0 data 0  data size bounds ?DO
         2 pick
         I line bounds ?DO
@@ -79,8 +79,8 @@ Create trigger
             3 +LOOP
         drop rot 4+ $F and -rot
         line +LOOP
-    dpy ImageByteOrder 0= IF data size &24 / <>.8  THEN
-    2drop drop } ;
+    dpy ImageByteOrder 0= IF data size #24 / <>.8  THEN
+    2drop drop ;
 
 [defined] old_trans.8 [IF]
 Code cs+!  ( n addr -- )
@@ -90,7 +90,7 @@ Code cs+!  ( n addr -- )
     THEN  AX pop
     Next end-code macro :dx :ax T&P
 
-: trans.8  { data size line dpy |
+: trans.8  { data size line dpy }
     data  data size bounds ?DO
         I c@+ c@+ c@ rgb>
         dup cells Colortable + c@+ c@+ c@
@@ -98,7 +98,7 @@ Code cs+!  ( n addr -- )
         I 1+ c@ swap -  dup 2/ dup  I 4 + cs+! - I line + 1+ cs+!
         I    c@ swap -  dup 2/ dup  I 3 + cs+! - I line +    cs+!
         screen xrc color  swap c!+
-    3 +LOOP  drop } ;
+    3 +LOOP  drop ;
 
 [ELSE]
 
@@ -131,11 +131,12 @@ Create colcorrect 3 allot
         cells Colortable + 3 bounds DO  rot I c@ -  LOOP
     LOOP  swap rot colcorrect c!+ c!+ c! ;
 
-: trans.8  { data size line dpy |  size 3 / line 3 / { size/3 line/3 |
-    size/3 NewHandle dup @ dup size/3 + { dend |
+: trans.8 ( data size line dpy -- )
+    2 pick 3 / 2 pick 3 / 0 0 0 0 { data size line dpy size/3 line/3 dend K K' J' }
+    size/3 NewHandle dup @ dup size/3 + to dend
     colcorrect 3 erase
-    data size bounds ?DO
-        line 0 ?DO
+    data size bounds over to K' ?DO  I to K
+        line dup to J' 0 ?DO
             framebuf dup $300 erase
             $10 0 DO
                 K J + I line * + dup K' <
@@ -157,38 +158,47 @@ Create colcorrect 3 allot
         line/3 $F * +
         line $10 * +LOOP  drop
     dup @ data size/3 move
-    DisposHandle } } } ;
+    DisposHandle ;
 
 [THEN]
 
-: trans.16   { data size line dpy |
+: trans.16   { data size line dpy }
     data  data size bounds ?DO
         I c@+ c@+ c@
              3 >>
         swap 3 << $07E0 and or
         swap 8 << $F800 and or
-        swap w!+  3 +LOOP  drop } ;
+        swap w!+  3 +LOOP  drop ;
 
 : trans.24 ( data size line dpy -- ) nip
     ImageByteOrder 0= IF  <>.24  ELSE  2drop  THEN ;
 
-: trans.32 ( data size line dpy -- ) nip { data size dpy |
+: trans.32 ( data size line dpy -- ) nip { data size dpy }
     size 3 / 1-  dpy ImageByteOrder 0=
     IF
         FOR  0 data I pixels + c@+ c@+ c@ data I 4* + c!+ c!+ c!+ c!  NEXT
     ELSE
         FOR  data I pixels + t@ data I 4* + !  NEXT
-    THEN } ;
+    THEN ;
 
-Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
-
+Create trans
+[defined] T] [IF]
+    T] trans.1 trans.8 trans.16 trans.24 trans.32 [
+[ELSE]
+    ' trans.1 ,
+    ' trans.8 ,
+    ' trans.16 ,
+    ' trans.24 ,
+    ' trans.32 ,
+[THEN]
+    
 [defined] x11 [IF]
 : pixmap-bits ( -- n )
   pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >> ;
 
 : create-pixmap ( data size w h -- pixmap w h )
-  pixmap-bits screen xrc dpy @
-  { data size w h bits dpy |
+  pixmap-bits screen xrc dpy @  0 0
+  { data size w h bits dpy img pix }
     data size w pixels dpy trans bits cells + perform
     dpy dup dup DefaultScreen DefaultVisual
     pixmap-format XPixmapFormatValues depth @
@@ -198,44 +208,44 @@ Create trans T] trans.1 trans.8 trans.16 trans.24 trans.32 [
     w bits * XCreateImage
     dpy screen xwin @ w h
     pixmap-format XPixmapFormatValues depth @ XCreatePixmap
-    { img pix |
-      screen drawable' nip pix swap img 0 0 0 0 w h XPutImage
-      img XImage data off  img XDestroyImage
-      pix w h } } ;
+    to pix to img
+    screen drawable' nip pix swap img 0 0 0 0 w h XPutImage
+    img XImage data off  img XDestroyImage
+    pix w h ;
 
 [defined] has-png [IF]  include png.fs [THEN]
 
 : readP6 ( fd w h -- pixmap w h )
-    { fd w h |
-      w pixels h * w pixels h $10 + -$10 and *
-      w pixmap-bits * h $10 + -$10 and * max cell+ dup NewPtr
-      tuck swap erase
-      { size data |
-        data size fd read-file throw drop
-        data size w h create-pixmap
-        data DisposPtr } } ;
+    0 0 { fd w h size data }
+    w pixels h * w pixels h $10 + -$10 and *
+    w pixmap-bits * h $10 + -$10 and * max cell+ dup NewPtr
+    tuck swap erase
+    to data to size
+    data size fd read-file throw drop
+    data size w h create-pixmap
+    data DisposPtr ;
 
 Create values sizeof XGCValues allot
 
 : readP4.1 ( fd w h -- pixmap )
-    { fd w h |
-      w bits h * dup NewPtr  screen xrc dpy @
-      { size data dpy |
-        data size fd read-file throw drop
-        dpy BitmapBitOrder 0= IF  data size <>.8  THEN
-	dpy dup dup DefaultScreen DefaultVisual
-	bitmap-format XPixmapFormatValues depth @
-	XYPixmap 0 data
-	w h bitmap-format XPixmapFormatValues scanline_pad @
-	w bits  XCreateImage
-	dpy screen xwin @ w h
-        bitmap-format XPixmapFormatValues depth @ XCreatePixmap
-        { img pix |
-          dpy pix 2dup 0 values XCreateGC dup >r
-          img 0 0 0 0 w h XPutImage
-          dpy r> XFreeGC
-          img XImage data off  img XDestroyImage   data DisposPtr
-          pix w h } } } ;
+    0 0 0 0 0 { fd w h size data dpy img pix }
+    w bits h * dup NewPtr  screen xrc dpy @
+    to dpy to data to size
+    data size fd read-file throw drop
+    dpy BitmapBitOrder 0= IF  data size <>.8  THEN
+    dpy dup dup DefaultScreen DefaultVisual
+    bitmap-format XPixmapFormatValues depth @
+    XYPixmap 0 data
+    w h bitmap-format XPixmapFormatValues scanline_pad @
+    w bits  XCreateImage
+    dpy screen xwin @ w h
+    bitmap-format XPixmapFormatValues depth @ XCreatePixmap
+    to pix to img
+    dpy pix 2dup 0 values XCreateGC dup >r
+    img 0 0 0 0 w h XPutImage
+    dpy r> XFreeGC
+    img XImage data off  img XDestroyImage   data DisposPtr
+    pix w h ;
 [THEN]
 
 [defined] win32 [IF]
@@ -245,22 +255,22 @@ sizeof BITMAPINFOHEADER dup bminfohead ! bminfo !
 1      bminfo BITMAPINFOHEADER biPlanes w!
 BI_RGB bminfo BITMAPINFOHEADER biCompression w!
 0      bminfo BITMAPINFOHEADER biSizeImage w!
-&2952  bminfo BITMAPINFOHEADER biXPelsPerMeter w!
-&2952  bminfo BITMAPINFOHEADER biYPelsPerMeter w!
+#2952  bminfo BITMAPINFOHEADER biXPelsPerMeter w!
+#2952  bminfo BITMAPINFOHEADER biYPelsPerMeter w!
 0      bminfo BITMAPINFOHEADER biClrImportant w!
 1      bminfohead BITMAPINFOHEADER biPlanes w!
 BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 0      bminfohead BITMAPINFOHEADER biSizeImage w!
-&2952  bminfohead BITMAPINFOHEADER biXPelsPerMeter w!
-&2952  bminfohead BITMAPINFOHEADER biYPelsPerMeter w!
+#2952  bminfohead BITMAPINFOHEADER biXPelsPerMeter w!
+#2952  bminfohead BITMAPINFOHEADER biYPelsPerMeter w!
 0      bminfohead BITMAPINFOHEADER biClrImportant w!
 
 : expand-bits ( u1 u2 h addr -- )
-    { addr |
+    { addr }
     1- FOR
         over I * addr + over I * addr + 3 pick move
         dup I * addr + over 3 pick /string erase
-    NEXT 2drop } ;
+    NEXT 2drop ;
     
 : paligned ( -- )  3 + -4 and ;
 
@@ -280,7 +290,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
             w pixels dup paligned h data expand-bits
         THEN
 \       data size w pixels dpy trans bits cells + perform
-        w h &24 bminfo !bmheader
+        w h #24 bminfo !bmheader
         w h pixel-bits @ bminfohead !bmheader
 
         DIB_RGB_COLORS bminfo data CBM_INIT bminfohead
@@ -383,8 +393,9 @@ Create Xpmattribs sizeof XpmAttributes allot
 
 : read-xpm ( fd -- pixmap1 pixmap2 w h )
     dup >r filename set-attrib
-    >r 0 sp@ >r 0 sp@ >r Xpmattribs r> r> r>
-    screen xwin @ screen xrc dpy @ XpmReadFileToPixmap drop
+    >r 0 sp@ >r 0 sp@ >r
+    screen xrc dpy @ screen xwin @ Xpmattribs r> swap r> r> swap 2swap
+    XpmReadFileToPixmap drop
     Xpmattribs XpmAttributes width @
     Xpmattribs XpmAttributes height @
     r> close-file throw ;

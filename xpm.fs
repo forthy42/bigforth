@@ -4,16 +4,20 @@ Module Xpm
 
 also DOS
 
-legacy on
+legacy off
 
 also X11
 
 library libXpm libXpm.so.4  depends libX11
 
 previous
-previous
 
 base @ hex
+
+libXpm XpmReadFileToPixmap int int int int int int (int) XpmReadFileToPixmap             ( dpy d filename pixmap_r shapemask_r attribs -- n )
+
+legacy on
+previous
 
 0 libXpm XpmAttributesSize              XpmAttributesSize               ( -- n )
 5 libXpm XpmCreateBufferFromImage       XpmCreateBufferFromImage        ( attribs shapeimg img buffer_r dpy -- n )
@@ -41,7 +45,6 @@ base @ hex
 2 libXpm XpmReadFileToBuffer            XpmReadFileToBuffer             ( buffer_r filename -- n )
 2 libXpm XpmReadFileToData              XpmReadFileToData               ( data_r filename -- n )
 5 libXpm XpmReadFileToImage             XpmReadFileToImage              ( attribs shapeimage_r image_r filename dpy -- n )
-6 libXpm XpmReadFileToPixmap            XpmReadFileToPixmap             ( attribs shapemask_r pixmap_r filename d dpy -- n )
 3 libXpm XpmReadFileToXpmImage          XpmReadFileToXpmImage           ( info image filename -- n )
 2 libXpm XpmWriteFileFromBuffer         XpmWriteFileFromBuffer          ( buffer_r filename -- n )
 2 libXpm XpmWriteFileFromData           XpmWriteFileFromData            ( data_r filename -- n )
