@@ -31,6 +31,7 @@ synonym Patch Defer
 synonym << lshift
 synonym >> arshift
 synonym toss previous
+synonym extend s>d
 
 : cont >r ;
 : push r> swap dup @ >r >r cont r> r> swap ! ;
@@ -106,7 +107,9 @@ Variable (i)
 : !+  tuck ! cell+ ;
 
 : wextend dup $8000 and negate or ;
+: cextend dup $80 and negate or ;
 
+: cx@ c@ cextend ;
 : wx@ w@ wextend ;
 : wx@+ dup wx@ swap 2+ ;
 
@@ -153,6 +156,8 @@ $09 Constant #tab        $07 Constant #bell
 : ud/mod ( ud1 u2 -- urem udquot )  >r 0 r@ um/mod r> swap >r
                                     um/mod r> ;
 Synonym m/mod fm/mod
+: d*     ( ud1 ud2 -- udprod )      >r swap >r 2dup um*
+                                    2swap r> * swap r> * + + ;
 
 \ timer handling
 

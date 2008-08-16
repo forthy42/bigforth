@@ -383,7 +383,7 @@ Variable ob-interface
   dup 0= IF  0  ELSE  :method# + 2@  THEN  methods ! vars ! ;
 
 : (is ( addr -- )  bl word findo drop
-    dup defer? abort" not deferred!"
+    dup defer? 0= abort" OO: not deferred!"
     defer# + c@ state @
     IF    ^+, postpone !
     ELSE  ^ + !  THEN ;

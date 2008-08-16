@@ -143,7 +143,7 @@ how:    : init ( file len -- ) super init  assign ;
           0 0 xywh 2swap 2drop r> r> shape @ image @ ;
         : draw  xywh 2drop draw-at dpy mask ;
 class;
-[defined] x11 [IF]
+[defined] x11 [defined] VFXFORTH 0= and [IF] \ !!!FIXME: VFX confused
 xresource implements
         : set-tile ( x y pixmap -- )  \ -1 cur-color !
           icon-pixmap with image @ endwith

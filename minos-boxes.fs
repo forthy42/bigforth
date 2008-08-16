@@ -41,7 +41,7 @@ how:    : >box  'nil bind childs  'nil bind active
           REPEAT  drop rdrop ;
         : (dpy!  ALLCHILDS  dup dpy! ;
         : dpy! ( dpy -- )  dup bind dpy (dpy! drop
-          0. hglues 2!  0. vglues 2! ;
+          0, hglues 2!  0, vglues 2! ;
 
 \ combined widgets                                     28mar99py
 
@@ -71,7 +71,8 @@ how:    : >box  'nil bind childs  'nil bind active
 
 \ combined widgets                                     25mar99py
 
-          { n x y w h | n 0< IF  swap  THEN  { lc sc | n abs 0
+	  { lc sc n x y w h } n 0< IF  lc sc to lc to sc  THEN
+	  n abs 0
           ?DO  attribs c@ :notshadow and 0=
                IF  x I + y I + w I 2* - 1- 1
                                           lc I ?2b dpy box  THEN
@@ -84,7 +85,7 @@ how:    : >box  'nil bind childs  'nil bind active
                attribs c@ :nobshadow and 0=
                IF  x I + y h + I - 1- w I - 1
                                           sc I ?2b dpy box  THEN
-          LOOP } } ;
+          LOOP ;
 
 \ combined widgets                                     21mar00py
 
@@ -116,7 +117,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : hide     super hide ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
         : handle-key?  active handle-key? ;
-        : !resized  0. hglues 2!  0. vglues 2!  tab-step-off
+        : !resized  0, hglues 2!  0, vglues 2!  tab-step-off
           ALLCHILDS !resized ;
 
 \ combined widgets: event handling                     19oct99py
@@ -166,7 +167,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : >inc ( glue o inc -- glue' )
           dup 1 =   IF  2drop  EXIT  THEN
           2 pick 0= IF  2drop  EXIT  THEN
-          { o inc | o - dup negate inc mod + 0max o + } ;
+          { o inc } o - dup negate inc mod + 0max o + ;
 
 \ combined widgets                                     08apr00py
         : ?vfix  attribs c@ :vfix and 0= and ;
@@ -272,13 +273,13 @@ depth 1+ >r ['] draw catch depth r> <> or IF .class THEN
 
         : xinc  0 1  attribs c@ :flip and ?EXIT
           swap hskips+ swap
-          ALLCHILDS  xinc { mi o i |  i 1 <>
+          ALLCHILDS  xinc { mi o i }  i 1 <>
           IF    o +  mi i max
-          ELSE  hglue@ drop + mi  THEN } ;
+          ELSE  hglue@ drop + mi  THEN ;
         : yinc  0 1  attribs c@ :flip and ?EXIT
           swap vskips+ swap
-          ALLCHILDS  yinc { mi o i |  i 1 <>
-          IF  o +  mi i max  ELSE  mi  THEN } ;
+          ALLCHILDS  yinc { mi o i }  i 1 <>
+          IF  o +  mi i max  ELSE  mi  THEN ;
 class;
 
 \ vbox                                                 19dec99py
@@ -303,7 +304,7 @@ how:    : >hglue ( -- min glue ) 0 mi n @ 0<> and
           ALLCHILDS hglue maxglue ;
         : hskips+ ( n -- n' )
           hskip@ borderw cx@ abs xS * 2/ + 2* + ;
-        : hglue ( -- glue )  tab-step-off  0.
+        : hglue ( -- glue )  tab-step-off  0,
           BEGIN   2drop tabs 1- tab@ >r >r  >hglue
                   r> r> tabs 1- tab@ d= UNTIL
           over + >hmax  swap
@@ -347,13 +348,13 @@ depth 1+ >r ['] draw catch depth r> <> or IF .class THEN
 
         : yinc  0 1  attribs c@ :flip and ?EXIT
           swap vskips+ swap
-          ALLCHILDS  yinc { mi o i |  i 1 <>
+          ALLCHILDS  yinc { mi o i }  i 1 <>
           IF    o +  mi i max
-          ELSE  vglue@ drop +  mi  THEN } ;
+          ELSE  vglue@ drop +  mi  THEN ;
         : xinc  0 1  attribs c@ :flip and ?EXIT
           swap hskips+ swap
-          ALLCHILDS  xinc { mi o i |  i 1 <>
-          IF  o +  mi i max  ELSE  mi  THEN } ;
+          ALLCHILDS  xinc { mi o i }  i 1 <>
+          IF  o +  mi i max  ELSE  mi  THEN ;
 class;
 
 \ box management                                       08apr00py
@@ -385,7 +386,11 @@ class;
 : panel ( o -- o )  hskip vskip ;
 
 \ boxes with focus                                     21mar00py
-' noop Alias component immediate
+[defined] synonym [IF]
+    synonym component noop immediate
+[ELSE]
+    ' noop Alias component immediate
+[THEN]
 vbox class vabox
 how:    : focus   ( -- )   attribs c@ :flip and
           0= IF  active focus    THEN ;
@@ -583,6 +588,7 @@ class;
 : fill-glue    0 1 *fill        *hglue new ;
 : space-glue   widget xN dup    *hglue new ;
 
+[defined] T] [IF]
 Create block-par
  T] indent-glue  null-glue  null-glue  fill-glue  space-glue [
 \   first-left   right      left       last-right space
@@ -592,6 +598,17 @@ Create left-par
  T] indent-glue  fill-glue  null-glue  fill-glue  space-glue [
 Create right-par
  T] fill-glue    null-glue  fill-glue  null-glue  space-glue [
+[ELSE]
+Create block-par
+ ' indent-glue , ' null-glue , ' null-glue , ' fill-glue , ' space-glue ,
+\   first-left   right      left       last-right space
+Create center-par
+ ' fill-glue , ' fill-glue , ' fill-glue , ' fill-glue , ' space-glue ,
+Create left-par
+ ' indent-glue , ' fill-glue , ' null-glue , ' fill-glue , ' space-glue ,
+Create right-par
+ ' fill-glue , ' null-glue , ' fill-glue , ' null-glue , ' space-glue ,
+[THEN]
 
 \ parbox                                               19mar00py
 
@@ -665,7 +682,7 @@ how:
       dpy self 0= IF  drop
          n' @ 0 ?DO  I items self  LOOP  n' @ hbox-new 1  EXIT
       THEN
-      dup 0 0  0 glue' { w w0 p q sp |
+      dup 0 0  0 glue' { w w0 p q sp }
       n' @ 0 ?DO
           I items hglue drop sp glueW + w0 <
           IF    sp I items self  p 2+ to p
@@ -674,7 +691,7 @@ how:
                 sp disposeW  2 glue' I items self  2 to p
                 over glueW over glueW + w swap - to w0
           THEN  4 glue' to sp
-      LOOP  sp disposeW  3 glue' p 1+ hbox-new q 1+ } ;
+      LOOP  sp disposeW  3 glue' p 1+ hbox-new q 1+ ;
 class;
 
 \ formating child boxes                                19mar00py

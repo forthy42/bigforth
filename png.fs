@@ -1,6 +1,7 @@
 \ portable network graphics
 
 [defined] VFXFORTH [IF]
+minos
 library: libpng12.so.0
 
     extern: void * png_create_read_struct( int , int , char * , int );
@@ -57,6 +58,7 @@ library: libpng12.so.0
     libc fdopen int ptr (ptr) fdopen
     libc _dup int (int) dup
     libc setjmp ptr (int) setjmp
+    previous
 [THEN]
 
 Variable user_error_ptr
@@ -111,20 +113,23 @@ Variable color_type
 \    png info png_read_end
     png info $7FFF -1 png_free_data ctype ;
 
-DOS
+also DOS
 
 $0095 Value pngflags
 
 : read-png-image ( fd -- addr w h color_type ) >r
-    r@ filehandle @ 0" r" fdopen dup
+    r@ [defined] filehandle [IF] filehandle @ [THEN]
+    0" r" fdopen dup
     init-png >r r@ rot png_init_io
     r@ over pngflags 0 png_read_png
     nip r>
     r> close-file throw
     swap png2array ;
 
-\needs xconst | import xconst
-\needs xrender include xrender.fs
+previous
+
+\ \needs xconst | import xconst
+\ \needs xrender include xrender.fs
 also memory also xconst also x11 also xrender also minos
 
 Create ARGB32
@@ -141,27 +146,34 @@ $18 w, \ alpha
 $FF w,
 0 ,    \ colormap - dummy
 
+: read-png-rgba ( img w h -- pixmap mask w h )
+    screen xrc dpy @ 0 0 0 0 0 { img w h dpy pixmap rgba32 mpict ximg gc }
+    dpy screen xwin @ w h $20 XCreatePixmap
+    ARGB32 @ 0= IF
+	dpy PictStandardARGB32 XRenderFindStandardFormat
+	ARGB32 $20 move  THEN
+    ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture
+    to mpict to rgba32 to pixmap
+    dpy dup dup DefaultScreen DefaultVisual $20 ZPixmap 0 img w h $20 w 4*
+    XCreateImage  dpy pixmap 0 0 XCreateGC to gc to ximg
+    dpy pixmap gc ximg 0 0 0 0 w h XPutImage
+    dpy gc XFreeGC
+    ximg XImage data off  ximg XDestroyImage   img DisposPtr
+    mpict -1 w h ;
+
+: read-png-rgb ( img w h -- pixmap mask w h )
+    pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >>
+    { data w h bits }
+    data w h * 3* <>.24
+    data w h * 3* w h
+    create-pixmap 0 -rot ;
+
+
 : read-png ( fd -- pixmap mask w h )
     read-png-image 4 and IF
-        screen xrc dpy @ { img w h dpy |
-        dpy screen xwin @ w h $20 XCreatePixmap
-        ARGB32 @ 0= IF
-            dpy PictStandardARGB32 XRenderFindStandardFormat
-            ARGB32 $20 move  THEN
-        ARGB32 2dup dpy -rot 0 0 XRenderCreatePicture { pixmap rgba32 mpict |
-	dpy dup dup DefaultScreen DefaultVisual $20 ZPixmap 0 img w h $20 w 4*
-        XCreateImage  dpy pixmap 0 0 XCreateGC { ximg gc |
-        dpy pixmap gc ximg 0 0 0 0 w h XPutImage
-        dpy gc XFreeGC
-        ximg XImage data off  ximg XDestroyImage   img DisposPtr
-        mpict -1 w h } } }
+	read-png-rgba
     ELSE
-        pixmap-format XPixmapFormatValues bits_per_pixel @ 3 >>
-        { data w h bits |
-        data w h * 3* <>.24
-        data w h * 3* w h
-        create-pixmap 0 -rot }
+	read-png-rgb
     THEN ;
     
-previous previous previous previous previous previous
-
+previous previous previous previous previous

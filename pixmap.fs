@@ -217,8 +217,8 @@ Create trans
 
 : readP6 ( fd w h -- pixmap w h )
     0 0 { fd w h size data }
-    w pixels h * w pixels h $10 + -$10 and *
-    w pixmap-bits * h $10 + -$10 and * max cell+ dup NewPtr
+    w pixels h * w pixels h $10 + $-10 and *
+    w pixmap-bits * h $10 + $-10 and * max cell+ dup NewPtr
     tuck swap erase
     to data to size
     data size fd read-file throw drop
@@ -315,9 +315,9 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 
 : read-format ( fd -- w h ) >r
     scratch $100
-    BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#
+    BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#'
            <>  UNTIL
-    0. 2swap >number 1 /string 0. 2swap >number 2drop drop nip
+    0, 2swap >number 1 /string 0, 2swap >number 2drop drop nip
     rdrop ;
 : read-P6 ( fd -- pixmap w h ) >r
     r@ read-format
@@ -338,25 +338,23 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     2drop r> close-file true abort" Unsupported format" throw ;
 
 [defined] x11 [IF]
-: fix-color { shape pixmap w h |
+: fix-color { shape pixmap w h }
     screen drawable' nip 4 XSetFunction drop
     screen drawable' nip
     1 pixmap-format XPixmapFormatValues depth @ << 1- XSetBackground
     screen drawable' nip pixmap shape rot
     0 0 w h 0 0 1 XCopyPlane
-    screen drawable' nip 3 XSetFunction drop
-    } ;
+    screen drawable' nip 3 XSetFunction drop ;
 [THEN]
 
 [defined] win32 [IF]
 | : >gc ( win -- gc )
      screen xrc dc @ CreateCompatibleDC tuck SelectObject drop ;
 $00BB0226 Value :fixand
-: fix-color { shape pixmap w h |
+: fix-color { shape pixmap w h }
     :fixand 0 0 pixmap >gc dup >r
       h w 0 0 shape >gc dup >r BitBlt drop r> DeleteDC drop
-      r> DeleteDC drop
-    } ;
+      r> DeleteDC drop ;
 [THEN]
 
 : read-icn ( fd -- pixmap1 pixmap2 w h ) >r
@@ -391,14 +389,24 @@ Create Xpmattribs sizeof XpmAttributes allot
     $8000 Xpmattribs XpmAttributes blue_closeness !
     1 Xpmattribs XpmAttributes alloc_close_colors ! ;
 
-: read-xpm ( fd -- pixmap1 pixmap2 w h )
-    dup >r filename set-attrib
-    >r 0 sp@ >r 0 sp@ >r
-    screen xrc dpy @ screen xwin @ Xpmattribs r> swap r> r> swap 2swap
-    XpmReadFileToPixmap drop
-    Xpmattribs XpmAttributes width @
-    Xpmattribs XpmAttributes height @
-    r> close-file throw ;
+[defined] VFXFORTH [IF]
+    : read-xpm ( addr -- pixmap1 pixmap2 w h )
+	set-attrib
+	>r 0 sp@ >r 0 sp@ >r
+	screen xrc dpy @ screen xwin @ Xpmattribs r> swap r> r> swap 2swap
+	XpmReadFileToPixmap drop
+	Xpmattribs XpmAttributes width @
+	Xpmattribs XpmAttributes height @ ;
+[ELSE]
+    : read-xpm ( fd -- pixmap1 pixmap2 w h )
+	dup >r filename set-attrib
+	>r 0 sp@ >r 0 sp@ >r
+	screen xrc dpy @ screen xwin @ Xpmattribs r> swap r> r> swap 2swap
+	XpmReadFileToPixmap drop
+	Xpmattribs XpmAttributes width @
+	Xpmattribs XpmAttributes height @
+	r> close-file throw ;
+[THEN]
 [THEN]
 
 \ read icons                                           30jul97py
@@ -418,12 +426,22 @@ Variable icon-base
 [THEN]
     s" .icn" suffix? IF  read-icn  EXIT  THEN
 [defined] x11 [IF]
-    s" .xpm" suffix? IF  read-xpm  EXIT  THEN
+    s" .xpm" suffix? IF
+	[defined] VFXFORTH [IF]
+	    close-file throw icon-base $@ over + 0 swap c! read-xpm
+	[ELSE]
+	    read-xpm
+	[THEN]
+	EXIT  THEN
 [THEN]
     s" .ppm" suffix? IF  read-ppm  EXIT  THEN
     true abort" Unknown icon file format" ;
 
-Patch read-icon
+[defined] VFXFORTH [IF]
+    Defer read-icon
+[ELSE]
+    Patch read-icon
+[THEN]
 ' (read-icon IS read-icon
 
 0 [IF]
