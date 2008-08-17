@@ -8,8 +8,6 @@
     swap Create dup , +
     DOES> @ + ;
 
-: ?lit, ( -- ) state @ IF postpone Literal THEN ;
-  
 : struct ( -- length ) ' >body @ ;
 : sizeof ( -- length ) struct ?lit, ; immediate
 

@@ -616,12 +616,17 @@ how:
     : '       ( -- xt )  bl word findo drop
 	state @ IF  Fpostpone Literal  THEN ;
     : send    ( xt -- )  dup . execute ." Is send" ;
-    : postpone ( -- )  o@ add-order Fpostpone Fpostpone drop-order ;
+    : postpone ( -- )  voc# @
+	o@ add-order ^ Fpostpone Literal Fpostpone >o
+	Fpostpone Fpostpone  Fpostpone o>
+	drop-order voc# ! ;
     
     : with ( -- n )  voc# @
 	state @ oset? 0= and IF  Fpostpone >o  THEN
 	o@ add-order voc# ! false to oset? ;
-    : endwith ( n -- ) Fpostpone o> voc# @ drop-order voc# ! ;
+    : endwith ( n -- )
+	state @ oset? 0= and IF  Fpostpone o>  THEN
+	voc# @ drop-order voc# ! ;
 
     : implements
 	o@ add-order 1+ voc# ! also types o@ lastob !

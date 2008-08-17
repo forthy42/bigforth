@@ -38,6 +38,8 @@ synonym extend s>d
 
 : & ' >body state @ IF postpone Literal THEN ; immediate
 
+: 0>= 0< 0= ;
+: 0<= 0> 0= ;
 : u>= u< 0= ;
 : u<= u> 0= ;
 : @+ dup @ swap cell+ ;
@@ -187,6 +189,7 @@ Defer idle ' 2drop IS idle
 \ constant adders
 
 : 6+ 6 + ;
+: 3+ 3 + ;
 
 \ multitasker is needed
 
@@ -204,3 +207,47 @@ Variable kbshift
 
 : FOR  0 postpone Literal postpone swap postpone DO ; immediate
 : NEXT  -1 postpone Literal postpone +LOOP ; immediate
+
+\ digit?
+
+: toupper ( char -- char' )
+    dup [char] a - [ char z char a - 1 + ] Literal u<  bl and - ;
+
+: ?lit, ( n -- ) state @ IF postpone Literal THEN ;
+
+: ctrl    ( -- n )  char toupper $40 xor ?lit, ;
+                                            immediate
+
+: digit?   ( char -- digit true/ false ) \ gforth
+  toupper [char] 0 - dup 9 u> IF
+    [ char A char 9 1 + -  ] literal -
+    dup 9 u<= IF
+      drop false EXIT
+    THEN
+  THEN
+  dup base @ u>= IF
+    drop false EXIT
+  THEN
+  true ;
+
+Create bases  #10 c,  $10 c, %10 c, #10 c, 0 c,
+\             10      16     2      10     char
+: getbase  ( addr u -- addr' u' )  over c@ '#' - dup 5 u<
+  IF  bases + c@ base ! 1 /string  ELSE  drop  THEN ;
+: getsign  over c@ '-' = dup >r negate /string r> ;
+Defer char@ ' count IS char@
+: s>number  ( addr len -- d )  base push
+  getsign >r  getbase  base @ 0=
+  IF  over + swap char@ >r swap over - dup 0= >r 1 = >r
+      c@ ''' = r> and r> or dpl !  r> 0 rdrop  EXIT  THEN
+  dpl on  getsign r> xor >r  0 0 2swap
+  BEGIN  dup >r >number  dup r> =
+         IF  rdrop 2drop dpl off  EXIT  THEN
+         dup  WHILE  dup dpl ! over c@ -3 and ',' = 0=
+         IF  rdrop 2drop dpl off  EXIT  THEN  1 /string
+     dup 0= UNTIL  THEN  2drop r> IF  dnegate  THEN ;
+
+\ case?
+
+: case? ( n1 n2 -- n1 false / true )
+    over = dup IF nip THEN ;

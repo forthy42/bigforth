@@ -612,6 +612,7 @@ Create right-par
 
 \ parbox                                               19mar00py
 
+[defined] VFXFORTH 0= [IF] \ !!!FIXME: missing array operators
 vbox class parbox
 public:
     cell var glues
@@ -706,4 +707,5 @@ how:
     vabox :: keyed
     vabox :: handle-key?
 class;
+[THEN]
 

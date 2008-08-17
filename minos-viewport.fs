@@ -33,7 +33,7 @@ how:    : init  ( sx sy -- )  noback on  super init
         gadget :: delete
 
 \ viewport                                             11aug99py
-[IFDEF] x11
+[defined] x11 [IF]
         : create-pixmap ( -- )
           xwin @ IF  0 0 0 sp@ >r
 	      xrc dpy @ xwin @  dummy dup dup
@@ -76,7 +76,7 @@ how:    : init  ( sx sy -- )  noback on  super init
 
         : dpy!  bind dpy  xrc self IF  xrc dispose  THEN
           dpy xrc clone bind xrc  create-pixmap
-[IFDEF] x11     get-win xrc get-gc  [THEN]
+[defined] x11 [IF]     get-win xrc get-gc  [THEN]
           0 clip-rect  flags #draw +bit
           self child dpy!
           child hglue 2dup hglues 2! drop
@@ -103,17 +103,17 @@ how:    : init  ( sx sy -- )  noback on  super init
 \ viewport                                             27mar99py
 
         : clipxy ( x y d -- x' y' )  clipxywh
-          { d x y w h | x y p- swap
-                      w d + min d max swap
-                      h d + min d max  x y p+ } ;
+          { d x y w h } x y p- swap
+	    w d + min d max swap
+	    h d + min d max  x y p+ ;
         : clip  ( x y w h -- x y w h )
           >xyxy 2swap 0 clipxy 2swap -1 clipxy >xywh ;
 
         : !resized  super !resized  !steps ;
 
         : inclip? ( x y -- flag )  trans'
-          -$8000 $8000 within swap
-          -$8000 $8000 within and ;
+          $-8000 $8000 within swap
+          $-8000 $8000 within and ;
 
 \ viewport                                             17dec00py
 
@@ -168,14 +168,14 @@ how:    : init  ( sx sy -- )  noback on  super init
           IF  orgx @ over  orgx ! -  hstep @ *
               dup abs sw @ <
               IF  clipxywh 2over 2swap clipback
-                  { o x0 y0 x y w h |
+                  { o x0 y0 x y w h }
                   x o 0max + y  dpy transback
                   w o abs - h x o 0min - y
                   dpy get-win  dpy image \ dpy >exposed
                   h o abs 0  y y0 - 0max
                   o 0> IF  w + o -  THEN  x x0 - 0max +
-                  cliprec w!+ w!+ w!+ w! }
-              ELSE  drop  THEN  draw  0. cliprec 2!  THEN ;
+                  cliprec w!+ w!+ w!+ w!
+              ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
 
 \ viewport                                             02jan05py
 
@@ -183,14 +183,14 @@ how:    : init  ( sx sy -- )  noback on  super init
           IF  orgy @ over  orgy ! -  vstep @ *
               dup abs sh @ <
               IF  clipxywh 2over 2swap clipback
-                  { o x0 y0 x y w h |
+                  { o x0 y0 x y w h }
                   x y o 0max +  dpy transback
                   w h o abs - x y o 0min -
                   dpy get-win  dpy image \ dpy >exposed
                   o abs w 0    o 0> IF  h + o -  THEN
                   y y0 - 0max + x x0 - 0max
-                  cliprec w!+ w!+ w!+ w! }
-              ELSE  drop  THEN  draw  0. cliprec 2!  THEN ;
+                  cliprec w!+ w!+ w!+ w!
+              ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
         : 'hslide self ['] xpos! ['] hslide toggle-state new ;
         : 'vslide self ['] ypos! ['] vslide toggle-state new ;
 
@@ -266,15 +266,15 @@ how:    : init  ( sx sy -- )  noback on  super init
           hspos self  IF  hspos draw  THEN
           vspos self  IF  vspos draw  THEN ;
         : show-me  ( x y -- ) sw @ sh @
-          { x y w h |  y orgy @ vstep @ * - h u>= dup
+          { x y w h }  y orgy @ vstep @ * - h u>= dup
             IF  y h 2/ - vstep @ / ylegal ypos!  THEN
             x orgx @ hstep @ * - w u>= dup
             IF  x w 2/ - hstep @ / xlegal xpos!  THEN
-            or IF  slided  THEN  x y trans' dpy show-me } ;
+            or IF  slided  THEN  x y trans' dpy show-me ;
 
 \ viewport                                             02jan05py
 
-        : scroll  ( x y -- )  sw @ 4- sh @ 4- { x y w h |
+        : scroll  ( x y -- )  sw @ 4- sh @ 4- { x y w h }
           y orgy @ vstep @ * - dup
           0<    IF  drop y  ELSE
           h >=  IF  y h - orgy @ 1+ vstep @ * max BUT  THEN
@@ -284,7 +284,7 @@ how:    : init  ( sx sy -- )  noback on  super init
           w >=  IF  x w - orgx @ 1+ hstep @ * max BUT  THEN
                     hstep @ / xlegal xpos! true  ELSE false THEN
           or IF  slided moved!  THEN
-          x y trans' dpy scroll } ;
+          x y trans' dpy scroll ;
         : focus    child focus   ;
         : defocus  child defocus ;
 
@@ -389,7 +389,7 @@ how:    0 border-at v!
 
 \ Container object                                     14sep97py
 
-        : glue-off  0. hglues 2!  0. vglues 2!
+        : glue-off  0, hglues 2!  0, vglues 2!
           & viewport @ inner class?
           IF  & hviewport @ viewp class?  0=
               IF  childs hglue 2drop  childs vglue 2drop  THEN
@@ -536,9 +536,9 @@ how:    : init ( -- )
         : vglue ( -- glue )  xN 0 ;
         : draw ( -- )  shadedbox ;
         : moved ( x y -- )  2drop
-[IFDEF] x11
+[defined] x11 [IF]
           relation?  IF  XC_bottom_side  ELSE  XC_top_side  THEN
- [THEN] [IFDEF] win32  IDC_SIZENS  [THEN]
+ [THEN] [defined] win32 [IF]  IDC_SIZENS  [THEN]
           dpy set-cursor ^ dpy set-rect ;
 
 \ vsizer                                               27mar99py
@@ -587,9 +587,9 @@ how:    : init ( -- )
         : hglue ( -- glue )  xN 0 ;
         : vglue ( -- glue )  xN 1 *filll ;
         : moved ( x y -- )  2drop
-[IFDEF] x11
+[defined] x11 [IF]
           relation?  IF  XC_right_side  ELSE  XC_left_side  THEN
- [THEN] [IFDEF] win32  IDC_SIZEWE  [THEN]
+ [THEN] [defined] win32 [IF]  IDC_SIZEWE  [THEN]
           dpy set-cursor  ^ dpy set-rect ;
 
 \ hsizer                                               27mar99py
@@ -630,11 +630,11 @@ how:    : init ( -- )
 
 vrtsizer class vsizer
 how:    : drawxorline
-[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN]
+[defined] x11 [IF]    dpy drawable' nip 9 XSetFunction drop [THEN]
           x @ y @ vsized vsize @ vsize' @
           relation? IF  -  ELSE  swap -  THEN  -
           h @ 2/ + w @ 1 color @ 8 >> dpy box
-[IFDEF] x11    dpy drawable' nip 3 XSetFunction drop [THEN] ;
+[defined] x11 [IF]    dpy drawable' nip 3 XSetFunction drop [THEN] ;
 class;
 
 vrtsizer class vxrtsizer
@@ -645,11 +645,11 @@ class;
 
 hrtsizer class hsizer
 how:    : drawxorline
-[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN]
+[defined] x11 [IF]    dpy drawable' nip 9 XSetFunction drop [THEN]
           x @ hsized hsize @ hsize' @
           relation? IF  -  ELSE  swap -  THEN  -
           w @ 2/ + y @ 1 h @ color @ 8 >> dpy box
-[IFDEF] x11    dpy drawable' nip 9 XSetFunction drop [THEN] ;
+[defined] x11 [IF]    dpy drawable' nip 9 XSetFunction drop [THEN] ;
 class;
 
 hrtsizer class hxrtsizer

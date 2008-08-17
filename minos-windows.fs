@@ -18,14 +18,14 @@ how:    : xinc  child xinc ;
 
         Variable border-size
 
-[IFDEF] x11
+[defined] x11 [IF]
         Variable wm_delete_window
         : set-protocol ( -- )
           xrc dpy @ 0" WM_DELETE_WINDOW" 0 XInternAtom
           wm_delete_window !
 	  xrc dpy @ xwin @
 	  xrc dpy @ 0" WM_PROTOCOLS" 0 XInternAtom
-	  4 &32 1 wm_delete_window 1
+	  4 #32 1 wm_delete_window 1
 	  XChangeProperty drop ;
         :noname  event XClientMessageEvent data @
           wm_delete_window @ =  IF  close  THEN ;
@@ -96,7 +96,7 @@ how:    : xinc  child xinc ;
 [THEN]
 
 \ window                                               28jul07py
-[IFDEF] win32
+[defined] win32 [IF]
         : make-window ( n -- )   >r  x @ y @ d0=
           IF  $80000000 dup x ! y !  THEN
           0 xrc inst @ 0  r@ $80000000 and
@@ -130,17 +130,17 @@ how:    : xinc  child xinc ;
           child self  drop child dispose  self cleanup
           title $off
           xwin @  IF
-[IFDEF] x11           xrc ic @ dup IF  XDestroyIC  THEN  drop
+[defined] x11 [IF]           xrc ic @ dup IF  XDestroyIC  THEN  drop
                       xrc dpy @ xwin @ XDestroyWindow drop
 [THEN]
-[IFDEF] win32         xwin @ DestroyWindow drop
+[defined] win32 [IF]         xwin @ DestroyWindow drop
                       dpy handle-event
 [THEN]    THEN
           self dpy delete ?app super dispose ;
 
 \ window                                               09aug04py
 
-[IFDEF] x11
+[defined] x11 [IF]
         : show   ( -- )
           h @ w @ d0= IF  xywh resize THEN
           flags #hidden bit@  flags #hidden -bit  set-hints  \ dpy sync
@@ -152,7 +152,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               13nov99py
 
-[IFDEF] win32
+[defined] win32 [IF]
         : show   ( -- )  child show
           h @ w @ d0= IF  xywh resize THEN
           flags #hidden -bit   SWP_NOZORDER SWP_SHOWWINDOW or
@@ -167,9 +167,9 @@ how:    : xinc  child xinc ;
 \ window                                               01nov06py
 
         : hide ( -- )  flags #hidden +bit  child hide \ ?app
-[IFDEF] x11
+[defined] x11 [IF]
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
           SW_HIDE xwin @ ShowWindow drop  [THEN] ;
         : stop  up@ app !  F stop ;
         : delete ( addr addr' -- )  over self =
@@ -184,7 +184,7 @@ how:    : xinc  child xinc ;
         : decoration ( o -- o' )
           & viewport @ innerwin class?
           IF  sliderview new  THEN ;
-        : focus  [IFDEF] x11
+        : focus  [defined] x11 [IF]
           xrc ic @ dup IF  dup >r XNFocusWindow xwin @
 	                   XNClientWindow xwin @ 0
                            XSetICValues_2 drop
@@ -196,7 +196,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               25jan03py
 
-[IFDEF] x11
+[defined] x11 [IF]
         : get-event ( mask -- )  dpy get-event  flush-queue ;
         : handle-event ( -- )
           event XAnyEvent window @ xwin @ =
@@ -212,7 +212,7 @@ how:    : xinc  child xinc ;
 [THEN]
 
 \ window                                               29jul07py
-[IFDEF] win32
+[defined] win32 [IF]
         : .event base push hex cell+ @+ swap 4 .r
           @+ swap 5 .r @+ swap 9 .r @+ swap 9 .r @+ @ swap
           5 .r 5 .r cr ;
@@ -236,7 +236,7 @@ how:    : xinc  child xinc ;
           x @ y @ xinc gw * + yinc gh * + resize
           0 counter ! rw on  rh on
           x @ y @ xinc gw * + yinc gh * + resize }
-[IFDEF] win32  output push display ." "  [THEN] ;
+[defined] win32 [IF]  output push display ." "  [THEN] ;
         : geometry? ( -- w h )
           w @ xinc >r - r> /
           h @ yinc >r - r> / ;
@@ -245,7 +245,7 @@ how:    : xinc  child xinc ;
           0 clip-rect  child draw ;
 
 \ window                                               05oct07py
-[IFDEF] x11
+[defined] x11 [IF]
         Create 'textprop 0 , 0 , 8 , 1 ,
         : !title ( -- )  0 title $@ + c!
           0" MINOS" title $@ drop sp@
@@ -263,7 +263,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               29jul07py
 
-[IFDEF] win32
+[defined] win32 [IF]
         : !title ( -- )  title $@ >utf16 drop
           xwin @ SetWindowTextW drop ;
         : title!  ( addr u -- ) title $!  !title ;
@@ -294,13 +294,13 @@ how:    : xinc  child xinc ;
                  d= r> and  UNTIL ;
 
 \ window                                               19oct99py
-[IFDEF] x11
+[defined] x11 [IF]
         : re-size ( -- )
           rw @ rh @ w @ h @ d= 0= IF
               xrc dpy @ xwin @ w @ h @ XResizeWindow
           THEN ;
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
         : re-size ( -- )
           rw @ rh @ w @ h @ d= 0= IF
               1 h @ w @ 0 0
@@ -317,15 +317,15 @@ how:    : xinc  child xinc ;
 \          rw @ rh @  child-size?  d= 0=  IF  draw  THEN
           set-hints dpy sync  re-size ;
         : close  ( -- )  closing push closing @ closing on
-          IF    hide ['] dispose self &10 after schedule
+          IF    hide ['] dispose self #10 after schedule
           ELSE  innerwin close  THEN ;
 
 \ window                                               15jul01py
 
         : repos ( x y -- )   2dup y ! x !
-[IFDEF] x11   set-hints
+[defined] x11 [IF]   set-hints
           xrc dpy @ xwin @ 2swap XMoveWindow sync ; [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
           >r >r 0 h @ w @ r> r> swap
           xwin @ MoveWindow drop ;  [THEN]
         : resized  ( -- )  (resized counter @ ?EXIT  draw ;
@@ -393,24 +393,24 @@ how:    : init ( widget win -- )  xwin !  title off
           xwin @ xrc get-gc  0 set-font
           maxclicks 8* cell+ clicks 2dup Handle! @ swap erase ;
         : resize-win ( -- )  h @ w @ y @ x @ or or or 0= ?EXIT
-[IFDEF] win32  SWP_NOZORDER SWP_SHOWWINDOW or
+[defined] win32 [IF]  SWP_NOZORDER SWP_SHOWWINDOW or
           h @ w @ y @ x @
           owner @ IF  HWND_TOPMOST  ELSE  0  THEN
           xwin @ SetWindowPos drop  [THEN]
-[IFDEF] x11    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] ;
+[defined] x11 [IF]    xrc dpy @ xwin @ xywh XMoveResizeWindow  [THEN] ;
 
 \ event handler for sub-window                         20nov07py
         : show ( -- )  resize-win
-[IFDEF] win32  SWP_SHOWWINDOW xwin @ ShowWindow drop [THEN]
-[IFDEF] x11    xrc dpy @ xwin @ XMapWindow  [THEN] ;
+[defined] win32 [IF]  SWP_SHOWWINDOW xwin @ ShowWindow drop [THEN]
+[defined] x11 [IF]    xrc dpy @ xwin @ XMapWindow  [THEN] ;
         : dispose-it ( -- )  self cleanup
           self dpy get-dpy with dpy delete endwith
           title $off
           xrc dispose gadget :: dispose ;
         : dispose ( -- )
-[IFDEF] win32  xwin @ IF  xwin @ DestroyWindow drop  THEN
-          ['] dispose-it  self &20 after schedule ;  [THEN]
-[IFDEF] x11  dispose-it ;  [THEN]
+[defined] win32 [IF]  xwin @ IF  xwin @ DestroyWindow drop  THEN
+          ['] dispose-it  self #20 after schedule ;  [THEN]
+[defined] x11 [IF]  dispose-it ;  [THEN]
         : resize  h ! w ! y ! x !  resize-win ;
 
 \ event handler for sub-window                         30aug05py
@@ -425,19 +425,19 @@ how:    : init ( widget win -- )  xwin !  title off
 class;
 
 \ window without border                                12dec99py
-[IFDEF] win32   Variable owner-win  [THEN]
+[defined] win32 [IF]   Variable owner-win  [THEN]
 window class frame
 public: cell var map?           method set-dpys
         method grab             method ungrab
-        method handle [IFDEF] win32  displays ptr ?grab  [THEN]
+        method handle [defined] win32 [IF]  displays ptr ?grab  [THEN]
 how:    : make-window  ( attrib -- )
-[IFDEF] x11  mouse_cursor xrc cursor
+[defined] x11 [IF]  mouse_cursor xrc cursor
           xswa XSetWindowAttributes cursor !
           1 xswa XSetWindowAttributes override_redirect !
           1 xswa XSetWindowAttributes save_under !
           CWSaveUnder or CWOverrideRedirect or CWCursor or
 [THEN]
-[IFDEF] win32  owner-win @ owner ! owner-win off  $80000000 or
+[defined] win32 [IF]  owner-win @ owner ! owner-win off  $80000000 or
           WS_EX_TOPMOST or WS_EX_TOOLWINDOW or  [THEN]
           super make-window ;
 
@@ -451,7 +451,7 @@ how:    : make-window  ( attrib -- )
                           mouse 0 child clicked tuck <>
                           IF dup IF   child focus
                                  ELSE child defocus  THEN THEN
-                     THEN  dpy xrc fid &30 idle
+                     THEN  dpy xrc fid #30 idle
                  ELSE  click 2over child inside? dup >r
                        IF    child clicked
                        ELSE  hide 2drop 2drop
@@ -460,7 +460,7 @@ how:    : make-window  ( attrib -- )
 
 \ frame                                                09mar07py
 
-[IFDEF] x11
+[defined] x11 [IF]
         Variable grab-win       grab-win on
         : Xgrab ( win -- )  grab-win @ map? ! grab-win !
 	  xrc dpy @ grab-win @ 0
@@ -477,7 +477,7 @@ how:    : make-window  ( attrib -- )
 [THEN]
 
 \ frame                                                27jun02py
-[IFDEF] win32
+[defined] win32 [IF]
         : Wgrab ( win -- ) dup re-time  grab-key self bind ?grab
           SetCapture dup 0= or map? !  ^ F bind grab-key ;
         : grab ( -- )  xwin @ Wgrab ;
@@ -488,8 +488,8 @@ how:    : make-window  ( attrib -- )
           ELSE  ReleaseCapture drop  app-win @ re-time  THEN ;
  [THEN] : dispose ( -- )
           title $off
-[IFDEF] x11  xwin @ IF xrc dpy @ xwin @ XDestroyWindow drop THEN
- [THEN] [IFDEF] win32
+[defined] x11 [IF]  xwin @ IF xrc dpy @ xwin @ XDestroyWindow drop THEN
+ [THEN] [defined] win32 [IF]
           xwin @  IF  xwin @ DestroyWindow drop  THEN
  [THEN]   self dpy delete  displays :: dispose ;
 
@@ -520,7 +520,7 @@ class;
 
 minos
 
-&1000 Value tooltip-delay
+#1000 Value tooltip-delay
 
 actor class tooltip
 public: widget ptr tip          actor ptr feed
@@ -533,7 +533,7 @@ how:    : init ( actor tip -- )  bind tip  bind feed
 
 \ tool tips                                            07nov99py
         : show-tip ( -- )
-[IFDEF] win32  caller with widget dpy get-dpy endwith
+[defined] win32 [IF]  caller with widget dpy get-dpy endwith
                displays with xwin @ endwith owner-win ! [THEN]
           caller with widget dpy pointed self ^ =
               IF   0 widget dpy set-rect  THEN  endwith
@@ -541,17 +541,17 @@ how:    : init ( actor tip -- )  bind tip  bind feed
           IF  nip 0 swap  ELSE  drop 0  THEN  p+
           caller self widget with xN endwith dup p+
           caller self widget with dpy screenpos endwith p+
-[IFDEF] x11  caller with widget dpy get-win endwith  [THEN]
+[defined] x11 [IF]  caller with widget dpy get-win endwith  [THEN]
           tip self caller self widget with dpy self endwith
           screen self frame-tip new dup bind tip-frame
           frame-tip with s" tooltip" assign
-              [IFDEF] x11  set-parent  [THEN]  show focus
+              [defined] x11 [IF]  set-parent  [THEN]  show focus
           endwith ;
 
 \ tool tips                                            21sep07py
 
-        : enter  [IFDEF] x11  leave  [THEN]
-          [IFDEF] win32  tip-frame self ?EXIT  [THEN]
+        : enter  [defined] x11 [IF]  leave  [THEN]
+          [defined] win32 [IF]  tip-frame self ?EXIT  [THEN]
           ['] show-tip ^ tooltip-delay after screen schedule ;
         : toggle leave feed toggle ;
         : fetch  leave feed fetch ;
@@ -591,7 +591,7 @@ how:    : assign ( widget -- ) child self IF child dispose THEN
 
 \ menu-frame                                           09mar07py
         : popup ( [xwin] child -- flag )  >r
-[IFDEF] win32+  dpy get-dpy displays with xwin @ endwith
+[defined] win32+ [IF]  dpy get-dpy displays with xwin @ endwith
                 owner-win !   [THEN]
           r@ widget with dpy self endwith
           dpy screenpos  xywh  >r >r p+ r> r>
@@ -600,7 +600,7 @@ how:    : assign ( widget -- ) child self IF child dispose THEN
              >r  ( !resized ) 0 0 0 0 resize
              child with w @ h @ endwith
              r>  IF  submenu-vpos  ELSE  submenu-hpos  THEN
-             >r rot [IFDEF] x11 set-parent [ELSE] drop [THEN] r>
+             >r rot [defined] x11 [IF] set-parent [ELSE] drop [THEN] r>
              show  focus   handle  swap child dpy!
              dispose  endwith ;
 class;

@@ -15,12 +15,12 @@ how:    : init ( cb char -- )  super init assign >callback ;
 
 \ boxchar                                              21aug99py
 
-        : textcenter ( string len ox oxy -- ) { x xy |
+        : textcenter ( string len ox oxy -- ) { x xy }
           xywh textwh @+ @ p- p2/ p+ x xy + xy p+
-          color @ 8 >> .text } ;
-        : textleft ( string len ox oxy -- ) { x xy |
+          color @ 8 >> .text ;
+        : textleft ( string len ox oxy -- ) { x xy }
           xywh nip texth @ - 2/ +
-          x xy + xy p+ color @ 8 >> .text } ;
+          x xy + xy p+ color @ 8 >> .text ;
 
 \ boxchar                                              21mar00py
 
@@ -79,13 +79,13 @@ how:    \ init  ( callback n -- )
         : pd ( x y h n -- )
           dup 7 and pd1 + c@ swap 2- 7 and pd1 + c@
           rot tuck * 2/ -rot * 2/ swap p+ ;
-        : triangle abs { x y h c1 c2 c3 pos n |
+        : triangle abs { x y h c1 c2 c3 pos n }
           x y h pos    pd <poly x y h pos 3+ pd poly#
           x y h pos 6+ pd poly# poly> color @ dpy fill
           n 0 ?DO x y h pos    pd  x y h pos 3+ pd  c1 dpy line
                   x y h pos 3+ pd  x y h pos 6+ pd  c2 dpy line
                   x y h pos 6+ pd  x y h pos    pd  c3 dpy line
-                  x 1+ to x  y 1+ to y  h 2- to h  LOOP } ;
+                  x 1+ to x  y 1+ to y  h 2- to h  LOOP ;
         : ltri ( x y h lc sc -- ) tuck      4 Xshadow triangle ;
         : rtri ( x y h lc sc -- ) over      0 Xshadow triangle ;
         : utri ( x y h lc sc -- ) dup       6 Xshadow triangle ;
@@ -93,14 +93,19 @@ how:    \ init  ( callback n -- )
 
 \ triangle button                                      07nov99py
 
-public: Table: tritable  ltri utri rtri dtri [
-[IFDEF] x11
+	public:
+	[defined] Table: [IF]
+	    Table: tritable  ltri utri rtri dtri [
+	[ELSE]
+	    Create tritable  ' ltri , ' utri , ' rtri , ' dtri ,
+	[THEN]
+[defined] x11 [IF]
         Create triarrows XC_sb_left_arrow  ,
                          XC_sb_up_arrow    ,
                          XC_sb_right_arrow ,
                          XC_sb_down_arrow  ,
 [THEN]
-[IFDEF] win32
+[defined] win32 [IF]
         Create triarrows 3 [FOR] mouse_cursor , [NEXT]
 [THEN]
         : moved ( x y -- ) super moved
@@ -114,8 +119,11 @@ how:    : hglue  xM 0 ;
         : vglue  xM 0 ;
 class;
 
+[defined] alias [IF]
 ' noop alias TRI:                               immediate
-
+[ELSE]
+    synonym TRI: noop immediate
+[THEN]
 0 Constant :left
 1 Constant :up
 2 Constant :right
@@ -125,7 +133,7 @@ class;
 boxchar class togglechar
 public: cell var oncolor
         method set              method reset
-how:    &20 /step V!
+how:    #20 /step V!
         : assign  ( char- char+ -- )
           $10 << defocuscol @ @ or [ 2 $18 << ] Literal or
           oncolor ! super assign ;
@@ -243,11 +251,9 @@ tbutton class topindex                          class;
 how:    : init ( -- )  0 1 *filll super init ;
 class;
 
-combined with
-F : flipper  combined ' +flip
-    :[ attribs c@ :flip or attribs c! hide ]:
+: flipper  combined ' +flip
+    :[ combined attribs c@ :flip or combined attribs c! combined hide ]:
     toggle new ;
-endwith
 
 \ Topindex, topglue                                    11apr99py
 tbutton class togglebutton
@@ -314,7 +320,7 @@ how:    : inside? ( x y -- ) 2dup super inside?
           2dup x @ w @ icon w @ - 2/ + y @ p-
           over icon w @ u< over icon h @ u< and
           IF
-[IFDEF] x11   icon shape @ -1 = IF
+[defined] x11 [IF]   icon shape @ -1 = IF
 		    dpy xrc dpy @ icon image @ 1- 2swap 1 1 -1 ZPixmap
 		    XGetImage >r
                     r@ IF  0 0 r@ XGetPixel r> XDestroyImage
@@ -326,7 +332,7 @@ how:    : inside? ( x y -- ) 2dup super inside?
 
 \ icon with small text                                 21mar04py
 
-[IFDEF] win32 swap icon shape @ GetDC GetPixel 0<> >r    [THEN]
+[defined] win32 [IF] swap icon shape @ GetDC GetPixel 0<> >r    [THEN]
           ELSE  2drop false >r  THEN
           xywh textwh @+ @ p- drop 2/ icon h @ p+ p-
           textwh @+ @ rot swap u< >r u< r> and r> or ;
@@ -381,9 +387,9 @@ how:    0 colors focuscol !     7 colors defocuscol !
 \ simple text input field                              06jan05py
 
         : moved ( x y -- )  2drop
-[IFDEF] x11   XC_xterm   [THEN] [IFDEF] win32 IDC_IBEAM  [THEN]
+[defined] x11 [IF]   XC_xterm   [THEN] [defined] win32 [IF] IDC_IBEAM  [THEN]
           dpy set-cursor  ^ dpy set-rect ;
-        : (dpy  [IFDEF] x11    dpy get-win  dpy xrc dpy @
+        : (dpy  [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN] ;
 
         : 'text ( -- addr )  text $@ curpos @ /string
@@ -413,12 +419,12 @@ how:    0 colors focuscol !     7 colors defocuscol !
           dup selw ! text $@ rot dup >r
           0min curpos @ + /string r> abs min
           -select +select
-          [IFDEF] x11    dpy get-win  dpy xrc dpy @
+          [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN]  !select !curxw
           selw @ r> <> IF  draw  THEN ;
         : sel-word ( -- )
           text $@ 2dup curpos @ /string bl scan nip -
-          2dup bl -scan nip /string >r
+          2dup -trailing nip /string >r
           text $@ drop - curpos ! r> >select ;
         : sel-all ( -- ) curpos off text $@len >select ;
 
@@ -465,7 +471,11 @@ how:    0 key-methods !
         : fetch ( -- addr u )  edit get ;
 class;
 
+[defined] alias [IF]
 ' :[ alias ST[                               immediate restrict
+[ELSE]
+    synonym ST[ :[
+[THEN]
 : ]ST postpone ]: edit-action postpone new ; immediate restrict
 
 \ text input key binding                               15apr01py
@@ -505,15 +515,19 @@ how:    : update  edit get text @ $! ;
         : click ( x y b n -- )  super click  update ;
 class;
 
+[defined] alias [IF]
 ' noop alias VT[                             immediate restrict
+[ELSE]
+    synonym VT[ noop immediate
+[THEN]
 : ]VT edit-var postpone new ;                immediate restrict
 
 \ number input field                                   27apr98py
 edit-action class number-action
 public: cell var nbase
 how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
-          <# #S  nbase @ $10 = IF  '$ hold  THEN
-                 nbase @ %10 = IF  '% hold  THEN  rot sign  #> ;
+          <# #S  nbase @ $10 = IF  '$' hold  THEN
+                 nbase @ %10 = IF  '%' hold  THEN  rot sign  #> ;
         : key ( key sh -- ) drop base push nbase @ base !
           dup shift-keys? IF  drop  EXIT  THEN  dup find-key dup
           IF    cell+ @ caller send drop
@@ -522,7 +536,7 @@ how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
           THEN  stroke @ called send ;
         : store ( d -- )  ># edit assign ;
         : fetch ( -- d ) edit get base push decimal s>number ;
-        : init  &10 nbase ! super init ;
+        : init  #10 nbase ! super init ;
 class;
 
 \ number input field                                   28aug99py
@@ -530,15 +544,21 @@ class;
 : #[ ( key -- )  (textfield postpone with :noname ;
 : ]# ( key sys ) postpone ; (textfield postpone endwith
   & number-action >o number-action bind-key o> ;      immediate
-'$ #[ callback self number-action with
+'$' #[ callback self number-action with
       fetch $10 nbase ! store endwith ]#
-'% #[ callback self number-action with
+'%' #[ callback self number-action with
       fetch %10 nbase ! store endwith ]#
-'& #[ callback self number-action with
-      fetch &10 nbase ! store endwith ]#
-'- #[ callback self number-action with
+'&' #[ callback self number-action with
+      fetch #10 nbase ! store endwith ]#
+'#' #[ callback self number-action with
+      fetch #10 nbase ! store endwith ]#
+'-' #[ callback self number-action with
       fetch dnegate store endwith ]#
+[defined] alias [IF]
 ' :[ alias SN[                               immediate restrict
+[ELSE]
+    synonym SN[ :[
+[THEN]
 : ]SN postpone ]: number-action postpone new ;
                                              immediate restrict
 
@@ -553,7 +573,11 @@ how:    : update  fetch drop int @ ! ;
         : click ( x y b n -- )  super click  update ;
 class;
 
+[defined] alias [IF]
 ' noop alias IV[                             immediate restrict
+[ELSE]
+    synonym IV[ noop immediate
+[THEN]
 : ]IV edit-int postpone new ;                immediate restrict
 
 \ text field derivates                                 19dec99py
@@ -653,6 +677,7 @@ class;
 
 \ text with parbox                                     27may00py
 
+[defined] parbox [IF]
 parbox class text-parbox
 how:    Variable text-string
         : init ( addr u format -- )  >r
@@ -667,6 +692,7 @@ how:    Variable text-string
           ?DO  I !  -cell +LOOP  0 hboxing dup n ! >box
           dpy self dpy! ;
 class;
+[THEN]
 
 \ new slider                                           20oct99py
 widget class arule
@@ -818,11 +844,11 @@ class;
 
 \ scaler helper words                                  11dec04py
 
-: max10 ( n max -- n' )  >r  &1000000000
+: max10 ( n max -- n' )  >r  #1000000000
   BEGIN  tuck mod dup r@ u>  WHILE
-         swap &10 /  REPEAT  nip rdrop ;
+         swap #10 /  REPEAT  nip rdrop ;
 : digit+ ( digit max n -- max n' )
-  &10 * rot '0 - over 0< IF  -  ELSE  +  THEN ;
+  #10 * rot '0' - over 0< IF  -  ELSE  +  THEN ;
 
 \ new scaler                                           03dec06py
 
@@ -841,7 +867,7 @@ public: method #>text           early scalekey
 how:    : #>text ( n -- addr u )  base push decimal
           text/ @ m* tuck dabs  <#
           text*/ @ 1 ?DO  # I 9 * +LOOP
-          text*/ @ 1 > IF  '. hold  THEN  #S rot sign #> ;
+          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> ;
         : .text ( addr u x y c -- )  >r 2swap r>
           fnt select  fnt self fnt ' display dpy drawer ;
         : get  ( -- steps step pos )  super get 0 swap ;
@@ -852,16 +878,16 @@ how:    : #>text ( n -- addr u )  base push decimal
         : init  1 1 text*/ 2!  super init ;
 
 \ new scaler                                           03dec06py
-        : keyed ( k s -- k s )  over '0 '9 1+ within
+        : keyed ( k s -- k s )  over '0' '9' 1+ within
           IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
               text*/ 2@ swap */
               reslide  EXIT  THEN                    over #bs =
-          IF  2drop get nip nip s>d &10 sm/rem nip o- 0max o+
-              reslide  EXIT  THEN                     over '% =
-          IF  2drop get >r - r> 0max &100 min
-              &100 */ o+ reslide  EXIT  THEN          over '- =
+          IF  2drop get nip nip s>d #10 sm/rem nip o- 0max o+
+              reslide  EXIT  THEN                     over '%' =
+          IF  2drop get >r - r> 0max #100 min
+              #100 */ o+ reslide  EXIT  THEN          over '-' =
           IF  2drop get >r - 1- r> negate o- 0max min o+ reslide
               EXIT  THEN  >r
           $FF50 case? IF  0 o+ reslide          rdrop  EXIT THEN
@@ -927,7 +953,7 @@ public: method #>text           early scalekey
 how:    : #>text ( n -- addr u )  base push decimal
           text/ @ m* tuck dabs  <#
           text*/ @ 1 ?DO  # I 9 * +LOOP
-          text*/ @ 1 > IF  '. hold  THEN  #S rot sign #> ;
+          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> ;
         : .text ( addr u x y c -- )  >r 2swap r>
           fnt select  fnt self fnt ' display dpy drawer ;
         : get  ( -- steps step pos )  super get 0 swap ;
@@ -942,16 +968,16 @@ how:    : #>text ( n -- addr u )  base push decimal
 
 \ new scaler                                           08mar07py
         : init  1 1 text*/ 2!  super init ;
-        : keyed ( k s -- k s )  over '0 '9 1+ within
+        : keyed ( k s -- k s )  over '0' '9' 1+ within
           IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
               text*/ 2@ swap */
               reslide  EXIT  THEN                    over #bs =
-          IF  2drop get nip nip s>d &10 sm/rem nip o- 0max o+
-              reslide  EXIT  THEN                     over '% =
-          IF  2drop get >r - r> 0max &100 min
-              &100 */ o+ reslide  EXIT  THEN          over '- =
+          IF  2drop get nip nip s>d #10 sm/rem nip o- 0max o+
+              reslide  EXIT  THEN                     over '%' =
+          IF  2drop get >r - r> 0max #100 min
+              #100 */ o+ reslide  EXIT  THEN          over '-' =
           IF  2drop get >r - 1- r> negate o- 0max min o+ reslide
               EXIT  THEN  drop
 

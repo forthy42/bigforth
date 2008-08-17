@@ -264,3 +264,7 @@ here wc-table - Constant #wc-table
 : get-encoding  maxascii ;
 
 base !
+
+[defined] char@ [IF]
+    ' xc@+ IS char@
+[THEN]
