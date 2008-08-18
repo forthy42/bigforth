@@ -164,32 +164,32 @@ how:    : init  ( sx sy -- )  noback on  super init
 
 \ viewport                                             02jan05py
 
+        : (xpos! { o x0 y0 x y w h }
+	    x o 0max + y  dpy transback
+	    w o abs - h x o 0min - y
+	    dpy get-win  dpy image \ dpy >exposed
+	    h o abs 0  y y0 - 0max
+	    o 0> IF  w + o -  THEN  x x0 - 0max +
+	    cliprec w!+ w!+ w!+ w! ;
         : xpos! ( p -- )  orgx @ case? 0=
           IF  orgx @ over  orgx ! -  hstep @ *
               dup abs sw @ <
-              IF  clipxywh 2over 2swap clipback
-                  { o x0 y0 x y w h }
-                  x o 0max + y  dpy transback
-                  w o abs - h x o 0min - y
-                  dpy get-win  dpy image \ dpy >exposed
-                  h o abs 0  y y0 - 0max
-                  o 0> IF  w + o -  THEN  x x0 - 0max +
-                  cliprec w!+ w!+ w!+ w!
+              IF  clipxywh 2over 2swap clipback (xpos!
               ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
 
 \ viewport                                             02jan05py
 
+        : (ypos! { o x0 y0 x y w h }
+	    x y o 0max +  dpy transback
+	    w h o abs - x y o 0min -
+	    dpy get-win  dpy image \ dpy >exposed
+	    o abs w 0    o 0> IF  h + o -  THEN
+	    y y0 - 0max + x x0 - 0max
+	    cliprec w!+ w!+ w!+ w! ;
         : ypos! ( p -- )  orgy @ case? 0=
           IF  orgy @ over  orgy ! -  vstep @ *
               dup abs sh @ <
-              IF  clipxywh 2over 2swap clipback
-                  { o x0 y0 x y w h }
-                  x y o 0max +  dpy transback
-                  w h o abs - x y o 0min -
-                  dpy get-win  dpy image \ dpy >exposed
-                  o abs w 0    o 0> IF  h + o -  THEN
-                  y y0 - 0max + x x0 - 0max
-                  cliprec w!+ w!+ w!+ w!
+              IF  clipxywh 2over 2swap clipback (ypos!
               ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
         : 'hslide self ['] xpos! ['] hslide toggle-state new ;
         : 'vslide self ['] ypos! ['] vslide toggle-state new ;
