@@ -147,13 +147,20 @@ synonym 0" z"
 
 : >len ( addr -- addr u ) dup zstrlen ;
 
+: 0place ( addr u addr -- )
+  swap 2dup + >r move 0 r> c! ;
+
 \ special characters
 
 $08 Constant #bs         $0D Constant #cr
 $0A Constant #lf         $1B Constant #esc
 $09 Constant #tab        $07 Constant #bell
 
-\ long division
+\ division - make sure everything is floored
+
+: /mod ( n1 n2 -- rem quot ) >r s>d r> fm/mod ;
+: / /mod nip ;
+: mod /mod drop ;
 
 : ud/mod ( ud1 u2 -- urem udquot )  >r 0 r@ um/mod r> swap >r
                                     um/mod r> ;
@@ -170,6 +177,7 @@ also DOS
   timeval 2@ swap $CB9CB68 um* nip swap
   $2000000 um* #675 ud/mod drop nip + ;
 previous
+: !time timer@ time ! ;
 : ms>time ( ms -- time )
   $C6D750EB um* $3FFFFFF, d+ 6 lshift swap $1A rshift or ;
 : >us ( time -- dus )  #86400000 um*

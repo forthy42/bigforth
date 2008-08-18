@@ -135,7 +135,7 @@ include resources.fs
 \ win-init                                             07jan07py
 
 : clear-resources  ( -- )
-  clear-icons  clear-fonts  0 bind term ;
+  clear-icons  clear-fonts [defined] term [IF] 0 bind term [THEN] ;
 
 [defined] x11 [IF]  also DOS
 : win-init ( -- ) !time clear-resources
@@ -158,7 +158,7 @@ previous                                        [THEN]
 
 [defined] win32 [IF]
 ficon: minos-win icons/minos1+.icn"
-: win-init ( -- )  clear-resources
+: win-init ( -- ) clear-resources
   xresource new xresource with
       IDI_APPLICATION 0 LoadIcon register
 \      minos-win icon-pixmap with
@@ -173,6 +173,7 @@ ficon: minos-win icons/minos1+.icn"
 
 \ main: cold: bye:                                     10apr04py
 
+[defined] VFXFORTH 0= [IF]
 main: ['] WINi/o IS standardi/o ;
 
 [defined] x11 [IF]
@@ -181,9 +182,10 @@ cold: win-init ;
 [defined] win32 [IF]
 cold: set-exceptions win-init ;
 [THEN]
+[THEN]
 
 \ init sequence                                        10apr04py
-[defined] x11 [IF]
+[defined] x11 [defined] VFXFORTH 0= and [IF]
 : "geometry ( addr u -- ) scratch 0place
   0 sp@ >r 0 0 0 scratch r> dup cell- dup cell- dup cell-
   XParseGeometry >r
@@ -196,6 +198,7 @@ cold: set-exceptions win-init ;
 also -options definitions
 ' "geometry Alias -geometry
 previous definitions
+
 export minos -geometry ;
 [THEN]
 
