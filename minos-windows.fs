@@ -231,11 +231,11 @@ how:    : xinc  child xinc ;
 
         : !resized  xrc !font
           0 set-font  child !resized resized ;
-        : geometry ( w h -- ) { gw gh |
+        : geometry ( w h -- ) { gw gh }
           1 counter ! rw off rh off
           x @ y @ xinc gw * + yinc gh * + resize
           0 counter ! rw on  rh on
-          x @ y @ xinc gw * + yinc gh * + resize }
+          x @ y @ xinc gw * + yinc gh * + resize
 [defined] win32 [IF]  output push display ." "  [THEN] ;
         : geometry? ( -- w h )
           w @ xinc >r - r> /
@@ -356,15 +356,20 @@ class;
 
 \ menu-entry                                           05jan07py
 
-actor uptr menu-call
+[defined] VFXFORTH [IF]
+    actor ptr menu-call
+[ELSE]
+    actor uptr menu-call
+[THEN]
+: >menu-call ( addr -- ) bind menu-call ;
 
-'& Value menu-sep
+'&' Value menu-sep
 button class menu-entry
 how:    \ init ( act addr len -- )
         2 colors focuscol !     3 colors defocuscol !
         : clicked ( x y b n -- ) dup 0= IF 2drop 2drop EXIT THEN
           >released drop
-          dpy hide callback self F bind menu-call ;
+          dpy hide callback self >menu-call ;
         : keyed ( key sh -- )  drop  dup bl = swap #cr = or
           IF  x @ y @  1 2 clicked  THEN ;
         : focus  super focus color   focuscol chcol +push draw ;
@@ -581,13 +586,13 @@ how:    : assign ( widget -- ) child self IF child dispose THEN
 
 \ menu-frame                                           05mar07py
 
-        : submenu-vpos { x y w h w' h' | ( --> x y )
+        : submenu-vpos { x y w h w' h' } ( --> x y )
           x y h + dup h' + screen h @ >  IF  h' - h - 0max  THEN
-          swap screen w @ w' - min 0max swap } ;
-        : submenu-hpos { x y w h w' h' | ( --> x y )
+          swap screen w @ w' - min 0max swap ;
+        : submenu-hpos { x y w h w' h' } ( --> x y )
           x w + y screen h @ h' - min 0max
           swap dup w' + screen w @ >  IF  w' - w - 0max  THEN
-          swap } ;
+          swap ;
 
 \ menu-frame                                           09mar07py
         : popup ( [xwin] child -- flag )  >r

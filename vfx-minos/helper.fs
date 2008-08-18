@@ -195,6 +195,9 @@ Defer idle ' 2drop IS idle
 
 include /usr/share/doc/VfxForth/Lib/Lin32/MultiLin32.fth
 
+synonym wake restart
+synonym sleep halt
+
 \ keyboard state
 
 Variable kbshift
@@ -202,6 +205,8 @@ Variable kbshift
 \ compile only
 
 : restrict ;
+
+: BUT  swap ; immediate
 
 \ loops
 

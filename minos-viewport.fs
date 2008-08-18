@@ -228,16 +228,6 @@ how:    : init  ( sx sy -- )  noback on  super init
                   <clip dpy mask clip>  THEN
           THEN  2drop 2drop 2drop 2drop ;
 
-/* viewport                                            28jun98py
-        : ximage ( x y w h x y win -- ) >r  2dup inclip?
-          IF  xwin @  IF  [ 5 ] [FOR] 5 pick [NEXT] r@
-                          super super ximage  THEN
-              flags #draw bit@ IF  r@ xwin @ =
-                          IF    draw
-                       ELSE  [ 5 ] [FOR] 5 pick [NEXT] trans' r@
-                               <clip dpy ximage clip>  THEN THEN
-          THEN  rdrop 2drop 2drop 2drop ;
-*/
 \ viewport                                             28jun98py
         : fill ( x y addr n color -- )  >r  2over inclip?
           IF  xwin @  IF  2over 2over r@ super super fill  THEN
@@ -475,12 +465,17 @@ how:    vabox :: (clicked       vabox :: show-you
 : D[   postpone >r ;                         immediate restrict
 | : (]D   r> r> swap >r displays with  assign self  endwith ;
                                                        restrict
-: ]D  -cell loffset +!  postpone (]D ;       immediate restrict
 
 : DS[  postpone >r ;                         immediate restrict
 | : (]DS  r> r> swap >r viewport with  assign self  endwith
     asliderview new ;                                  restrict
+[defined] loffset [IF]
+: ]D  -cell loffset +!  postpone (]D ;       immediate restrict
 : ]DS  -cell loffset +!  postpone (]DS ;     immediate restrict
+[ELSE]
+: ]D   postpone (]D ;       immediate restrict
+: ]DS  postpone (]DS ;     immediate restrict
+[THEN]
 
 \ Container object                                     03aug98py
 
