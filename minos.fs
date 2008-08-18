@@ -128,7 +128,9 @@ include minos-boxes.fs
 include minos-buttons.fs
 include minos-viewport.fs
 include minos-windows.fs
-include minos-complex.fs
+[defined] VFXFORTH 0= [IF]
+    include minos-complex.fs
+[THEN]
 include resources.fs
 \ win-init                                             07jan07py
 

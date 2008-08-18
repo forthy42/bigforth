@@ -1,16 +1,3 @@
-/* Font resources                                      12nov06py
-
-[IFDEF] win32
-| : /1  1 /string ;
-| : /-  '- scan ;
-| : -*- /1 2dup /- 2swap over2 - ;
-: >font ( addr u -- addr' u' family type width height )
-  /1 /- -*- 2swap
-  -*- s" bold" str= IF  FW_BOLD  ELSE  FW_NORMAL  THEN  -rot
-  -*- s" i" str= IF   ITALIC_FONTTYPE  ELSE  0  THEN  -rot
-  /1 /- /1 /- -*- s>number drop >r 2drop swap 0 -rot r> ;
-[THEN]
-*/
 \ Font resources                                       12nov06py
 
 AVariable fonts
@@ -19,7 +6,7 @@ AVariable fonts
          2dup r@ cell+ cell+ count compare 0= UNTIL
   2drop r>  EXIT  THEN  nip nip ;
 
-: ?font ( -- addr/0 )  >in @ '" parse  font?  swap >in ! ;
+: ?font ( -- addr/0 )  >in @ '"' parse  font?  swap >in ! ;
 : font@ ( addr -- font ) cell+ dup cell+ count
   2 pick @  IF  2drop @  EXIT  THEN
   new-font tuck swap ! ;
@@ -35,7 +22,7 @@ AVariable fonts
 
 : font" ( "font"<"> -- )  ?font ?dup
   0= IF   postpone (font" fonts @ here fonts ! A, 0 , ,"
-  ELSE    postpone (font@ A, '" parse 2drop  THEN ;
+  ELSE    postpone (font@ A, '"' parse 2drop  THEN ;
                                             immediate restrict
 
 : .font cr base push hex dup cell+ @ 8 .r
@@ -43,7 +30,7 @@ AVariable fonts
 : .fonts fonts LIST> .font ;
 
 \ Font resources                                       10apr04py
-[IFDEF] x11
+[defined] x11 [IF]
 : font16@ ( addr -- icon ) cell+ dup cell+ count
   2 pick @  IF  2drop @  EXIT  THEN
   X-font16 new tuck swap ! ;
@@ -55,7 +42,7 @@ AVariable fonts
 
 : font16" ( "font"<"> -- )  ?font ?dup
   0= IF   postpone (font16" fonts @ here fonts ! A, 0 , ,"
-  ELSE    postpone (font16@ A, '" parse 2drop  THEN ;
+  ELSE    postpone (font16@ A, '"' parse 2drop  THEN ;
                                             immediate restrict
 [THEN]
 
@@ -67,7 +54,7 @@ AVariable icons
          2dup r@ cell+ cell+ count compare 0= UNTIL
   2drop r>  EXIT  THEN  nip nip ;
 
-: ?icon ( -- addr/0 )  >in @ '" parse  icon?  swap >in ! ;
+: ?icon ( -- addr/0 )  >in @ '"' parse  icon?  swap >in ! ;
 : icon@ ( addr -- icon ) cell+ dup cell+ count
   2 pick @  IF  2drop @  EXIT  THEN
   icon-pixmap new tuck swap ! ;
@@ -79,7 +66,7 @@ AVariable icons
 
 : icon" ( "file"<"> -- )  ?icon ?dup
   0= IF   postpone (icon" icons @ here icons ! A, 0 , ,"
-  ELSE    postpone (icon@ A, '" parse 2drop  THEN ;
+  ELSE    postpone (icon@ A, '"' parse 2drop  THEN ;
                                             immediate restrict
 
 : 2icon" ( "file"<">"file<">" -- )
@@ -99,7 +86,7 @@ AVariable icons
 
 : ficon: ( "name" "file" -- )  Create ?icon ?dup
   0= IF  icons @ here icons ! A, 0 , ," ficon-does
-  ELSE   A, ficon@-does '" parse 2drop  THEN ;
+  ELSE   A, ficon@-does '"' parse 2drop  THEN ;
 
 ficon: dir-icon icons/dir"
 ficon: diro-icon icons/diropen"
@@ -111,7 +98,10 @@ ficon: term-w icons/script"
 
 \ File icons                                           10apr04py
 
-Create ficons
+: icon-table ( -- )  Create
+  DOES> ( i -- icon )  swap $1F and cells + perform ;
+
+icon-table ficons
 ' file-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' dir-icon  A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' sym-icon  A,  ' file-icon A,
@@ -120,7 +110,6 @@ Create ficons
 ' diro-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' sym-icon  A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
-DOES> ( i -- icon )  swap $1F and cells + perform ;
 : set-pixmaps ( pm_0 .. pm_i i -- )
   1- FOR  Pixmaps I cells + !  NEXT
   redraw-all @ redraw-all on  screen draw redraw-all ! ;
@@ -272,9 +261,9 @@ ficon: backtext-d-pm pattern/backtext-d"
   to blues to greens to reds re-color  reload-icons
   redraw-all dup push on  screen resized ;
 \ normal font scheme                                   21jun05py
-[IFDEF] x11
+[defined] x11 [IF]
 : (normal-font ( -- )  screen xrc with
-    [IFDEF] has-utf8
+    [defined] has-utf8 [IF]
 	maxascii $80 = IF
 	    S" -adobe-helvetica-bold-r-normal-*-*-120-*-*-p-*-iso10646-1"
 	    0 font!  \ normal font
@@ -363,7 +352,7 @@ ficon: backtext-d-pm pattern/backtext-d"
 
 \ fonts                                                29jul07py
 
-[IFDEF] win32
+[defined] win32 [IF]
 : (normal-font ( -- )  screen xrc with
 S" -*-Arial-medium-r-normal--15-*-*-*-p-*-iso8859-1"
      0 font!
@@ -392,6 +381,7 @@ patch large-font   ' (large-font  IS large-font
 
 \ alert                                                10apr04py
 
+[defined] VFXFORTH [IF] cell [THEN]
 User alert#
 button class alertbutton
         cell var exit#          cell var 'alert#
@@ -411,21 +401,21 @@ ficon: none-alert icons/NONE"
 ficon: question-alert icons/QUESTION"
 ficon: warning-alert icons/WARNING"
 
-Create alert-icons  T]
-        error-alert     question-alert  warning-alert
-        fatal-alert     info-alert      none-alert [
+Create alert-icons
+       ' error-alert A,   ' question-alert A, ' warning-alert A,
+       ' fatal-alert A,   ' info-alert A,     ' none-alert A,
 
 Create alert-titles
         ," Error!"      ," Question?"   ," Warning!"
         ," Fatal!"      ," Info"        ," None"
 
 \ alert boxhandler                                     10aug05py
-: alert-text ( $1 .. $n n -- o )  dup >r
-0 ?DO  I' 2* I - 1- dup >r roll r> roll text-label new LOOP
-  r> vbox new ;
-: alert-buttons ( $1 .. $n n -- o default )  dup >r
-  0 ?DO  I' 2* I - 1- dup >r roll r> roll I alertbutton new
-  LOOP  r> dup pick >r hatbox new hskip
+: alert-text ( $1 .. $n n -- o )  dup { n }
+0 ?DO  n 2* I - 1- dup >r roll r> roll text-label new LOOP
+  n vbox new ;
+: alert-buttons ( $1 .. $n n -- o default )  dup { n }
+  0 ?DO  n 2* I - 1- dup >r roll r> roll I alertbutton new
+  LOOP  n dup pick >r hatbox new hskip
   0 [ 1 *fill ] Literal  2dup *hglue new -rot *hglue new
   rot swap 3 habox new r> ;
 : make-alert ( $1 .. $n n $1 .. $m m n -- o )
@@ -454,13 +444,14 @@ minos
 : alert ( $1 .. $n n $1 .. $m m f -- n2 )
   screen self window new window with  dup >r make-alert
   r> title$ assign
-[IFDEF] x11
+[defined] x11 [IF]
   0" Alert" dup sp@ xrc dpy @ xwin @ rot XSetClassHint 2drop
 [THEN]
   mousemap  stop ( dispose ) endwith  alert# @ ;
 
 \ boxhandler                                           10apr04py
 
+[defined] VFXFORTH 0= [IF]
 Variable ?showpath  ?showpath on
 
 | : scr# ( -- addr len ) scr @ abs extend
@@ -472,4 +463,5 @@ Variable ?showpath  ?showpath on
   IF    >r  scr#  r> 1+ s" Cancel" s" Editor" 2
   ELSE  s"  OK " 1  THEN  0 alert >r (error
   r> 1 = IF " V" find 0= IF drop ELSE execute THEN THEN ;
+[THEN]
 

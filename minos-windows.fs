@@ -502,11 +502,11 @@ how:    : make-window  ( attrib -- )
 
         : show ( x y -- )
           y ! x !  flags #hidden -bit  super show ;
-        : set-dpys ( widget -- )  recursive
+        : set-dpys ( widget -- )
           BEGIN  dup 0<> over 'nil <> and  WHILE  ^ swap >o
                  widget bind dpy   widget widgets self
                  & combined @ class?
-                 IF    combined childs self o> set-dpys
+                 IF    combined childs self o> recurse
                  ELSE  o>  THEN
           REPEAT  drop ;
 class;
@@ -624,7 +624,7 @@ how:    0 colors focuscol !     1 colors defocuscol !
         : >released ( x y b n -- ) 2drop 2drop
           1 color 2+ c!  draw
           dpy get-win callw self menu-frame popup
-          0=   IF    callback self F bind menu-call
+          0=   IF    callback self >menu-call
                ELSE  dpy focus  THEN    0 color 2+ c!  draw ;
 
 \ menu title                                           21apr01py
@@ -643,7 +643,11 @@ how:    \ : init ( widget addr u -- )  super init ;
           menu-call self callback self <> IF  dpy hide  THEN ;
 class;
 
+[defined] alias [IF]
 ' noop alias M:                                 immediate
+[ELSE]
+    synonym M: noop immediate
+[THEN]
 
 \ info-menu                                            27dec99py
 hbox class info-menu
@@ -682,10 +686,10 @@ how:    : assign ( addr u -- ) text assign ;
 \ info-menu                                            05mar07py
 
         : >released ( x y b n -- ) 2drop 2drop
-          :up tri assign tri draw  0 F bind menu-call
+          :up tri assign tri draw  0 >menu-call
           dpy get-win
           callw self text with menu-frame popup endwith
-          0=   IF callback self F bind menu-call THEN
+          0=   IF callback self >menu-call THEN
           :down tri assign tri draw ;
         : clicked  ( x y b n -- ) \ first-active
           dup 0= IF  2drop 2drop  EXIT  THEN
