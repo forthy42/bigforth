@@ -26,6 +26,7 @@ decimal
   doNotSin immediate
 ;
 
+\ debugging tool
 
 : my.s ( ... -- ... )  ." <" depth 0 .r ." > "
     depth 0 max $10 min
@@ -45,7 +46,7 @@ decimal
 
 Vocabulary Objects  also Objects also definitions
 
-Vocabulary types  types also
+Vocabulary oo-types  oo-types also
 
 0 cells Constant :wordlist
 1 cells Constant :parent
@@ -142,7 +143,7 @@ Variable 'link
 
 : mallot ( -- offset )    methods @ cell methods +! ;
 
-types definitions
+oo-types definitions
 
 : (static, ( offset -- ) >r : r> o@+, discard-sinline postpone ; ;
 : static   ( -- ) \ oof- oof
@@ -192,7 +193,7 @@ early eee
 ' ddd3 ' ddd4 prefix-size Constant defer#2
 ' sss3 ' sss4 prefix-size Constant static#2
 
-Objects definitions also types
+Objects definitions also oo-types
 
 : exec1? ['] xxx1 method# tuck compare 0= ;
 : exec2? ['] xxx3 method#2 tuck compare 0= ;
@@ -373,7 +374,7 @@ Variable ob-interface
 : voc! ( addr -- )  get-current old-current !
   add-order  2 + voc# !
   get-order wordlist tuck classlist ! 1+ set-order
-  also types classlist @ set-current ;
+  also oo-types classlist @ set-current ;
 
 : (class-does>  DOES>  false method, ;
 
@@ -476,7 +477,7 @@ Variable last-interface  0 last-interface !
 
 \ method implementation                                20feb95py
 
-types definitions
+oo-types definitions
 
 : how:  ( -- ) \ oof- oof how-to
 \G End declaration, start implementation
@@ -629,7 +630,7 @@ how:
 	voc# @ drop-order voc# ! ;
 
     : implements
-	o@ add-order 1+ voc# ! also types o@ lastob !
+	o@ add-order 1+ voc# ! also oo-types o@ lastob !
 	false to oset?   get-current old-current !
 	thread @ set-current ;
 class; \ object

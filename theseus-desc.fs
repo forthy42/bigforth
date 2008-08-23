@@ -1,6 +1,6 @@
 \ MINOS descriptor classes
 
-: .d  base push decimal dup 0< IF '- emit THEN '& emit abs . ;
+: .d  base push decimal '# emit dup 0< IF '- emit THEN abs . ;
 
 descriptor class descriptors
 public:

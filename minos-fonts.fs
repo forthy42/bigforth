@@ -77,7 +77,6 @@ how:    : size ( addr u -- w h )  2/ id @ -rot
 
 \ X fonts 16 bit                                       26may02py
 
-[defined] VFXFORTH 0= [IF] \ !!!FIXME VFX: confuses VFX
         : draw ( addr u x y dpy -- )
           >r id @ XFontStruct fid @ text_i XTextItem font !
           2swap 2/ swap text_i XTextItem chars 2!
@@ -85,7 +84,6 @@ how:    : size ( addr u -- w h )  2/ id @ -rot
           r> displays with
 	    2>r drawable' 2r> text_i 1 XDrawText16
           endwith ;
-[THEN]
 class;
 
 : new-x-font16 ( -- font ) x-font16 new ;

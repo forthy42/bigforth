@@ -386,9 +386,7 @@ class;
 : panel ( o -- o )  hskip vskip ;
 
 \ boxes with focus                                     21mar00py
-[defined] synonym [IF]
-    synonym component noop immediate
-[ELSE]
+[defined] VFXFORTH 0= [IF]
     ' noop Alias component immediate
 [THEN]
 vbox class vabox
@@ -416,6 +414,9 @@ how:    : focus   ( -- )   attribs c@ :flip and
                   ELSE  drop  THEN  o>  THEN
               clicked -1 o> rdrop  THEN ;
 class;
+[defined] VFXFORTH [IF]
+    synonym component vabox
+[THEN]
 
 hbox class habox
 how:    vabox :: (clicked       vabox :: show-you

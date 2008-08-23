@@ -135,7 +135,7 @@ how:    : dispose  clicks HandleOff
 [THEN]
           maxclicks 8* cell+ clicks 2dup Handle! @ swap erase
           -1 rw ! -1 rh !  -1 cur-cursor !
-          event-task ;
+[defined] VFXFORTH [ 0= ] [IF] event-task [THEN] ;
 
 \ Display                                              27jun02py
 
@@ -844,11 +844,9 @@ displays ptr screen
 
 \ font implementation                                  21aug99py
 
-[defined] VFXFORTH 0= [IF] \ !!!FIXME VFX: confuses VFX
 font implements
         : display  >r color @
           r@ displays with  set-color  endwith
           addr @ u @ 2swap r> draw ;
 class;
-[THEN]
 

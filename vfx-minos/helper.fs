@@ -2,6 +2,8 @@
 
 : | ; \ headerless becomes a noop
 
+Vocabulary editor \ empty vocabulary
+
 \ memory words
 
 vocabulary memory
@@ -32,6 +34,7 @@ synonym << lshift
 synonym >> arshift
 synonym toss previous
 synonym extend s>d
+synonym #! \
 
 : cont >r ;
 : push r> swap dup @ >r >r cont r> r> swap ! ;

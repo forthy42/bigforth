@@ -1,7 +1,9 @@
 \ component                                            04mar00py
 
+[defined] VFXFORTH 0= [IF]
 s" COMPONENT" pad place  bl pad count + c!
 ' vabox pad context @ (find drop (name> !
+[THEN]
 : get-win ( -- win )  & displays @ object class?
   IF  displays get-win  ELSE  widget dpy get-win  THEN ;
 : new-component ( o od addr u -- o )
@@ -17,9 +19,11 @@ s" COMPONENT" pad place  bl pad count + c!
 
 \ OpenGL canvas                                        22jun02py
 
+[defined] VFXFORTH 0= [IF]
+
 opengl also glconst also
 
-[IFDEF] win32
+[defined] win32 [IF]
         | Create pfd  sizeof PIXELFORMATDESCRIPTOR w, 1 w,
           0 ( PFD_DRAW_TO_WINDOW or ) PFD_DRAW_TO_BITMAP or
           PFD_SUPPORT_OPENGL or \ PFD_SUPPORT_GDI or
@@ -42,16 +46,16 @@ public: defer drawer            method render
         cell var ctx            cell var glxpm
         cell var glxwin         cell var rendered
         window-stub ptr stub    cell var shown
-[IFDEF] win32
+[defined] win32 [IF]
         cell var oldbm          cell var dibptr
-[THEN] [IFDEF] x11
+[THEN] [defined] x11 [IF]
         cell var cmap
 [THEN]
         widget ptr outer
 
 \ OpenGL canvas                                        08jul00py
 how:
-[IFDEF] x11
+[defined] x11 [IF]
         | Create attrib GLX_DOUBLEBUFFER ,
                         GLX_RGBA ,
                         GLX_RED_SIZE   ,   1 ,
@@ -121,7 +125,7 @@ how:
 [THEN]
 
 \ OpenGL canvas                                        23sep99py
-[IFDEF] win32
+[defined] win32 [IF]
         : set-context ctx @ pixmap @ wglMakeCurrent ?err ;
         : add-dib-section  h @ 1 max w @ 1 max  bih cell+ 2!
           0 0 0 DIB_RGB_COLORS bih
@@ -151,14 +155,14 @@ how:
 
         : resize ( x y w h -- )
           super resize rendered off
-[IFDEF] win32
+[defined] win32 [IF]
           oldbm @ pixmap @ SelectObject ?err
           glxpm  @ ?dup  IF  DeleteObject drop glxpm  off THEN
           add-dib-section
 [ELSE]    glxpm  @   IF  destroy-pixmap  THEN  new-pixmap
           stub self  IF  xywh stub resize  stub show  THEN
 [THEN]  ;
-        : dispose destroy-pixmap  [IFDEF] x11
+        : dispose destroy-pixmap  [defined] x11 [IF]
           ctx @ ?dup  IF
               dpy xrc dpy @ swap glXDestroyContext  THEN
 [THEN]    stub self IF  stub dispose  THEN  glFlush
@@ -169,7 +173,7 @@ how:
         : render ( -- ) \ ." render "
           pixmap @ glxwin @ or 0= IF  new-pixmap  THEN
           set-context ^ drawer  glFlush
-[IFDEF] x11
+[defined] x11 [IF]
           glxpm @
           IF  dpy xrc dpy @ glxpm @ glXSwapBuffers  THEN
 [THEN]    rendered on ;
@@ -178,17 +182,17 @@ how:
 
         : draw ( -- )
           rendered @ 0=  IF  render  THEN
-[IFDEF] x11   pixmap @
+[defined] x11 [IF]   pixmap @
           IF    0 0 xywh 2swap pixmap @ dpy image
           ELSE  glxwin @
             IF  dpy xrc dpy @ glxwin @ glXSwapBuffers
                 rendered off  THEN
           THEN
 [THEN]
-[IFDEF] x11_ximage   0 0 xywh 2swap 0 sp@ >r 0 sp@ r>
+[defined] x11_ximage [IF]   0 0 xywh 2swap 0 sp@ >r 0 sp@ r>
           pixmap @ dpy xrc dpy @ XMesaFindBuffer
           XMesaGetBackBuffer drop nip dpy ximage  [THEN]
-[IFDEF] win32   0 0 xywh 2swap pixmap @ dpy image  [THEN]
+[defined] win32 [IF]   0 0 xywh 2swap pixmap @ dpy image  [THEN]
         ;
 
 \ OpenGL canvas                                        04aug05py
@@ -212,18 +216,14 @@ previous previous
 : ]GL  glcanvas postpone endwith  postpone ]: ;    immediate
 
 \ helper words for Theseus                             21sep07py
+[THEN]
 
 : T"   postpone S" ;                             immediate
 
 : ^^bind  postpone dup  postpone bind ;      immediate restrict
-/*
-| Create ^^bind-buf $100 allot
-: ^^bind ( -- )
-  ^^bind-buf off ^^bin-buf $sum !
-  s" dup ^^ with bind " $add
-  bl word count $add s"  endwith" $add
-  ^^bind-buf count evaluate ; immediate
-*/
+
+[defined] VFXFORTH 0= [IF]
+
 \ IO-Window                                            26oct99py
 
 : scan8 ( addr u -- addr u' )  2dup bounds
@@ -439,8 +439,8 @@ how:    6 colors focuscol !     1 colors defocuscol !
           IF  typebuf @ @+ swap
               curoff typebuf @ off  win-type  curon  THEN ;
         : moved ( x y -- )  2drop  ^ dpy set-rect
-[IFDEF] x11            XC_xterm   [THEN]
-[IFDEF] win32          IDC_IBEAM  [THEN]  dpy set-cursor  ;
+[defined] x11 [IF]            XC_xterm   [THEN]
+[defined] win32 [IF]          IDC_IBEAM  [THEN]  dpy set-cursor  ;
 
 \ IO-Window                                            12mar00py
         : page  ( -- )  flush curoff  pos off  typebuf @ off
@@ -496,7 +496,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ IO-Window                                            09mar99py
         : selecting ( -- )  flush  textwh 2@ swap
           DOPRESS  x @ y @ p- 2swap swap >r / swap r> / at-sel ;
-        : (dpy  [IFDEF] x11    dpy get-win  dpy xrc dpy @
+        : (dpy  [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN] ;
         : mark-selection ( x y -- )  defocus  at? >r >r
           swap at pos @ >r selecting
@@ -542,7 +542,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 
         : decode ( m s addr pos char -- m s addr pos flag )
           kbshift @ $100 and  IF  >atxy  0 EXIT  THEN
-[IFDEF] (Ftast  dup $FFBE $FFCA within
+[defined] (Ftast [IF]  dup $FFBE $FFCA within
           IF  $FFBE - cells (Ftast + -rot >r >r -rot >r >r
               perform r> r> r> r> prompt cr save-cursor
               over 3 pick type row over at 0 EXIT THEN
@@ -552,7 +552,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           $FF54 case?  IF  ctrl N  THEN
           dup $007F = IF  drop ctrl D  THEN
           dup $FF00 and $FF00 =  IF  drop 0 EXIT  THEN
-[IFDEF] utf-8  xdecode [ELSE] PCdecode [THEN] ;
+[defined] utf-8 [IF]  xdecode [ELSE] PCdecode [THEN] ;
 
 \ IO-Window                                            01jan05py
 
@@ -596,9 +596,9 @@ Output: WINdisplay
 : WINkey? ( -- flag )  term? term key? ;
 : WINkey  ( -- key )   term? term key ;
 : WINdecode            term? term decode ;
-[IFDEF] xaccept
+[defined] xaccept [IF]
         Input:  WINkeyboard
-        WINkey WINkey? WINdecode xaccept false [  [THEN]
+        WINkey WINkey? WINdecode xaccept false [
 [ELSE]  Input:  WINkeyboard
         WINkey WINkey? WINdecode PCaccept false [  [THEN]
 : WINi/o  WINdisplay  WINkeyboard ;
@@ -664,7 +664,7 @@ class;
 
 
 \ helper
-[IFDEF] x11
+[defined] x11 [IF]
 : screen-sync  ( -- )   screen sync ;
 : screen-ic!  ( ic -- ) screen xrc ic ! ;       [THEN]
 forward ficons
@@ -686,8 +686,8 @@ how:    \ 6 colors defocuscol !
           size @ 0 <# #S #> 0 textsize drop wsize !
           S" 00may99"       0 textsize drop wdate !
           S" 00:00:00"      0 textsize drop wtime ! ;
-[IFDEF] x11   : dir@ attr @ $C >> ;             [THEN]
-[IFDEF] win32 : dir@ attr @ $10 and 0<> 4 and ; [THEN]
+[defined] x11 [IF]   : dir@ attr @ $C >> ;             [THEN]
+[defined] win32 [IF] : dir@ attr @ $10 and 0<> 4 and ; [THEN]
 
 \ file widget                                          10apr04py
         : draw ( -- )  base push decimal  push? 1 and >r
@@ -724,8 +724,8 @@ how:    \ 6 colors defocuscol !
 class;
 
 \ file listbox                                         10apr04py
-[IFDEF] x11     : dir? @attr $C >> 4 = ;        [THEN]
-[IFDEF] win32   : dir? @attr $10 and 0<> ;      [THEN]
+[defined] x11 [IF]     : dir? @attr $C >> 4 = ;        [THEN]
+[defined] win32 [IF]   : dir? @attr $10 and 0<> ;      [THEN]
 component class file-listbox
 public: actor ptr file          actor ptr path
         cell var file<=         early name<=
@@ -816,7 +816,7 @@ how:    AVariable file<=
                       r> r> swap -
                 ELSE  2 pick 1+ r> + >r r@ swap /string
                       s" /" 2over insert insert scratch r> THEN
-[IFDEF] x11     over c@ '/ = IF  path assign  ELSE  2drop  THEN
+[defined] x11 [IF]     over c@ '/ = IF  path assign  ELSE  2drop  THEN
 [ELSE]          path assign   [THEN]
           ELSE  2drop  THEN
           sort-title get reload ;
@@ -838,11 +838,11 @@ how:    AVariable file<=
 
 \ file selector box                                    10apr04py
         : >real-path ( addr n1 -- addr' n2 )
-[IFDEF] win32
+[defined] win32 [IF]
           over 1+ c@ ': <>
 [ELSE]    over c@ '/ <>   [THEN]
           IF  2dup  pad dup 0 dgetpath drop >len
-[IFDEF] win32 2dup bounds ?DO  I c@ '\ = IF  '/ I c!  THEN LOOP
+[defined] win32 [IF] 2dup bounds ?DO  I c@ '\ = IF  '/ I c!  THEN LOOP
 [THEN]        dup IF  2dup + '/ swap c! 1+  THEN
               dup >r + swap move r> + nip pad swap
           THEN ;
@@ -917,4 +917,6 @@ minos
   ELSE  2drop  THEN ;
 
 previous minos
+
+[THEN]
 

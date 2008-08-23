@@ -56,7 +56,8 @@ sub-menu implements
           color 2+ c@ IF  shadow xS xywh drawshadow  THEN
           xM >r x @ w @ + r@ - xS - 1- y @ h @ r@ - 2/ + r>
           shadow color 2+ c@ IF swap  THEN
-          tributton tritable 2 cells + perform ;
+[defined] VFXFORTH [ 0= ] [IF] \ !!!FIXME: confuses VFXFORTH
+	  tributton tritable 2 cells + perform [THEN] ;
         : hglue ( -- glue )  menu-entry :: hglue
           xM 1+ 0 p+ ;
 class;
@@ -94,11 +95,11 @@ class;
 tbutton implements
         : draw ( -- )  halfshade
           xM  xN xS +  callback fetch
-          { m n s |  shadow s IF  swap  THEN  xS
+          { m n s }  shadow s IF  swap  THEN  xS
             x @ m 2/ + y @ h @ n - 1+ 2/ +  n dup
             s IF  2over 2over color @ 8 >> dpy box  THEN
           drawshadow
-          text $@ m n + 0 textleft } ;
+          text $@ m n + 0 textleft ;
         : hglue  textwh @ xN + xS + xN 2* + 3+ 1 *fil ;
         button :: vglue
 class;
@@ -106,8 +107,8 @@ class;
 rbutton implements
         : draw ( -- ) halfshade
           xN   xM over + 2/ xS + swap
-          &169 &239 */  dup xS + 1+   callback fetch
-          { m n np s |  shadow
+          #169 #239 */  dup xS + 1+   callback fetch
+          { m n np s }  shadow
             s 0= IF  swap  THEN  >r >r
             x @ m + np -  y @ h @ 2/ +  over 1- over 1+ 2swap
             <poly np 1- np poly,  np 1- np negate poly, poly>
@@ -119,7 +120,7 @@ rbutton implements
             color @ s IF  8 >>  THEN  dpy fill
             <poly n 1- n poly, n 1- n negate poly, poly>
             color @ s IF  8 >>  THEN  dpy fill
-            text $@ m 2* 0 textleft } ;
+            text $@ m 2* 0 textleft ;
         : hglue   super  hglue  2 0 p+ ;
         button :: vglue
 class;
@@ -144,9 +145,7 @@ togglebutton implements
 class;
 
 topindex implements
-        : draw  ( -- )
-           callback fetch color @ $18 >> negate
-          { state o |
+        : draw-state { state o } ( --> state )
           state 0= IF  xywh drop xS defocuscol @ @ dpy box THEN
           shadow o IF swap THEN xS xywh
           state IF  xS +  ELSE  2swap xS + 2swap THEN drawshadow
@@ -166,11 +165,18 @@ topindex implements
           x @ w @ + xS - y @ h @ + xS dup shadow
           widgets self 'nil =
           IF  nip  ELSE  drop  THEN  dpy box
-          state } widgets self 'nil = = ?EXIT
+          state ;
+        : draw  ( -- )
+          callback fetch color @ $18 >> negate
+          draw-state widgets self 'nil = = ?EXIT
           x @ w @ + xS - y @ h @ + widgets self 'nil <>
           xS + shadow   callback fetch
-          IF nip ELSE drop THEN  swap
-          0 ?DO  >r 2dup I' I - 1 r@ dpy box 1+ r>  LOOP
+	    IF nip ELSE drop THEN  swap
+	    [defined] VFXFORTH [IF] dup { n }
+		0 ?DO  >r 2dup n I - 1 r@ dpy box 1+ r>  LOOP
+	    [ELSE]
+		0 ?DO  >r 2dup I' I - 1 r@ dpy box 1+ r>  LOOP
+	    [THEN]
           drop 2drop ;
         button :: hglue
         button :: vglue
@@ -198,12 +204,12 @@ class;
 
 toggleicon implements
         : draw  ( -- )
-          callback fetch  push?  { s of |
+          callback fetch  push?  { s of }
           shadedbox
           s IF    icon+ w @ icon+ h @
             ELSE  icon- w @ icon- h @  THEN  >r >r
           x @ w @ r> - 2/ +  y @ h @ r> - 2/ +  of dup p+
-         s IF icon+ draw-at ELSE icon- draw-at THEN dpy mask } ;
+         s IF icon+ draw-at ELSE icon- draw-at THEN dpy mask ;
         : hglue  icon+ w @ icon- w @ max  xS 2* + 1+ 1 *fil ;
         : vglue  icon+ h @ icon- h @ max  xS 2* + 1+ 1 *fil ;
 class;
@@ -270,10 +276,10 @@ class;
 
 (textfield implements
         : draw ( -- )  xywh $D dpy box
-          x @ curx @ + y @ curw @ xS + h @ { x y w h |
+          x @ curx @ + y @ curw @ xS + h @ { x y w h }
           color @ $FF and 1 =
           IF  x y w h color @ dpy box
-              shadow xS 2/ x y w h drawshadow  THEN }
+              shadow xS 2/ x y w h drawshadow  THEN
           text $@ xS 2/ 0 textleft ;
         : dpy! ( dpy -- )  widget :: dpy!
           fnt self 0= IF
@@ -304,7 +310,17 @@ hslider implements
 class;
 
 hslider0 implements
+[defined] VFXFORTH [IF] \ !! FIXME: confuses VFXFORTH
+        : subbox ( -- o1 .. on n )  -2 borderw c! 
+          ^ R[ lstep ]R 0 slidetri new
+          ^ R[ lpage ]R ['] part1 ['] part0 arule new
+          ^ M[ slide ]M ['] part2 ['] part0 arule new
+             arule with $02000003 assign ^ endwith
+          ^ R[ rpage ]R ['] part3 ['] part0 arule new
+          ^ R[ rstep ]R 2 slidetri new 5 ;
+[ELSE]
         hslider :: subbox
+[THEN]
 class;
 
 hscaler implements
@@ -338,7 +354,17 @@ vslider implements
 class;
 
 vslider0 implements
+[defined] VFXFORTH [IF] \ !! FIXME: confuses VFXFORTH
+        : subbox ( -- o1 .. on n )  -2 borderw c! 
+          ^ R[ lstep ]R 1 slidetri new 
+          ^ R[ lpage ]R ['] part0 ['] part1 arule new
+           ^ M[ slide ]M ['] part0 ['] part2 arule new
+             arule with $02000003 assign ^ endwith
+          ^ R[ rpage ]R ['] part0 ['] part3 arule new
+          ^ R[ rstep ]R 3 slidetri new 5 ;
+[ELSE]
         vslider :: subbox
+[THEN]
 class;
 
 vscaler implements
@@ -369,10 +395,10 @@ hrtsizer implements
           shadow swap xS 2/ x @ w @ 2/ + 1- y @ xS h @
                 drawshadow
           x @ 0 dpy txy!  xM  xN xS +
-          { m n |  shadow xS
+          { m n }  shadow xS
             x @ w @ n - 2/ +    y @ h @ + m 2/ -
             n w @ n - 1 and + dup >r - r> dup 2over 2over
-            color @ dpy box drawshadow } 0 0 dpy txy! ;
+            color @ dpy box drawshadow 0 0 dpy txy! ;
         : hglue ( -- glue )  xN xS 2* 1+ + -2 and  0 ;
         : vglue ( -- glue )  xM  xN xS + + 1 *filll ;
 class;
@@ -382,10 +408,10 @@ vrtsizer implements
           shadow swap xS 2/ x @ y @ h @ 2/ + 1- w @ xS
                drawshadow
           0 y @ dpy txy!  xM  xN xS +
-          { m n |  shadow xS
+          { m n }  shadow xS
             x @ w @ + m 2/ -  n h @ n - 1 and + dup >r -
             y @ h @ n - 2/ +  r> dup  2over 2over
-            color @ dpy box drawshadow } 0 0 dpy txy! ;
+            color @ dpy box drawshadow 0 0 dpy txy! ;
         : hglue ( -- glue )  xM  xN xS + + 1 *filll ;
         : vglue ( -- glue )  xN xS 2* 1+ + -2 and  0 ;
 class;
