@@ -77,7 +77,8 @@ slowvoc @ slowvoc on
 
 \ High level locals                                    19aug93py
 
-| Create inlocal  5 cells allot  inlocal off
+| 4 cells Constant inlocal#
+| Create inlocal  inlocal# cell+ allot  inlocal off
 | Variable local?
 
 Vocabulary do-local  also do-local definitions
@@ -92,17 +93,21 @@ Vocabulary do-local  also do-local definitions
 : | inlocal off local? on ; immediate
 previous definitions
 
-: { compile <local  -1
-  BEGIN  >in @ >r name count & do-local search-wordlist
-      dup 0<=  WHILE
-      IF    execute rdrop >in @ name drop
-      ELSE  ['] local: r>  THEN
-  REPEAT
-  rdrop drop execute  >in @ >r
-  BEGIN  dup 0>= WHILE  >in !  execute  REPEAT
-  drop  r> >in ! compile local>
-  inlocal @ IF  inlocal 2 cells + 2! inlocal cell+ ! THEN ;
-                                             immediate restrict
+| Variable default-local ['] local: default-local !
+
+| : ({ compile <local  -1
+    BEGIN  >in @ >r name count & do-local search-wordlist
+	dup 0<=  WHILE
+	    IF    execute rdrop >in @ name drop
+	    ELSE  default-local @ r>  THEN
+    REPEAT
+    rdrop drop execute  >in @ >r
+    BEGIN  dup 0>= WHILE  >in !  execute  REPEAT
+    drop  r> >in ! compile local>
+    inlocal @ IF  inlocal 2 cells + 2! inlocal cell+ ! THEN ;
+
+: {  [']  local: default-local ! ({ ;      immediate restrict
+: f{ ['] flocal: default-local ! ({ ;      immediate restrict
 
 ' local; alias } immediate restrict
 
@@ -116,16 +121,26 @@ previous definitions
             compile local>
             inlocal 2 cells + 2! inlocal cell+ ! THEN ;
 
+| : inlocal; ( -- )
+    inlocal cell+ @ inlocal 2 cells + 2@ compile local; ;
 | : ?local;  inlocal @
-    IF  inlocal cell+ @ inlocal 2 cells + 2@
-        compile local; inlocal off  THEN
+    IF  inlocal; inlocal off  THEN
     loffset off  local? off ;
 
 : ;      ?local; compile ; ;                 immediate restrict
 : DOES>  ?local; compile DOES> ;             immediate
 : EXIT   local? @ IF  compile delocal 0 l,  THEN
   compile EXIT ;                             immediate restrict
+: ?EXIT  local? @ IF
+	compile IF  compile  EXIT  compile  THEN
+    ELSE
+	compile ?EXIT
+    THEN ;                                   immediate restrict
 
+: SCOPE  inlocal 2@ inlocal 2 cells + 2@ loffset @ ;
+                                             immediate restrict
+: ENDSCOPE  ?local; loffset ! inlocal 2 cells + 2! inlocal 2! ;
+                                             immediate restrict
 
 Assembler definitions
 : ;Code  ?local; compile ;Code ;             immediate restrict
