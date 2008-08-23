@@ -180,6 +180,8 @@ cold: win-init ;
 [defined] win32 [IF]
 cold: set-exceptions win-init ;
 [THEN]
+[ELSE]
+    win-init
 [THEN]
 
 \ init sequence                                        10apr04py

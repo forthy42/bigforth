@@ -664,9 +664,6 @@ class;
 
 
 \ helper
-[defined] x11 [IF]
-: screen-sync  ( -- )   screen sync ;
-: screen-ic!  ( ic -- ) screen xrc ic ! ;       [THEN]
 forward ficons
 forward dot-dir
 forward dotdot-dir

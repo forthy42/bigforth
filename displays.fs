@@ -832,9 +832,15 @@ displays ptr screen
 [defined]  x11 [IF]
     [defined] VFXFORTH [IF]
 	: (screen-event  ( -- )  0 screen get-event ;
+	: (screen-sync  ( -- )   screen sync ;
+	: (screen-ic!  ( ic -- ) screen xrc ic ! ;
 	' (screen-event IS screen-event
+	' (screen-sync  IS screen-sync
+	' (screen-ic!   IS screen-ic!
     [ELSE]
 	: screen-event  ( -- )  0 screen get-event ;
+	: screen-sync  ( -- )   screen sync ;
+	: screen-ic!  ( ic -- ) screen xrc ic ! ;
     [THEN]
 [THEN]
 

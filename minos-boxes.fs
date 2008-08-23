@@ -150,7 +150,8 @@ how:    : >box  'nil bind childs  'nil bind active
           dup  bind active  'nil <> dup 0= ?EXIT
           active first-active ;
 
-        : first-active  'nil bind active  next-active drop ;
+        : first-active  'nil bind active
+	  [defined] VFXFORTH [ 0= ] [IF] next-active drop [THEN] ;
 
 \ combined widgets: active point                       14sep97py
         : prev-active ( -- flag )
