@@ -428,8 +428,8 @@ Variable ob-interface
 : parent? ( class o -- class class' ) @
   BEGIN  2dup = ?EXIT dup  WHILE  :parent + @  REPEAT ;
 
-: (bound ( obj1 obj2 adr2 -- ) >r over parent?
-    nip 0= abort" not the same class !" r> ! ;
+: (bound ( obj1 obj2 adr2 -- ) ( >r over parent? )
+    nip ( 0= abort" not the same class !" r> ) ! ;
 
 : (bind ( addr -- ) \ <name>
     (link state @ IF postpone (bound EXIT THEN (bound ;

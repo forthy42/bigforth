@@ -267,3 +267,5 @@ Defer char@ ' count IS char@
 
 : case? ( n1 n2 -- n1 false / true )
     over = dup IF nip THEN ;
+
+0 value script?

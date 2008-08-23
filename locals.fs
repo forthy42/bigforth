@@ -93,7 +93,7 @@ Vocabulary do-local  also do-local definitions
 : | inlocal off local? on ; immediate
 previous definitions
 
-| Variable default-local ['] local: default-local !
+| Variable default-local ' local: default-local !
 
 | : ({ compile <local  -1
     BEGIN  >in @ >r name count & do-local search-wordlist
