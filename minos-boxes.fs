@@ -116,7 +116,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : show     super show ?nodraw ?EXIT  ALLCHILDS  show ;
         : hide     super hide ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
-        : handle-key? ~~ active handle-key? ~~ ;
+        : handle-key? active handle-key? ;
         : !resized  0, hglues 2!  0, vglues 2!  tab-step-off
           ALLCHILDS !resized ;
 

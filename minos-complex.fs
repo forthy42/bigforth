@@ -10,7 +10,7 @@ s" COMPONENT" pad place  bl pad count + c!
   >r >r  1 swap modal new  r> r>
   screen self window new  window with  assign ^  endwith ;
 : open-component    ( o od addr u -- )
-  ~~ new-component ~~ window with ~~ show ~~ endwith ;
+  new-component  window with  show  endwith ;
 : open-dialog       ( o od addr u -- )
   new-component  get-win
   swap window with  set-parent show  endwith ;

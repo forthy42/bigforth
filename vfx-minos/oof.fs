@@ -245,12 +245,13 @@ Objects definitions also oo-types
 	r> 2@ swap >r
 	string count rot search-wordlist
 \	string count type dup 0= IF ."  not" THEN ."  found" cr
-	dup r@ 0= or  UNTIL  r> drop ( dup 0= IF
-	    o@ :iface + @ >r  BEGIN  drop
-		r> 2@ swap >r :ilist + @
-		string count rot search-wordlist
-	    dup r@ 0= or  UNTIL  r> drop
-    THEN ) ;
+    dup r@ 0= or  UNTIL
+    r> drop dup 0= IF
+	o@ :iface + @ ?dup IF  >r  BEGIN  drop
+	    r> 2@ swap >r :ilist + @
+	    string count rot search-wordlist
+	dup r@ 0= or  UNTIL  r> drop  THEN
+    THEN ;
 
 : findo    ( string -- cfa n )
     (findo dup 0= IF  true abort" method not found!" THEN ;
@@ -523,7 +524,7 @@ Forth
 	IF    method#2 + @ o@ + !
 	ELSE
 	    dup 5 + c@ $C3 = IF  1+ dup >r - 4- r> !  EXIT  THEN
-	    >body dup cell+ @ 0< IF  2@ swap o@ + @ + ~~ !  EXIT  THEN
+	    >body dup cell+ @ 0< IF  2@ swap o@ + @ + !  EXIT  THEN
 	    drop
 	THEN
     THEN ; immediate
