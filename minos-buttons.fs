@@ -122,7 +122,7 @@ class;
 [defined] alias [IF]
 ' noop alias TRI:                               immediate
 [ELSE]
-    synonym TRI: noop immediate
+    synonym TRI: noop-i
 [THEN]
 0 Constant :left
 1 Constant :up
@@ -518,7 +518,7 @@ class;
 [defined] alias [IF]
 ' noop alias VT[                             immediate restrict
 [ELSE]
-    synonym VT[ noop immediate
+    synonym VT[ noop-i
 [THEN]
 : ]VT edit-var postpone new ;                immediate restrict
 
@@ -576,7 +576,7 @@ class;
 [defined] alias [IF]
 ' noop alias IV[                             immediate restrict
 [ELSE]
-    synonym IV[ noop immediate
+    synonym IV[ noop-i
 [THEN]
 : ]IV edit-int postpone new ;                immediate restrict
 

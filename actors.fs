@@ -157,6 +157,7 @@ class;
 \ actor simplification                                 05mar07py
 
 [defined] VFXFORTH [IF]
+    : noop-i ; immediate
     synonym S[ :[
     synonym DT[ :[
     synonym T[ :[
@@ -165,8 +166,8 @@ class;
     synonym SC[ :[
     synonym SL[ :[
     synonym ]T[ :[
-    synonym CP[ noop immediate
-    synonym ]CP noop immediate
+    synonym CP[ noop-i
+    synonym ]CP noop-i
 [ELSE]
     ' :[ alias S[                                immediate restrict
     ' :[ alias DT[                               immediate restrict
