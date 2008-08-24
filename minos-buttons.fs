@@ -9,7 +9,7 @@ public: font ptr fnt            cell var color
 how:    : init ( cb char -- )  super init assign >callback ;
         : !textwh ( addr u -- )
           fnt self 0= IF  2drop  EXIT  THEN
-          fnt size  swap textwh 2! ;
+          fnt size swap textwh 2! ;
         : .text ( addr u x y c -- )  >r 2swap r>
           fnt select  fnt self fnt ' display dpy drawer ;
 
@@ -93,12 +93,12 @@ how:    \ init  ( callback n -- )
 
 \ triangle button                                      07nov99py
 
-	public:
-	[defined] Table: [IF]
-	    Table: tritable  ltri utri rtri dtri [
-	[ELSE]
-	    Create tritable  ' ltri , ' utri , ' rtri , ' dtri ,
-	[THEN]
+        public:
+        [defined] Table: [IF]
+            Table: tritable  ltri utri rtri dtri [
+        [ELSE]
+            Create tritable  ' ltri , ' utri , ' rtri , ' dtri ,
+        [THEN]
 [defined] x11 [IF]
         Create triarrows XC_sb_left_arrow  ,
                          XC_sb_up_arrow    ,
@@ -321,12 +321,12 @@ how:    : inside? ( x y -- ) 2dup super inside?
           over icon w @ u< over icon h @ u< and
           IF
 [defined] x11 [IF]   icon shape @ -1 = IF
-		    dpy xrc dpy @ icon image @ 1- 2swap 1 1 -1 ZPixmap
-		    XGetImage >r
+                    dpy xrc dpy @ icon image @ 1- 2swap 1 1 -1 ZPixmap
+                    XGetImage >r
                     r@ IF  0 0 r@ XGetPixel r> XDestroyImage
                            0< >r  THEN
               ELSE  dpy xrc dpy @ icon shape @ 2swap 1 1 1 ZPixmap
-		    XGetImage >r
+                    XGetImage >r
                     r@ IF  0 0 r@ XGetPixel r> XDestroyImage
                            0<> >r  THEN  THEN            [THEN]
 
@@ -371,7 +371,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
         : text! ( -- )  dpy self 0= ?EXIT  !resized
           0 text $@ + c!  flags #hidden bit@ ?EXIT
           hglue drop dup w @ <= swap r> = and
-	  IF  draw  ELSE
+          IF  draw  ELSE
               parent self 0= ?EXIT  parent resized  THEN
           callback toggle ;
         : assign ( addr n -- )  tuck text $! bl text $@ + c!

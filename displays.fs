@@ -92,7 +92,8 @@ how:    : dispose  clicks HandleOff
 \ Display tasking                                      09jul00py
 
       [defined] VFXFORTH [IF]
-        : do-event
+	Variable pass^
+        : do-event  pass^ @ op!
           up@ TO event-task
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
@@ -102,7 +103,7 @@ how:    : dispose  clicks HandleOff
                  depth r> <> IF  ~~  THEN  clearstack
           AGAIN ;
 	  task eventtask
-	  : event-task ['] do-event eventtask initiate ;
+	  : event-task ^ pass^ ! ['] do-event eventtask initiate ;
       [ELSE]
 	: event-task  $20000 $10000 NewTask activate
 	  >tib off $100 newtib

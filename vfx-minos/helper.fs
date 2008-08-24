@@ -46,7 +46,7 @@ synonym #! \
 : u>= u< 0= ;
 : u<= u> 0= ;
 : @+ dup @ swap cell+ ;
-: rdrop r> r> drop >r ;
+: rdrop postpone r> postpone drop ; immediate
 
 : list> ( thread -- element )
   BEGIN  @ dup  WHILE  dup r@ execute

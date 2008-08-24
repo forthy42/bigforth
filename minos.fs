@@ -181,7 +181,7 @@ cold: win-init ;
 cold: set-exceptions win-init ;
 [THEN]
 [ELSE]
-    win-init
+    win-init \ screen event-task
 [THEN]
 
 \ init sequence                                        10apr04py

@@ -157,7 +157,7 @@ oo-types definitions
     mallot (method, ;
 : early    ( -- ) \ oof- oof
 \G Create a method selector for early binding.
-    : postpone crash discard-sinline postpone ; ;
+    : postpone crash discard-sinline postpone ; doNotSin ;
 : (var, ( offset -- )  >r
     : r> ^+, discard-sinline postpone ; ;
 : var ( size -- ) \ oof- oof
@@ -617,7 +617,7 @@ how:
     
     : '       ( -- xt )  bl word findo drop
 	state @ IF  Fpostpone Literal  THEN ;
-    : send    ( xt -- )  dup . execute ." Is send" ;
+    : send    ( xt -- )  execute ;
     : postpone ( -- )  voc# @
 	o@ add-order ^ Fpostpone Literal Fpostpone >o
 	Fpostpone Fpostpone  Fpostpone o>

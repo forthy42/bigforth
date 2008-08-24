@@ -35,7 +35,9 @@ how:    : >box  'nil bind childs  'nil bind active
         : init ( widget_1 .. widget_n n -- )
           focuscol @ color !
           super init  dup n ! >box ;
-        : ALLCHILDS ( .. -- ..' )  childs self
+        : ALLCHILDS ( .. -- ..' )
+	  [defined] VFXFORTH [IF] rdrop [THEN]
+	  childs self
           BEGIN  dup 'nil <>  WHILE
                  r@ swap >o execute widgets self o>
           REPEAT  drop rdrop ;
@@ -145,13 +147,12 @@ how:    : >box  'nil bind childs  'nil bind active
                 active widgets self
           THEN  >o
           BEGIN  ^ 'nil <>  WHILE
-                 handle-key?  0=  WHILE
+                 handle-key? 0=  WHILE
                  widgets self op!  REPEAT  THEN  ^ o>
           dup  bind active  'nil <> dup 0= ?EXIT
           active first-active ;
 
-        : first-active  'nil bind active
-	  [defined] VFXFORTH [ 0= ] [IF] next-active drop [THEN] ;
+        : first-active  'nil bind active  next-active drop ;
 
 \ combined widgets: active point                       14sep97py
         : prev-active ( -- flag )
@@ -209,7 +210,7 @@ class;
 :  ALLCHILDS ( .. -- ..' ) r> swap >o >r combined childs self
    BEGIN  dup 'nil <>  WHILE
           r@ swap >o execute combined widgets self o>
-   REPEAT  drop rdrop o> ;
+   REPEAT  drop rdrop o> ; [defined] VFXFORTH [IF] doNotSin [THEN]
 
 \ hbox                                                 19dec99py
 
@@ -328,7 +329,7 @@ how:    : >hglue ( -- min glue ) 0 mi n @ 0<> and
           ALLCHILDS xywh xS + +skip @ + nip rot drop over +
                     eclip @ umin sclip @ umax swap
                     eclip @ umin sclip @ umax u<= ?EXIT
-depth 1+ >r ['] draw catch depth r> <> or IF .class THEN
+                    depth 1+ >r ['] draw catch depth r> <> or IF .class THEN
                     /skip @ 0= IF widgets self 'nil = ?EXIT THEN
                     +skip @ 0= ?EXIT  x @ y @ h @ + w @ +skip @
                     bc dpy box ;
