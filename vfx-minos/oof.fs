@@ -519,12 +519,12 @@ Forth
 : ; ( xt colon-sys -- ) \ oof- oof
     postpone ;
     m-name @ ?dup 0= ?EXIT  dup exec1?
-    IF    method# + c@ o@ + !
+    IF    method# + c@ lastob @ + !
     ELSE  dup exec2?
-	IF    method#2 + @ o@ + !
+	IF    method#2 + @ lastob @ + !
 	ELSE
 	    dup 5 + c@ $C3 = IF  1+ dup >r - 4- r> !  EXIT  THEN
-	    >body dup cell+ @ 0< IF  2@ swap o@ + @ + !  EXIT  THEN
+	    >body dup cell+ @ 0< IF  2@ swap lastob @ + @ + !  EXIT  THEN
 	    drop
 	THEN
     THEN ; immediate
