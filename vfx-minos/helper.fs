@@ -173,7 +173,7 @@ Synonym m/mod fm/mod
 
 \ timer handling
 
-1 cells User time
+1 cells +user time
 
 also DOS
 : timer@  timeval timezone gettimeofday
