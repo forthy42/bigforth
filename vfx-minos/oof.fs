@@ -118,6 +118,7 @@ false Value oset?
 \ variables / memory allocation                        30oct94py
 
 Variable lastob
+Variable class-o
 Variable lastparent   0 lastparent !
 Variable vars
 Variable methods
@@ -463,7 +464,7 @@ Variable last-interface  0 last-interface !
 
 : lastob!  ( -- )  lastob @ dup
     BEGIN  nip dup @ here cell+ 2 pick ! dup 0= UNTIL  drop
-    dup , op! o@ lastob ! ;
+    dup , op! ^ class-o ! o@ lastob ! ;
 
 : thread,  ( -- )  classlist @ , ;
 : var,     ( -- )  methods @ , vars @ , ;
@@ -505,7 +506,7 @@ oo-types definitions
 : Fpostpone  postpone postpone ; immediate
 
 : : ( <methodname> -- ) \ oof- oof colon
-    decl @ abort" HOW: missing! "
+    decl @ abort" HOW: missing! "  class-o @ op!
     >in @ >r bl word (findo 0=
     IF  r> >in ! m-name off :
     ELSE  r> drop
@@ -631,7 +632,8 @@ how:
 	voc# @ drop-order voc# ! ;
 
     : implements
-	o@ add-order 1+ voc# ! also oo-types o@ lastob !
+	o@ add-order 1+ voc# ! also oo-types
+	o@ lastob ! ^ class-o !
 	false to oset?   get-current old-current !
 	thread @ set-current ;
 class; \ object
