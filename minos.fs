@@ -172,16 +172,21 @@ ficon: minos-win icons/minos1+.icn"
 \ main: cold: bye:                                     10apr04py
 
 [defined] VFXFORTH 0= [IF]
-main: ['] WINi/o IS standardi/o ;
+    main: ['] WINi/o IS standardi/o ;
 
 [defined] x11 [IF]
-cold: win-init ;
+    cold: win-init ;
 [THEN]
 [defined] win32 [IF]
-cold: set-exceptions win-init ;
+    cold: set-exceptions win-init ;
 [THEN]
 [ELSE]
     win-init \ screen event-task
+    : minos-key?  key?-gen  screen handle-events ;
+    : minos-key  BEGIN  minos-key?  UNTIL  key-gen ;
+    ' minos-key? IS key?
+    ' minos-key  IS key
+    : event-loop ( -- ) BEGIN  screen handle-events  AGAIN ;
 [THEN]
 
 \ init sequence                                        10apr04py

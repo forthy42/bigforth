@@ -220,7 +220,12 @@ previous previous
 
 : T"   postpone S" ;                             immediate
 
-: ^^bind  postpone dup  postpone bind ;      immediate restrict
+[defined] VFXFORTH [IF]
+    Variable ^^bind-string
+    : ^^bind  postpone dup  postpone bind2 ;     immediate
+[ELSE]
+    : ^^bind  postpone dup  postpone bind ;      immediate restrict
+[THEN]
 
 [defined] VFXFORTH 0= [IF]
 

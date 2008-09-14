@@ -8,6 +8,7 @@ component class abacus
 public:
   early widget
   early open
+  early dialog
   early open-app
   infotextfield ptr num
  ( [varstart] ) cell var v0    cell var i0
@@ -23,6 +24,7 @@ cell var v9    cell var i9
 method re-calc ( [varend] ) 
 how:
   : open     new DF[ 0 ]DF s" Abacus" open-component ;
+  : dialog   new DF[ 0 ]DF s" Abacus" open-dialog ;
   : open-app new DF[ 0 ]DF s" Abacus" open-application ;
 class;
 
@@ -30,12 +32,14 @@ component class abacus-comp
 public:
   early widget
   early open
+  early dialog
   early open-app
  ( [varstart] ) cell var *v
 cell var *i
 abacus ptr outer ( [varend] ) 
 how:
   : open     new DF[ 0 ]DF s" No Title" open-component ;
+  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
   : open-app new DF[ 0 ]DF s" No Title" open-application ;
 class;
 
@@ -46,17 +50,17 @@ abacus-comp implements
           ^^ TN[ 0 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 5 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ &10 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
-        &3 harbox new
+        #3 harbox new
           ^^ TN[ 0 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 1 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 2 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 3 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 4 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 5 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
-        &6 harbox new
-      &2 habox new &1 hskips
+        #6 harbox new
+      #2 habox new #1 hskips
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
+  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 abacus implements
@@ -70,7 +74,7 @@ abacus implements
       &10 ud/mod rot 5 /mod 5 * I ! I cell+ !  -2 cells +LOOP
   2drop draw ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        &0. ]N ( MINOS ) ^^ SN[ re-number ]SN ( MINOS ) S" #" infotextfield new  ^^bind num
+        #0, ]N ( MINOS ) ^^ SN[ re-number ]SN ( MINOS ) X" #" infotextfield new  ^^bind num
           ^^ CP[ v9 i9 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v8 i8 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v7 i7 ]CP ( MINOS ) abacus-comp new 
@@ -81,10 +85,10 @@ abacus implements
           ^^ CP[ v2 i2 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v1 i1 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v0 i0 ]CP ( MINOS ) abacus-comp new 
-        &10 vabox new
-      &2 vabox new panel
+        #10 vabox new
+      #2 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
+  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 : main

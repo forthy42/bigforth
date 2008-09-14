@@ -28,9 +28,9 @@ decimal
 
 \ debugging tool
 
-: my.s ( ... -- ... )  ." <" depth 0 .r ." > "
+: my.s ( ... -- ... )  base @ >r hex ." <" depth 0 .r ." > "
     depth 0 max $10 min
-    dup 0  ?DO  dup i - pick .  LOOP  drop ;
+    dup 0  ?DO  dup i - pick .  LOOP  drop r> base ! ;
 : (~~) ( in line source -- )  cr
     .SourceName ." :" 0 .r ." ," 0 .r space my.s ;
 : ~~ ( -- )
@@ -312,8 +312,11 @@ Variable alloc
 
 Create chunks here 16 cells dup allot erase
 
+[defined] DelFix 0= [IF]
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
+[THEN]
 
+[defined] NewFix 0= [IF]
 : NewFix  ( root size # -- addr )
   BEGIN  2 pick @ ?dup 0=
   WHILE  2dup * allocate throw over 0
@@ -322,6 +325,7 @@ Create chunks here 16 cells dup allot erase
          drop
   REPEAT
   >r drop r@ @ rot ! r@ swap erase r> ;
+[THEN]
 
 : >chunk ( n -- root n' )
   1- -8 and dup 3 rshift cells chunks + swap 8 + ;
@@ -440,9 +444,10 @@ Variable ob-interface
 
 Forth definitions
 
-: bind ( o -- )  '  state @
-  IF   postpone Literal postpone >body postpone (sbound EXIT  THEN
-  >body (sbound ;  immediate
+: bind ( o -- )  ' >body  state @
+  IF   postpone Literal postpone (sbound EXIT  THEN
+  (sbound ;  immediate
+: bind2 ( o -- )  (bind ; immediate
 
 Objects definitions
 
@@ -518,7 +523,7 @@ oo-types definitions
 Forth
 
 : ; ( xt colon-sys -- ) \ oof- oof
-    postpone ;
+    postpone ; DoNotSin
     m-name @ ?dup 0= ?EXIT  dup exec1?
     IF    method# + c@ lastob @ + !
     ELSE  dup exec2?

@@ -48,8 +48,8 @@ how:    : init ( cb char -- )  super init assign >callback ;
         : keyed ( key sh -- )  callback key ;
         : defocus  color defocuscol chcol  draw ;
         : focus    super focus color focuscol   chcol  draw ;
-        : hglue  textwh @       xS 2* + 1+ 1 *fil ;
-        : vglue  texth @ xS 2* + 1+ 1 *fil ;
+        : hglue  textwh @  xS 2* + 1+ 1 *fil ;
+        : vglue  texth  @  xS 2* + 1+ 1 *fil ;
 
 \ boxchar                                              26sep99py
 
@@ -184,8 +184,6 @@ how:    : init ( callback addr len -- )
           defocuscol @ @ [ 2 $18 << ] Literal or color !
           super init ;
         : dispose ( -- )  text $off super dispose ;
-        : hglue  textwh @ xS 2* + 1+ 1 *fil ;
-        : vglue  texth  @ xS 2* + 1+ 1 *fil ;
         : text! ( addr n -- )  text $!
           dpy self IF  !resized  THEN ;
         : get ( -- addr len ) text $@ ;
@@ -466,9 +464,9 @@ how:    0 key-methods !
         : bind-key ( key method -- )
           here key-methods @ A, key-methods ! A, , ;
         : init ( o xt -- ) stroke ! super init ;
-        : store ( addr u -- )  edit assign ;
-        : toggle ( -- )  stroke @ called send ;
-        : fetch ( -- addr u )  edit get ;
+        : store ( addr u -- ) edit assign ;
+        : toggle ( -- ) stroke @ called send ;
+        : fetch ( -- addr u ) edit get ;
 class;
 
 [defined] alias [IF]
@@ -480,8 +478,8 @@ class;
 
 \ text input key binding                               15apr01py
 
-: K[ ( key -- )  (textfield postpone with :noname ;
-: ]K ( key sys ) postpone ; (textfield postpone endwith
+: K[ ( key -- )  (textfield postpone with postpone :[ ;
+: ]K ( key sys ) postpone ]: >r (textfield postpone endwith r>
   & edit-action >o edit-action bind-key o> ;          immediate
 : K-alias ( key1 key2 -- ) swap edit-action find-key
   ?dup IF  cell+ @
@@ -534,15 +532,15 @@ how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
           ELSE  drop dup digit? nip 0= ?EXIT
                 sp@ 1 edit with ins drop 1 c drop endwith
           THEN  stroke @ called send ;
-        : store ( d -- )  ># edit assign ;
+        : store ( d -- ) ># edit assign ;
         : fetch ( -- d ) edit get base push decimal s>number ;
         : init  #10 nbase ! super init ;
 class;
 
 \ number input field                                   28aug99py
 
-: #[ ( key -- )  (textfield postpone with :noname ;
-: ]# ( key sys ) postpone ; (textfield postpone endwith
+: #[ ( key -- )  (textfield postpone with postpone :[ ;
+: ]# ( key sys ) postpone ]: >r (textfield postpone endwith r>
   & number-action >o number-action bind-key o> ;      immediate
 '$' #[ callback self number-action with
       fetch $10 nbase ! store endwith ]#

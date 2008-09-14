@@ -457,7 +457,8 @@ how:    Create minmax 0 , 0 ,
                      IF  hglue@  ELSE  minmax 2@  THEN
                      gsize >r
                      2swap r@ over xy 2@ 2swap resize
-                     r> x+ ;                    class;
+		     r> x+ ;
+class;
 
 \ tabulator box                                        19dec99py
 
@@ -490,7 +491,8 @@ how:    Create minmax 0 , 0 ,
                      IF  vglue@  ELSE  minmax 2@  THEN
                      gsize >r
                      2swap dup r@ xy 2@ 2swap resize 2swap
-                     r> y+ ;                    class;
+		     r> y+ ;
+class;
 
 \ htbox variants                                       21may97py
 

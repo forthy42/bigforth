@@ -93,31 +93,36 @@ how:    : dispose  clicks HandleOff
 
       [defined] VFXFORTH [IF]
 	Variable pass^
+	: .catch-rest ( n -- )  ." Error " . cr ;
+	: handle-events ( -- )  handle-event  invoke drop ;
         : do-event  pass^ @ op!
           up@ TO event-task
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
-                 ?dup IF  ." Error" cr  THEN
+                 ?dup IF  .catch-rest  THEN
 [defined]  x11 [IF]    (  err-dpy @ IF  .Xerror  THEN ) ?calib   [THEN]
-                 ['] invoke catch drop do-idle
-                 depth r> <> IF  ~~  THEN  clearstack
+                 ['] invoke catch
+                 ?dup IF  .catch-rest  ELSE  do-idle  THEN
+                 depth r> <> IF  ~~  clearstack  THEN
           AGAIN ;
 	  task eventtask
 	  : event-task ^ pass^ ! ['] do-event eventtask initiate ;
       [ELSE]
+        : .catch-rest ( n -- )  .  "error @ ?dup
+	  IF  count type  THEN  "error off
+	  cr ['] .except catch drop
+	  cr ['] .back   catch drop ;
 	: event-task  $20000 $10000 NewTask activate
 	  >tib off $100 newtib
 	  Onlyforth dynamic   " event-task" r0 @ cell+ !
           up@ TO event-task
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
-                 ?dup IF  .  "error @ ?dup
-                          IF  count type  THEN  "error off
-                          cr ['] .except catch drop
-                          cr ['] .back   catch drop  THEN
+	         ?dup IF  .catch-rest  THEN
 [defined]  x11 [IF]      err-dpy @ IF  .Xerror  THEN  ?calib   [THEN]
-                 ['] invoke catch drop do-idle
-                 depth r> <> IF  ~~  THEN  clearstack
+                 ['] invoke catch
+                 ?dup IF  .catch-rest  ELSE  do-idle  THEN
+                 depth r> <> IF  ~~  clearstack  THEN
           AGAIN ;
       [THEN]
         : set-hints ;
