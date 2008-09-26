@@ -189,7 +189,7 @@ Variable macro$
     s" " macro$ $! 0 >r
     BEGIN  dup  WHILE  <delimiter $split
 	    2swap macro$ $+! dup IF
-		over c@ <delimiter = IF
+		over xc@+ nip <delimiter = IF
 		    over dup xchar+ over - macro$ $+! +x/string
 		ELSE
 		    delimiter> $xsplit 2swap
