@@ -136,7 +136,7 @@ how:    : xinc  child xinc ;
 [defined] win32 [IF]         xwin @ DestroyWindow drop
                       dpy handle-event
 [THEN]    THEN
-          self dpy delete ?app super dispose ;
+          self dpy delete  ?app super dispose ;
 
 \ window                                               09aug04py
 

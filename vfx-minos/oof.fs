@@ -63,7 +63,8 @@ Vocabulary oo-types  oo-types also
 2 cells Constant :ilen
 3 cells Constant :inum
 
-cell +user op
+\ cell +user op
+: op currobj ;
 
 Forth definitions
 : op! ( o -- )  op ! ;
@@ -426,7 +427,7 @@ Variable ob-interface
 
 \ bind instance pointers                               27mar94py
 
-: ((link ( addr -- o addr' ) 2@ swap ^ + ;
+: ((link ( addr -- o addr' ) 2@ drop ^ + ;
 
 : (link  ( -- o addr )  bl word findo drop >body state @
     IF postpone Literal postpone ((link EXIT THEN ((link ;
@@ -434,13 +435,12 @@ Variable ob-interface
 : parent? ( class o -- class class' ) @
   BEGIN  2dup = ?EXIT dup  WHILE  :parent + @  REPEAT ;
 
-: (bound ( obj1 obj2 adr2 -- ) ( >r over parent? )
-    nip ( 0= abort" not the same class !" r> ) ! ;
+: (bound ( obj1 adr2 -- )  ! ;
 
 : (bind ( addr -- ) \ <name>
     (link state @ IF postpone (bound EXIT THEN (bound ;
 
-: (sbound ( o addr -- ) dup cell+ @ swap (bound ;
+: (sbound ( o addr -- )  (bound ;
 
 Forth definitions
 
@@ -611,7 +611,7 @@ how:
     : dispose ( -- )       ^ size @ dispose, ;
     : bind    ( addr -- )  (bind ;
     : bound   ( o1 o2 addr2  -- ) (bound ;
-    : link    ( -- o addr ) (link ;
+    : link    ( -- class addr ) (link ;
     : class?  ( class -- flag )  ^ parent? nip 0<> ;
     : ::      ( -- )
 	state @ IF  ^ true method,  ELSE  inherit  THEN ;

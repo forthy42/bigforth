@@ -186,7 +186,8 @@ ficon: minos-win icons/minos1+.icn"
     : minos-key  BEGIN  minos-key?  UNTIL  key-gen ;
     ' minos-key? IS key?
     ' minos-key  IS key
-    : event-loop ( -- ) BEGIN  screen handle-events  AGAIN ;
+    : event-loop ( -- ) BEGIN  screen handle-events
+	screen childs self 'nilscreen =  UNTIL ;
 [THEN]
 
 \ init sequence                                        10apr04py
