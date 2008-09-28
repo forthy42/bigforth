@@ -204,10 +204,14 @@ Defer idle ' 2drop IS idle
 
 \ multitasker is needed
 
-include /usr/share/doc/VfxForth/Lib/Lin32/MultiLin32.fth
+\ include /usr/share/doc/VfxForth/Lib/Lin32/MultiLin32.fth
 
-synonym wake restart
-synonym sleep halt
+\ synonym wake restart
+\ synonym sleep halt
+
+: wake  drop ;
+: sleep drop ;
+: stop ;
 
 \ keyboard state
 

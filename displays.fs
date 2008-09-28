@@ -105,8 +105,8 @@ how:    : dispose  clicks HandleOff
                  ?dup IF  .catch-rest  ELSE  do-idle  THEN
                  depth r> <> IF  ~~  clearstack  THEN
           AGAIN ;
-	  task eventtask
-	  : event-task ^ pass^ ! ['] do-event eventtask initiate ;
+\	  task eventtask
+\	  : event-task ^ pass^ ! ['] do-event eventtask initiate ;
       [ELSE]
         : .catch-rest ( n -- )  .  "error @ ?dup
 	  IF  count type  THEN  "error off

@@ -2,7 +2,9 @@
 
 gadget class widget             early >callback
 public: displays ptr dpy        actor ptr callback
+[defined] VFXFORTH 0= [IF]
         early dopress           early whilepress
+[THEN]
         early shadow            early xS
         early drawshadow        early textsize
         early xN                early xM
@@ -26,7 +28,6 @@ how:    : >callback ( cb -- )
 \ widget                                               28aug99py
 
         : DOPRESS  ( dx dy -- dx dy x y )
-	  [defined] VFXFORTH [IF] rdrop [THEN]
           BEGIN  BEGIN  dpy click? 0=  WHILE  dpy moved?
                         IF    2dup dpy mouse drop r@ execute
                               dpy sync
@@ -40,7 +41,6 @@ how:    : >callback ( cb -- )
           BEGIN  timeout? 0=  WHILE  dpy invoke 0=  UNTIL  THEN
           till ;
         : WHILEPRESS ( x y b n -- ) \ 2over moved
-	  [defined] VFXFORTH [IF] rdrop [THEN]
           nip nip nip 1 and
           IF    BEGIN 0 after
                     BEGIN  r@ swap >r execute

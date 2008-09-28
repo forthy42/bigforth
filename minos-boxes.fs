@@ -24,7 +24,8 @@ public: gadget ptr childs       cell var n
         method +flip            method -flip
         method tab!             method tab@
         method tabs
-        early >box              early ALLCHILDS
+        early >box
+        [defined] VFXFORTH 0= [IF] early ALLCHILDS [THEN]
 
 \ combined widgets                                     21mar00py
 how:    : >box  'nil bind childs  'nil bind active
@@ -36,7 +37,6 @@ how:    : >box  'nil bind childs  'nil bind active
           focuscol @ color !
           super init  dup n ! >box ;
         : ALLCHILDS ( .. -- ..' )
-	  [defined] VFXFORTH [IF] rdrop [THEN]
 	  childs self
           BEGIN  dup 'nil <>  WHILE
                  r@ swap >o execute widgets self o>

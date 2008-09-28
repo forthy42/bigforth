@@ -310,17 +310,7 @@ hslider implements
 class;
 
 hslider0 implements
-[defined] VFXFORTH [IF] \ !! FIXME: confuses VFXFORTH
-        : subbox ( -- o1 .. on n )  -2 borderw c! 
-          ^ R[ lstep ]R 0 slidetri new
-          ^ R[ lpage ]R ['] part1 ['] part0 arule new
-          ^ M[ slide ]M ['] part2 ['] part0 arule new
-             arule with $02000003 assign ^ endwith
-          ^ R[ rpage ]R ['] part3 ['] part0 arule new
-          ^ R[ rstep ]R 2 slidetri new 5 ;
-[ELSE]
         hslider :: subbox
-[THEN]
 class;
 
 hscaler implements
@@ -354,17 +344,7 @@ vslider implements
 class;
 
 vslider0 implements
-[defined] VFXFORTH [IF] \ !! FIXME: confuses VFXFORTH
-        : subbox ( -- o1 .. on n )  -2 borderw c! 
-          ^ R[ lstep ]R 1 slidetri new 
-          ^ R[ lpage ]R ['] part0 ['] part1 arule new
-           ^ M[ slide ]M ['] part0 ['] part2 arule new
-             arule with $02000003 assign ^ endwith
-          ^ R[ rpage ]R ['] part0 ['] part3 arule new
-          ^ R[ rstep ]R 3 slidetri new 5 ;
-[ELSE]
         vslider :: subbox
-[THEN]
 class;
 
 vscaler implements

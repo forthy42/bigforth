@@ -182,10 +182,8 @@ ficon: minos-win icons/minos1+.icn"
 [THEN]
 [ELSE]
     win-init \ screen event-task
-    : minos-key?  key?-gen  screen handle-events ;
-    : minos-key  BEGIN  minos-key?  UNTIL  key-gen ;
-    ' minos-key? IS key?
-    ' minos-key  IS key
+    : minos-idle screen handle-events ;
+\    ' minos-idle IS pause
     : event-loop ( -- ) BEGIN  screen handle-events
 	screen childs self 'nilscreen =  UNTIL ;
 [THEN]
