@@ -313,6 +313,8 @@ Variable alloc
 
 Create chunks here 16 cells dup allot erase
 
+: init-oo-mem  chunks 16 cells erase ;
+
 [defined] DelFix 0= [IF]
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
 [THEN]

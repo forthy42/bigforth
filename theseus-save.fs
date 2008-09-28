@@ -126,7 +126,7 @@ Defer do-bug
     0 cur resources script? IF
         cr ." : main"
         0 cur resources dump-script
-        cr ."   $" . ." 0 ?DO  stop  LOOP bye ;"
+        cr drop ."   event-loop bye ;"
         cr ." script? [IF]  main  [THEN]"
     THEN ;
 

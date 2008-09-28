@@ -327,6 +327,6 @@ class;
 : main
   calc open-app
   test-widgets all-open
-  $2 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

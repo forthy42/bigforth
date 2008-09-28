@@ -180,11 +180,12 @@ ficon: minos-win icons/minos1+.icn"
 [defined] win32 [IF]
     cold: set-exceptions win-init ;
 [THEN]
+: event-loop  BEGIN  stop
+    screen childs self 'nilscreen =  UNTIL ;
 [ELSE]
-    win-init \ screen event-task
+    ' win-init atcold
     : minos-idle screen handle-events ;
-\    ' minos-idle IS pause
-    : event-loop ( -- ) BEGIN  screen handle-events
+    : event-loop ( -- ) BEGIN  minos-idle
 	screen childs self 'nilscreen =  UNTIL ;
 [THEN]
 

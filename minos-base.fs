@@ -1,19 +1,12 @@
 \ Color system                                         06jan05py
 
-[defined] VFXFORTH [IF]
-    : CellArray Create  DOES>  swap cells + ;
-    CellArray colors
-[ELSE]
-    Create colors
-[THEN]
+: CellArray Create  DOES>  swap cells + ;
+CellArray colors
        $0001 , $0203 ,  \ focus and defocus for buttons
        $0405 , $0607 ,  \ focus and defocus for labels
        $0809 , $0A0B ,  \ border colors
        $0C0D , $0E0F ,  \ color for texts&cursor
        $0D0D , $0D0D ,  \ revers text&cursor colors
-[defined] VFXFORTH 0= [IF]
-DOES>  swap cells + ;
-[THEN]
 
 Variable redraw-all             redraw-all off
 \ Variable kbstate
