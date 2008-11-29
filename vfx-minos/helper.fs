@@ -97,6 +97,8 @@ Variable (i)
 
 : macro ; \ indicates macro
 
+: recursive  reveal ; immediate
+
 : Module  >in @ Vocabulary >in !
     get-order get-current swap 1+ set-order
     also ' execute also definitions ;

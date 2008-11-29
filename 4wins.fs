@@ -14,7 +14,7 @@ Create board     here *rows *cols * dup allot erase
 
 \ board operations: push stone and display result
 
-[IFUNDEF] cx@ : cx@ ( addr -- c ) c@ dup $80 and negate or ; [THEN]
+[DEFINED] cx@ 0= [IF] : cx@ ( addr -- c ) c@ dup $80 and negate or ; [THEN]
 
 : b[] ( x y -- board[x,y] )
     *rows * + [ board *rows 1+ + ] ALiteral + ;
@@ -56,8 +56,8 @@ Variable gameover  gameover on
 
 Variable side  -1 side !
 
-: <stone ( score-addr ) 0 swap c! ; [IFDEF] macro macro [THEN]
-: /side   side @ negate side ! ; [IFDEF] macro macro [THEN]
+: <stone ( score-addr ) 0 swap c! ; [DEFINED] macro [IF] macro [THEN]
+: /side   side @ negate side ! ; [DEFINED] macro [IF] macro [THEN]
 
 \ count all square scores with the same sign
 

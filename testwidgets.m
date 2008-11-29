@@ -191,22 +191,9 @@ test-widgets implements
         0 linewidth
         r> $900 >=
     endwith ;
-: start-cv1
-    cv1task @ IF  draw-cv1 drop  EXIT  THEN
-    1 $1000 dup NewTask dup cv1task !  pass
-    canvas with
-        BEGIN  ^ draw-cv1 dpy sync
-            IF
-                BEGIN
-                    -1 #30 idle
-                    timer@ $E << #1000 um* nip $100 <
-                UNTIL
-            ELSE  -1 #30 idle  THEN
-            outer with kill-me @ endwith  UNTIL
-    outer with
-        kill-me @ IF  test-widgets :: dispose  THEN
-    endwith endwith ;
-: dispose  kill-me on ; ( [methodend] ) 
+: start-cv1  recursive
+    ^ draw-cv1 drop dpy sync ['] start-cv1 ^ #30 after dpy schedule ;
+: dispose  dpy cleanup ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         M: menu1 widget X"  bigFORTH " menu-title new 
         M: sub-menu1 widget X"  File " menu-title new 
@@ -250,16 +237,16 @@ test-widgets implements
                     #3 vabox new hfixbox 
                       :beamer beamer new  ^^bind beam1 D[ 
                         doublebuffer new  D[ 
-                          CV[ outer with nikolaus self start-cv1 endwith ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $10 $A *hfil $10 $A *vfil canvas new  ^^bind nikolaus
+                          CV[ outer with nikolaus with start-cv1 endwith endwith ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $10 $A *hfil $10 $A *vfil canvas new  ^^bind nikolaus
                         #1 habox new ]D ( MINOS ) 
                       #1 habox new ]D ( MINOS ) 
                     #1 habox new #-2 borderbox
                   #2 habox new #1 hskips
                   T" " ^^ ST[  ]ST ( MINOS ) X" Text:" infotextfield new  ^^bind tex
-                    ^^ 0 &64 &16 SL[ extend under dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
-                    ^^ 0 &64 &16 SL[ extend under dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
+                    ^^ 0 #64 #16 SL[ extend tuck dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
+                    ^^ 0 #64 #16 SL[ extend tuck dabs <# #S rot sign #> tex assign ]SL ( MINOS ) hslider new 
                   #2 habox new
-                  ^^ #0 #1000 SC[ extend under dabs <# #S rot sign #> tex assign ]SC ( MINOS ) hscaler new  #-500 SC# 
+                  ^^ #0 #1000 SC[ extend tuck dabs <# #S rot sign #> tex assign ]SC ( MINOS ) hscaler new  #-500 SC# 
                         ^^  0 T[ topics +flip ][ ( MINOS ) topics -flip ]T ( MINOS ) X" -" T" +" togglebutton new 
                       #1 habox new hfixbox 
                       ^^ S[ s" Flip It" tex assign ]S ( MINOS ) X" Flip It!" lbutton new 

@@ -210,13 +210,13 @@ class;
 
 previous previous
 
-: CV[  postpone :[ canvas postpone with ;        immediate
-: ]CV  canvas postpone endwith  postpone ]: ;    immediate
 : GL[  postpone :[ glcanvas postpone with ;        immediate
 : ]GL  glcanvas postpone endwith  postpone ]: ;    immediate
+[THEN]
+: CV[  postpone :[ canvas postpone with ;        immediate
+: ]CV  canvas postpone endwith  postpone ]: ;    immediate
 
 \ helper words for Theseus                             21sep07py
-[THEN]
 
 : T"   postpone S" ;                             immediate
 

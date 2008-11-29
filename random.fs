@@ -23,6 +23,7 @@ Variable seed  timer@ seed !
 $10450405 Constant generator
 
 Code rol9  AX 9 # rol  Next end-code macro
+\ : rol9 $200 um* or ;
 
 : rnd  ( -- n )  seed @ generator um* drop 1+ dup rol9 seed ! ;
 
