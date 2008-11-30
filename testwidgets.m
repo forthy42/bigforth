@@ -154,7 +154,7 @@ test-widgets implements
       beamer with clone endwith s" Clone" assign show
   endwith ;
 : show ( -- )
-    #300 #400 geometry dpy sync super show  beam-clone ;
+    #300 #400 geometry dpy sync super show beam-clone ;
 : xto ( x y n1 n2 -- )
     2dup >=
     IF    - $100 min tuck * 8 >> >r * 8 >> r> canvas to

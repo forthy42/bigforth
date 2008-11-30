@@ -126,7 +126,7 @@ how:    : xinc  child xinc ;
 
 \ window                                               22sep07py
 
-        : dispose ( -- )
+        : dispose ( -- )  self dpy delete
           child self  drop child dispose  self cleanup
           title $off
           xwin @  IF
@@ -136,7 +136,7 @@ how:    : xinc  child xinc ;
 [defined] win32 [IF]         xwin @ DestroyWindow drop
                       dpy handle-event
 [THEN]    THEN
-          self dpy delete  ?app super dispose ;
+          ?app super dispose ;
 
 \ window                                               09aug04py
 

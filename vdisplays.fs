@@ -301,8 +301,6 @@ how:    : drops  cells sp@ + cell+ sp! ;
           nextb self IF  nextb goto all-on THEN ;
         : all-off  enable off
           nextb self IF  nextb goto all-off THEN ;
-        : draw  firstb all-off  enable on  super draw
-          firstb all-on ;
 
 \ beamer                                               28mar99py
 
@@ -318,7 +316,8 @@ how:    : drops  cells sp@ + cell+ sp! ;
         : resize ( x y w h -- )
           first? IF  super resize resize! on
           ELSE  gadget :: resize THEN ;
-        : draw  super draw  resize! @ 0= ?EXIT  resize! off
+        : draw  redraw-all dup push off
+	  super draw  resize! @ 0= ?EXIT  resize! off
           nextb self IF  nextb resize-all  THEN ;
 
 \ beamer                                               28mar99py
