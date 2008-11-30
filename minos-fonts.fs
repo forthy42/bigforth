@@ -51,7 +51,7 @@ how:    : assign ( addr u -- )  name-string $!
 	    2swap swap text_i XTextItem chars 2!
 	    ascent @ +
 	    r> displays with
-	    2>r drawable' 2r> text_i 1
+	    2>r drawable 2r> text_i 1
 	    [defined] has-utf8 [IF]
 		maxascii $80 =
 		IF  Xutf8DrawText  ELSE  XDrawText  THEN
@@ -82,7 +82,7 @@ how:    : size ( addr u -- w h )  2/ id @ -rot
           2swap 2/ swap text_i XTextItem chars 2!
           ascent @ +
           r> displays with
-	    2>r drawable' 2r> text_i 1 XDrawText16
+	    2>r drawable 2r> text_i 1 XDrawText16
           endwith ;
 class;
 

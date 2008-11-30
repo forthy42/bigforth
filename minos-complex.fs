@@ -90,7 +90,7 @@ how:
         : new-window   xswa sizeof XSetWindowAttributes erase
           AllocNone visinfo @ XVisualInfo visual @
           dup dpy xrc vis @ <> canvas-mode 4 and or
-          IF    dpy drawable' drop 2swap swap XCreateColormap dup cmap !
+          IF    dpy drawable drop 2swap swap XCreateColormap dup cmap !
           ELSE  2drop dpy xrc cmap @  THEN
               xswa XSetWindowAttributes colormap !
           dpyscreen BlackPixel dup

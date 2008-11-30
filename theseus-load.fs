@@ -34,22 +34,22 @@ Variable last-file
     cur-descs make r> new,
     dup cur-descs assign ;
 
-: entity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: 'entity, ( "name" -- )  >in @ ' >body find-entity swap >in !
+    Create A, ;
+
+: entity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
     @ >r  r@ cell+ #classes
     descriptors new
     r> @ @ new-desc ;
 
-: fentity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: fentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
     @ >r  r@ cell+ #classes
     font-descriptors new
     r> @ @ new-desc ;
 
-: ref-entity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: ref-entity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
     @ >r  r@ cell+ #classes
     referred-descs new
@@ -57,8 +57,7 @@ DOES> ( class1 .. classn -- o )
 
 stroke-des ptr last-stroke
 
-: tentity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: tentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
     @ >r  2 pick stroke-des with & nstroke-des @ class? 0= endwith
     IF
@@ -68,23 +67,20 @@ DOES> ( class1 .. classn -- o )
     font-descriptors new
     r> @ @ new-desc ;
 
-: dentity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: dentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )  @ >r
     display-des new  r@ cell+ #classes
     descriptors new
     r> @ @ new-desc ;
 
-: ventity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: ventity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )  @ >r
     step-des new step-des with assign ^ endwith
     viewport-des new  r@ cell+ #classes
     descriptors new
     r> @ @ new-desc ;
 
-: tgentity: ( "name" -- )  >in @ ' >body find-entity swap >in !
-    Create A,
+: tgentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
     @ >r  topglue-des new r@ cell+ #classes
     descriptors new

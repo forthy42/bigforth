@@ -209,7 +209,7 @@ Create trans
     dpy screen xwin @ w h
     pixmap-format XPixmapFormatValues depth @ XCreatePixmap
     to pix to img
-    screen drawable' nip pix swap img 0 0 0 0 w h XPutImage
+    screen drawable nip pix swap img 0 0 0 0 w h XPutImage
     img XImage data off  img XDestroyImage
     pix w h ;
 
@@ -339,12 +339,12 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
 
 [defined] x11 [IF]
 : fix-color { shape pixmap w h }
-    screen drawable' nip 4 XSetFunction drop
-    screen drawable' nip
+    screen drawable nip 4 XSetFunction drop
+    screen drawable nip
     1 pixmap-format XPixmapFormatValues depth @ << 1- XSetBackground
-    screen drawable' nip pixmap shape rot
+    screen drawable nip pixmap shape rot
     0 0 w h 0 0 1 XCopyPlane
-    screen drawable' nip 3 XSetFunction drop ;
+    screen drawable nip 3 XSetFunction drop ;
 [THEN]
 
 [defined] win32 [IF]

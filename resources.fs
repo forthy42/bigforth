@@ -12,18 +12,19 @@ AVariable fonts
   new-font tuck swap ! ;
 
 : >font ( font o -- )  gadget with font! endwith ;
+
+: font-assign ( o addr -- o )  font@ over >font ;
 
 \ Font resources                                       10apr04py
 
 : (font" ( o -- o )
-  r> dup cell+ cell+ count + >r font@ over >font ; restrict
-: (font@ ( o -- o )
-  r> dup cell+ >r @ font@ over >font ;             restrict
+  r> dup cell+ cell+ count + aligned >r font-assign ; restrict
+[defined] doNotSin [IF] doNotSin [THEN]
 
 : font" ( "font"<"> -- )  ?font ?dup
-  0= IF   postpone (font" fonts @ here fonts ! A, 0 , ,"
-  ELSE    postpone (font@ A, '"' parse 2drop  THEN ;
-                                            immediate restrict
+  0= IF   postpone (font" fonts @ here fonts ! A, 0 , ," align
+  ELSE    postpone Aliteral postpone font-assign '"' parse 2drop  THEN ;
+                                           immediate restrict
 
 : .font cr base push hex dup cell+ @ 8 .r
   space 2 cells + count type ;
@@ -35,14 +36,15 @@ AVariable fonts
   2 pick @  IF  2drop @  EXIT  THEN
   X-font16 new tuck swap ! ;
 
+: font16-assign ( o addr -- o )  font16@ over >font ;
+
 : (font16" ( o -- o )
-  r> dup cell+ cell+ count + >r font16@ over >font ; restrict
-: (font16@ ( o -- o )
-  r> dup cell+ >r @ font16@ over >font ;             restrict
+  r> dup cell+ cell+ count + aligned >r font16@ over >font ; restrict
+[defined] doNotSin [IF] doNotSin [THEN]
 
 : font16" ( "font"<"> -- )  ?font ?dup
-  0= IF   postpone (font16" fonts @ here fonts ! A, 0 , ,"
-  ELSE    postpone (font16@ A, '"' parse 2drop  THEN ;
+  0= IF   postpone (font16" fonts @ here fonts ! A, 0 , ," align
+  ELSE    postpone ALiteral postpone font16-assign '"' parse 2drop  THEN ;
                                             immediate restrict
 [THEN]
 
@@ -59,13 +61,15 @@ AVariable icons
   2 pick @  IF  2drop @  EXIT  THEN
   icon-pixmap new tuck swap ! ;
 
-: (icon" ( -- )  r> dup cell+ cell+ count + >r icon@ ; restrict
+: (icon" ( -- )  r> dup cell+ cell+ count + aligned >r icon@ ; restrict
+[defined] doNotSin [IF] doNotSin [THEN]
 : (icon@ ( -- )  r> dup cell+ >r @ icon@ ;             restrict
+[defined] doNotSin [IF] doNotSin [THEN]
 
 \ File icons                                           10apr04py
 
 : icon" ( "file"<"> -- )  ?icon ?dup
-  0= IF   postpone (icon" icons @ here icons ! A, 0 , ,"
+  0= IF   postpone (icon" icons @ here icons ! A, 0 , ," align
   ELSE    postpone (icon@ A, '"' parse 2drop  THEN ;
                                             immediate restrict
 

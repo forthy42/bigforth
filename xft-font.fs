@@ -191,10 +191,10 @@ how:
         dpy displays with
             xft-draw @ 0= IF
                 & pixmap @ class? IF
-                    drawable rot drop swap xrc depth @
+                    drawable drop xrc depth @
                     XftDrawCreateAlpha
                 ELSE
-                    drawable rot drop swap xrc vis @
+                    drawable drop xrc vis @
                     xrc cmap @ XftDrawCreate
                 THEN  xft-draw !
             THEN

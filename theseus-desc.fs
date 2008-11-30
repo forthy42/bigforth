@@ -177,7 +177,7 @@ how:
           ^ TN[ 3 content ]T[ content @ assign ]TN S" Down" rbutton new
           ^ TN[ 2 content ]T[ content @ assign ]TN S" Right" rbutton new
           $0 $1 *hfill $0 $1 *vfil glue new
-        &5 harbox new hskip ;
+        #5 harbox new hskip ;
     : null ( -- 0 )  0 ;
     : make ( -- n )  get ;
     : dump ( -- )  get
@@ -753,7 +753,7 @@ descriptor class slider-des
     cell var steps
     cell var width
 how:
-    : init &10 steps ! &1 width ! ;
+    : init #10 steps ! #1 width ! ;
     : edit-field ( -- o )
         ^ F cur bind slider
         get drop 0 0 SN[ text@ drop cur slider get nip cur slider assign ]SN
@@ -767,10 +767,10 @@ how:
         item self 0= IF  2drop  EXIT  THEN
          item self widget with 0 -rot callback assign endwith
         item !resized  item resized ;
-    : null ( -- actor ) cur pane self 0 &10 1 slider-var new ;
+    : null ( -- actor ) cur pane self 0 #10 1 slider-var new ;
     : make ( -- actor ) cur pane self 0 get slider-var new ;
     : dump ( -- )
-        base push decimal ." ^^ 0 &" get swap . ." &" . ;
+        base push decimal ." ^^ 0 #" get swap . ." #" . ;
 class;
 
 descriptor class scaler-des
@@ -781,7 +781,7 @@ public:
     early text*!
     early text/!
 how:
-    : init &10 contents ! ;
+    : init #10 contents ! ;
     : h-offset ( -- addr )
 	item self hscaler with offset endwith ;
     : text*/ ( -- addr )
@@ -816,7 +816,7 @@ how:
         s" Div:" infotextfield new
         4 habox new hskip
         dup F bind edit-string ;
-    : null ( -- actor ) cur pane self pos @ &9 scale-var new ;
+    : null ( -- actor ) cur pane self pos @ #9 scale-var new ;
     : make ( -- actor ) cur pane self pos @ get scale-var new ;
     : get ( -- n ) contents @ ;
     : dump ( -- ) base push decimal ." ^^ "
