@@ -70,16 +70,16 @@ Variable (i)
                                                       immediate
 
 : [+LOOP] ( n -- ) \ gforth bracket-question-plus-loop
-  rdrop ;                                             immediate
+  rdrop rdrop ;                                       immediate
 
 : [LOOP] ( -- ) \ gforth bracket-loop
-  1 rdrop ;                                           immediate
+  1 rdrop rdrop ;                                     immediate
 
 : [FOR] ( n -- ) \ gforth bracket-for
   0 swap postpone [DO] ;                              immediate
 
 : [NEXT] ( n -- ) \ gforth bracket-next
-  -1 rdrop ;                                          immediate
+  -1 rdrop rdrop ;                                    immediate
 
 : [I]  (i) @ state @ IF  postpone Literal  THEN ;     immediate
 
