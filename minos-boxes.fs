@@ -37,7 +37,7 @@ how:    : >box  'nil bind childs  'nil bind active
           focuscol @ color !
           super init  dup n ! >box ;
         : ALLCHILDS ( .. -- ..' )
-	  childs self
+          childs self
           BEGIN  dup 'nil <>  WHILE
                  r@ swap >o execute widgets self o>
           REPEAT  drop rdrop ;
@@ -57,7 +57,7 @@ how:    : >box  'nil bind childs  'nil bind active
           ELSE  childs append  THEN  1 n +! ( resized ) ;
 
         : ?nodraw ( -- flag )  attribs c@ :flip and 0<>
-	  flags #hidden bit@ or ;
+          flags #hidden bit@ or ;
 
 \ combined widgets                                     29aug99py
 
@@ -73,8 +73,8 @@ how:    : >box  'nil bind childs  'nil bind active
 
 \ combined widgets                                     25mar99py
 
-	  { lc sc n x y w h } n 0< IF  lc sc to lc to sc  THEN
-	  n abs 0
+          { lc sc n x y w h } n 0< IF  lc sc to lc to sc  THEN
+          n abs 0
           ?DO  attribs c@ :notshadow and 0=
                IF  x I + y I + w I 2* - 1- 1
                                           lc I ?2b dpy box  THEN
@@ -388,9 +388,7 @@ class;
 : panel ( o -- o )  hskip vskip ;
 
 \ boxes with focus                                     21mar00py
-[defined] VFXFORTH 0= [IF]
-    ' noop Alias component immediate
-[THEN]
+
 vbox class vabox
 how:    : focus   ( -- )   attribs c@ :flip and
           0= IF  active focus    THEN ;
@@ -416,9 +414,6 @@ how:    : focus   ( -- )   attribs c@ :flip and
                   ELSE  drop  THEN  o>  THEN
               clicked -1 o> rdrop  THEN ;
 class;
-[defined] VFXFORTH [IF]
-    synonym component vabox
-[THEN]
 
 hbox class habox
 how:    vabox :: (clicked       vabox :: show-you
@@ -457,7 +452,7 @@ how:    Create minmax 0 , 0 ,
                      IF  hglue@  ELSE  minmax 2@  THEN
                      gsize >r
                      2swap r@ over xy 2@ 2swap resize
-		     r> x+ ;
+                     r> x+ ;
 class;
 
 \ tabulator box                                        19dec99py
@@ -491,7 +486,7 @@ how:    Create minmax 0 , 0 ,
                      IF  vglue@  ELSE  minmax 2@  THEN
                      gsize >r
                      2swap dup r@ xy 2@ 2swap resize 2swap
-		     r> y+ ;
+                     r> y+ ;
 class;
 
 \ htbox variants                                       21may97py

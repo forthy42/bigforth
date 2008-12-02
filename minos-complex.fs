@@ -1,21 +1,56 @@
 \ component                                            04mar00py
 
-[defined] VFXFORTH 0= [IF]
-s" COMPONENT" pad place  bl pad count + c!
-' vabox pad context @ (find drop (name> !
-[THEN]
 : get-win ( -- win )  & displays @ object class?
   IF  displays get-win  ELSE  widget dpy get-win  THEN ;
-: new-component ( o od addr u -- o )
-  >r >r  1 swap modal new  r> r>
-  screen self window new  window with  assign ^  endwith ;
-: open-component    ( o od addr u -- )
-  new-component  window with  show  endwith ;
-: open-dialog       ( o od addr u -- )
-  new-component  get-win
-  swap window with  set-parent show  endwith ;
-: open-application  ( o od addr u -- )
-  new-component  window with  show up@ app !  endwith ;
+
+modal class component
+    early open immediate
+    early dialog immediate
+    early open-app immediate
+    method params
+    method widget
+  how:
+    : widget s" Nothing" text-label new ;
+    : params   DF[ 0 ]DF s" No Title" ;
+    : init ( -- ) ^>^^ assign
+	widget 1 ^ params 2drop nip super init ;
+    : make     ( o -- win )
+	new, dup >o dup params o> rot drop
+	screen self window new  window with assign ^ endwith ;
+    : open,     make  window with  show  endwith ;
+    : dialog,   make  get-win
+	swap window with  set-parent show  endwith ;
+    : open-app, make  window with  show up@ app !  endwith ;
+    : open     ( -- o )     o@ state @
+	IF postpone ALiteral postpone open, ELSE open, THEN ;
+    : dialog     ( -- o )     o@ state @
+	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
+    : open-app     ( -- o )     o@ state @
+	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
+class;
+
+menu-window class menu-component
+    early open immediate
+    early dialog immediate
+    early open-app immediate
+    method params
+    method widget
+  how:
+    : widget s" Nothing" text-label new ;
+    : params   DF[ 0 ]DF s" No Title" ;
+    : init ( -- ) super init ^>^^
+	widget 1 ^ params 2>r nip modal new 2r> assign ;
+    : open,     new,  window with  show  endwith ;
+    : dialog,   new,  get-win
+	swap window with  set-parent show  endwith ;
+    : open-app, new,  window with  show up@ app !  endwith ;
+    : open     ( -- o )     o@ state @
+	IF postpone ALiteral postpone open, ELSE open, THEN ;
+    : dialog     ( -- o )     o@ state @
+	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
+    : open-app     ( -- o )     o@ state @
+	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
+class;
 
 \ OpenGL canvas                                        22jun02py
 

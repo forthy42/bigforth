@@ -67,7 +67,7 @@ also MINOS also
     menu-title new add-help ;
 
 : show-splash ( -- )
-    minos-splash new 1 0 modal new
+    minos-splash new
     screen self frame new frame with
         dup s" MINOS Splash Screen" assign
         screen xywh 2swap 2drop xywh 2swap 2drop p- p2/ show

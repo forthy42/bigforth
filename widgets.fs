@@ -195,7 +195,8 @@ how:    : delete ( addr addr' -- )  2drop ;
         : hglue  0 0 ;
         : vglue  0 0 ;
         : init ;
-        : dispose ;
+	: dispose ;
+	: close ;
         : show-you ( -- ) ;
 class;
 

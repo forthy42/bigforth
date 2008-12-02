@@ -6,15 +6,11 @@ also editor also minos also forth
 
 component class tip1
 public:
-  early widget
-  early open
-  early open-app
   text-label ptr tip-text
   button ptr i-know
  ( [varstart] ) cell var tip-file ( [varend] ) 
 how:
-  : open     new DF[ i-know self ]DF s" Tip 1" open-component ;
-  : open-app new DF[ i-know self ]DF s" Tip 1" open-application ;
+  : params  DF[ i-know self ]DF s" Tip 1" ;
 class;
 
 tip1 implements
@@ -39,7 +35,6 @@ scratch swap tip-text assign [ previous ] ]S ( MINOS ) S" Next Tip" button new
         $0 $1 *hfil $0 $1 *vfil glue new 
       &2 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main

@@ -522,25 +522,15 @@ resource:dialog implements
             IF  cr ." include " class-file $@ type  THEN
             cr base-class type ."  class " name-field get type
             cr ." public:"
-            cr ."   early widget"
-            cr ."   early open"
-            cr ."   early dialog"
-            cr ."   early open-app"
             nvar off set-var on 2 indent !
             dump-names'  var-edit backup
             cr ."  ( [varstart] ) " var-content $@ type
             ."  ( [varend] ) "
             nvar off set-var off 6 indent !
             cr ." how:" cr
-            .'   : open     new DF[ '  .default
+            .'   : params   DF[ '  .default
                 .'  ]DF s" ' title-field get type
-                .' " open-component ;' cr
-            .'   : dialog   new DF[ '  .default
-                .'  ]DF s" ' title-field get type
-                .' " open-dialog ;' cr
-            .'   : open-app new DF[ '  .default
-                .'  ]DF s" ' title-field get type
-                .' " open-application ;' cr
+                .' " ;' cr
             ." class;" cr
         THEN ;
     : dump-implementation ( -- )
@@ -553,7 +543,6 @@ resource:dialog implements
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
             cr .'     ( [dumpend] ) ;' cr
-            .'   : init  ^>^^  assign  widget 1 :: init ;'
             cr ." class;" cr
         THEN
         next-resource self 0= ?EXIT
@@ -592,7 +581,7 @@ resource:dialog implements
 class;
 
 resource:menu-window implements
-    : base-class s" menu-window" ;
+    : base-class s" menu-component" ;
     : dump-declaration ( -- )
         next-resource self
         IF  next-resource dump-declaration  THEN
@@ -601,19 +590,15 @@ resource:menu-window implements
             IF  cr ." include " class-file $@ type  THEN
             cr base-class type ."  class " name-field get type
             cr ." public:"
-            cr ."   early widget"
-            cr ."   early open"
-            cr ."   early all-open"
-            cr ."   early modal-open"
             nvar off set-var on 2 indent !
             dump-names'  var-edit backup
             cr ."  ( [varstart] ) " var-content $@ type
             ."  ( [varend] ) "
             nvar off set-var off 6 indent !
             cr ." how:" cr
-            ."   : open       screen self new >o show o> ;" cr
-            ."   : all-open   screen self new >o show up@ app ! o> ;" cr
-            ."   : modal-open screen self new >o show stop o> ;" cr
+            .'   : params   DF[ '  .default
+                .'  ]DF s" ' title-field get type
+                .' " ;' cr
             ." class;" cr
         THEN ;
     : .default ( -- )
@@ -629,9 +614,6 @@ resource:menu-window implements
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
             cr .'     ( [dumpend] ) ;' cr
-            .'   : title$  s" '  title-field get type .' " ;' cr
-            .'   : init  super init  ^ to ^^' cr
-            .'     widget 1 ' .default .'  modal new  title$ assign ;'
             cr ." class;" cr
         THEN
         next-resource self 0= ?EXIT
