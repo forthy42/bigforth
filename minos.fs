@@ -46,21 +46,21 @@ include sincos.fs
 \ useful utilities                                     09jan00py
 
     [defined] VFXFORTH [IF]
-	: pin 2+ cells sp@ + ! ;
-	$7FFFFFFF | Constant mi
-	: 0max dup 0< 0= and ;
-	: 0min dup 0< and ;
-	: 8*  ( n -- 8*n ) 3 lshift ;
-	: 3*  ( n -- 3*n ) dup 2* + ;
+        : pin 2+ cells sp@ + ! ;
+        $7FFFFFFF | Constant mi
+        : 0max dup 0< 0= and ;
+        : 0min dup 0< and ;
+        : 8*  ( n -- 8*n ) 3 lshift ;
+        : 3*  ( n -- 3*n ) dup 2* + ;
     [ELSE]
-	Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
-	    Next end-code macro :dx :ax T&P
-	$7FFFFFFF | Constant mi
-	: 0max dup 0>= and ;
-	: 0min dup 0< and ;
-	Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
-	Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
-    [THEN]	
+        Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
+            Next end-code macro :dx :ax T&P
+        $7FFFFFFF | Constant mi
+        : 0max dup 0>= and ;
+        : 0min dup 0< and ;
+        Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
+        Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
+    [THEN]      
 \ class utility                                        01jan00py
 | : cell-@  dup IF cell- @ THEN ;
 : parent@ ( object -- parent )  >o object parento @ cell-@ o> ;
@@ -84,17 +84,17 @@ Patch .class
 \ Loadscreen for X11                                   21sep07py
 
     [defined] VFXFORTH [IF]
-	include vfx-minos/x11.fs
-	include vfx-minos/xrender.fs
-	include vfx-minos/xpm.fs
-	include x.fs
+        include vfx-minos/x11.fs
+        include vfx-minos/xrender.fs
+        include vfx-minos/xpm.fs
+        include x.fs
     [ELSE]
-	\needs x11      include x11.fs
-	\needs xrender  include xrender.fs
-	\needs xpm      include xpm.fs
-	\needs opengl   include opengl.fs
-	\needs xconst   | import xconst
-	\needs glconst  | import glconst
+        \needs x11      include x11.fs
+        \needs xrender  include xrender.fs
+        \needs xpm      include xpm.fs
+        \needs opengl   include opengl.fs
+        \needs xconst   | import xconst
+        \needs glconst  | import glconst
     [THEN]
 Onlyforth
 Module MINOS
@@ -186,7 +186,7 @@ ficon: minos-win icons/minos1+.icn"
     ' win-init atcold
     : minos-idle screen handle-events ;
     : event-loop ( -- ) BEGIN  minos-idle
-	screen childs self 'nilscreen =  UNTIL ;
+        screen childs self 'nilscreen =  UNTIL ;
 [THEN]
 
 \ init sequence                                        10apr04py

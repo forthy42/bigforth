@@ -21,9 +21,7 @@ public:
   infotextfield ptr tex
   vabox ptr topics
   vabox ptr sub-topics
- ( [varstart] ) cell var cv1task
-cell var kill-me
-early draw-cv1 ( [varend] ) 
+ ( [varstart] ) early draw-cv1 ( [varend] ) 
 how:
   : open       screen self new >o show o> ;
   : all-open   screen self new >o show up@ app ! o> ;
@@ -193,7 +191,7 @@ test-widgets implements
     endwith ;
 : start-cv1  recursive
     ^ draw-cv1 drop dpy sync ['] start-cv1 ^ #30 after dpy schedule ;
-: dispose  dpy cleanup ; ( [methodend] ) 
+: dispose  ^ dpy cleanup ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         M: menu1 widget X"  bigFORTH " menu-title new 
         M: sub-menu1 widget X"  File " menu-title new 
