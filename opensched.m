@@ -5,12 +5,8 @@
 also editor also minos also forth
 
 include opensched-types.fs
-menu-window class opensched
+menu-component class opensched
 public:
-  early widget
-  early open
-  early all-open
-  early modal-open
   infotextfield ptr newjob
   viewport ptr task-list
   infotextfield ptr newresource
@@ -28,82 +24,46 @@ method list-jobs
 method print
 method load-sched ( [varend] ) 
 how:
-  : open       screen self new >o show o> ;
-  : all-open   screen self new >o show up@ app ! o> ;
-  : modal-open screen self new >o show stop o> ;
+  : params   DF[ 0 ]DF s" Open Schedule GUI" ;
 class;
 
 component class file-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" File Menu" open-component ;
-  : dialog   new DF[ 0 ]DF s" File Menu" open-dialog ;
-  : open-app new DF[ 0 ]DF s" File Menu" open-application ;
+  : params   DF[ 0 ]DF s" File Menu" ;
 class;
 
 component class help-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Help Menu" open-component ;
-  : dialog   new DF[ 0 ]DF s" Help Menu" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Help Menu" open-application ;
+  : params   DF[ 0 ]DF s" Help Menu" ;
 class;
 
 component class resource-title
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Resource Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" Resource Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Resource Title" open-application ;
+  : params   DF[ 0 ]DF s" Resource Title" ;
 class;
 
 component class job-title
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Job Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" Job Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Job Title" open-application ;
+  : params   DF[ 0 ]DF s" Job Title" ;
 class;
 
 component class edit-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Edit Menu" open-component ;
-  : dialog   new DF[ 0 ]DF s" Edit Menu" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Edit Menu" open-application ;
+  : params   DF[ 0 ]DF s" Edit Menu" ;
 class;
 
 component class project
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   infotextfield ptr prefix
   infotextfield ptr year
   infotextfield ptr month
@@ -122,39 +82,25 @@ public:
   tbutton ptr vacs
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Project Properties" open-component ;
-  : dialog   new DF[ 0 ]DF s" Project Properties" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Project Properties" open-application ;
+  : params   DF[ 0 ]DF s" Project Properties" ;
 class;
 
 component class process-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Process Menu" open-component ;
-  : dialog   new DF[ 0 ]DF s" Process Menu" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Process Menu" open-application ;
+  : params   DF[ 0 ]DF s" Process Menu" ;
 class;
 
 component class graphs
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   infotextfield ptr task
   infotextfield ptr year
   infotextfield ptr month
   infotextfield ptr day
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Graph Properties" open-component ;
-  : dialog   new DF[ 0 ]DF s" Graph Properties" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Graph Properties" open-application ;
+  : params   DF[ 0 ]DF s" Graph Properties" ;
 class;
 
 graphs implements
@@ -166,25 +112,24 @@ graphs implements
   &100 /mod &100 /mod 0 year assign 0 month assign 0 day assign
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          T" " ^^ ST[  ]ST ( MINOS ) S" Task Graph:" infotextfield new  ^^bind task
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" End Year" infotextfield new  ^^bind year
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
-          &3 habox new &1 hskips -&1 borderbox
-        &2 vabox new &1 vskips
+          T" " ^^ ST[  ]ST ( MINOS ) X" Task Graph:" infotextfield new  ^^bind task
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" End Year" infotextfield new  ^^bind year
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
+          #3 habox new #1 hskips #-1 borderbox
+        #2 vabox new #1 vskips
           $10 $2 *hfilll $10 $1 *vfil glue new 
           ^^ S[ current-widget @ opensched with graph endwith >r
 task get r@ task-graph name" $!
 year get drop &100 * month get drop + &100 * day get drop +
 r> task-graph date !
-close ]S ( MINOS ) S" OK" button new 
+close ]S ( MINOS ) X" OK" button new 
           $10 $1 *hfilll $10 $1 *vfil glue new 
-          ^^ S[ close ]S ( MINOS ) S" Cancel" button new 
+          ^^ S[ close ]S ( MINOS ) X" Cancel" button new 
           $10 $2 *hfilll $10 $1 *vfil glue new 
-        &5 hatbox new
-      &2 vabox new panel
+        #5 hatbox new
+      #2 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 process-menu implements
@@ -195,24 +140,23 @@ process-menu implements
    filename $@ tmpbuf $+!
    0 tmpbuf $@ + c!
    tmpbuf $@ drop [ also dos ] system [ previous ] drop
-endwith ]S ( MINOS ) S" OpenSched" menu-entry new 
+endwith ]S ( MINOS ) X" OpenSched" menu-entry new 
         ^^ S[ ^ opensched with
    s" latex " tmpbuf $!
    globals global prefix $@ tmpbuf $+!
    s" .tex &" tmpbuf $+!
    0 tmpbuf $@ + c!
    tmpbuf $@ drop [ also dos ] system [ previous ] drop
-endwith ]S ( MINOS ) S" LaTeX" menu-entry new 
+endwith ]S ( MINOS ) X" LaTeX" menu-entry new 
         ^^ S[ ^ opensched with
    s" xdvi " tmpbuf $!
    globals global prefix $@ tmpbuf $+!
    s" .dvi &" tmpbuf $+!
    0 tmpbuf $@ + c!
    tmpbuf $@ drop [ also dos ] system [ previous ] drop
-endwith ]S ( MINOS ) S" xdvi" menu-entry new 
-      &3 vabox new &2 borderbox
+endwith ]S ( MINOS ) X" xdvi" menu-entry new 
+      #3 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 project implements
@@ -237,33 +181,33 @@ project implements
   dup $20 and IF  vacs set   THEN  drop
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        T" " ^^ ST[  ]ST ( MINOS ) S" Project Prefix:" infotextfield new  ^^bind prefix
-          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Start Year" infotextfield new  ^^bind year
-          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Month" infotextfield new  ^^bind month
-          &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Day" infotextfield new  ^^bind day
-        &3 hatab new &1 hskips -&1 borderbox
-            S" Reports:" text-label new 
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Text" tbutton new  ^^bind text
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" TeX" tbutton new  ^^bind tex
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" HTML" tbutton new  ^^bind html
-          &4 hatbox new
-            S" Details:" text-label new 
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Weekly" tbutton new  ^^bind weekly
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Monthly" tbutton new  ^^bind monthly
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Slippage" tbutton new  ^^bind slippage
-          &4 hatbox new
-        &2 vatbox new -&1 borderbox
-            S" Show:" text-label new 
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Resources" tbutton new  ^^bind res
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Tasks" tbutton new  ^^bind tasks
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Task-IDs" tbutton new  ^^bind tids
-          &4 hatab new
-            S" " text-label new 
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Milestones" tbutton new  ^^bind mile
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Dependencies" tbutton new  ^^bind deps
-            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) S" Vacations" tbutton new  ^^bind vacs
-          &4 hatab new
-        &2 vabox new -&1 borderbox
+        T" " ^^ ST[  ]ST ( MINOS ) X" Project Prefix:" infotextfield new  ^^bind prefix
+          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Start Year" infotextfield new  ^^bind year
+          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
+          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
+        #3 hatab new #1 hskips #-1 borderbox
+            X" Reports:" text-label new 
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Text" tbutton new  ^^bind text
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" TeX" tbutton new  ^^bind tex
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" HTML" tbutton new  ^^bind html
+          #4 hatbox new
+            X" Details:" text-label new 
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Weekly" tbutton new  ^^bind weekly
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Monthly" tbutton new  ^^bind monthly
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Slippage" tbutton new  ^^bind slippage
+          #4 hatbox new
+        #2 vatbox new #-1 borderbox
+            X" Show:" text-label new 
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Resources" tbutton new  ^^bind res
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Tasks" tbutton new  ^^bind tasks
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Task-IDs" tbutton new  ^^bind tids
+          #4 hatab new
+            X" " text-label new 
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Milestones" tbutton new  ^^bind mile
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Dependencies" tbutton new  ^^bind deps
+            ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Vacations" tbutton new  ^^bind vacs
+          #4 hatab new
+        #2 vabox new #-1 borderbox
           $10 $2 *hfilll $10 $1 *vfil glue new 
           ^^ S[ current-widget @ opensched with globals endwith >r
 prefix get r@ global prefix $!
@@ -276,65 +220,60 @@ r@ global reports !
 res get 1 and  tasks get 2 and or  tids get 4 and or
 mile get 8 and or  deps get $10 and or  vacs get $20 and or
 r> global shows !
-close ]S ( MINOS ) S" OK" button new 
+close ]S ( MINOS ) X" OK" button new 
           $10 $1 *hfilll $10 $1 *vfil glue new 
-          ^^ S[ close ]S ( MINOS ) S" Cancel" button new 
+          ^^ S[ close ]S ( MINOS ) X" Cancel" button new 
           $10 $2 *hfilll $10 $1 *vfil glue new 
-        &5 hatbox new
-      &5 vabox new panel
+        #5 hatbox new
+      #5 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 edit-menu implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[ ^ current-widget ! project open ]S ( MINOS ) S" Project..." menu-entry new 
-        ^^ S[ ^ current-widget ! graphs open ]S ( MINOS ) S" Task Graph..." menu-entry new 
-      &2 vabox new &2 borderbox
+        ^^ S[ ^ current-widget ! project open ]S ( MINOS ) X" Project..." menu-entry new 
+        ^^ S[ ^ current-widget ! graphs open ]S ( MINOS ) X" Task Graph..." menu-entry new 
+      #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 job-title implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[  ]S ( MINOS ) S" Id" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Days" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Complete" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Name" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Description" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Candidates" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Dependencies" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Schedules" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Id" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Days" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Complete" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Name" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Description" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Candidates" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Dependencies" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Schedules" lbutton new 
         $0 $1 *hfilll $0 $1 *vfilll glue new 
-      &9 hatab new
+      #9 hatab new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 resource-title implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[  ]S ( MINOS ) S" Id" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Name" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Efficiency" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Rate" lbutton new 
-        ^^ S[  ]S ( MINOS ) S" Note" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Id" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Name" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Efficiency" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Rate" lbutton new 
+        ^^ S[  ]S ( MINOS ) X" Note" lbutton new 
         $0 $1 *hfilll $0 $1 *vfilll glue new 
-      &6 hatab new
+      #6 hatab new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 help-menu implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[  ]S ( MINOS ) S" About OpenSched" menu-entry new 
-        ^^ S[  ]S ( MINOS ) S" About Open Schedule GUI" menu-entry new 
-      &2 vabox new &2 borderbox
+        ^^ S[  ]S ( MINOS ) X" About OpenSched" menu-entry new 
+        ^^ S[  ]S ( MINOS ) X" About Open Schedule GUI" menu-entry new 
+      #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 file-menu implements
@@ -345,25 +284,24 @@ s" Sched File" s" " sched-path @
 IF  sched-path $@  ELSE  s" *.sched"  THEN
 ^ S[ 2swap sched-path $! filename $! ^ current-widget !
      load-sched ]S fsel-dialog
-endwith ]S ( MINOS ) S" Load file..." menu-entry new 
+endwith ]S ( MINOS ) X" Load file..." menu-entry new 
         ^^ S[ ^ opensched with
 filename @ IF  print
 ELSE   s" Sched File" s" "  sched-path @
        IF  sched-path $@  ELSE  s" *.sched"  THEN
        ^ S[ 2swap sched-path $! filename $! print ]S
        fsel-dialog
-THEN  endwith ]S ( MINOS ) S" Save" menu-entry new 
+THEN  endwith ]S ( MINOS ) X" Save" menu-entry new 
         ^^ S[ ^ opensched with
 s" Sched File" filename @ IF  filename $@  ELSE  s" "  THEN
 sched-path @
 IF  sched-path $@  ELSE  s" *.sched"  THEN
 ^ S[ 2swap sched-path $! filename $! print ]S
 fsel-dialog
-endwith ]S ( MINOS ) S" Save as..." menu-entry new 
-        ^^ S[ close ]S ( MINOS ) S" Quit" menu-entry new 
-      &4 vabox new &2 borderbox
+endwith ]S ( MINOS ) X" Save as..." menu-entry new 
+        ^^ S[ close ]S ( MINOS ) X" Quit" menu-entry new 
+      #4 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 include opensched.fs
@@ -432,45 +370,42 @@ Variable textmp
         dup here over - rot dp ! true
   ELSE  2drop false  THEN ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: file-menu menu S"  File " menu-title new 
-        M: edit-menu menu S"  Edit " menu-title new 
-        M: process-menu menu S"  Process " menu-title new 
+        M: file-menu menu X"  File " menu-title new 
+        M: edit-menu menu X"  Edit " menu-title new 
+        M: process-menu menu X"  Process " menu-title new 
         $190 $1 *hfilll $1 $1 *vfil rule new 
-        M: help-menu menu S"  Help " menu-title new 
-      &5 hbox new vfixbox  &2 borderbox
-            ^^ ST[ newjob get check-cr IF  
+        M: help-menu menu X"  Help " menu-title new 
+      #5 hbox new vfixbox  #2 borderbox
+            T" " ^^ ST[ newjob get check-cr IF  
     new-job jobs append! list-jobs
-    s" " newjob assign  THEN ]ST ( MINOS ) T" " S" New Job:" infotextfield new  ^^bind newjob
-              ^^ S[  ]S ( MINOS ) S" Delete Selected Jobs" button new 
-            &1 habox new hfixbox 
-          &2 habox new vfixbox  panel
+    s" " newjob assign  THEN ]ST ( MINOS ) X" New Job:" infotextfield new  ^^bind newjob
+              ^^ S[  ]S ( MINOS ) X" Delete Selected Jobs" button new 
+            #1 habox new hfixbox 
+          #2 habox new vfixbox  panel
             1 1 viewport new  ^^bind task-list DS[ 
-              S" Job List" text-label new 
-            &1 vabox new ]DS ( MINOS ) 
+              X" Job List" text-label new 
+            #1 vabox new ]DS ( MINOS ) 
             $0 $0 *hpix $A0 $1 *vfilll glue new 
-          &2 habox new
+          #2 habox new
           vxrtsizer new 
-        &3 vasbox new
-          ^^ ST[ newresource get check-cr IF  
+        #3 vasbox new
+          T" " ^^ ST[ newresource get check-cr IF  
     new-resource resources append! list-resources
-    s" " newresource assign  THEN ]ST ( MINOS ) T" " S" New Resource:" infotextfield new  ^^bind newresource
-            ^^ S[  ]S ( MINOS ) S" Detele Selected Resources" button new 
-          &1 habox new hfixbox 
-        &2 habox new vfixbox  panel
+    s" " newresource assign  THEN ]ST ( MINOS ) X" New Resource:" infotextfield new  ^^bind newresource
+            ^^ S[  ]S ( MINOS ) X" Detele Selected Resources" button new 
+          #1 habox new hfixbox 
+        #2 habox new vfixbox  panel
           1 1 viewport new  ^^bind resource-list DS[ 
-            S" Resources" text-label new 
-          &1 vabox new ]DS ( MINOS ) 
+            X" Resources" text-label new 
+          #1 vabox new ]DS ( MINOS ) 
           $0 $0 *hpix $A0 $1 *vfilll glue new 
-        &2 habox new
-      &3 vabox new
+        #2 habox new
+      #3 vabox new
     ( [dumpend] ) ;
-  : title$  s" Open Schedule GUI" ;
-  : init  super init  ^ to ^^
-    widget 1 0 modal new  title$ assign ;
 class;
 
 : main
-  opensched all-open
-  $1 0 ?DO  stop  LOOP bye ;
+  opensched open-app
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

@@ -7,9 +7,6 @@ also editor also minos also forth
 include sql-classes.fs
 component class sql
 public:
-  early widget
-  early open
-  early open-app
   tableinfotextfield ptr db
   tableinfotextfield ptr table
   tableinfotextfield ptr #name
@@ -21,8 +18,7 @@ public:
 database ptr sql-db
 cell var db-name ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" SQL insert" open-component ;
-  : open-app new DF[ 0 ]DF s" SQL insert" open-application ;
+  : params   DF[ 0 ]DF s" SQL insert" ;
 class;
 
 include sql.fs
@@ -45,23 +41,22 @@ sql implements
   sql-db self  IF  sql-db dispose  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        T" test" ^^ ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
-        T" customer" ^^ ST[  ]ST ( MINOS ) S" Table" tableinfotextfield new  ^^bind table
-        T" " ^^ ST[  ]ST ( MINOS ) S" Name" tableinfotextfield new  ^^bind #name
-        T" " ^^ ST[  ]ST ( MINOS ) S" Street" tableinfotextfield new  ^^bind #street
-        T" " ^^ ST[  ]ST ( MINOS ) S" Country" tableinfotextfield new  ^^bind #country
-        &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Zip" tableinfotextfield new  ^^bind #zip
-        T" " ^^ ST[  ]ST ( MINOS ) S" Town" tableinfotextfield new  ^^bind #town
-          ^^ S[ do-insert ]S ( MINOS ) S" Insert" button new 
-          ^^ S[ close ]S ( MINOS ) S" Close" button new 
-        &2 hatbox new &1 hskips
-      &8 vabox new panel
+        T" test" ^^ ST[  ]ST ( MINOS ) X" Data base:" tableinfotextfield new  ^^bind db
+        T" customer" ^^ ST[  ]ST ( MINOS ) X" Table" tableinfotextfield new  ^^bind table
+        T" " ^^ ST[  ]ST ( MINOS ) X" Name" tableinfotextfield new  ^^bind #name
+        T" " ^^ ST[  ]ST ( MINOS ) X" Street" tableinfotextfield new  ^^bind #street
+        T" " ^^ ST[  ]ST ( MINOS ) X" Country" tableinfotextfield new  ^^bind #country
+        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Zip" tableinfotextfield new  ^^bind #zip
+        T" " ^^ ST[  ]ST ( MINOS ) X" Town" tableinfotextfield new  ^^bind #town
+          ^^ S[ do-insert ]S ( MINOS ) X" Insert" button new 
+          ^^ S[ close ]S ( MINOS ) X" Close" button new 
+        #2 hatbox new #1 hskips
+      #8 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   sql open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

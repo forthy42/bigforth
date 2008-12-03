@@ -196,7 +196,7 @@ previous
     2icon-des new 2icon-des with assign self endwith ;
 
 : font" ( o -- o )  '" parse
-    X-font new over all-descs find-object
+    new-font over all-descs find-object
     font-descriptors with
         & font-descriptors @ class?  IF  font!  ELSE  drop  THEN
     endwith ;

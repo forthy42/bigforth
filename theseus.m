@@ -67,7 +67,6 @@ minos-about implements
         #3 habox new #1 vskips
       #3 vabox new
     ( [dumpend] ) ;
-
 class;
 
 help-menu implements
@@ -78,7 +77,6 @@ help-menu implements
         ^^ S[ minos-about open ]S ( MINOS ) X" About Theseus" menu-entry new 
       #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-
 class;
 
 edit-menu implements
@@ -88,7 +86,6 @@ edit-menu implements
         ^^ S[  ]S ( MINOS ) X" New Menu Window" menu-entry new 
       #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-
 class;
 
 file-menu implements
@@ -102,7 +99,6 @@ file-menu implements
         ^^ S[  ]S ( MINOS ) X" Quit" menu-entry new 
       #6 vabox new #2 borderbox
     ( [dumpend] ) ;
-
 class;
 
 designer implements
@@ -234,11 +230,10 @@ designer implements
         #2 vasbox new
       #2 vabox new
     ( [dumpend] ) ;
-
 class;
 
 : main
-  designer all-open
+  designer open-app
   event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

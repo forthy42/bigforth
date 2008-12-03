@@ -6,15 +6,11 @@ also editor also minos also forth
 
 component class osci
 public:
-  early widget
-  early open
-  early open-app
   canvas ptr field
   button ptr ende
  ( [varstart] ) cell var samples ( [varend] ) 
 how:
-  : open     new DF[ ende self ]DF s" Saw Tooth" open-component ;
-  : open-app new DF[ ende self ]DF s" Saw Tooth" open-application ;
+  : params   DF[ ende self ]DF s" Saw Tooth" ;
 class;
 
 osci implements
@@ -40,14 +36,13 @@ osci implements
   endwith ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         CV[ ^ draw-oszi ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $258 $1 *hfil $190 $1 *vfil canvas new  ^^bind field
-        ^^ S[ close ]S ( MINOS ) S" Ende" button new  ^^bind ende
-      &2 vabox new panel
+        ^^ S[ close ]S ( MINOS ) X" Ende" button new  ^^bind ende
+      #2 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   osci open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

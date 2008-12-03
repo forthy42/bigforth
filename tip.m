@@ -10,7 +10,7 @@ public:
   button ptr i-know
  ( [varstart] ) cell var tip-file ( [varend] ) 
 how:
-  : params  DF[ i-know self ]DF s" Tip 1" ;
+  : params   DF[ 0 ]DF s" Tip 1" ;
 class;
 
 tip1 implements
@@ -18,27 +18,27 @@ tip1 implements
   : widget  ( [dumpstart] )
                icon" icons/INFO" icon new 
               $0 $1 *hfil $0 $1 *vfil glue new 
-            &2 vabox new
-              S" Did you know?" text-label new 
-              S" Click on ``next tip'' to get a tip" text-label new  ^^bind tip-text
-            &2 vabox new &1 vskips
-          &2 habox new &1 hskips
-            ^^ S[ close ]S ( MINOS ) S" I know" button new  ^^bind i-know
+            #2 vabox new
+              X" Did you know?" text-label new 
+              X" Click on ``next tip'' to get a tip" text-label new  ^^bind tip-text
+            #2 vabox new #1 vskips
+          #2 habox new #1 hskips
+            ^^ S[ close ]S ( MINOS ) X" I know" button new  ^^bind i-know
             ^^ S[ [ also DOS ] tip-file @ 0=
 IF  s" tips.txt" r/o open-file throw tip-file !  THEN
 BEGIN  scratch $100 tip-file @ read-line throw  0= WHILE
        drop 0. tip-file @ reposition-file throw  REPEAT
-scratch swap tip-text assign [ previous ] ]S ( MINOS ) S" Next Tip" button new 
+scratch swap tip-text assign [ previous ] ]S ( MINOS ) X" Next Tip" button new 
             $0 $1 *hfilll $0 $1 *vfilll glue new 
-          &3 hatbox new &1 hskips
-        &2 vabox new panel
+          #3 hatbox new #1 hskips
+        #2 vabox new panel
         $0 $1 *hfil $0 $1 *vfil glue new 
-      &2 vabox new
+      #2 vabox new
     ( [dumpend] ) ;
 class;
 
 : main
   tip1 open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

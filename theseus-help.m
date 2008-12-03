@@ -35,7 +35,6 @@ minos-about implements
         #1 vabox new
       #2 vabox new
     ( [dumpend] ) ;
-
 class;
 
 previous previous previous

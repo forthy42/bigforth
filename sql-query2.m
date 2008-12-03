@@ -7,9 +7,6 @@ also editor also minos also forth
 include sql-classes.fs
 component class sql
 public:
-  early widget
-  early open
-  early open-app
   tableinfotextfield ptr db
   tableinfotextfield ptr table
   tableinfotextfield ptr #name
@@ -19,8 +16,7 @@ public:
 database ptr sql-db
 cell var db-name ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" SQL insert" open-component ;
-  : open-app new DF[ 0 ]DF s" SQL insert" open-application ;
+  : params   DF[ 0 ]DF s" SQL insert" ;
 class;
 
 include sql.fs
@@ -41,21 +37,20 @@ sql implements
   sql-db self  IF  sql-db dispose  THEN
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        T" test" ^^ ST[  ]ST ( MINOS ) S" Data base:" tableinfotextfield new  ^^bind db
-        T" product" ^^ ST[  ]ST ( MINOS ) S" Table:" tableinfotextfield new  ^^bind table
-        T" " ^^ ST[  ]ST ( MINOS ) S" name" tableinfotextfield new  ^^bind #name
-        T" " ^^ ST[  ]ST ( MINOS ) S" version" tableinfotextfield new  ^^bind #version
-        &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" price" tableinfotextfield new  ^^bind #price
-          ^^ S[ do-insert ]S ( MINOS ) S" Insert" button new 
-          ^^ S[ close ]S ( MINOS ) S" Close" button new 
-        &2 hatbox new &1 hskips
-      &6 vabox new panel
+        T" test" ^^ ST[  ]ST ( MINOS ) X" Data base:" tableinfotextfield new  ^^bind db
+        T" product" ^^ ST[  ]ST ( MINOS ) X" Table:" tableinfotextfield new  ^^bind table
+        T" " ^^ ST[  ]ST ( MINOS ) X" name" tableinfotextfield new  ^^bind #name
+        T" " ^^ ST[  ]ST ( MINOS ) X" version" tableinfotextfield new  ^^bind #version
+        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" price" tableinfotextfield new  ^^bind #price
+          ^^ S[ do-insert ]S ( MINOS ) X" Insert" button new 
+          ^^ S[ close ]S ( MINOS ) X" Close" button new 
+        #2 hatbox new #1 hskips
+      #6 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   sql open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

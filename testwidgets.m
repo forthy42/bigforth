@@ -4,12 +4,8 @@
 
 also editor also minos also forth
 
-menu-window class test-widgets
+menu-component class test-widgets
 public:
-  early widget
-  early open
-  early all-open
-  early modal-open
   viewport ptr view0
   info-menu ptr coolness
   topindex ptr (topindex-00)
@@ -23,64 +19,38 @@ public:
   vabox ptr sub-topics
  ( [varstart] ) early draw-cv1 ( [varend] ) 
 how:
-  : open       screen self new >o show o> ;
-  : all-open   screen self new >o show up@ app ! o> ;
-  : modal-open screen self new >o show stop o> ;
+  : params   DF[ 0 ]DF s" bigFORTH" ;
 class;
 
 component class sub-menu1
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 component class menu1
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 component class color-menu1
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 component class calc
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   infotextfield ptr a#
   infotextfield ptr b#
   infotextfield ptr r#
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Calculator" open-component ;
-  : dialog   new DF[ 0 ]DF s" Calculator" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Calculator" open-application ;
+  : params   DF[ 0 ]DF s" Calculator" ;
 class;
 
 calc implements
@@ -99,7 +69,6 @@ calc implements
         #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" infotextfield new  ^^bind r#
       #4 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 color-menu1 implements
@@ -120,7 +89,6 @@ color-menu1 implements
         ^^ S[ mono s" Mono" test-widgets coolness assign ]S ( MINOS ) X" Mono" menu-entry new 
       #12 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 menu1 implements
@@ -131,7 +99,6 @@ menu1 implements
         ^^ S[ s" Menu 2" test-widgets tex assign ]S ( MINOS ) X" Menu 2" menu-entry new 
       #3 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 sub-menu1 implements
@@ -143,7 +110,6 @@ sub-menu1 implements
         ^^ S[ s" Menu 2" test-widgets tex assign ]S ( MINOS ) X" Menu 2" menu-entry new 
       #4 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 test-widgets implements
@@ -304,14 +270,11 @@ test-widgets implements
         #1 habox new ]DS ( MINOS ) 
       #1 vabox new
     ( [dumpend] ) ;
-  : title$  s" bigFORTH" ;
-  : init  super init  ^ to ^^
-    widget 1 0 modal new  title$ assign ;
 class;
 
 : main
   calc open-app
-  test-widgets all-open
+  test-widgets open-app
   event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous
