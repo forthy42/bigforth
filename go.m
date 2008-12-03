@@ -175,10 +175,10 @@ Variable go$
 : close  close-game super close ;
 previous ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: file-menu widget S"  File " menu-title new 
-        M: go-game-menu widget S"  Game " menu-title new 
+        M: file-menu menu S"  File " menu-title new 
+        M: go-game-menu menu S"  Game " menu-title new 
         $1 $1 *hfilll $1 $1 *vfilll rule new 
-        M: help-menu widget S"  Help " menu-title new 
+        M: help-menu menu S"  Help " menu-title new 
       &4 hbox new vfixbox  &2 borderbox
             &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Captured: White" infotextfield new  ^^bind white
             &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Black" infotextfield new  ^^bind black

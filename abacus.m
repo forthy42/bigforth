@@ -6,10 +6,6 @@ also editor also minos also forth
 
 component class abacus
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   infotextfield ptr num
  ( [varstart] ) cell var v0    cell var i0
 cell var v1    cell var i1
@@ -23,24 +19,16 @@ cell var v8    cell var i8
 cell var v9    cell var i9
 method re-calc ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Abacus" open-component ;
-  : dialog   new DF[ 0 ]DF s" Abacus" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Abacus" open-application ;
+  : params   DF[ 0 ]DF s" Abacus" ;
 class;
 
 component class abacus-comp
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] ) cell var *v
 cell var *i
 abacus ptr outer ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 abacus-comp implements
@@ -60,7 +48,6 @@ abacus-comp implements
         #6 harbox new
       #2 habox new #1 hskips
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 abacus implements
@@ -88,11 +75,10 @@ abacus implements
         #10 vabox new
       #2 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 : main
   abacus open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

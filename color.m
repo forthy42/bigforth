@@ -9,7 +9,7 @@ public:
   button ptr color-ok
  ( [varstart] ) cell var color ( [varend] ) 
 how:
-  : params   DF[ color-ok self ]DF s" Color" ;
+  : params   DF[ 0 ]DF s" Color" ;
 class;
 
 component class result
@@ -18,11 +18,11 @@ public:
   button ptr choice-ok
  ( [varstart] ) cell var color ( [varend] ) 
 how:
-  : params   DF[ choice-ok self ]DF s" Your Choice" ;
+  : params   DF[ 0 ]DF s" Your Choice" ;
 class;
 
 result implements
-( [methodstart] ) : assign ( addr u -- ) color $! ;
+ ( [methodstart] ) : assign ( addr u -- ) color $! ;
 : show color $@ choice assign super show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         T" " ^^ ST[  ]ST ( MINOS ) X" Choice" infotextfield new  ^^bind choice
@@ -31,7 +31,6 @@ result implements
         #2 hatbox new #1 hskips
       #2 hatbox new panel
     ( [dumpend] ) ;
-
 class;
 
 color implements
@@ -53,7 +52,6 @@ result open-app ]S ( MINOS ) X" OK" button new  ^^bind color-ok
         #4 vabox new #1 vskips
       #2 habox new panel
     ( [dumpend] ) ;
-
 class;
 
 : main

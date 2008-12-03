@@ -94,10 +94,10 @@ class;
 notepad implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: file-menu widget S" File" menu-title new 
-        M: edit-menu widget S" Edit" menu-title new 
+        M: file-menu menu S" File" menu-title new 
+        M: edit-menu menu S" Edit" menu-title new 
         $1 $1 *hfilll $1 $1 *vfil rule new 
-        M: help-menu widget S" Help" menu-title new 
+        M: help-menu menu S" Help" menu-title new 
       &4 hbox new vfixbox 
         1 1 vviewport new  DS[ 
            (straction stredit new  ^^bind notes $40 setup-edit 

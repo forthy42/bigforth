@@ -6,16 +6,12 @@ also editor also minos also forth
 
 component class adjust
 public:
-  early widget
-  early open
-  early open-app
   infotextfield ptr path#
   infotextfield ptr id#
   button ptr path-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ path-ok self ]DF s" Adjust Configuration" open-component ;
-  : open-app new DF[ path-ok self ]DF s" Adjust Configuration" open-application ;
+  : params   DF[ path-ok self ]DF s" Adjust Configuration" ;
 class;
 
 include adjust-path.fs
@@ -28,23 +24,22 @@ adjust implements
       repos endwith
   super show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        T" " ^^ ST[  ]ST ( MINOS ) S" Pathes" infotextfield new  ^^bind path#
-        T" py" ^^ ST[  ]ST ( MINOS ) S" ID" infotextfield new  ^^bind id#
+        T" " ^^ ST[  ]ST ( MINOS ) X" Pathes" infotextfield new  ^^bind path#
+        T" py" ^^ ST[  ]ST ( MINOS ) X" ID" infotextfield new  ^^bind id#
           $10 $1 *hfill $10 $1 *vfil glue new 
           ^^ S[ id# get path# get s" xbigforth.ini" adjust-path-id
 id# get path# get  s" bigforth.ini" adjust-path-id
-close ]S ( MINOS ) S" OK" button new  ^^bind path-ok
+close ]S ( MINOS ) X" OK" button new  ^^bind path-ok
           $10 $1 *hfil $10 $1 *vfil glue new 
-          ^^ S[ close ]S ( MINOS ) S" Cancel" button new 
+          ^^ S[ close ]S ( MINOS ) X" Cancel" button new 
           $10 $1 *hfill $10 $1 *vfil glue new 
-        &5 hatbox new
-      &3 vabox new panel
+        #5 hatbox new
+      #3 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   adjust open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

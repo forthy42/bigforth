@@ -6,18 +6,12 @@ also editor also minos also forth
 
 component class calc
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   tableinfotextfield ptr a#
   tableinfotextfield ptr b#
   tableinfotextfield ptr c#
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Calculator" open-component ;
-  : dialog   new DF[ 0 ]DF s" Calculator" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Calculator" open-application ;
+  : params   DF[ 0 ]DF s" Calculator" ;
 class;
 
 calc implements
@@ -35,7 +29,6 @@ calc implements
         #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" tableinfotextfield new  ^^bind c#
       #4 vabox new panel
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 :: init ;
 class;
 
 : main

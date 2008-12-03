@@ -432,11 +432,11 @@ Variable textmp
         dup here over - rot dp ! true
   ELSE  2drop false  THEN ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: file-menu widget S"  File " menu-title new 
-        M: edit-menu widget S"  Edit " menu-title new 
-        M: process-menu widget S"  Process " menu-title new 
+        M: file-menu menu S"  File " menu-title new 
+        M: edit-menu menu S"  Edit " menu-title new 
+        M: process-menu menu S"  Process " menu-title new 
         $190 $1 *hfilll $1 $1 *vfil rule new 
-        M: help-menu widget S"  Help " menu-title new 
+        M: help-menu menu S"  Help " menu-title new 
       &5 hbox new vfixbox  &2 borderbox
             ^^ ST[ newjob get check-cr IF  
     new-job jobs append! list-jobs

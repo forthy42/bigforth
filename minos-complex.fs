@@ -7,6 +7,7 @@ modal class component
     early open immediate
     early dialog immediate
     early open-app immediate
+    early menu immediate
     method params
     method widget
   how:
@@ -21,12 +22,15 @@ modal class component
     : dialog,   make  get-win
 	swap window with  set-parent show  endwith ;
     : open-app, make  window with  show up@ app !  endwith ;
+    : menu,     ( o -- o ) >o widget o> ;
     : open     ( -- )     o@ state @
 	IF postpone ALiteral postpone open, ELSE open, THEN ;
     : dialog     ( -- )     o@ state @
 	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
     : open-app     ( -- )     o@ state @
 	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
+    : menu     ( -- )     ^ state @
+	IF postpone ALiteral postpone menu, ELSE menu, THEN ;
 class;
 
 : new-component ( o od addr u -- o )

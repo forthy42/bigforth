@@ -6,9 +6,6 @@ also editor also minos also forth
 
 component class gears
 public:
-  early widget
-  early open
-  early open-app
   glcanvas ptr GLgear
  ( [varstart] ) cell var alphax
 cell var alphay
@@ -28,8 +25,7 @@ cell var scale-y
 cell var scale-z
 3 cells var textures ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Gears" open-component ;
-  : open-app new DF[ 0 ]DF s" Gears" open-application ;
+  : params   DF[ 0 ]DF s" Gears" ;
 class;
 
 include gears.fs
@@ -54,37 +50,36 @@ gears implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             GL[ outer with draw-gears endwith ]GL ( MINOS ) ^^ S[ 2drop 2drop ]S ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
-            ^^ &0 &360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
-            ^^ &0 &360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
-            ^^ &0 &360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
-            ^^ &35 &360 SC[ &360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
-            ^^ &331 &360 SC[ &360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
-            ^^ &350 &360 SC[ &360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
-            ^^ &0 &100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
-            ^^ &20 &40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 
-            ^^ &100 &100 SC[ scale-x ! ]SC ( MINOS )  TT" Scale X" hscaler new 
-            ^^ &100 &100 SC[ scale-y ! ]SC ( MINOS )  TT" Scale Y" hscaler new 
-            ^^ &100 &100 SC[ scale-z ! ]SC ( MINOS )  TT" Scale Z" hscaler new 
-              ^^ TN[ 1 shade ]T[ ( MINOS )  ]TN ( MINOS ) S" Texture" rbutton new 
-              ^^ TN[ 0 shade ]T[ ( MINOS )  ]TN ( MINOS ) S" Solid" rbutton new 
-              ^^ TN[ 2 shade ]T[ ( MINOS )  ]TN ( MINOS ) S" Lines" rbutton new 
-            &3 hartbox new vfixbox 
-              ^^ TN[ 0 texting ]T[ ( MINOS )  ]TN ( MINOS ) S" xy" rbutton new 
-              ^^ TN[ 1 texting ]T[ ( MINOS )  ]TN ( MINOS ) S" rphi" rbutton new 
-              ^^ TN[ 2 texting ]T[ ( MINOS )  ]TN ( MINOS ) S" zphi" rbutton new 
-            &3 hartbox new vfixbox 
-              ^^ S[ gears open ]S ( MINOS ) S" One more" button new 
-              ^^ S[ close ]S ( MINOS ) S" Close" button new 
-            &2 hatbox new vfixbox  panel
-          &15 vabox new
-        &1 vabox new
-      &1 vabox new
+            ^^ #0 #360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
+            ^^ #0 #360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
+            ^^ #0 #360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
+            ^^ #35 #360 SC[ &360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
+            ^^ #331 #360 SC[ &360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
+            ^^ #350 #360 SC[ &360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
+            ^^ #0 #100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
+            ^^ #20 #40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 
+            ^^ #100 #100 SC[ scale-x ! ]SC ( MINOS )  TT" Scale X" hscaler new 
+            ^^ #100 #100 SC[ scale-y ! ]SC ( MINOS )  TT" Scale Y" hscaler new 
+            ^^ #100 #100 SC[ scale-z ! ]SC ( MINOS )  TT" Scale Z" hscaler new 
+              ^^ TN[ 1 shade ]T[ ( MINOS )  ]TN ( MINOS ) X" Texture" rbutton new 
+              ^^ TN[ 0 shade ]T[ ( MINOS )  ]TN ( MINOS ) X" Solid" rbutton new 
+              ^^ TN[ 2 shade ]T[ ( MINOS )  ]TN ( MINOS ) X" Lines" rbutton new 
+            #3 hartbox new vfixbox 
+              ^^ TN[ 0 texting ]T[ ( MINOS )  ]TN ( MINOS ) X" xy" rbutton new 
+              ^^ TN[ 1 texting ]T[ ( MINOS )  ]TN ( MINOS ) X" rphi" rbutton new 
+              ^^ TN[ 2 texting ]T[ ( MINOS )  ]TN ( MINOS ) X" zphi" rbutton new 
+            #3 hartbox new vfixbox 
+              ^^ S[ gears open ]S ( MINOS ) X" One more" button new 
+              ^^ S[ close ]S ( MINOS ) X" Close" button new 
+            #2 hatbox new vfixbox  panel
+          #15 vabox new
+        #1 vabox new
+      #1 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   gears open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

@@ -157,7 +157,7 @@ IS dummy-canvas
 	ret  end-code
 [THEN]
 
-!1 f>fs Constant #1
+!1 f>fs Constant #1.
 pi f2* FConstant 2pi
 2pi 1/f FConstant 1/2pi
 
@@ -167,7 +167,7 @@ pi f2* FConstant 2pi
 \       DO  I sf@ !2 f+ !2 f- f.  1 sfloats +LOOP
 \       4 sfloats +LOOP ;
 
-Create .white #1 , #1 , #1 , #1 ,
+Create .white #1. , #1. , #1. , #1. ,
 
 [IFDEF] debug-points
 Variable maxpoints
@@ -876,7 +876,7 @@ class;
     : draw-textured-path ( p'' p' p -- )
       gl-mode @ glBegin
       dup  [IFDEF] glarrays  path+  [THEN]
-      &15 cells + dup @ #1 = IF  off  ELSE  drop  THEN
+      &15 cells + dup @ #1. = IF  off  ELSE  drop  THEN
       2dup <> smooth @ and
       IF  2dup path# @ 1+ compute-normals  THEN
       path-bound smooth @

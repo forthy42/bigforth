@@ -139,7 +139,7 @@ sub-menu1 implements
   : widget  ( [dumpstart] )
         ^^ S[ s" Menu 0" test-widgets tex assign ]S ( MINOS ) X" Menu 0" menu-entry new 
         ^^ S[ s" Menu 1" test-widgets tex assign ]S ( MINOS ) X" Menu 1" menu-entry new 
-        M: menu1 widget X" Sub-Menu" sub-menu new 
+        M: menu1 menu X" Sub-Menu" sub-menu new 
         ^^ S[ s" Menu 2" test-widgets tex assign ]S ( MINOS ) X" Menu 2" menu-entry new 
       #4 vabox new #2 borderbox
     ( [dumpend] ) ;
@@ -193,9 +193,9 @@ test-widgets implements
     ^ draw-cv1 drop dpy sync ['] start-cv1 ^ #30 after dpy schedule ;
 : dispose  ^ dpy cleanup ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: menu1 widget X"  bigFORTH " menu-title new 
-        M: sub-menu1 widget X"  File " menu-title new 
-        M: color-menu1 widget X"  Options " menu-title new 
+        M: menu1 menu X"  bigFORTH " menu-title new 
+        M: sub-menu1 menu X"  File " menu-title new 
+        M: color-menu1 menu X"  Options " menu-title new 
         $0 $1 *hfilll $0 $1 *vfil rule new 
       #4 hbox new vfixbox  #2 borderbox
         1 1 viewport new  ^^bind view0 DS[ 
@@ -205,7 +205,7 @@ test-widgets implements
                     $10 $1 *hfil $10 $1 *vfil glue new 
                     ^^ S[ s" Button 3" tex assign ]S ( MINOS ) X" Button 3" button new 
                   #4 hatbox new #2 hskips #2 borderbox
-                  M: color-menu1 widget X" Coolness:" info-menu new  ^^bind coolness
+                  M: color-menu1 menu X" Coolness:" info-menu new  ^^bind coolness
                       0 0 flipper X" Index 0" topindex new ^^bind (topindex-00)
                       0 0 flipper X" Index 1" topindex new ^^bind (topindex-01)
                       0 -1 flipper X" Index 2" topindex new ^^bind (topindex-02)

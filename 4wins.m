@@ -6,10 +6,6 @@ also editor also minos also forth
 
 component class 4wins
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   icon-but ptr drop0
   icon-but ptr drop1
   icon-but ptr drop2
@@ -20,9 +16,7 @@ public:
   text-label ptr game-state
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Four Wins" open-component ;
-  : dialog   new DF[ 0 ]DF s" Four Wins" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Four Wins" open-application ;
+  : params   DF[ 0 ]DF s" Four Wins" ;
 class;
 
 include 4wins.fs
@@ -73,34 +67,33 @@ include 4wins.fs
   : widget  ( [dumpstart] )
             ^^ S[ 0 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop0
             CV[ 0 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 0 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 1 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop1
             CV[ 1 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 1 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 2 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop2
             CV[ 2 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 2 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 3 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop3
             CV[ 3 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 3 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 4 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop4
             CV[ 4 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 4 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 5 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop5
             CV[ 5 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 5 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
+          #2 vabox new vfixbox 
             ^^ S[ 6 4win-move ]S ( MINOS )  icon" icons/arrow0" icon-but new  ^^bind drop6
             CV[ 6 draw-row ]CV ( MINOS ) ^^ CK[ ( x y b n -- ) >released 6 4win-move ]CK ( MINOS ) $20 $1 *hfil $D8 $0 *vfil canvas new 
-          &2 vabox new vfixbox 
-        &7 habox new
-        S" Your move" text-label new  ^^bind game-state
-      &2 vabox new
+          #2 vabox new vfixbox 
+        #7 habox new
+        X" Your move" text-label new  ^^bind game-state
+      #2 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   4wins open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

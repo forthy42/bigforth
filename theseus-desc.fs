@@ -229,7 +229,7 @@ how:
         0 S[ ]S s" <empty>" menu-entry new
         1 vabox new 2 borderbox ;
     : make ( -- widget )  null ;
-    : dump ( -- ) ." M: " get type ."  widget " ;
+    : dump ( -- ) ." M: " get type ."  menu " ;
     : edit-field ( -- o )  ^ F cur bind text
         get 0 ST[ text@ pad place pad count cur text assign ]ST
         s" Menu:" infotextfield new ;

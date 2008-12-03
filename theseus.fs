@@ -542,7 +542,7 @@ resource:dialog implements
             ."  ( [methodend] ) "
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
-            cr .'     ( [dumpend] ) ;' cr
+            cr .'     ( [dumpend] ) ;'
             cr ." class;" cr
         THEN
         next-resource self 0= ?EXIT
@@ -613,7 +613,7 @@ resource:menu-window implements
             ."  ( [methodend] ) "
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
-            cr .'     ( [dumpend] ) ;' cr
+            cr .'     ( [dumpend] ) ;'
             cr ." class;" cr
         THEN
         next-resource self 0= ?EXIT
@@ -1584,7 +1584,7 @@ Variable auto-save-file
     designer open-file ]S fsel-dialog ;
 
 : file-menu ( -- o )
-    ^ S[ ~~ load-minos ~~   ]S s" Load file..."      menu-entry new
+    ^ S[ load-minos    ]S s" Load file..."      menu-entry new
     ^ S[ save-minos... ]S s" Save as..."        menu-entry new
     ^ S[ run-minos     ]S s" Run application"   menu-entry new
     ^ S[ mod-minos     ]S s" Save as module..." menu-entry new

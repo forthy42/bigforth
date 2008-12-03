@@ -98,7 +98,7 @@ also minos-load definitions
 
 : M:
     S" " menu-des new menu-des with assign
-        s"  widget " content scan-strings
+        s"  menu " content scan-strings
         self endwith ;
 : S[  drop
     S" " action-des new action-des with assign
