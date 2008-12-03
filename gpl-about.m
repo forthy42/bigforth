@@ -28,7 +28,7 @@ public:
   button ptr gpl-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ gpl-ok self ]DF s" About bigFORTH+MINOS" ;
+  : params   DF[ 0 ]DF s" About bigFORTH+MINOS" ;
 class;
 
 bigforth-about implements

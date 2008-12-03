@@ -4,12 +4,8 @@
 
 also editor also minos also forth
 
-menu-window class go
+menu-component class go
 public:
-  early widget
-  early open
-  early all-open
-  early modal-open
   infotextfield ptr white
   infotextfield ptr black
   infotextfield ptr white#
@@ -28,68 +24,46 @@ method new-game
 method close-game
 method go-write ( [varend] ) 
 how:
-  : open       screen self new >o show o> ;
-  : all-open   screen self new >o show up@ app ! o> ;
-  : modal-open screen self new >o show stop o> ;
+  : params   DF[ 0 ]DF s" Go" ;
 class;
 
 component class file-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 component class help-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 component class go-game-menu
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" No Title" open-component ;
-  : dialog   new DF[ 0 ]DF s" No Title" open-dialog ;
-  : open-app new DF[ 0 ]DF s" No Title" open-application ;
+  : params   DF[ 0 ]DF s" No Title" ;
 class;
 
 go-game-menu implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[ s" pass" go go-write ]S ( MINOS ) S" Pass" menu-entry new 
-        ^^ S[ s" resign" go go-write ]S ( MINOS ) S" Resign" menu-entry new 
-      &2 vabox new &2 borderbox
+        ^^ S[ s" pass" go go-write ]S ( MINOS ) X" Pass" menu-entry new 
+        ^^ S[ s" resign" go go-write ]S ( MINOS ) X" Resign" menu-entry new 
+      #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 help-menu implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        ^^ S[  ]S ( MINOS ) S" About" menu-entry new 
-        ^^ S[  ]S ( MINOS ) S" Contents" menu-entry new 
-      &2 vabox new &2 borderbox
+        ^^ S[  ]S ( MINOS ) X" About" menu-entry new 
+        ^^ S[  ]S ( MINOS ) X" Contents" menu-entry new 
+      #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 file-menu implements
@@ -98,11 +72,10 @@ file-menu implements
         ^^ S[ [ also dos ]
   go close-game
   go new-game
-[ previous ] ]S ( MINOS ) S" New Game" menu-entry new 
-        ^^ S[ go close ]S ( MINOS ) S" Exit" menu-entry new 
-      &2 vabox new &2 borderbox
+[ previous ] ]S ( MINOS ) X" New Game" menu-entry new 
+        ^^ S[ go close ]S ( MINOS ) X" Exit" menu-entry new 
+      #2 vabox new #2 borderbox
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 go implements
@@ -175,24 +148,24 @@ Variable go$
 : close  close-game super close ;
 previous ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: file-menu menu S"  File " menu-title new 
-        M: go-game-menu menu S"  Game " menu-title new 
+        M: file-menu menu X"  File " menu-title new 
+        M: go-game-menu menu X"  Game " menu-title new 
         $1 $1 *hfilll $1 $1 *vfilll rule new 
-        M: help-menu menu S"  Help " menu-title new 
-      &4 hbox new vfixbox  &2 borderbox
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Captured: White" infotextfield new  ^^bind white
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Black" infotextfield new  ^^bind black
-          &2 hatab new &1 hskips
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Territory: White" infotextfield new  ^^bind white#
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Black" infotextfield new  ^^bind black#
-          &2 hatab new &1 hskips
-            &0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) S" Handicap" infotextfield new  ^^bind handicap
-            ^^ S[ s" pass" go-write ]S ( MINOS ) S" Pass" button new 
+        M: help-menu menu X"  Help " menu-title new 
+      #4 hbox new vfixbox  #2 borderbox
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Captured: White" infotextfield new  ^^bind white
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black
+          #2 hatab new #1 hskips
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Territory: White" infotextfield new  ^^bind white#
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black#
+          #2 hatab new #1 hskips
+            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Handicap" infotextfield new  ^^bind handicap
+            ^^ S[ s" pass" go-write ]S ( MINOS ) X" Pass" button new 
             ^^ S[ s" back" go-write
-s" back" go-write ]S ( MINOS ) S" Back" button new 
-          &3 habox new vfixbox  &1 hskips
-          S" " text-label new  ^^bind comment
-        &4 vabox new vfixbox  panel
+s" back" go-write ]S ( MINOS ) X" Back" button new 
+          #3 habox new vfixbox  #1 hskips
+          X" " text-label new  ^^bind comment
+        #4 vabox new vfixbox  panel
           CV[ 38 dup steps $C0 dup dup rgb> backcolor clear
 1 1 home! path
 9 0 DO  0 -36 to 2 0 to 0 36 to 2 0 to  LOOP
@@ -220,16 +193,13 @@ taskid @ 0= IF  new-game  THEN
 19 swap - 0 <# #S rot 'a + dup 'i >= IF  1+  THEN  hold #>
 goin @ IF  2dup go-write
 THEN  2drop ]CK ( MINOS ) $130 $1 *hfil $130 $1 *vfil canvas new  ^^bind go-field
-        &1 habox new
-      &2 vabox new
+        #1 habox new
+      #2 vabox new
     ( [dumpend] ) ;
-  : title$  s" Go" ;
-  : init  super init  ^ to ^^
-    widget 1 0 modal new  title$ assign ;
 class;
 
 : main
-  go all-open
-  $1 0 ?DO  stop  LOOP bye ;
+  go open-app
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

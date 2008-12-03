@@ -7,10 +7,6 @@ also editor also minos also forth
 include midi-classes.fs
 component class midi
 public:
-  early widget
-  early open
-  early dialog
-  early open-app
   infotextfield ptr filename
   button ptr play-it
   button ptr stop-it
@@ -36,9 +32,7 @@ public:
 cell var midi-path
 cell var scheduled ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Midi Player" open-component ;
-  : dialog   new DF[ 0 ]DF s" Midi Player" open-dialog ;
-  : open-app new DF[ 0 ]DF s" Midi Player" open-application ;
+  : params   DF[ 0 ]DF s" Midi Player" ;
 class;
 
 include midi.fs
@@ -72,17 +66,17 @@ midi implements
      endwith
   endwith pause ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-          T" " ^^ ST[  ]ST ( MINOS ) S" Datei:" infotextfield new  ^^bind filename
-            ^^ S[ ?player player start scheduled on draw ]S ( MINOS ) S" Play" button new  ^^bind play-it
-            ^^ S[ ?player player stop 1 scheduled ! ]S ( MINOS ) S" Stop" button new  ^^bind stop-it
+          T" " ^^ ST[  ]ST ( MINOS ) X" Datei:" infotextfield new  ^^bind filename
+            ^^ S[ ?player player start scheduled on draw ]S ( MINOS ) X" Play" button new  ^^bind play-it
+            ^^ S[ ?player player stop 1 scheduled ! ]S ( MINOS ) X" Stop" button new  ^^bind stop-it
             ^^ S[ 1 scheduled !
 s" MIDI" s" " midi-path @
 IF  midi-path $@  ELSE  S" *.mid"  THEN
-^ S[ 2swap midi-path $! filename assign ?player ]S fsel-action ]S ( MINOS ) S" Load" button new  ^^bind load-it
-            ^^ S[ close ]S ( MINOS ) S" Close" button new  ^^bind close-it
-            ^^  0 T[ player self IF  player precision on  THEN ][ ( MINOS ) player self IF  player precision off  THEN ]T ( MINOS )  TT" Timing Precission" S" time" tbutton new 
-          &5 hatbox new &1 hskips
-        &2 vabox new vfixbox  panel
+^ S[ 2swap midi-path $! filename assign ?player ]S fsel-action ]S ( MINOS ) X" Load" button new  ^^bind load-it
+            ^^ S[ close ]S ( MINOS ) X" Close" button new  ^^bind close-it
+            ^^  0 T[ player self IF  player precision on  THEN ][ ( MINOS ) player self IF  player precision off  THEN ]T ( MINOS )  TT" Timing Precission" X" time" tbutton new 
+          #5 hatbox new #1 hskips
+        #2 vabox new vfixbox  panel
           CV[ 0 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channel0
           CV[ 1 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channel1
           CV[ 2 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channel2
@@ -99,14 +93,13 @@ IF  midi-path $@  ELSE  S" *.mid"  THEN
           CV[ 13 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channelD
           CV[ 14 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channelE
           CV[ 15 ^ draw-sound ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $80 $1 *hfil $8 $1 *vfil canvas new  ^^bind channelF
-        &16 vabox new -&2 borderbox
-      &2 vabox new
+        #16 vabox new #-2 borderbox
+      #2 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   midi open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

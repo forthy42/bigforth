@@ -10,15 +10,15 @@ Vocabulary alsa-midi
 also dos also memory also alsa-midi definitions
 
 struct{
-1 type         /* event type */
-1 flags        /* event flags */
-1 tag          /* arbitrary tag */
-1 queue        /* schedule queue */
+byte type         /* event type */
+byte flags        /* event flags */
+byte tag          /* arbitrary tag */
+byte queue        /* schedule queue */
 cell time_s    /* schedule time */
 cell time_ns
-2 source       /* source address: client, port */
-2 dest         /* destination address: client, port */
-40 data        /* event data... */
+short source       /* source address: client, port */
+short dest         /* destination address: client, port */
+40 string data        /* event data... */
 } snd_seq_event
 
 

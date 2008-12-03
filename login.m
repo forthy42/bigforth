@@ -6,59 +6,49 @@ also editor also minos also forth
 
 component class login-1
 public:
-  early widget
-  early open
-  early open-app
   infotextfield ptr name
   infotextfield ptr passwort
   button ptr log-in
   button ptr cancel
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ log-in self ]DF s" Einloggen" open-component ;
-  : open-app new DF[ log-in self ]DF s" Einloggen" open-application ;
+  : params   DF[ log-in self ]DF s" Einloggen" ;
 class;
 
 component class main-1
 public:
-  early widget
-  early open
-  early open-app
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ 0 ]DF s" Main" open-component ;
-  : open-app new DF[ 0 ]DF s" Main" open-application ;
+  : params   DF[ 0 ]DF s" Main" ;
 class;
 
 main-1 implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-          ^^ S[ login-1 open ]S ( MINOS ) S" Login" button new 
-          ^^ S[ close ]S ( MINOS ) S" Logout" button new 
-        &2 vabox new panel
-      &1 vabox new
+          ^^ S[ login-1 open ]S ( MINOS ) X" Login" button new 
+          ^^ S[ close ]S ( MINOS ) X" Logout" button new 
+        #2 vabox new panel
+      #1 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 login-1 implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-          T" " ^^ ST[  ]ST ( MINOS ) S" Name" infotextfield new  ^^bind name
-          T" " ^^ ST[  ]ST ( MINOS ) S" Passwort" infotextfield new  ^^bind passwort
+          T" " ^^ ST[  ]ST ( MINOS ) X" Name" infotextfield new  ^^bind name
+          T" " ^^ ST[  ]ST ( MINOS ) X" Passwort" infotextfield new  ^^bind passwort
             ^^ S[ ." login " name get type
-."  with Passwort " passwort get type cr  ]S ( MINOS ) S" Log mich ein" button new  ^^bind log-in
-            ^^ S[ close ]S ( MINOS ) S" Lass es sein" button new  ^^bind cancel
-            ^^ S[ large-font ]S ( MINOS ) S" Large Font" button new 
-          &3 habox new &1 hskips
-        &3 vabox new panel
-      &1 vabox new
+."  with Passwort " passwort get type cr  ]S ( MINOS ) X" Log mich ein" button new  ^^bind log-in
+            ^^ S[ close ]S ( MINOS ) X" Lass es sein" button new  ^^bind cancel
+            ^^ S[ large-font ]S ( MINOS ) X" Large Font" button new 
+          #3 habox new #1 hskips
+        #3 vabox new panel
+      #1 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
   main-1 open-app
-  $1 0 ?DO  stop  LOOP bye ;
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous

@@ -622,7 +622,7 @@ resource:menu-window implements
         name-field get nip 0<> IF
             shown @ IF
                 cr 2 spaces name-field get type
-                .'  all-open' 1+
+                .'  open-app' 1+
             THEN
         THEN
         next-resource self 0= ?EXIT

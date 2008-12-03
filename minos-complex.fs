@@ -53,7 +53,7 @@ menu-window class menu-component
   how:
     : widget s" Nothing" text-label new ;
     : params   DF[ 0 ]DF s" No Title" ;
-    : init ( -- ) super init ^>^^
+    : init ( -- )  screen self super init ^>^^
 	widget 1 ^ params 2>r nip modal new 2r> assign ;
     : open,     new,  window with  show  endwith ;
     : dialog,   new,  get-win
