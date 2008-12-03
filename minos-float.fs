@@ -16,7 +16,7 @@ number-action class float-action
 	0= IF  !0  THEN ;
 class;
 
-: ]#f ( key sys ) postpone ; (textfield postpone endwith
+: ]#f ( key sys ) postpone ]: (textfield postpone endwith
   & float-action >o float-action bind-key o> ;      immediate
 '- #[ sp@ 1 ins drop 1 c ]#F
 '. #[ sp@ 1 ins drop 1 c ]#F
