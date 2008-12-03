@@ -6,14 +6,10 @@ also editor also minos also forth
 
 component class minos-about
 public:
-  early widget
-  early open
-  early open-app
   button ptr theseus-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : open     new DF[ theseus-ok self ]DF s" Minos Help" open-component ;
-  : open-app new DF[ theseus-ok self ]DF s" Minos Help" open-application ;
+  : param  DF[ theseus-ok self ]DF s" Minos Help" ;
 class;
 
 minos-about implements
@@ -27,7 +23,7 @@ minos-about implements
             S" based on MINOS" text-label new 
             S" (c) 1997-2000 by Bernd Paysan" text-label new 
               S" Theseus is available under " text-label new 
-              ^^ S[ gpl-about new 0 s" About GPL" open-component ]S ( MINOS ) S" GPL" button new 
+              ^^ S[ gpl-about open ]S ( MINOS ) S" GPL" button new 
               $10 $1 *hfilll $10 $1 *vfil glue new 
             &3 habox new
           &5 vabox new &2 borderbox
@@ -39,7 +35,6 @@ minos-about implements
         &1 vabox new
       &2 vabox new
     ( [dumpend] ) ;
-  : init  ^>^^  assign  widget 1 super init ;
 class;
 
 previous previous previous

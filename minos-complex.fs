@@ -21,13 +21,24 @@ modal class component
     : dialog,   make  get-win
 	swap window with  set-parent show  endwith ;
     : open-app, make  window with  show up@ app !  endwith ;
-    : open     ( -- o )     o@ state @
+    : open     ( -- )     o@ state @
 	IF postpone ALiteral postpone open, ELSE open, THEN ;
-    : dialog     ( -- o )     o@ state @
+    : dialog     ( -- )     o@ state @
 	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
-    : open-app     ( -- o )     o@ state @
+    : open-app     ( -- )     o@ state @
 	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
 class;
+
+: new-component ( o od addr u -- o )
+  >r >r  1 swap modal new  r> r>
+  screen self window new  window with  assign ^  endwith ;
+: open-component    ( o od addr u -- )
+  new-component  window with  show  endwith ;
+: open-dialog       ( o od addr u -- )
+  new-component  get-win
+  swap window with  set-parent show  endwith ;
+: open-application  ( o od addr u -- )
+  new-component  window with  show up@ app !  endwith ;
 
 menu-window class menu-component
     early open immediate
@@ -44,11 +55,11 @@ menu-window class menu-component
     : dialog,   new,  get-win
 	swap window with  set-parent show  endwith ;
     : open-app, new,  window with  show up@ app !  endwith ;
-    : open     ( -- o )     o@ state @
+    : open     ( -- )     o@ state @
 	IF postpone ALiteral postpone open, ELSE open, THEN ;
-    : dialog     ( -- o )     o@ state @
+    : dialog     ( -- )     o@ state @
 	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
-    : open-app     ( -- o )     o@ state @
+    : open-app     ( -- )     o@ state @
 	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
 class;
 
@@ -811,7 +822,7 @@ how:    : read-files ( addr attr -- w1 .. wn n )
 
 \ file listbox                                         10apr04py
 
-        : newdir ( addr len attr -- object )
+        : widget ( addr len attr -- object )
           scratch 0place
           file<= @ F IS lex
           scratch $1C0 read-dir   >r  sp@ r@ sort
@@ -820,9 +831,8 @@ how:    : read-files ( addr attr -- w1 .. wn n )
           IF  s" -Empty Directory-" text-label new swap 1+  THEN
           0 1 *filll 2dup   rule new swap 1+ vresize new
           ['] <= F IS lex ;
-        : init ( addr u file-act path-act <= -- )
-          file<= !  bind path  bind file
-          newdir 1 super init ;
+        : assign ( addr u file-act path-act <= -- )
+          file<= !  bind path  bind file ;
         : dispose path dispose file dispose super dispose ;
 class;
 
@@ -919,7 +929,7 @@ how:    AVariable file<=
         : assign ( info len file len path len -- )
           sort-menu self
           s" Sort by" info-menu new bind sort-title
-          panel-line  s" File Selector"  super assign ;
+          panel-line  s" File Selector" super assign ;
         : init ( action dpy -- )
           super init  bind do-ok  file-listbox ' name<= file<= !
           sort-menu: bind sort-menu  diro-icon set-icon ;
@@ -940,8 +950,8 @@ minos
   file-selector with  assign  0 $10 geometry  show  endwith ;
 
 : fsel-dialog ( info len file1 len1 path1 len1 simple -- )
-  screen self file-selector new  get-win  swap
-  file-selector with  set-parent  assign  0 $10 geometry
+  screen self file-selector new get-win  swap
+  file-selector with set-parent assign 0 $10 geometry
   show endwith ;
 
 \ fsel-input                                           10apr04py

@@ -582,6 +582,9 @@ class;
 
 resource:menu-window implements
     : base-class s" menu-component" ;
+    : .default ( -- )
+        default $@ dup 0= IF  2drop ." 0"  EXIT  THEN
+        type ."  self" ;
     : dump-declaration ( -- )
         next-resource self
         IF  next-resource dump-declaration  THEN
@@ -601,9 +604,6 @@ resource:menu-window implements
                 .' " ;' cr
             ." class;" cr
         THEN ;
-    : .default ( -- )
-        default $@ dup 0= IF  2drop ." 0"  EXIT  THEN
-        type ."  self" ;
     : dump-implementation ( -- )
         name-field get nip 0<> IF
             implementation-file $@?
@@ -1584,7 +1584,7 @@ Variable auto-save-file
     designer open-file ]S fsel-dialog ;
 
 : file-menu ( -- o )
-    ^ S[ load-minos    ]S s" Load file..."      menu-entry new
+    ^ S[ ~~ load-minos ~~   ]S s" Load file..."      menu-entry new
     ^ S[ save-minos... ]S s" Save as..."        menu-entry new
     ^ S[ run-minos     ]S s" Run application"   menu-entry new
     ^ S[ mod-minos     ]S s" Save as module..." menu-entry new

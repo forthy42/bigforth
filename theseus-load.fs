@@ -483,13 +483,20 @@ also dos
             IF  create-dialog  LEAVE  THEN
             source s" vabox class " prefix?
             IF  create-dialog  LEAVE  THEN
-\ FIXME end dated alternatives
             source s" menu-window class " prefix?
+            IF  create-menu-window  LEAVE  THEN
+\ FIXME end dated alternatives
+            source s" menu-component class " prefix?
             IF  create-menu-window  LEAVE  THEN
             source s" ( [varstart] ) " search nip nip
             IF  add-vars  cur resources self  set-title  LEAVE  THEN
             source s"   : open-app new DF[ " prefix?
             IF  s"   : open-app new DF[ " >in ! drop bl parse
+                2dup s" 0" compare
+                IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
+            THEN
+            source s"   : params  DF[ " prefix?
+            IF  s"   : params  DF[ " >in ! drop bl parse
                 2dup s" 0" compare
                 IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
             THEN
