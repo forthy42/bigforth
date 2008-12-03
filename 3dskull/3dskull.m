@@ -1,22 +1,18 @@
-#! /home/pliz/soft/bin/xbigforth -m=900M
+#! xbigforth
 \ automatic generated code
 \ do not edit
 
 also editor also minos also forth
 
 component class skull
-    public:
-    early widget
-    early open
-    early dialog
-    early open-app
-    glcanvas ptr zyprojection
-    glcanvas ptr xyprojection
-    glcanvas ptr zxprojection
-    text-label ptr labelX
-    text-label ptr labelY
-    text-label ptr labelZ
-    ( [varstart] ) cell var zoom
+public:
+  glcanvas ptr zyprojection
+  glcanvas ptr xyprojection
+  glcanvas ptr zxprojection
+  text-label ptr labelX
+  text-label ptr labelY
+  text-label ptr labelZ
+ ( [varstart] ) cell var zoom
     cell var yz-task
     cell var xz-task
     cell var xy-task
@@ -28,16 +24,13 @@ component class skull
     cell var zclicked
     cell var mbutton
     cell var mstate ( [varend] ) 
-  how:
-    : open     new DF[ 0 ]DF s" CT scan" open-component ;
-    : dialog   new DF[ 0 ]DF s" CT scan" open-dialog ;
-    : open-app new DF[ 0 ]DF s" CT scan" open-application ;
+how:
+  : params   DF[ 0 ]DF s" CT scan" ;
 class;
 
 include 3dskull_m.fs
-
 skull implements
-( [methodstart] ) : make-yz-task
+ ( [methodstart] ) : make-yz-task
     zyprojection render &100 0 DO  pause  LOOP
     zyprojection draw   &100 0 DO  pause  LOOP ;
 : make-xy-task
@@ -212,8 +205,8 @@ skull implements
     yz-task @  IF  self dpy cleanup pause yz-task off  THEN
     xz-task @  IF  self dpy cleanup pause xz-task off  THEN    
     super dispose ; ( [methodend] ) 
-: widget  ( [dumpstart] )
-    GL[ outer with yzdraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
+  : widget  ( [dumpstart] )
+            GL[ outer with yzdraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
     dup 1 = if
 	zy-cross
 	zy@ zdim swap - 
@@ -225,8 +218,8 @@ skull implements
 	2drop 2drop	  
     then
     ]CK ( MINOS ) $12C $1 *hfil $12C $1 *vfil glcanvas new  ^^bind zyprojection
-    $10 $1 *hfil hrule new 
-    GL[ outer with xydraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
+            $10 $1 *hfil hrule new 
+            GL[ outer with xydraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
     dup 1 = if
 	xy-cross
 	xy@ 
@@ -238,9 +231,9 @@ skull implements
 	2drop 2drop	  
     then      
     ]CK ( MINOS ) $12C $1 *hfil $12C $1 *vfil glcanvas new  ^^bind xyprojection
-    &3 vabox new
-    $10 $1 *vfil vrule new 
-    GL[ outer with xzdraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
+          #3 vabox new
+          $10 $1 *vfil vrule new 
+            GL[ outer with xzdraw endwith ]GL ( MINOS ) ^^ CK[ ( x y b n -- )
     dup 1 = if
 	zx-cross
 	zx@ zdim swap - 
@@ -252,39 +245,38 @@ skull implements
 	2drop 2drop	  
     then            
     ]CK ( MINOS ) $12C $1 *hfil $12C $1 *vfil glcanvas new  ^^bind zxprojection
-    $10 $1 *hfil hrule new 
-    $14 $1 *hfil $12C $1 *vfil glue new 
-    $F $1 *hfill $6E $1 *vfill glue new 
-    S" Source array indices" text-label new 
-    S" X:" text-label new 
-    S" Y:" text-label new 
-    S" Z:" text-label new 
-    &3 vabox new
-    S" " text-label new  ^^bind labelX
-    S" " text-label new  ^^bind labelY
-    S" " text-label new  ^^bind labelZ
-    &3 vabox new
-    $14 $1 *hfil $10 $1 *vfil glue new 
-    &3 habox new
-    $F $1 *hfill $78 $1 *vfill glue new 
-    &4 vabox new
-    $14 $1 *hfil $12C $1 *vfil glue new 
-    &3 habox new
-    &3 vabox new
-    &3 habox new
-    ^^ S[ imtext-xy DisposPtr
+            $10 $1 *hfil hrule new 
+              $14 $1 *hfil $12C $1 *vfil glue new 
+                $F $1 *hfill $6E $1 *vfill glue new 
+                X" Source array indices" text-label new 
+                    X" X:" text-label new 
+                    X" Y:" text-label new 
+                    X" Z:" text-label new 
+                  #3 vabox new
+                    X" " text-label new  ^^bind labelX
+                    X" " text-label new  ^^bind labelY
+                    X" " text-label new  ^^bind labelZ
+                  #3 vabox new
+                  $14 $1 *hfil $10 $1 *vfil glue new 
+                #3 habox new
+                $F $1 *hfill $78 $1 *vfill glue new 
+              #4 vabox new
+              $14 $1 *hfil $12C $1 *vfil glue new 
+            #3 habox new
+          #3 vabox new
+        #3 habox new
+          ^^ S[ imtext-xy DisposPtr
     imtext-zy DisposPtr    
     imtext-zx DisposPtr
     close
-    ]S ( MINOS ) S" done" button new 
-    &1 habox new vfixbox 
-    &2 vabox new
+    ]S ( MINOS ) X" done" button new 
+        #1 habox new vfixbox 
+      #2 vabox new
     ( [dumpend] ) ;
-: init  ^>^^  assign  widget 1 super init ;
 class;
 
 : main
-    skull open-app
-    $1 0 ?DO  stop  LOOP bye ;
+  skull open-app
+  event-loop bye ;
 script? [IF]  main  [THEN]
 previous previous previous
