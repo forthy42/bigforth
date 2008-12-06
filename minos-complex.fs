@@ -16,12 +16,12 @@ modal class component
     : init ( -- ) ^>^^ assign
 	widget 1 ^ params 2drop nip super init ;
     : make     ( o -- win )
-	new, dup >o dup params o> rot drop
-	screen self window new  window with assign ^ endwith ;
+	new, dup >o params o> rot drop
+	screen self window new  window with  assign ^  endwith ;
     : open,     make  window with  show  endwith ;
     : dialog,   make  get-win
 	swap window with  set-parent show  endwith ;
-    : open-app, make  window with  show up@ app !  endwith ;
+    : open-app, make  window with  show up@ app ! 1 apprefcnt +! endwith ;
     : menu,     ( o -- o ) >o widget o> ;
     : open     ( -- )     o@ state @
 	IF postpone ALiteral postpone open, ELSE open, THEN ;
@@ -42,7 +42,7 @@ class;
   new-component  get-win
   swap window with  set-parent show  endwith ;
 : open-application  ( o od addr u -- )
-  new-component  window with  show up@ app !  endwith ;
+  new-component  window with  show up@ app ! 1 apprefcnt +!  endwith ;
 
 menu-window class menu-component
     early open immediate
@@ -58,7 +58,7 @@ menu-window class menu-component
     : open,     new,  window with  show  endwith ;
     : dialog,   new,  get-win
 	swap window with  set-parent show  endwith ;
-    : open-app, new,  window with  show up@ app !  endwith ;
+    : open-app, new,  window with  show up@ app ! 1 apprefcnt +!  endwith ;
     : open     ( -- )     o@ state @
 	IF postpone ALiteral postpone open, ELSE open, THEN ;
     : dialog     ( -- )     o@ state @

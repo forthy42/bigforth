@@ -157,7 +157,7 @@ test-widgets implements
     endwith ;
 : start-cv1  recursive
     ^ draw-cv1 drop dpy sync ['] start-cv1 ^ #30 after dpy schedule ;
-: dispose  ^ dpy cleanup ; ( [methodend] ) 
+ ( [methodend] ) 
   : widget  ( [dumpstart] )
         M: menu1 menu X"  bigFORTH " menu-title new 
         M: sub-menu1 menu X"  File " menu-title new 

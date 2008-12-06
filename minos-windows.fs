@@ -1,5 +1,7 @@
 \ window                                               15aug99py
 
+Variable  apprefcnt
+
 displays class window
 public: gadget ptr child        cell var title
         method make-window      method decoration
@@ -122,11 +124,11 @@ how:    : xinc  child xinc ;
           0 make-window  xwin @ xrc get-gc  0 set-font
           maxclicks 8* cell+ clicks 2dup Handle! @ swap erase
           title off ;
-        : ?app  app @   IF  app @ wake pause  app off  THEN ;
+        : ?app  app @ IF  -1 apprefcnt +! app @ wake pause  app off  THEN ;
 
 \ window                                               22sep07py
 
-        : dispose ( -- )  self dpy delete
+        : dispose ( -- ) self dpy delete
           child self  drop child dispose  self cleanup
           title $off
           xwin @  IF
@@ -171,7 +173,7 @@ how:    : xinc  child xinc ;
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [defined] win32 [IF]
           SW_HIDE xwin @ ShowWindow drop  [THEN] ;
-        : stop  up@ app !  F stop ;
+        : stop  up@ app !  1 apprefcnt +!  F stop ;
         : delete ( addr addr' -- )  over self =
           IF    nextwin self swap ! drop
           ELSE  drop link nextwin  nextwin goto delete  THEN ;

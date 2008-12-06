@@ -180,13 +180,11 @@ ficon: minos-win icons/minos1+.icn"
 [defined] win32 [IF]
     cold: set-exceptions win-init ;
 [THEN]
-: event-loop  BEGIN  stop
-    screen childs self 'nilscreen =  UNTIL ;
+: event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
     ' win-init atcold
     : minos-idle screen handle-events ;
-    : event-loop ( -- ) BEGIN  minos-idle
-        screen childs self 'nilscreen =  UNTIL ;
+    : event-loop ( -- ) BEGIN  minos-idle  apprefcnt @ 0=  UNTIL ;
 [THEN]
 
 \ init sequence                                        10apr04py
