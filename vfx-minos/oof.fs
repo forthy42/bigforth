@@ -343,13 +343,13 @@ Create chunks here 16 cells dup allot erase
     dup 128 > IF drop free throw EXIT THEN
     >chunk drop DelFix ;
 
+Forth definitions
+
 : new, ( o -- addr )  dup size@
   alloc @ execute dup >r to ohere (new, r> ;
 
 : new[], ( n o -- addr )  dup size@
   2 pick * alloc @ execute to ohere (new[], ;
-
-Forth definitions
 
 : dynamic ['] Dalloc alloc ! ;  dynamic
 : static  ['] Salloc alloc ! ;

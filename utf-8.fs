@@ -41,6 +41,8 @@ $80 Value maxascii
         >r xc!+ r> r> swap - true
     THEN ;
 
+: xc, ( xc -- )  here xc!+ dp ! ;
+
 \ pictured output
 
 : xhold ( xc -- )  pad cell- over xc-size negate over +!
