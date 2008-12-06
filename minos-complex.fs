@@ -277,7 +277,6 @@ previous previous
     : ^^bind  postpone dup  postpone bind ;      immediate restrict
 [THEN]
 
-[defined] VFXFORTH 0= [IF]
 
 \ IO-Window                                            26oct99py
 
@@ -351,7 +350,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ mixed font output                                    24oct99py
 
         : .texts ( addr u x y dpy -- )
-          fnt16 self 0= IF  fnt draw  EXIT  THEN  { x y dpy |
+          fnt16 self 0= IF  fnt draw  EXIT  THEN  { x y dpy }
           BEGIN  dup  WHILE  2dup scan8 dup
                  IF    tuck x y dpy fnt draw
                        dup textwh @ * x + to x /string
@@ -359,7 +358,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
                  2dup scan16 dup
                  IF    tuck x y dpy fnt16 draw
                        dup textwh @ * x + to x /string
-                 ELSE  2drop  THEN  REPEAT  2drop } ;
+                 ELSE  2drop  THEN  REPEAT  2drop ;
 
 \ mixed font output                                    16jan05py
 
@@ -392,7 +391,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : drawcur  dpy self 0= ?EXIT  !tile  expand16
           cursor# @  IF  6 colors @  ELSE  color @  THEN
           pos @ typebuf @ @ +
-          dup selw @ + 2dup min -rot max { color s e |
+          dup selw @ + 2dup min -rot max { color s e }
           x @ y @ cols @ rows @ * 0
           ?DO  s I - cols @ u<  e I - cols @ u< or
                I s e within or
@@ -403,13 +402,13 @@ how:    6 colors focuscol !     1 colors defocuscol !
                   /string  2over swap s I csize +
                   swap color 8 >> .text
                THEN  texth @ + cols @ +LOOP
-          2drop } ;
+          2drop ;
 
 \ IO-Window                                            16jun02py
 
         : draw-io ( x y dpyo -- )
           dup displays with clipy endwith
-          over + { dpyo sclip eclip |
+          over + { dpyo sclip eclip }
           cols @ rows @ * 0
           ?DO  dup sclip eclip within
                IF  2dup w @ texth @
@@ -417,7 +416,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
                    I 'line 2over 6 colors @ 8 >>
                    dpyo font-color!
                    dpyo .texts
-               THEN  texth @ + cols @ +LOOP  2drop } ;
+               THEN  texth @ + cols @ +LOOP  2drop ;
         : draw ( -- )  !tile
           x @ y @ ^ ['] draw-io dpy drawer
           drawcur  0 0 dpy txy! ;
@@ -431,7 +430,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           parent resized  dpy set-hints
           ['] resize-it2 ^ /step @ after dpy schedule ;
         : screen-resize
-          start rows @ $20 + -$20 and
+          start rows @ $20 + $-20 and
           cols @ * SetHandleSize
           resize! c@ ?EXIT  1 resize! c!
           ['] resize-it ^ /step @ after dpy schedule ;
@@ -520,7 +519,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           0max cols @ 1- min
           swap 0max rows @ 1- min  ?sel-scroll
           cols @ * + pos @ - cursor# @ pos @ selw @
-          { s1 c# p s |
+          { s1 c# p s }
           s s1 xor 0<
           IF  1 cursor# ! drawcur      p       s1      0
           ELSE  s1 0max s 0max <  IF p s1 +  s s1 -  1  ELSE
@@ -529,7 +528,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
                 s1 0min s 0min >  IF p s +   s1 s -  1  ELSE
                 p 0 1  THEN THEN THEN THEN
           THEN  cursor# ! selw ! pos ! drawcur
-          c# cursor# ! p pos ! s1 selw ! } ;
+          c# cursor# ! p pos ! s1 selw ! ;
 
 \ IO-Window                                            30dec99py
         : clrline   flush  curoff pos @ dup cols @ mod - pos !
@@ -585,12 +584,12 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : key?  ( -- flag )
           keys @ @ 0= IF  pause  THEN  keys @ @ 0> ;
         : getkey ( -- key )  keys @ @
-          IF    keys @ cell+ @  keys @ 8+ dup cell- $78 move
+          IF    keys @ cell+ @  keys @ 8 + dup cell- $78 move
                 -1 keys @ +! $10000 /mod kbshift !
           ELSE  0  THEN ;
         : key   ( -- key )  flush  1 cursor# ! curon
           BEGIN  key?  0= WHILE
-                 dpy xrc fid &50 idle  REPEAT
+                 dpy xrc fid #50 idle  REPEAT
           getkey curoff ;
 
 \ IO-Window                                            06jan05py
@@ -607,7 +606,8 @@ how:    6 colors focuscol !     1 colors defocuscol !
           $FF54 case?  IF  ctrl N  THEN
           dup $007F = IF  drop ctrl D  THEN
           dup $FF00 and $FF00 =  IF  drop 0 EXIT  THEN
-[defined] utf-8 [IF]  xdecode [ELSE] PCdecode [THEN] ;
+[defined] VFXFORTH [IF] ( !!!FIXME!!! stub ) drop false [ELSE]
+[defined] utf-8 [IF]  xdecode [ELSE] PCdecode [THEN] [THEN] ;
 
 \ IO-Window                                            01jan05py
 
@@ -624,6 +624,17 @@ how:    6 colors focuscol !     1 colors defocuscol !
           typebuf HandleOff  ^ dpy cleanup  super dispose ;
 class;
 
+[defined] VFXFORTH [IF]
+    #1000 Value MaxScroll
+    terminal ptr term
+    : openw 0 { term-o } screen self window new
+        menu-window with
+        1 1 viewport new d[ 80 24 terminal new dup to term-o ]d
+        s" bigFORTH Dialog" assign
+        80 24 geometry
+	show endwith term-o bind term
+    MaxScroll term scrollback ;
+[ELSE]
 \ Window IO words                                      10apr04py
 terminal uptr term      Forward openw
 | : term?  term self 0= IF  openw  THEN ;
@@ -750,13 +761,13 @@ how:    \ 6 colors defocuscol !
           r@ r@ p+  x @ xS + r@ + y @ xS + r@ +
           dir@ r> 4 << or ficons icon-pixmap with draw-at
           w @ endwith xS + xM color @ 8 >>
-          { iw m cc |  dpy mask
+          { iw m cc }  dpy mask
           2swap 2over iw 0 p+ cc .text
           w @ wdate @ - 6 - 0 p+
           time @ >date 2over  cc .text
           m wtime @ + 0 p-   time @ >time 2over cc .text
           m wsize @ + 0 p- size @ 0 <# #S #>
-          2swap cc .text } ;
+          2swap cc .text ;
 
 \ file widget                                          10apr04py
         : hglue ( -- glue )  super hglue xM 3 *

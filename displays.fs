@@ -446,7 +446,7 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              04aug05py
 [defined]  x11 [IF]
-        :[  event XMotionEvent time @ event-time !
+        :[ event XMotionEvent time @ event-time !
           event XMotionEvent x @+ @ mxy!
           event XMotionEvent state @ 8 >> mb !  moved! ]:
         MotionNotify cells Handlers + !

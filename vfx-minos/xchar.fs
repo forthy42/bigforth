@@ -241,14 +241,14 @@ here wc-table - Constant #wc-table
 
 \ inefficient table walk:
 
-: wcwidth ( xc -- n )
+: xc-width ( xchar -- n )
     wc-table #wc-table over + swap ?DO
-	dup I 2@ within IF  I 2 cells + @  UNLOOP EXIT  THEN
-    3 cells +LOOP  1 ;
+        dup I 2@ within IF  drop I 2 cells + @  UNLOOP EXIT  THEN
+    3 cells +LOOP  drop 1 ;
 
 : x-width ( xcaddr u -- n )
     0 rot rot over + swap ?DO
-	I xc@+ swap >r wcwidth +
+	I xc@+ swap >r xc-width +
     r> I - +LOOP ;
 
 : char  ( "name" -- xc )  bl word count drop xc@+ nip ;
