@@ -6,7 +6,9 @@
 #endif
 
 #if defined(BSD) || defined(linux)
+#ifndef unix
 #define unix
+#endif
 #endif
 
 #include <stdio.h>
@@ -368,7 +370,7 @@ void bf_link(int * this, int * that, unsigned short * thread)
         popal");
 }
 
-void linkit(unsigned char * nametable)
+void linkit(char * nametable)
 {
   unsigned short tablesize;
   int namesize;
@@ -934,7 +936,7 @@ signal_throw(int sig, siginfo_t *info, void *_)
     { SIGSEGV, -9 },
   };
 
-  dump1 = &(sigc->edi);
+  dump1 = (long*)&(sigc->edi);
   dump2 = ((long*)(recovery))+1;
   dump3 = (long*)(sigc->fpstate);
 

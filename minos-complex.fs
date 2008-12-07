@@ -637,6 +637,7 @@ class;
 [ELSE]
 \ Window IO words                                      10apr04py
 terminal uptr term      Forward openw
+[THEN]
 | : term?  term self 0= IF  openw  THEN ;
 : WINtype  ( addr l -- )  term? term type pause ;
 : WINemit  ( char -- )    term? term emit ;
@@ -651,17 +652,18 @@ terminal uptr term      Forward openw
 : WINcurleft  ( -- )      term? -1 term c ;
 : WINcurrite  ( -- )      term?  1 term c ;
 : WINclrline  ( -- )      term? term clrline ;
+
+: WINkey? ( -- flag )  term? term key? ;
+: WINkey  ( -- key )   term? term key ;
+: WINdecode            term? term decode ;
 
 \ Window IO words                                      05jan05py
-
+[defined] VFXFORTH 0= [IF]
 Output: WINdisplay
         WINemit true WINcr WINtype PCdel WINpage
         WINat WINat? WINform  noop noop WINflush
         WINcuron WINcuroff WINcurleft WINcurrite WINclrline [
 
-: WINkey? ( -- flag )  term? term key? ;
-: WINkey  ( -- key )   term? term key ;
-: WINdecode            term? term decode ;
 [defined] xaccept [IF]
         Input:  WINkeyboard
         WINkey WINkey? WINdecode xaccept false [

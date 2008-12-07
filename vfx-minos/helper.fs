@@ -15,7 +15,7 @@ also memory definitions
 : DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
 : Handle! ( len addr -- )  >r NewPtr r> ! ;
 : HandleOff ( addr -- )  dup @ free throw off ;
-: SetHandleSize ( addr -- ) >r
+: SetHandleSize ( addr size -- ) swap >r
     r@ @ swap resize throw r> ! ;
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
 : NewFix  ( root len # -- addr )
