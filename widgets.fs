@@ -147,6 +147,7 @@ how:    : init ( file len -- ) super init  assign ;
 class;
 
 xresource implements
+[defined] x11 [IF]
         : set-tile ( x y pixmap -- )  \ -1 cur-color !
           icon-pixmap with image @ endwith
                     [ xgc XGCValues tile         ] ALiteral !
@@ -156,6 +157,11 @@ xresource implements
           [ GCTile GCTileStipXOrigin or
             GCTileStipYOrigin or GCFillStyle or ] Literal xgc
           XChangeGC drop ;
+[THEN]
+[defined] win32 [IF]
+        : set-tile ( x y pixmap -- )  \ -1 cur-color !
+          2drop drop ; \ stub
+[THEN]
 class;
 
 \ Icon                                                 26oct07py

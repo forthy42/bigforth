@@ -182,8 +182,8 @@ struct{
   cell   biSize 
   cell   biWidth 
   cell   biHeight 
-  2      biPlanes 
-  2      biBitCount 
+  short  biPlanes 
+  short  biBitCount 
   cell   biCompression 
   cell   biSizeImage 
   cell   biXPelsPerMeter 
@@ -200,7 +200,7 @@ struct{
     cell   ErrorSelector
     cell   DataOffset
     cell   DataSelector
-    &80    RegisterArea
+    &80 string RegisterArea
     cell   Cr0NpxState
 } FLOATING_SAVE_AREA
 

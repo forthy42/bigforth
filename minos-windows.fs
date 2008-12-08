@@ -237,8 +237,7 @@ how:    : xinc  child xinc ;
           1 counter ! rw off rh off
           x @ y @ xinc gw * + yinc gh * + resize
           0 counter ! rw on  rh on
-          x @ y @ xinc gw * + yinc gh * + resize
-[defined] win32 [IF]  output push display ." "  [THEN] ;
+          x @ y @ xinc gw * + yinc gh * + resize ;
         : geometry? ( -- w h )
           w @ xinc >r - r> /
           h @ yinc >r - r> / ;

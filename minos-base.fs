@@ -548,7 +548,7 @@ how:    : init ( -- )
               fontarray @ DisposHandle
               cursors   @ DisposHandle  THEN
           super dispose ;
-        : close ( -- ) ~~ dpy @ XCloseDisplay drop ~~ ;
+        : close ( -- ) dpy @ XCloseDisplay drop ;
 	: color ( i --  n )
 	    $FF and cells colarray @ @ + @ ;
         : font@ ( i --  n )  cells fontarray @ @ + @ ;
