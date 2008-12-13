@@ -94,7 +94,7 @@ scr2str$(EXE) str2scr$(EXE):	scr2str.c
 	ln -s scr2str$(EXE) str2scr$(EXE)
 
 forthker.fi: $(KERNSRC)
-	-@$(MV) $@ $@~
+	-@$(CP) $@ $@~
 	./bigforth -e "include forth.fb save-target forthker $(BYE)"
 
 bigforth.fi: forthker.fi $(SYSSRC) Makefile
