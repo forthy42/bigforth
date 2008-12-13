@@ -32,8 +32,6 @@ EXE = @EXEEXT@
 CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' @EXTFLAGS@
 LDLIBS = @LIBS@
 SHELL = /bin/bash
-LIB	= $$(libc=$$(ldd bigforth | grep libc | cut -f2 | cut -f1 -d' '); if [ "$$libc" = libc.so.5 ]; then echo -n libc5; else if [ "$$libc" = libc.so.6 ]; then echo -n glibc; else echo -n bsd; fi; fi)
-LIBDIST	= $$(if [ "$$(ldd bigforth/bigforth | grep libc | cut -f2 | cut -f1 -d' ')" = libc.so.5 ]; then echo -n libc5; else echo -n glibc; fi)
 
 WARNING	= 
 #WARNING = warning on
@@ -97,7 +95,7 @@ scr2str$(EXE) str2scr$(EXE):	scr2str.c
 
 forthker.fi: $(KERNSRC)
 	-@$(MV) $@ $@~
-	./bigforth -e ": $(LIB) ; include forth.fb save-target forthker $(BYE)"
+	./bigforth -e "include forth.fb save-target forthker $(BYE)"
 
 bigforth.fi: forthker.fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
