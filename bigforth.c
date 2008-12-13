@@ -1003,7 +1003,7 @@ signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
     { SIGSEGV, -9 },
   };
 
-  dump1 = (long*)&(sigc->edi);
+/*  dump1 = (long*)&(sigc->edi);
   dump2 = ((long*)(recovery))+1;
   dump3 = (long*)(sigc->fpstate);
 
@@ -1021,7 +1021,7 @@ signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
   } else {
     *dump2-- = (long)0;
   }
-
+*/
   for (code=-256-sig, p=throwtable; p<throwtable+(sizeof(throwtable)/sizeof(*p)); p++)
     if (sig == p->signal) {
       code = p->throwcode;
