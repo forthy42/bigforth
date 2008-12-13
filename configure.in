@@ -11,6 +11,7 @@ case "$host_os" in
 		ARCHFLAGS=""
 		INI="bigforth.ini"
 		XINI="xbigforth.ini"
+		ARCH="win32"
 		;;
 	*bsd)
 		EXTFLAGS="-DBSD"
@@ -18,6 +19,23 @@ case "$host_os" in
 		ARCHFLAGS=""
 		INI=".bigforthrc"
 		XINI=".xbigforthrc"
+		ARCH="bsd"
+		;;
+	linux)
+		EXTFLAGS=""
+		WINDOWS=""
+		ARCHFLAGS=""
+		INI=".bigforthrc"
+		XINI=".xbigforthrc"
+		ARCH="lin"
+		;;
+	darwin)
+		EXTFLAGS=""
+		WINDOWS=""
+		ARCHFLAGS=""
+		INI=".bigforthrc"
+		XINI=".xbigforthrc"
+		ARCH="osx"
 		;;
 	*)
 		EXTFLAGS=""
@@ -25,6 +43,7 @@ case "$host_os" in
 		ARCHFLAGS=""
 		INI=".bigforthrc"
 		XINI=".xbigforthrc"
+		ARCH="lin"
 		;;
 esac
 
@@ -33,6 +52,8 @@ case "$host_cpu" in
 		ARCHFLAGS="-m32"
 		;;
 esac
+
+ln -s forthker-$ARCH.fi forthker.fi
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 exec_prefix=$prefix
@@ -45,5 +66,6 @@ AC_SUBST(WINDOWS)
 AC_SUBST(libdirpath)
 AC_SUBST(INI)
 AC_SUBST(XINI)
+AC_SUBST(ARCH)
 
 AC_OUTPUT(Makefile $INI $XINI)
