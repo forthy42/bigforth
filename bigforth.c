@@ -5,7 +5,7 @@
 #define _GNU_SOURCE
 #endif
 
-#if defined(BSD) || defined(linux)
+#if defined(BSD) || defined(linux) || defined(DARWIN)
 #ifndef unix
 #define unix
 #endif
