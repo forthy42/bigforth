@@ -31,6 +31,7 @@ MV = mv
 EXE = @EXEEXT@
 CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' @EXTFLAGS@
 LDLIBS = @LIBS@
+ARCH = @ARCH@
 SHELL = /bin/bash
 
 WARNING	= 
@@ -58,7 +59,7 @@ XSRC	= startx.fb minos.fs oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
 	  resources.fs minos-float.fs
 
-all:	bigforth$(EXE) forthker$(EXE) xbigforth$(EXE) xbigforth.fi ok
+all:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi ok
 
 ok:	xbigforth.fi xbigforth$(EXE)
 	@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
@@ -82,7 +83,7 @@ bigforth$(EXE): bigforth.o linker.o
 	$(CC) $(CFLAGS) bigforth.o linker.o $(LDLIBS) -o bigforth
 	strip bigforth$(EXE)
 
-forthker$(EXE): bigforth$(EXE)
+forthker-$(ARCH)$(EXE): bigforth$(EXE)
 	$(CP) $< $@
 
 xbigforth$(EXE): xbigforth.o linker.o
@@ -93,27 +94,27 @@ scr2str$(EXE) str2scr$(EXE):	scr2str.c
 	$(CC) $(CFLAGS) $< -o scr2str$(EXE)
 	ln -s scr2str$(EXE) str2scr$(EXE)
 
-forthker.fi: $(KERNSRC)
+forthker-%.fi: $(KERNSRC)
 	-@$(CP) $@ $@~
-	./bigforth -e "include forth.fb save-target forthker $(BYE)"
+	./bigforth -e ": :$* ; include forth.fb save-target forthker-$* $(BYE)"
 
-bigforth.fi: forthker.fi $(SYSSRC) Makefile
+bigforth.fi: forthker-$(ARCH).fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
-	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
+	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker-$(ARCH) -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
 
 xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) $(INI)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs use float.fb include startx.fb $(XSAVE) xbigforth $(BYE)"
 
-xconst.fm: $(XCSRC) forthker.fi $(SYSSRC)
+xconst.fm: $(XCSRC) forthker-$(ARCH).fi $(SYSSRC)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) include x.fs m' xconst savemod xconst $(BYE)"
 
-glconst.fm: $(XCSRC) forthker.fi $(SYSSRC)
+glconst.fm: $(XCSRC) forthker-$(ARCH).fi $(SYSSRC)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs include glconst.fs m' glconst savemod glconst $(BYE)"
 
-float.fm: float.fb forthker.fi $(SYSSRC)
+float.fm: float.fb forthker-$(ARCH).fi $(SYSSRC)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs include float.fb m' float savemod float $(BYE)"
 
@@ -127,7 +128,7 @@ EXAMPLEDIST = bigforth/3dskull/{*.fs,*.m,*.dat}
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker.fi,xpmtoicn} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker-$(ARCH).fi,xpmtoicn} $(ICONDIST)
 
 DRAGONDIST = bigforth/pattern/dragon{,-back,-head,-wing,-claw}.png \
 	bigforth/pattern/{bark,normal-w1,back,focus}.ppm

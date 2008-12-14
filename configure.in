@@ -27,7 +27,7 @@ case "$host_os" in
 		ARCHFLAGS=""
 		INI=".bigforthrc"
 		XINI=".xbigforthrc"
-		ARCH="lin"
+		ARCH="linux"
 		;;
 	darwin*)
 		EXTFLAGS="-DDARWIN"
@@ -43,7 +43,7 @@ case "$host_os" in
 		ARCHFLAGS=""
 		INI=".bigforthrc"
 		XINI=".xbigforthrc"
-		ARCH="lin"
+		ARCH="linux"
 		;;
 esac
 
@@ -52,8 +52,6 @@ case "$host_cpu" in
 		ARCHFLAGS="-m32"
 		;;
 esac
-
-ln -s forthker-$ARCH.fi forthker.fi
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 exec_prefix=$prefix
