@@ -4,8 +4,13 @@ Module X11
 
 also DOS
 
+[IFDEF] osx
+library libX11 /usr/X11/lib/libX11.dylib
+library libXext /usr/X11/lib/libXext.dylib \ depends libX11
+[ELSE]
 library libX11 libX11.so.6
 library libXext libXext.so.6 \ depends libX11
+[THEN]
 
 base @ hex
 

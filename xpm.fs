@@ -8,7 +8,11 @@ legacy off
 
 also X11
 
+[IFDEF] osx
+library libXpm /usr/X11R6/lib/libXpm.dylib  depends libX11
+[ELSE]
 library libXpm libXpm.so.4  depends libX11
+[THEN]
 
 previous
 
