@@ -8,8 +8,13 @@ DOS also OpenGL
     also x11
     
 \    library libGL libMesaGL.so.3  $20 allot   depends libXext depends libm
+[IFDEF] osx
+    library libGL /usr/X11/lib/libGL.dylib $20 allot    depends libX11
+    library libGLU /usr/X11/lib/libGLU.dylib
+[ELSE]
     library libGL libGL.so.1 $20 allot    depends libX11
     library libGLU libGLU.so.1
+[THEN]
     | ' libGL alias libGLext
     previous
     true Value ?texture immediate

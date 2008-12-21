@@ -22,27 +22,33 @@ library: libpng12.so.0
 [ELSE]
     also DOS
     
-    s" libpng12.so.0" getlib 0<> Value newpng
-    true Value png3
-    
-    newpng [IF]
-	library libpng libpng12.so.0
+    [IFDEF] osx
+        library libpng /usr/X11/lib/libpng12.dylib
+        : init-png-lib ; \ not supported in VFX Forth
+        true value png3
     [ELSE]
-	s" libpng.so.3" getlib 0<> to png3
-	png3 [IF]
-        library libpng libpng.so.3 0 ,
-	[ELSE]
-	    library libpng libpng.so.2 0 ,
-	[THEN]
-    [THEN]
+        s" libpng12.so.0" getlib 0<> Value newpng
+        true Value png3
     
-    : init-png-lib ( -- )
-	& libpng cell+ @ ?EXIT
-	true to png3 s" libpng12.so.0" getlib 0<> to newpng
-	newpng IF  s" libpng12.so.0"
-	ELSE  s" libpng.so.3" getlib 0<> to png3
-	    png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
-	& libpng 4 cells + place ;
+        newpng [IF]
+        	library libpng libpng12.so.0
+        [ELSE]
+        	s" libpng.so.3" getlib 0<> to png3
+	    png3 [IF]
+            library libpng libpng.so.3 0 ,
+	    [ELSE]
+	        library libpng libpng.so.2 0 ,
+	    [THEN]
+        [THEN]
+    
+        : init-png-lib ( -- )
+	    & libpng cell+ @ ?EXIT
+	    true to png3 s" libpng12.so.0" getlib 0<> to newpng
+	    newpng IF  s" libpng12.so.0"
+	    ELSE  s" libpng.so.3" getlib 0<> to png3
+	        png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
+	    & libpng 4 cells + place ;
+    [THEN]
     
     legacy off
     

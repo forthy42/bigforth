@@ -6,7 +6,11 @@ also dos
 
 legacy off
 
+[IFDEF] osx
+library libXft /usr/X11/lib/libXft.dylib
+[ELSE]
 library libXft libXft.so.2
+[THEN]
 
 libXft XftFontMatch int int int int (int) XftFontMatch ( dpy screen pattern result -- pattern )
 libXft XftFontOpenPattern int int (int) XftFontOpenPattern ( dpy pattern -- font )

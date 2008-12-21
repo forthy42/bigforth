@@ -6,7 +6,11 @@ also dos
 
 legacy off
 
+[IFDEF] osx
+library libXrender /usr/X11/lib/libXrender.dylib
+[ELSE]
 library libXrender libXrender.so.1
+[THEN]
 
 libXrender XRenderFindFormat ptr int ptr int (ptr) XRenderFindFormat ( dpy mask templ count -- pict )
 libXrender XRenderFindVisualFormat ptr ptr (ptr) XRenderFindVisualFormat ( dpy visual -- pict )
