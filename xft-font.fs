@@ -224,10 +224,17 @@ class;
 
 : (normal-font ( -- )
     screen xrc with
+    [IFDEF] osx
+        s" -*-verdana-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
+        s" -*-courier-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
+        s" -*-verdana-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
+	s" -*-verdana-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
+    [ELSE]
         s" -*-helvetica-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
         s" -*-courier new-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
         s" -*-helvetica-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
-        s" -*-helvetica-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
+	s" -*-helvetica-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
+    [THEN]
     endwith
     maxascii $80 = IF
 	s" -*-ar pl kaitim gb-bold-r-normal--15-*-*-*-c-*-iso10646-1"   $2E80 $A000 0 add-font
@@ -240,10 +247,17 @@ class;
 
 : (large-font ( -- )
     screen xrc with
+    [IFDEF] osx
+       s" -*-verdana-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
+       s" -*-courier-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
+       s" -*-verdana-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
+       s" -*-verdana-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
+    [ELSE]
        s" -*-helvetica-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
        s" -*-courier new-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
        s" -*-helvetica-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
        s" -*-helvetica-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
+    [THEN]
     endwith
     maxascii $80 = IF
 	s" -*-ar pl kaitim gb-bold-r-normal--22-*-*-*-c-*-iso10646-1"   $2E80 $A000 0 add-font
