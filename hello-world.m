@@ -12,6 +12,7 @@ public:
   | topindex ptr (topindex-03)
   | topindex ptr (topindex-04)
   | topindex ptr (topindex-05)
+  | topindex ptr (topindex-06)
  ( [varstart] )  ( [varend] ) 
 how:
   : params   DF[ 0 ]DF s" Hello World" ;
@@ -26,8 +27,9 @@ hello implements
             0 0 flipper X" 中文" topindex new ^^bind (topindex-03)
             0 0 flipper X" Русский" topindex new ^^bind (topindex-04)
             0 0 flipper X" 日本语" topindex new ^^bind (topindex-05)
+            0 0 flipper X" Tiếng Việt" topindex new ^^bind (topindex-06)
             topglue new 
-          #7 harbox new vfixbox 
+          #8 harbox new vfixbox 
               X" Hallöle Weltle!" text-label new 
             #1 habox new panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
               X" Hello World!" text-label new 
@@ -40,7 +42,9 @@ hello implements
             #1 habox new flipbox  panel dup ^^ with C[ (topindex-05) ]C ( MINOS ) endwith 
               X" Bonjour le monde!" text-label new 
             #1 habox new flipbox  panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
-          #6 habox new $10  noborderbox  #2 borderbox
+              X" sin chào thế giới" text-label new 
+            #1 habox new flipbox  panel dup ^^ with C[ (topindex-06) ]C ( MINOS ) endwith 
+          #7 habox new $10  noborderbox  #2 borderbox
         #2 vabox new
           $10 $1 *hfill *hglue new 
           ^^ S[ close ]S ( MINOS ) X"   OK  " button new 
