@@ -230,10 +230,10 @@ class;
         s" -*-verdana-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
 	s" -*-verdana-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
     [ELSE]
-        s" -*-helvetica-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
-        s" -*-courier new-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
-        s" -*-helvetica-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
-	s" -*-helvetica-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
+        s" -*-FreeSans-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
+        s" -*-FreeMono-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
+        s" -*-FreeSans-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
+	s" -*-FreeSans-medium-r-normal--12-*-*-*-c-*-iso10646-1" 3 font!
     [THEN]
     endwith
     maxascii $80 = IF
@@ -242,7 +242,7 @@ class;
 	s" -*-ar pl kaitim gb-medium-r-normal--10-*-*-*-c-*-iso10646-1" $2E80 $A000 2 add-font
 	s" -*-ar pl kaitim gb-medium-r-normal--15-*-*-*-c-*-iso10646-1" $2E80 $A000 3 add-font
     THEN
-    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
+    0" -*-FreeSans-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
 
 : (large-font ( -- )
@@ -253,10 +253,10 @@ class;
        s" -*-verdana-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
        s" -*-verdana-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
     [ELSE]
-       s" -*-helvetica-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
-       s" -*-courier new-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
-       s" -*-helvetica-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
-       s" -*-helvetica-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
+       s" -*-FreeSans-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
+       s" -*-FreeMono-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
+       s" -*-FreeSans-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
+       s" -*-FreeSans-medium-r-normal--16-*-*-*-p-*-iso10646-1" 3 font!
     [THEN]
     endwith
     maxascii $80 = IF
@@ -265,7 +265,7 @@ class;
 	s" -*-ar pl kaitim gb-medium-r-normal--12-*-*-*-c-*-iso10646-1" $2E80 $A000 2 add-font
 	s" -*-ar pl kaitim gb-medium-r-normal--22-*-*-*-c-*-iso10646-1" $2E80 $A000 3 add-font
     THEN
-    0" -adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
+    0" -*-FreeSans-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
 
 also xft
