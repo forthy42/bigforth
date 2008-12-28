@@ -517,20 +517,20 @@ also dos
      cur pane resized
      cur status resized <rebox> <redpy> ;
 
-: (load-minos ( addr u -- )  loading on
+: included-minos ( addr u -- )  loading on
 [ also float ] f-init [ previous ]
     2dup cur file-name $!
     r/o open-file throw $1000 input-file
     Onlyforth minos also minos-load also
-    create-classes
+    ['] create-classes catch dup IF  saveerr  THEN  throw
     loadfile @ close-file throw
-    strip-names Onlyforth cur save-state off
-    s" Theseus: " window title! cur file-name $@ window title+!
-    loading off ;
+    strip-names Onlyforth cur save-state off ;
 
 : load-minos ( -- )
     s" Load:" s" " s" *.m"
-    cur self S[ ^ bind cur path+file pad place pad count (load-minos ]S
+    cur self S[ ^ bind cur path+file pad place pad count included-minos
+    s" Theseus: " window title! cur file-name $@ window title+!
+    loading off ]S
     fsel-dialog ;
 
 previous

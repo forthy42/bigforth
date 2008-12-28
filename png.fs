@@ -22,7 +22,7 @@ library: libpng12.so.0
 [ELSE]
     also DOS
     
-    [IFDEF] osx
+    [defined] osx [IF]
         library libpng /usr/X11/lib/libpng12.dylib
         : init-png-lib ; \ not supported in VFX Forth
         true value png3

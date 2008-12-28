@@ -9,7 +9,7 @@ public:
   button ptr ende
  ( [varstart] ) cell var samples ( [varend] ) 
 how:
-  : params   DF[ ende self ]DF s" Saw Tooth" ;
+  : params   DF[ 0 ]DF s" Saw Tooth" ;
 class;
 
 osci implements

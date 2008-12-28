@@ -61,7 +61,7 @@ abacus implements
       &10 ud/mod rot 5 /mod 5 * I ! I cell+ !  -2 cells +LOOP
   2drop draw ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        #0, ]N ( MINOS ) ^^ SN[ re-number ]SN ( MINOS ) X" #" infotextfield new  ^^bind num
+        #0. ]N ( MINOS ) ^^ SN[ re-number ]SN ( MINOS ) X" #" infotextfield new  ^^bind num
           ^^ CP[ v9 i9 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v8 i8 ]CP ( MINOS ) abacus-comp new 
           ^^ CP[ v7 i7 ]CP ( MINOS ) abacus-comp new 

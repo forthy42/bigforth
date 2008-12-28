@@ -317,7 +317,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     scratch $100
     BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#'
            <>  UNTIL
-    0, 2swap >number 1 /string 0, 2swap >number 2drop drop nip
+    0. 2swap >number 1 /string 0. 2swap >number 2drop drop nip
     rdrop ;
 : read-P6 ( fd -- pixmap w h ) >r
     r@ read-format

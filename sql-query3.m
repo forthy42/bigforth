@@ -46,7 +46,7 @@ sql implements
         T" " ^^ ST[  ]ST ( MINOS ) X" Name" tableinfotextfield new  ^^bind #name
         T" " ^^ ST[  ]ST ( MINOS ) X" Street" tableinfotextfield new  ^^bind #street
         T" " ^^ ST[  ]ST ( MINOS ) X" Country" tableinfotextfield new  ^^bind #country
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Zip" tableinfotextfield new  ^^bind #zip
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Zip" tableinfotextfield new  ^^bind #zip
         T" " ^^ ST[  ]ST ( MINOS ) X" Town" tableinfotextfield new  ^^bind #town
           ^^ S[ do-insert ]S ( MINOS ) X" Insert" button new 
           ^^ S[ close ]S ( MINOS ) X" Close" button new 

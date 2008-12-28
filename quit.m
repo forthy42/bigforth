@@ -10,7 +10,7 @@ public:
   button ptr no-button
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ yes-button self ]DF s" Quit?" ;
+  : params   DF[ 0 ]DF s" Quit?" ;
 class;
 
 quit implements

@@ -288,7 +288,7 @@ how:
     : null ( -- addr u )  0. ;
     : make ( -- addr u ) get ;
     : dump ( -- )  base push decimal
-        get ." #" 0 d.r ." , ]N ( MINOS ) " ;
+        get ." #" 0 d.r ." . ]N ( MINOS ) " ;
 class;
 
 also float

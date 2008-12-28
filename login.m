@@ -12,7 +12,7 @@ public:
   button ptr cancel
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ log-in self ]DF s" Einloggen" ;
+  : params   DF[ 0 ]DF s" Einloggen" ;
 class;
 
 component class main-1

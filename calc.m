@@ -17,8 +17,8 @@ class;
 calc implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" A:" tableinfotextfield new  ^^bind a#
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" B:" tableinfotextfield new  ^^bind b#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" A:" tableinfotextfield new  ^^bind a#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" B:" tableinfotextfield new  ^^bind b#
           ^^ S[ a# get b# get d+ c# assign ]S ( MINOS ) X" +" button new 
           ^^ S[ a# get b# get d- c# assign ]S ( MINOS ) X" -" button new 
           ^^ S[ a# get b# get d* c# assign ]S ( MINOS ) X" *" button new 
@@ -26,7 +26,7 @@ calc implements
           ^^ S[ c# get a# assign ]S ( MINOS ) X" >A" button new 
           ^^ S[ c# get b# assign ]S ( MINOS ) X" >B" button new 
         #6 hatbox new #1 hskips
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" tableinfotextfield new  ^^bind c#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" tableinfotextfield new  ^^bind c#
       #4 vabox new panel
     ( [dumpend] ) ;
 class;

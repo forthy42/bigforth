@@ -43,7 +43,7 @@ how:    : >box  'nil bind childs  'nil bind active
           REPEAT  drop rdrop ;
         : (dpy!  ALLCHILDS  dup dpy! ;
         : dpy! ( dpy -- )  dup bind dpy (dpy! drop
-          0, hglues 2!  0, vglues 2! ;
+          0. hglues 2!  0. vglues 2! ;
 
 \ combined widgets                                     28mar99py
 
@@ -119,7 +119,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : hide     super hide ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
         : handle-key? active handle-key? ;
-        : !resized  0, hglues 2!  0, vglues 2!  tab-step-off
+        : !resized  0. hglues 2!  0. vglues 2!  tab-step-off
           ALLCHILDS !resized ;
 
 \ combined widgets: event handling                     19oct99py
@@ -306,7 +306,7 @@ how:    : >hglue ( -- min glue ) 0 mi n @ 0<> and
           ALLCHILDS hglue maxglue ;
         : hskips+ ( n -- n' )
           hskip@ borderw cx@ abs xS * 2/ + 2* + ;
-        : hglue ( -- glue )  tab-step-off  0,
+        : hglue ( -- glue )  tab-step-off  0.
           BEGIN   2drop tabs 1- tab@ >r >r  >hglue
                   r> r> tabs 1- tab@ d= UNTIL
           over + >hmax  swap

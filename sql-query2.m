@@ -41,7 +41,7 @@ sql implements
         T" product" ^^ ST[  ]ST ( MINOS ) X" Table:" tableinfotextfield new  ^^bind table
         T" " ^^ ST[  ]ST ( MINOS ) X" name" tableinfotextfield new  ^^bind #name
         T" " ^^ ST[  ]ST ( MINOS ) X" version" tableinfotextfield new  ^^bind #version
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" price" tableinfotextfield new  ^^bind #price
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" price" tableinfotextfield new  ^^bind #price
           ^^ S[ do-insert ]S ( MINOS ) X" Insert" button new 
           ^^ S[ close ]S ( MINOS ) X" Close" button new 
         #2 hatbox new #1 hskips

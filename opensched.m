@@ -113,9 +113,9 @@ graphs implements
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
           T" " ^^ ST[  ]ST ( MINOS ) X" Task Graph:" infotextfield new  ^^bind task
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" End Year" infotextfield new  ^^bind year
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" End Year" infotextfield new  ^^bind year
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
           #3 habox new #1 hskips #-1 borderbox
         #2 vabox new #1 vskips
           $10 $2 *hfilll $10 $1 *vfil glue new 
@@ -182,9 +182,9 @@ project implements
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         T" " ^^ ST[  ]ST ( MINOS ) X" Project Prefix:" infotextfield new  ^^bind prefix
-          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Start Year" infotextfield new  ^^bind year
-          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
-          #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
+          #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Start Year" infotextfield new  ^^bind year
+          #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Month" infotextfield new  ^^bind month
+          #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Day" infotextfield new  ^^bind day
         #3 hatab new #1 hskips #-1 borderbox
             X" Reports:" text-label new 
             ^^  0 T[  ][ ( MINOS )  ]T ( MINOS ) X" Text" tbutton new  ^^bind text

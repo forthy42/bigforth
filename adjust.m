@@ -11,7 +11,7 @@ public:
   button ptr path-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ path-ok self ]DF s" Adjust Configuration" ;
+  : params   DF[ 0 ]DF s" Adjust Configuration" ;
 class;
 
 include adjust-path.fs

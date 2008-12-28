@@ -4,6 +4,16 @@
 
 Vocabulary editor \ empty vocabulary
 
+: ans-float
+    '.' dp-char !
+    '.' fp-char ! ;
+
+ans-float
+
+: mpe-float
+    ',' dp-char !
+    '.' fp-char ! ;
+
 \ memory words
 
 vocabulary memory
@@ -185,7 +195,7 @@ also DOS
 previous
 : !time timer@ time ! ;
 : ms>time ( ms -- time )
-  $C6D750EB um* $3FFFFFF, d+ 6 lshift swap $1A rshift or ;
+  $C6D750EB um* $3FFFFFF. d+ 6 lshift swap $1A rshift or ;
 : >us ( time -- dus )  #86400000 um*
   #1000 um* >r >r #1000 um* r> + r> rot 0< s>d d- ;
 : after ( ms -- time ) ms>time timer@ + ;

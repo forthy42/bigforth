@@ -175,7 +175,7 @@ how:    : init  ( sx sy -- )  noback on  super init
           IF  orgx @ over  orgx ! -  hstep @ *
               dup abs sw @ <
               IF  clipxywh 2over 2swap clipback (xpos!
-              ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
+              ELSE  drop  THEN  draw  0. cliprec 2!  THEN ;
 
 \ viewport                                             02jan05py
 
@@ -190,7 +190,7 @@ how:    : init  ( sx sy -- )  noback on  super init
           IF  orgy @ over  orgy ! -  vstep @ *
               dup abs sh @ <
               IF  clipxywh 2over 2swap clipback (ypos!
-              ELSE  drop  THEN  draw  0, cliprec 2!  THEN ;
+              ELSE  drop  THEN  draw  0. cliprec 2!  THEN ;
         : 'hslide self ['] xpos! ['] hslide toggle-state new ;
         : 'vslide self ['] ypos! ['] vslide toggle-state new ;
 
@@ -379,7 +379,7 @@ how:    0 border-at v!
 
 \ Container object                                     14sep97py
 
-        : glue-off  0, hglues 2!  0, vglues 2!
+        : glue-off  0. hglues 2!  0. vglues 2!
           & viewport @ inner class?
           IF  & hviewport @ viewp class?  0=
               IF  childs hglue 2drop  childs vglue 2drop  THEN
