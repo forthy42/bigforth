@@ -333,7 +333,7 @@ how:    #40 /step V!            4 colors shadowcol !
 \ widget class                                         05jan07py
         : focus ;
         : defocus ;
-        : close ~~ ;
+        : close ;
         : xywh ( -- x y w h ) x @ y @ w @ h @ ;
         : inside? ( x y -- f )
           y @ - h @ 0max u< swap x @ - w @ 0max u< and ;

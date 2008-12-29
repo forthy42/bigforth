@@ -35,6 +35,8 @@ ficon: minos-win icons/minos1+"
 
 : >child ( o -- o' )
     combined with childs self endwith ;
+: >child2 ( o -- o' )
+    combined with childs widgets self endwith ;
 
 Variable comp#
 
@@ -225,20 +227,19 @@ class;
     >r rot r> swap 4 vabox new ;
 
 : minos:dialog ( -- o )
-    cross new 1 vabox new  panel  designerbox new
+    cross new 1 vabox new  panel  1 designerbox new
     dup >r minos-design
     dup resource:dialog new
     r@ swap link-resource
     r> designerbox with <box> endwith ;
 
 : minos:menu-window ( -- o )
-    cross new 1 hbox new  vfixbox  designerbox new
-    cross new 1 vabox new   panel  designerbox new
-    2dup >r >r
-    2 vabox new
-    minos-design
+    cross new 1 hbox new  vfixbox
+    cross new 1 vabox new   panel  2 vbox new  1 designerbox new
+    dup >r minos-design
     dup resource:menu-window new
-    r> r> rot link-resource ;
+    r@ swap link-resource
+    r> designerbox with <box> endwith ;
 
 designer ptr cur
 
@@ -376,8 +377,8 @@ designerbox implements
         n @ 1 = IF
             childs self         cur bind topbox
         ELSE
-            childs self                      cur bind menubox
-            widgets with childs self endwith cur bind topbox
+            childs self         cur bind menubox
+            childs widgets self cur bind topbox
         THEN ;
     : clicked ( x y b n -- ) <box> do-click <rebox> <redpy>
         ['] draw-decor ^ &50 after screen schedule ;
@@ -385,8 +386,8 @@ designerbox implements
         ['] draw-decor ^ &50 after screen schedule ;
     : moved ( x y -- )
         2drop  do-it @ 2 cells + @ dpy set-cursor ;
-    : init ( o -- )
-        1 super init ^ panel drop ;
+    : init ( o1 .. on n -- )
+        super init ^ panel drop ;
 class;
 
 \ resource bar
@@ -585,64 +586,16 @@ resource:menu-window implements
     : .default ( -- )
         default $@ dup 0= IF  2drop ." 0"  EXIT  THEN
         type ."  self" ;
-    : dump-declaration ( -- )
-        next-resource self
-        IF  next-resource dump-declaration  THEN
-        name-field get nip 0<> IF
-            class-file $@?
-            IF  cr ." include " class-file $@ type  THEN
-            cr base-class type ."  class " name-field get type
-            cr ." public:"
-            nvar off set-var on 2 indent !
-            dump-names'  var-edit backup
-            cr ."  ( [varstart] ) " var-content $@ type
-            ."  ( [varend] ) "
-            nvar off set-var off 6 indent !
-            cr ." how:" cr
-            .'   : params   DF[ '  .default
-                .'  ]DF s" ' title-field get type
-                .' " ;' cr
-            ." class;" cr
-        THEN ;
-    : dump-implementation ( -- )
-        name-field get nip 0<> IF
-            implementation-file $@?
-            IF  cr ." include " implementation-file $@ type  THEN
-            cr name-field get type ."  implements"  methods-edit backup
-            cr ."  ( [methodstart] ) " methods-content $@ type
-            ."  ( [methodend] ) "
-            cr ."   : widget  ( [dumpstart] )"
-            dump-contents
-            cr .'     ( [dumpend] ) ;'
-            cr ." class;" cr
-        THEN
-        next-resource self 0= ?EXIT
-        next-resource goto dump-implementation ;
-    : dump-script ( n -- n+1 )
-        name-field get nip 0<> IF
-            shown @ IF
-                cr 2 spaces name-field get type
-                .'  open-app' 1+
-            THEN
-        THEN
-        next-resource self 0= ?EXIT
-        next-resource goto dump-script ;
+    resource:dialog :: dump-declaration ( -- )
+    resource:dialog :: dump-implementation ( -- )
+    resource:dialog :: dump-script ( n -- n+1 )
     : dump-contents ( -- )
-        menubox self dump-box
-        topbox  self dump-box ;
-    : link-designer ( o o -- )
-        >child bind topbox
-        >child bind menubox ;
-    : dump-names' ( -- )
-        menubox self dump-names
-        topbox  self dump-names ;
-    : >cur ( -- )
-        cur topbox  self bind topbox
-        cur menubox self bind menubox ;
-    : add-box ( o1 o2 -- )
-        topbox  self dup cur bind box cur bind topbox  addinstead
-        menubox self dup cur bind box cur bind menubox addinstead
-        >cur ;
+	topbox childs self dump-box
+	topbox childs widgets self dump-box ;
+    resource:dialog :: link-designer
+    resource:dialog :: dump-names'
+    resource:dialog :: >cur
+    : add-box ( o1 o2 -- ) 2 vbox new resource:dialog :: add-box ;
     resource:dialog :: init
     resource:dialog :: script?
     resource:dialog :: find-name
@@ -702,12 +655,11 @@ Variable reenter
     cur box widgets self cur bind box  addlast
     r> cur bind box cur box resized ;
 : addinstead ( o -- )
-    cur box self 2dup
-    cur box parent with combined add combined remove endwith
-    cur box self cur topbox  self =  IF   dup cur bind topbox   THEN
-    cur box self cur menubox self =  IF   dup cur bind menubox  THEN
-    cur bind box
-    cur box resized ;
+     cur box self 2dup
+     cur box parent with combined add combined remove endwith
+     cur box self cur topbox  self =  IF   dup cur bind topbox   THEN
+     cur box self cur menubox self =  IF   dup cur bind menubox  THEN
+     cur bind box ;
 
 ' addlast IS +object
 

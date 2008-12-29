@@ -524,13 +524,15 @@ also dos
     Onlyforth minos also minos-load also
     ['] create-classes catch dup IF  saveerr  THEN  throw
     loadfile @ close-file throw
-    strip-names Onlyforth cur save-state off ;
+    strip-names Onlyforth cur save-state off
+    cur with
+        s" Theseus: " window title! file-name $@ window title+!
+    endwith
+    loading off ;
 
 : load-minos ( -- )
     s" Load:" s" " s" *.m"
-    cur self S[ ^ bind cur path+file pad place pad count included-minos
-    s" Theseus: " window title! cur file-name $@ window title+!
-    loading off ]S
+    cur self S[ ^ bind cur path+file pad place pad count included-minos ]S
     fsel-dialog ;
 
 previous

@@ -8,9 +8,9 @@ menu-component class test-widgets
 public:
   viewport ptr view0
   info-menu ptr coolness
-  topindex ptr (topindex-00)
-  topindex ptr (topindex-01)
-  topindex ptr (topindex-02)
+  topindex ptr ti0
+  topindex ptr ti1
+  topindex ptr ti2
   button ptr clone-button
   beamer ptr beam1
   canvas ptr nikolaus
@@ -56,8 +56,8 @@ class;
 calc implements
  ( [methodstart] )  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" A:" infotextfield new  ^^bind a#
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" B:" infotextfield new  ^^bind b#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" A:" infotextfield new  ^^bind a#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" B:" infotextfield new  ^^bind b#
           ^^ S[ a# get b# get d+ r# assign ]S ( MINOS ) X" +" button new 
           ^^ S[ a# get b# get d- r# assign ]S ( MINOS ) X" -" button new 
           ^^ S[ a# get b# get d* r# assign ]S ( MINOS ) X" *" button new 
@@ -66,7 +66,7 @@ calc implements
           ^^ S[ r# get a# assign ]S ( MINOS ) X" >A" button new 
           ^^ S[ r# get b# assign ]S ( MINOS ) X" >B" button new 
         #7 hatbox new #1 hskips
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" infotextfield new  ^^bind r#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" infotextfield new  ^^bind r#
       #4 vabox new panel
     ( [dumpend] ) ;
 class;
@@ -172,25 +172,25 @@ test-widgets implements
                     ^^ S[ s" Button 3" tex assign ]S ( MINOS ) X" Button 3" button new 
                   #4 hatbox new #2 hskips #2 borderbox
                   M: color-menu1 menu X" Coolness:" info-menu new  ^^bind coolness
-                      0 0 flipper X" Index 0" topindex new ^^bind (topindex-00)
-                      0 0 flipper X" Index 1" topindex new ^^bind (topindex-01)
-                      0 -1 flipper X" Index 2" topindex new ^^bind (topindex-02)
+                      0 0 flipper X" Index 0" topindex new ^^bind ti0
+                      0 0 flipper X" Index 1" topindex new ^^bind ti1
+                      0 -1 flipper X" Index 2" topindex new ^^bind ti2
                       topglue new 
                     #4 harbox new
                         ^^ S[ s" Index 0" tex assign ]S ( MINOS ) X" Index 0" button new 
                         ^^ S[ s" Klick mal" tex assign ]S ( MINOS ) X" Klick mal" button new 
                         $10 $1 *hfilll $10 $1 *vfil glue new 
-                      #3 harbox new flipbox  panel dup ^^ with C[ (topindex-00) ]C ( MINOS ) endwith 
+                      #3 harbox new flipbox  panel dup ^^ with C[ ti0 ]C ( MINOS ) endwith 
                         ^^ S[ s" Index 1" tex assign ]S ( MINOS ) X" Index 1" button new 
                         ^^ S[ s" Kuck mal" tex assign ]S ( MINOS ) X" Kuck mal" button new 
                         $10 $1 *hfil $10 $1 *vfil glue new 
-                      #3 hartbox new flipbox  panel dup ^^ with C[ (topindex-01) ]C ( MINOS ) endwith 
+                      #3 hartbox new flipbox  panel dup ^^ with C[ ti1 ]C ( MINOS ) endwith 
                         ^^ S[ s" Kuck" tex assign ]S ( MINOS ) X" Kuck" button new  font" -*-verdana-medium-r-*--17-*-*-*-p-0-iso8859-15"
                         ^^ S[ s" mal" tex assign ]S ( MINOS ) X" mal" button new  font" -*-verdana-medium-i-*--17-*-*-*-p-0-iso8859-15"
                         ^^ S[ s" wer" tex assign ]S ( MINOS ) X" wer" button new  font" -*-verdana-bold-r-*--17-*-*-*-p-0-iso8859-15"
                         ^^ S[ s" da" tex assign ]S ( MINOS ) X" da" button new  font" -*-verdana-bold-i-*--17-*-*-*-p-0-iso8859-15"
                         ^^ S[ s" spricht" tex assign ]S ( MINOS ) X" spricht" button new 
-                      #5 harbox new panel dup ^^ with C[ (topindex-02) ]C ( MINOS ) endwith 
+                      #5 harbox new panel dup ^^ with C[ ti2 ]C ( MINOS ) endwith 
                     #3 habox new $10  noborderbox  #2 borderbox
                   #2 vabox new
                   ^^ S[ s" Button 4" tex assign ]S ( MINOS ) X" Button 4" button new 

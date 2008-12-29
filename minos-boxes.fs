@@ -48,7 +48,7 @@ how:    : >box  'nil bind childs  'nil bind active
 \ combined widgets                                     28mar99py
 
         : remove  ( o -- )
-          link childs childs delete -1 n +! resized ;
+          link childs childs delete -1 n +! ( resized ) ;
         : add ( o before -- )
           over dpy self swap >o dpy! o>
           dup childs self =
