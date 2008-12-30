@@ -153,13 +153,13 @@ previous ( [methodend] )
         $1 $1 *hfilll $1 $1 *vfilll rule new 
         M: help-menu menu X"  Help " menu-title new 
       #4 hbox new vfixbox  #2 borderbox
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Captured: White" infotextfield new  ^^bind white
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Captured: White" infotextfield new  ^^bind white
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black
           #2 hatab new #1 hskips
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Territory: White" infotextfield new  ^^bind white#
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black#
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Territory: White" infotextfield new  ^^bind white#
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Black" infotextfield new  ^^bind black#
           #2 hatab new #1 hskips
-            #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Handicap" infotextfield new  ^^bind handicap
+            #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Handicap" infotextfield new  ^^bind handicap
             ^^ S[ s" pass" go-write ]S ( MINOS ) X" Pass" button new 
             ^^ S[ s" back" go-write
 s" back" go-write ]S ( MINOS ) X" Back" button new 

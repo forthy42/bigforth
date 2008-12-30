@@ -57,7 +57,7 @@ XSRC	= startx.fb minos.fs oof.fb x11.fs xpm.fs locals.fs edit.fb \
 	  minos-base.fs displays.fs minos-fonts.fs vdisplays.fs \
 	  actors.fs widgets.fs minos-boxes.fs minos-buttons.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
-	  resources.fs minos-float.fs
+	  resources.fs minos-float.fs convert-m.sh
 
 all:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi ok
 
@@ -172,7 +172,7 @@ install:	all
 	@install -d $(BININSTDIR)
 	@install -d $(INSTDIR)
 	@for i in $(INSTDIRS); do install -d $(INSTDIR)/$$i; done
-	@install -m 644 {forthker,bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
+	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
 	@install -m 644 $(INI) $(INSTDIR)
 	@install -m 644 $(XINI) $(INSTDIR)
 	@install -m 755 {forthker,bigforth,xbigforth} $(BININSTDIR)

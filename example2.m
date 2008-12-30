@@ -45,8 +45,8 @@ calc implements
  ( [methodstart] ) : re-calc  'do-op @ 0= IF  ['] d+ IS do-op  THEN
   a# get b# get do-op r# assign ; ( [methodend] ) 
   : widget  ( [dumpstart] )
-        #0, ]N ( MINOS ) ^^ SN[ re-calc ]SN ( MINOS ) X" A:" infotextfield new  ^^bind a#
-        #0, ]N ( MINOS ) ^^ SN[ re-calc ]SN ( MINOS ) X" B:" infotextfield new  ^^bind b#
+        #0. ]N ( MINOS ) ^^ SN[ re-calc ]SN ( MINOS ) X" A:" infotextfield new  ^^bind a#
+        #0. ]N ( MINOS ) ^^ SN[ re-calc ]SN ( MINOS ) X" B:" infotextfield new  ^^bind b#
           ^^ S[ ['] d+ IS do-op re-calc ]S ( MINOS ) X" +" button new 
           ^^ S[ ['] d- IS do-op re-calc ]S ( MINOS ) X" -" button new 
           ^^ S[ ['] d* IS do-op re-calc ]S ( MINOS ) X" *" button new 
@@ -56,7 +56,7 @@ calc implements
           ^^ S[ r# get a# assign re-calc ]S ( MINOS ) X" >A" button new 
           ^^ S[ r# get b# assign re-calc ]S ( MINOS ) X" >B" button new 
         #7 hatbox new #1 hskips
-        #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" infotextfield new  ^^bind r#
+        #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" R:" infotextfield new  ^^bind r#
       #4 vabox new panel
     ( [dumpend] ) ;
 class;

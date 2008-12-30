@@ -115,7 +115,7 @@ dragon implements
               ^^ #20 #40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 
               ^^ #60 #100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
               $0 $1 *hfill $0 $1 *vfill rule new 
-              #0, ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Frames per second:" infotextfield new  ^^bind fps
+              #0. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) X" Frames per second:" infotextfield new  ^^bind fps
               $0 $1 *hfill $0 $1 *vfill rule new 
             #5 vabox new #2 borderbox
               ^^ #100 #100 SC[ scale-x ! ]SC ( MINOS )  TT" Scale X" hscaler new 
@@ -132,7 +132,7 @@ dragon implements
               ^^ TN[ 6 shade ]T[ ( MINOS )  ]TN ( MINOS ) X" Poly" rbutton new 
             #7 hartbox new #2 borderbox
               ^^  0 T[ shade1 @ 8 or shade1 ! ][ ( MINOS ) shade1 @ -9 and shade1 ! ]T ( MINOS ) X" List" tbutton new 
-            #1 habox new  #2 borderbox
+            #1 habox new #2 borderbox
           #2 habox new vfixbox 
               ^^ #5000 #5000 SC[ maxpoints ! ]SC ( MINOS )  TT" Maximal points to display" hscaler new 
               $0 $2 *hfil $0 $0 *vfil rule new 

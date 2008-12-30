@@ -438,6 +438,13 @@ also dos
         dup IF  title-field assign  ELSE  2drop  THEN
     endwith ;
 
+: set-title' ( o -- ) >r
+    s'  s" ' parse-string? nip nip
+    IF  '" parse  ELSE  s" "  THEN
+    r> resource:dialog with
+        dup IF  title-field assign  ELSE  2drop  THEN
+    endwith ;
+
 : load-dialog ( o -- )
     \ traceall
     resource:dialog with
@@ -489,16 +496,17 @@ also dos
             source s" menu-component class " prefix?
             IF  create-menu-window  LEAVE  THEN
             source s" ( [varstart] ) " search nip nip
-            IF  add-vars  cur resources self  set-title  LEAVE  THEN
+            IF  add-vars  LEAVE  THEN
             source s"   : open-app new DF[ " prefix?
             IF  s"   : open-app new DF[ " >in ! drop bl parse
                 2dup s" 0" compare
                 IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
             THEN
-            source s"   : params  DF[ " prefix?
-            IF  s"   : params  DF[ " >in ! drop bl parse
+            source s"   : params   DF[ " prefix?
+            IF  s"   : params   DF[ " >in ! drop bl parse
                 2dup s" 0" compare
-                IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
+		IF  cur resources default $!  ELSE  2drop  THEN
+		cur resources self  set-title'  LEAVE
             THEN
             source s"     widget 1 " prefix?
             IF  s"     widget 1 " >in ! drop bl parse
@@ -513,9 +521,9 @@ also dos
             IF  read-titles  LEAVE  THEN
         DONE
     REPEAT
-     cur pane !resized
-     cur pane resized
-     cur status resized <rebox> <redpy> ;
+    cur pane !resized
+    cur pane resized
+    cur status resized <rebox> <redpy> ;
 
 : included-minos ( addr u -- )  loading on
 [ also float ] f-init [ previous ]

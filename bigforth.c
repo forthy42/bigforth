@@ -252,11 +252,11 @@ int bfdat[10]=
   DEFAULTDICT,  /* dictionary size */
   0x00080000,  /* Minimal  */
   0x04000000,  /* Maximal  */
-  0x00010000,  /* Stacklen */
+  0x00020000,  /* Stacklen */
   1,          /* argc     */
   0,          /* argv     */
   0,          /* env      */
-  0x00001000,  /* Return stack len */
+  0x00010000,  /* Return stack len */
 };
 
 int recovery[32];
