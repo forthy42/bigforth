@@ -595,7 +595,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ IO-Window                                            06jan05py
 
         : decode ( m s addr pos char -- m s addr pos flag )
-          kbshift @ $100 and  IF  >atxy  0 EXIT  THEN
+\          kbshift @ $100 and  IF  >atxy  0 EXIT  THEN
 [defined] (Ftast [IF]  dup $FFBE $FFCA within
           IF  $FFBE - cells (Ftast + -rot >r >r -rot >r >r
               perform r> r> r> r> prompt cr save-cursor
@@ -617,7 +617,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
               1 and  IF  drop mark-selection  EXIT  THEN
               1 and 0=  IF  2drop (dpy @select paste-selection
                             EXIT  THEN
-              8 << or kbshift @ $100 or keyed ]CK >callback
+              2drop ( 8 << or kbshift @ $100 or keyed ) ]CK >callback
           assign  defocuscol @ @ color ! ;
         : close  #cr 0 keyed S" bye"  bounds ?DO  i c@ 0 keyed  LOOP ;
         : dispose start HandleOff  keys HandleOff
