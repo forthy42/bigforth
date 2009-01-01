@@ -1,11 +1,12 @@
 \ editor also                                          21dec97py
 
 dos also
-[IFDEF] win32api  win32api also [THEN]
-[IFDEF] xconst    xconst also   [THEN]
-MINOS also
+[defined] win32api [IF]  win32api also [THEN]
+[defined] xconst [IF]    xconst also   [THEN]
+MINOS also editor
 
-AVariable 'edifile0             & forth.fb cell+ 'edifile0 !
+AVariable 'edifile0
+[defined] forth.fb [IF] & forth.fb cell+ 'edifile0 ! [THEN]
 Variable 'scr0                  1 'scr0 !
 Variable 'r#0                   0 'r#0 !
 Variable uclose  uclose off
@@ -13,12 +14,23 @@ Variable edit-o
 Variable do-done do-done off
 Variable closing closing off
 
+[defined] VFXforth [IF]
+    defer edicatch
+    defer (scraction
+    defer ev-key
+    defer done
+    defer ?stamp
+    defer scr:view
+    defer (block
+    :noname true abort" VFX doesn't support blocks!" ; is (block
+[ELSE]
 forward edicatch
 forward (scraction
 forward ev-key
 forward done
 forward ?stamp
 forward scr:view
+[THEN]
 
 terminal class scredit
 public:
@@ -55,7 +67,7 @@ scredit implements
     : 'start ( -- addr )  scr# @ edifile @ (block ;
     : add-to-buffer ( -- )
         edit-buffer self bind next-buffer
-        self F bind edit-buffer ;   
+        self F bind edit-buffer ;
     : init ( action file -- )
         term self bind callwind
         edifile ! actiontable ! c/l l/s super init
@@ -311,7 +323,7 @@ class;
       endwith  ?dup IF  nip  EXIT  THEN
   REPEAT  drop 0 ;
 
-[IFDEF] x11
+[defined] x11 [IF]
 : mousexy! ( x y -- ) 2>r
   window xrc dpy @ 0 window xwin @ 0 0 0 0 2r>
   XWarpPointer ;
