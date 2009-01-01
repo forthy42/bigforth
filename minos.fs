@@ -183,7 +183,18 @@ ficon: minos-win icons/minos1+.icn"
 : event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
     ' win-init atcold
+    Create fds here $400 8 / dup allot erase
+    Create >timeout 0 , 0 ,
+
+    extern: int select( int , int , int , int , int );
+    : unix-wait ( fid ms -- )
+	#1000 um* #1000000 um/mod >timeout 2!
+	fds $80 erase fds swap +bit
+	$400 fds 0 0 >timeout select drop ;
+    
     : minos-idle screen handle-events ;
+    :noname ( fid ms -- )
+	unix-wait minos-idle ; IS idle
     : event-loop ( -- ) BEGIN  minos-idle  apprefcnt @ 0=  UNTIL ;
 [THEN]
 

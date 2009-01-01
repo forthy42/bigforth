@@ -658,7 +658,45 @@ terminal uptr term      Forward openw
 : WINdecode            term? term decode ;
 
 \ Window IO words                                      05jan05py
-[defined] VFXFORTH 0= [IF]
+[defined] VFXFORTH [IF]
+    : WINsetpos' ( x y mode sid -- ior ) 2drop swap WINat 0 ;
+    : WINgetpos' ( mode sid -- x y ior ) 2drop WINat? swap 0 ;
+    : WINflush' ( sid -- ior ) drop WINflush 0 ;
+    : WINkey' drop WINkey ;
+    : WINkey?' drop WINkey? ;
+    : WINemit' drop WINemit ;
+    : WINtype' drop WINtype ;
+    : WINcr' drop WINcr ;
+    : WINpage' drop WINpage ;
+    : WINcurleft' drop WINcurleft ;
+    : WINemit?' drop true ;
+    Create WINio-table
+    ' .s , \ open
+    ' false , \ close
+    ' drop , \ read
+    ' drop , \ write
+    ' WINkey' ,
+    ' WINkey?' ,
+    ' WINkey' ,
+    ' WINkey?' ,
+    ' drop , \ accept
+    ' WINemit' ,
+    ' WINemit?' ,
+    ' WINtype' ,
+    ' WINcr' ,
+    ' WINcr' , \ line feed
+    ' WINpage' , \ form feed
+    ' WINcurleft' ,
+    ' noop ,
+    ' WINsetpos' ,
+    ' WINgetpos' ,
+    ' 2drop , \ ioctl
+    ' WINflush' ,
+    ' noop , \ readex
+    Create WINio-sid 0 , WINio-table , 0 ,
+    : WINdisplay ( -- ) WINio-sid op-handle ! ;
+    : WINkeyboard ( -- ) WINio-sid ip-handle ! ;
+[ELSE]
 Output: WINdisplay
         WINemit true WINcr WINtype PCdel WINpage
         WINat WINat? WINform  noop noop WINflush
