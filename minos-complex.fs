@@ -631,7 +631,7 @@ class;
     : openw 0 { term-o } screen self window new
         menu-window with
         1 1 viewport new d[ 80 24 terminal new dup to term-o ]d
-        s" bigFORTH Dialog" assign
+        s" VFX Forth Dialog" assign
         80 24 geometry  80 c/line ! 24 c/cols !
 	show endwith term-o bind term
     MaxScroll term scrollback WinI/O ;
