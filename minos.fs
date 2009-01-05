@@ -24,6 +24,7 @@
     include vfx-minos/oof.fs
     include vfx-minos/lambda.fs
     include vfx-minos/helper.fs
+    include vfx-minos/accept.fs
     include sincos.fs
     include vfx-minos/points.fs
 \    include vfx-minos/qsort.fs
@@ -182,7 +183,7 @@ ficon: minos-win icons/minos1+.icn"
 [THEN]
 : event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
-    ' win-init atcold
+    :noname win-init WinI/O ; atcold
     Create fds here $400 8 / dup allot erase
     Create >timeout 0 , 0 ,
 

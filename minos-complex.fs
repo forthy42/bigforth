@@ -606,7 +606,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           $FF54 case?  IF  ctrl N  THEN
           dup $007F = IF  drop ctrl D  THEN
           dup $FF00 and $FF00 =  IF  drop 0 EXIT  THEN
-[defined] VFXFORTH [IF] ( !!!FIXME!!! stub ) drop false [ELSE]
+[defined] VFXFORTH [IF] PCdecode  [ELSE]
 [defined] utf-8 [IF]  xdecode [ELSE] PCdecode [THEN] [THEN] ;
 
 \ IO-Window                                            01jan05py
@@ -625,15 +625,16 @@ how:    6 colors focuscol !     1 colors defocuscol !
 class;
 
 [defined] VFXFORTH [IF]
+    Defer WinI/O
     #1000 Value MaxScroll
     terminal ptr term
     : openw 0 { term-o } screen self window new
         menu-window with
         1 1 viewport new d[ 80 24 terminal new dup to term-o ]d
         s" bigFORTH Dialog" assign
-        80 24 geometry
+        80 24 geometry  80 c/line ! 24 c/cols !
 	show endwith term-o bind term
-    MaxScroll term scrollback ;
+    MaxScroll term scrollback WinI/O ;
 [ELSE]
 \ Window IO words                                      10apr04py
 terminal uptr term      Forward openw
@@ -656,20 +657,24 @@ terminal uptr term      Forward openw
 : WINkey? ( -- flag )  term? term key? ;
 : WINkey  ( -- key )   term? term key ;
 : WINdecode            term? term decode ;
+' WINdecode IS decode
 
 \ Window IO words                                      05jan05py
 [defined] VFXFORTH [IF]
-    : WINsetpos' ( x y mode sid -- ior ) 2drop swap WINat 0 ;
+    : >out  WINat? out ! op-line# ! ;
+    : WINsetpos' ( x y mode sid -- ior ) 2drop swap WINat 0 >out ;
     : WINgetpos' ( mode sid -- x y ior ) 2drop WINat? swap 0 ;
     : WINflush' ( sid -- ior ) drop WINflush 0 ;
     : WINkey' drop WINkey ;
     : WINkey?' drop WINkey? ;
-    : WINemit' drop WINemit ;
-    : WINtype' drop WINtype ;
-    : WINcr' drop WINcr ;
-    : WINpage' drop WINpage ;
-    : WINcurleft' drop WINcurleft ;
+    : WINemit' drop WINemit >out ;
+    : WINtype' drop WINtype >out ;
+    : WINcr' drop WINcr >out ;
+\    : WINlf' drop WINclrline >out ;
+    : WINpage' drop WINpage >out ;
+    : WINcurleft' drop WINcurleft >out ;
     : WINemit?' drop true ;
+    : WINaccept' drop PCaccept ;
     Create WINio-table
     ' .s , \ open
     ' false , \ close
@@ -679,7 +684,7 @@ terminal uptr term      Forward openw
     ' WINkey?' ,
     ' WINkey' ,
     ' WINkey?' ,
-    ' drop , \ accept
+    ' WINaccept' , \ accept
     ' WINemit' ,
     ' WINemit?' ,
     ' WINtype' ,
@@ -694,8 +699,9 @@ terminal uptr term      Forward openw
     ' WINflush' ,
     ' noop , \ readex
     Create WINio-sid 0 , WINio-table , 0 ,
-    : WINdisplay ( -- ) WINio-sid op-handle ! ;
+    : WINdisplay ( -- ) WINio-sid dup op-handle ! to PauseConsole ;
     : WINkeyboard ( -- ) WINio-sid ip-handle ! ;
+    :noname  WINdisplay  WINkeyboard ; IS WinI/O
 [ELSE]
 Output: WINdisplay
         WINemit true WINcr WINtype PCdel WINpage

@@ -22,7 +22,9 @@ Variable closing closing off
     defer ?stamp
     defer scr:view
     defer (block
+    defer update
     :noname true abort" VFX doesn't support blocks!" ; is (block
+    ' noop IS update
 [ELSE]
 forward edicatch
 forward (scraction
