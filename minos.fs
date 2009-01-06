@@ -183,7 +183,8 @@ ficon: minos-win icons/minos1+.icn"
 [THEN]
 : event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
-    :noname win-init WinI/O ; atcold
+    :noname win-init ; atcold
+\    :noname WinI/O .cold quit ; IS entrypoint
     Create fds here $400 8 / dup allot erase
     Create >timeout 0 , 0 ,
 

@@ -62,7 +62,7 @@ calc implements
           ^^ S[ a# get b# get d- r# assign ]S ( MINOS ) X" -" button new 
           ^^ S[ a# get b# get d* r# assign ]S ( MINOS ) X" *" button new 
           ^^ S[ a# get b# get drop ud/mod r# assign drop ]S ( MINOS ) X" /" button new 
-          ^^ S[ a# get 1, b# get drop 0 ?DO 2over d* LOOP r# assign 2drop ]S ( MINOS ) X" ^" button new 
+          ^^ S[ a# get 1. b# get drop 0 ?DO 2over d* LOOP r# assign 2drop ]S ( MINOS ) X" ^" button new 
           ^^ S[ r# get a# assign ]S ( MINOS ) X" >A" button new 
           ^^ S[ r# get b# assign ]S ( MINOS ) X" >B" button new 
         #7 hatbox new #1 hskips
