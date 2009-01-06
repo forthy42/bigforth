@@ -657,7 +657,9 @@ terminal uptr term      Forward openw
 : WINkey? ( -- flag )  term? term key? ;
 : WINkey  ( -- key )   term? term key ;
 : WINdecode            term? term decode ;
-' WINdecode IS decode
+[defined] VFXFORTH [IF]
+    ' WINdecode IS decode
+[THEN]
 
 \ Window IO words                                      05jan05py
 [defined] VFXFORTH [IF]
