@@ -25,6 +25,7 @@ Variable closing closing off
     defer update
     :noname true abort" VFX doesn't support blocks!" ; is (block
     ' noop IS update
+    $10 Value l/s
 [ELSE]
 forward edicatch
 forward (scraction
@@ -77,7 +78,9 @@ scredit implements
         F r# @ pos !  scr @ scr# !
         ^ edit-o !  add-to-buffer ;
     : updated?  ( -- f )
-        'start 4- @ $14 + wx@ 0< ;
+	[defined] bigFORTH [IF]
+	    'start 4- @ $14 + wx@ 0<
+	[ELSE] 0 [THEN] ;
     : update$   ( -- string )  updated? 0=
         IF  S" not modified"  EXIT  THEN  S" modified" ;
     : workblank  scratch $sum !

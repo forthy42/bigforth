@@ -42,7 +42,9 @@ decimal
 : \G postpone \ ; immediate
 : ?EXIT  postpone IF  postpone EXIT postpone THEN ; immediate
 : 8aligned ( n1 -- n2 )  7 + -8 and ;
-: F also Forth bl word count evaluate previous ; immediate
+: F also Forth bl word find dup 0= abort" Not found!"
+    0< state @ and IF  compile,  ELSE  execute  THEN
+    previous ; immediate
 
 Vocabulary Objects  also Objects also definitions
 
@@ -442,13 +444,11 @@ Variable ob-interface
 : (bind ( addr -- ) \ <name>
     (link state @ IF postpone (bound EXIT THEN (bound ;
 
-: (sbound ( o addr -- )  (bound ;
-
 Forth definitions
 
 : bind ( o -- )  ' >body  state @
-  IF   postpone Literal postpone (sbound EXIT  THEN
-  (sbound ;  immediate
+  IF   postpone Literal postpone (bound EXIT  THEN
+  (bound ;  immediate
 : bind2 ( o -- )  (bind ; immediate
 
 Objects definitions

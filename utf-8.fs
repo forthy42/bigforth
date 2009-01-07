@@ -12,6 +12,20 @@ $80 Value maxascii
     BEGIN  2dup u>=  WHILE  5 lshift r> 1+ >r  dup 0= UNTIL  THEN
     2drop r> ;
 
+: x-size ( x-addr u -- u' )  drop
+    \ length of UTF-8 char starting at u8-addr (accesses only u8-addr)
+    c@
+    dup $80 u< IF drop 1 exit THEN
+\    dup $c0 u< abort" malformed character"
+    dup $e0 u< IF drop 2 exit THEN
+    dup $f0 u< IF drop 3 exit THEN
+    dup $f8 u< IF drop 4 exit THEN
+    dup $fc u< IF drop 5 exit THEN
+    dup $fe u< IF drop 6 exit THEN
+    dup $ff u< IF drop 7 exit THEN
+    drop 8 ;
+\    abort" malformed character" ;
+
 : xc@+ ( xcaddr -- xcaddr' xc )
     count  dup maxascii u< ?EXIT  \ special case ASCII
     dup $C2 u< ?EXIT \ malformed UTF-8
