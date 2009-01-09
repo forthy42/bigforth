@@ -15,7 +15,7 @@
     >r 2 + dup 12 > IF  12 - swap 1+ swap  THEN
     r> 1+ ;
 
-: (ymd2day) ( y m d -- day year/4 )  -rot
+: (ymd2day) ( y m d -- day year/4 )  1- -rot
     2 - dup 0<= IF  12 + swap 1- swap  THEN
     153 5 */ 31 - swap
     4 /mod swap 365 * swap >r + + r> ;
@@ -25,7 +25,7 @@
 
 \ gregorian calendar
 
-1582 10 5 (ymd2day) 2Constant gregorian.
+1582 10 15 (ymd2day) 2Constant gregorian.
 1582 10 5 j-ymd2day Constant gregorian
 
 : day2ymd ( day -- y m d ) dup gregorian >= IF

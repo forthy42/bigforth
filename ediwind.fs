@@ -22,10 +22,32 @@ Variable closing closing off
     defer ?stamp
     defer scr:view
     defer (block
+    defer block
+    defer buffer
     defer update
-    :noname true abort" VFX doesn't support blocks!" ; is (block
-    ' noop IS update
+    defer convey
+    :noname true abort" VFX doesn't support blocks!" ;
+    dup is (block
+    dup is block
+    dup is update
+    dup is buffer
+    dup is convey
+    drop
     $10 Value l/s
+    c/l l/s * Value b/blk
+    : capacity 2 ;
+    Variable isfile
+    Variable r#
+    : isfile@ isfile @ ;
+    : .file ( file -- ) drop ;
+    : !files isfile ! ;
+    : purgebuf ;
+    : save-buffers ;
+    : more ( n -- ) drop ;
+    : searchfile ( file -- string ) ;
+    : str? ( file -- flag )  drop true ;
+    : (#load ( n >in -- )  2drop isfile@ include-file ;
+    : (load  2drop true abort" VFX doesn't support blocks!" ;
 [ELSE]
 forward edicatch
 forward (scraction
@@ -33,6 +55,7 @@ forward ev-key
 forward done
 forward ?stamp
 forward scr:view
+: purgebuf prev @ emptybuf ;
 [THEN]
 
 terminal class scredit
@@ -75,22 +98,27 @@ scredit implements
         term self bind callwind
         edifile ! actiontable ! c/l l/s super init
         'edifile0 @ 'edifile !  'scr0 @ 'scr !  'r#0 @ 'r# !
-        F r# @ pos !  scr @ scr# !
+	F r# @ pos !  scr @ scr# !
         ^ edit-o !  add-to-buffer ;
-    : updated?  ( -- f )
-	[defined] bigFORTH [IF]
-	    'start 4- @ $14 + wx@ 0<
-	[ELSE] 0 [THEN] ;
-    : update$   ( -- string )  updated? 0=
-        IF  S" not modified"  EXIT  THEN  S" modified" ;
-    : workblank  scratch $sum !
-        scratch c/l bl fill  0 scratch c! ;
-    : title$ ( -- addr u )
-        base push decimal  workblank
-        edifile @ filename >len $add
-        S"   Scr # " $add  scr# @ 0 <# bl hold # # #S #> $add
-        update$ $add
-        scratch 1+ c/l 4- -trailing ;
+    [defined] VFXForth [IF]
+	: updated? false ;
+	: update$ s" not modified" ;
+	: title$ ( -- addr u )
+	    base push decimal
+	    S"   Scr # " scratch$ $!
+	    scr# @ 0 <# bl hold # # #S #> scratch$ $+!
+	    scratch$ $@ ;
+    [ELSE]
+	: updated?  ( -- f ) 'start 4- @ $14 + wx@ 0< ;
+	: update$   ( -- string )  updated? 0=
+	    IF  S" not modified"  EXIT  THEN  S" modified" ;
+	: title$ ( -- addr u )
+	    base push decimal
+	    edifile @ filename >len scratch$ $!
+	    S"   Scr # " scratch$ $+! scr# @ 0 <# bl hold # # #S #> scratch$ $+!
+	    update$ scratch$ $+!
+	    scratch$ $@ ;
+    [THEN]
     : !window  bind win-title ;
     : (slided ( -- )
         draw win-title self IF  title$ win-title title!  THEN
@@ -115,7 +143,7 @@ scredit implements
         IF  0 shadowscr bind shadowscr  0 bind shadowscr  THEN
         do-done @ do-done off
         closing push closing @ closing on or
-        0= IF  edicatch false " closed" done  EXIT  THEN
+        0= IF  edicatch false c" closed" done  EXIT  THEN
         dpy close ;
     : !scr   edifile @ isfile !  scr# @ scr !  pos @ r# ! ;
     : type  super type update ;
@@ -124,7 +152,7 @@ scredit implements
         pos @ 'line c/l showtext  at ;
     : keyed ( key sh -- )
         dup $100 and IF  drop $100 /mod swap at  EXIT  THEN
-        -$13 and over shift-keys?  IF  2drop  EXIT  THEN
+        $-13 and over shift-keys?  IF  2drop  EXIT  THEN
         dup 2 and IF  swap tolower swap  THEN
         !scr $D and ev-key ;
     : clicked ( x y b n -- )  dup >r super clicked
@@ -195,75 +223,75 @@ class;
     8    menu" close window  &C-x"
     7    menu" save and leave  &C-s"
     9    menu" save and load  &C-l"
-    &12 vabox new 2 borderbox ;
+    #12 vabox new 2 borderbox ;
 
 : edit-menu: ( flag -- o )   >r
-  &10    menu" Undo  &C-z"
+  #10    menu" Undo  &C-z"
         label"  Searching"
-  &53    menu" Find  &C-f"
-  &54    menu" Repeat  &C-r"
+  #53    menu" Find  &C-f"
+  #54    menu" Repeat  &C-r"
         label"  Write mode"
-  &55    menu" Insert  &C-i"
-  &56    menu" Overwrite  &C-o"
+  #55    menu" Insert  &C-i"
+  #56    menu" Overwrite  &C-o"
         label"  Author"
-  &57    menu" Get ID...  &C-g"
+  #57    menu" Get ID...  &C-g"
   r>   IF
         label"  Line"
-  &58    menu" Set Length  &M-l"
-  &60    menu" Stamp  &M-s"
-  &12  ELSE
-  &09  THEN
+  #58    menu" Set Length  &M-l"
+  #60    menu" Stamp  &M-s"
+  #12  ELSE
+  #09  THEN
       vabox new 2 borderbox ;
 
 : screen-menu:  ( -- o )
-  &12    menu" Next Scr  &C-n"
-  &13    menu" Back Scr  &C-b"
-  &16    menu" Shadow Scr  &C-w"
-  &17    menu" Jump to Mark  &C-a"
-  &18    menu" Jump to Scr...  &C-j"
-  &19    menu" View...  &C-v"
+  #12    menu" Next Scr  &C-n"
+  #13    menu" Back Scr  &C-b"
+  #16    menu" Shadow Scr  &C-w"
+  #17    menu" Jump to Mark  &C-a"
+  #18    menu" Jump to Scr...  &C-j"
+  #19    menu" View...  &C-v"
         label"  don't move"
-  &20    menu" Clear Scr  &M-c"
-  &21    menu" Insert Scr  &M-i"
-  &22    menu" Delete Scr  &M-d"
-  &23    menu" Set Mark  &C-m"
-  &11 vabox new 2 borderbox ;
+  #20    menu" Clear Scr  &M-c"
+  #21    menu" Insert Scr  &M-i"
+  #22    menu" Delete Scr  &M-d"
+  #23    menu" Set Mark  &C-m"
+  #11 vabox new 2 borderbox ;
 
 : line-menu:    ( -- o )
         label"  wag Tail of Scr"
-  &28    menu" Backspace Line  &S-bs"
-  &29    menu" Delete Line  &S-del"
-  &30    menu" Insert Line  &S-ins"
-  &32    menu" Split Line  &S-ret"
-  &34    menu" Linefeed  &C-ret"
-  &24    menu" Cut to Stack  &S-up"
-  &25    menu" Paste from Stack  &S-down"
+  #28    menu" Backspace Line  &S-bs"
+  #29    menu" Delete Line  &S-del"
+  #30    menu" Insert Line  &S-ins"
+  #32    menu" Split Line  &S-ret"
+  #34    menu" Linefeed  &C-ret"
+  #24    menu" Cut to Stack  &S-up"
+  #25    menu" Paste from Stack  &S-down"
         label"  don't wag Tail of Scr"
-  &26    menu" Copy to Stack  &C-down"
-  &31    menu" Erase Line  &C-e"
-  &27    menu" Erase Line-rest  &C-del"
-  &12 vabox new 2 borderbox ;
+  #26    menu" Copy to Stack  &C-down"
+  #31    menu" Erase Line  &C-e"
+  #27    menu" Erase Line-rest  &C-del"
+  #12 vabox new 2 borderbox ;
 
 : char-menu:    ( -- o )
         label"  wag Tail of Line"
-  &37    menu" Cut to Stack  &S-left"
-  &38    menu" Paste from Stack  &S-right"
+  #37    menu" Cut to Stack  &S-left"
+  #38    menu" Paste from Stack  &S-right"
         label"  don't wag Tail of Line"
-  &39    menu" Copy to Stack  &C-right"
+  #39    menu" Copy to Stack  &C-right"
   5 vabox new 2 borderbox ;
 
 : cursor-menu:  ( -- o )
         label"  move Cursor quick"
-  &51    menu" Home  &home"
-  &52    menu" > Text-End  &S-home"
-  &49    menu" 1/4 Line >  &tab"
-  &50    menu" 1/8 Line <  &S-tab"
+  #51    menu" Home  &home"
+  #52    menu" > Text-End  &S-home"
+  #49    menu" 1/4 Line >  &tab"
+  #50    menu" 1/8 Line <  &S-tab"
   5 vabox new 2 borderbox ;
 
 : window-menu:  ( -- o )
         label"  Open"
-  &59    menu" Duplicate  &M-o"
-  &60    menu" Shadow  &M-s"
+  #59    menu" Duplicate  &M-o"
+  #60    menu" Shadow  &M-s"
   3 vabox new 2 borderbox ;
 
 : make-menu ( flag -- o )
@@ -309,15 +337,11 @@ class;
 
 \ print buffers                                        27dec99py
 
-?head @ ?head off
-
-: .edit-buffers ( -- )
-  edit-buffer self
-  BEGIN  dup  WHILE  cr
-      scredit with  edifile @ .file  next-buffer self  endwith
-  REPEAT  drop ;
-
-?head !
+| : .edit-buffers ( -- )
+    edit-buffer self
+    BEGIN  dup  WHILE  cr
+	    scredit with  edifile @ .file  next-buffer self  endwith
+    REPEAT  drop ;
 
 : search-buffer ( -- o / 0 )
   edit-buffer self

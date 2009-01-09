@@ -17,6 +17,7 @@ Variable dummy
 
 0 Value scratch
 $4000 Constant scratch#
+Variable scratch$
 : char$ ( char -- addr u )  scratch xc!+ scratch tuck - ;
 
 \ Color system - RGB table                             25mar99py
@@ -916,5 +917,5 @@ Variable got-selection          Variable str-selection
 
 #30 Value minwait
 
-0 Value event-task
+0 Value event-task'
 

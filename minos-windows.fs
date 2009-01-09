@@ -173,7 +173,12 @@ how:    : xinc  child xinc ;
           xrc dpy @ xwin @ XUnmapWindow  [THEN]
 [defined] win32 [IF]
           SW_HIDE xwin @ ShowWindow drop  [THEN] ;
-        : stop  up@ app !  1 apprefcnt +!  F stop ;
+        : stop ( -- )  up@ app !  1 apprefcnt +!
+	    up@ event-task' = IF
+		BEGIN  screen with
+		    handle-event invoke do-idle
+		endwith apprefcnt @ 0=  UNTIL
+		ELSE  F stop  THEN ;
         : delete ( addr addr' -- )  over self =
           IF    nextwin self swap ! drop
           ELSE  drop link nextwin  nextwin goto delete  THEN ;

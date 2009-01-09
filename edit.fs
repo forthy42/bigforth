@@ -95,11 +95,11 @@ stredit implements
 \ resize, glue and title$                              24may94py
 
     : updated?  changed @ ;
-    : title$ ( -- string ) workblank   edifile @ ?dup
-        IF  filename >len $add  THEN
-        S"   Line # " $add  base push decimal
-        line#@ 0 <# bl hold # # # #S #> $add
-        update$ $add  scratch 1+ c/l 4- ;
+    : title$ ( -- string ) s" " scratch$ $!  edifile @ ?dup
+        IF  filename >len scratch$ $+!  THEN
+        S"   Line # " scratch$ $+!  base push decimal
+        line#@ 0 <# bl hold # # # #S #> scratch$ $+!
+        update$ scratch$ $+!  scratch$ $@ ;
     : maketitle  edifile @ 0= ?EXIT
         title$ dpy get-dpy window with title! endwith
         do!schib off ;
@@ -392,8 +392,13 @@ Variable epos
 : a  stredit 'r# @ stredit 'scr @ (mark scr ! pos! gotoline ;
 : mark        (mark  true abort" marked !" ;
 
+[defined] VFXForth [IF]
+:noname cur >r Top scr @ 1 max 1 ?DO  NextLine  LOOP
+    scr on r> pos! ; IS gotoline
+[ELSE]
 : gotoline cur >r Top scr @ 1 max 1 ?DO  NextLine  LOOP
     scr on r> pos! ;
+[THEN]
 
 \ Zeilen                                               07may91py
 

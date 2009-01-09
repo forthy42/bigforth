@@ -449,6 +449,8 @@ Forth definitions
 : bind ( o -- )  ' >body  state @
   IF   postpone Literal postpone (bound EXIT  THEN
   (bound ;  immediate
+: link ( o -- )  ' >body  state @
+  IF   postpone Literal EXIT  THEN ;  immediate
 : bind2 ( o -- )  (bind ; immediate
 
 Objects definitions

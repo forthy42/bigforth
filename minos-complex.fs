@@ -744,7 +744,7 @@ minos
       map-pos 2@ d0= 0= IF  map-pos 2@ repos  THEN
       show endwith
   MaxScroll term scrollback
-  event-task task's term dup @
+  event-task' task's term dup @
   0= IF  term self swap !  ELSE  drop  THEN
   ['] WINi/o IS standardi/o  WINi/o ;
 

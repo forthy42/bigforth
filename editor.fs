@@ -33,12 +33,18 @@ Variable loading                Variable callwind
 
 Variable jingle   jingle on
 Variable ?hide    ?hide off
-: alarm    7 con! jingle off ;
+: alarm   [defined] con! [IF] 7 con! [THEN]
+    jingle off ;
 
 : blank    ( addr count --)     bl fill ;
 
-forward edi_open
-forward replace-it
+[defined] VFXForth [IF]
+    Defer edi_open
+    Defer replace-it
+[ELSE]
+    forward edi_open
+    forward replace-it
+[THEN]
 
 \ Move the Editor's cursor around                      26jun94py
 : top          ( -- )       0. scredit at ;
@@ -55,13 +61,13 @@ forward replace-it
 : scr@         ( -- addr len ) scredit 'start b/blk ;
 : >""end       ( -- )       scr@ 1- -trailing nip  pos ! ;
 : word@        ( addr count skip -- addr' count' )  swap >r
-  bl -scan 2dup + r> 2 pick - under bl scan nip - >r + r> ;
+  -trailing 2dup + r> 2 pick - tuck bl scan nip - >r + r> ;
 
 \ buffers                                              02oct94py
 
 : modified   ( -- )             'start drop  update ;
 
-&42 Constant c/buf
+#42 Constant c/buf
 \ "Es wird euch nicht gefallen, aber das Ergebnis ist 42"
 
 Variable insbuf
@@ -117,7 +123,7 @@ Variable insbuf
 
 \ screen display                                       21apr97py
 
-&18 Constant id-len  Create id   id-len allot   id id-len erase
+#18 Constant id-len  Create id   id-len allot   id id-len erase
 : stamp       id  1+ count scr@ drop c/l +  over -  swap move ;
 : ?stamp      updated? scr@ -trailing nip 0<> and
               IF  stamp  THEN  ;
@@ -130,24 +136,28 @@ Variable insbuf
                   IF  scredit start @ scr@ move update
                       edilist scredit retscr on THEN  EXIT  THEN
               scr@ scredit start @ swap move
-              prev @ emptybuf  edilist scr @ scredit retscr ! ;
+              purgebuf  edilist scr @ scredit retscr ! ;
 
 \ more-alert cancel-alert                              12oct97py
 
 : more-alert ( -- )
-  r> r> ^ 4 $3000 $2000 NewTask pass  >o rdrop edicatch  >r >r
+[defined] VFXForth [ 0= ] [IF]
+  r> r> ^ 3 $3000 $2000 NewTask pass  >o rdrop edicatch  >r >r
+[THEN]
   s" Add a screen?" 1
   s"  No " s"  Yes "  2 1 alert ;
 
 : cancel-alert ( -- )
+[defined] VFXForth [ 0= ] [IF]
   r> r> ^ 3 $3000 $2000 NewTask pass  >o rdrop edicatch  >r >r
+[THEN]
   s" All datas are lost!" 1
   s"  Yes "  s"  No " 2 2 alert ;
 
 \ more?                                                31aug97py
 Variable next-slide
-: draw-edislide  timer@ next-slide @ - -$1000 0 within ?EXIT
-  &50 after next-slide !   scredit dpy self
+: draw-edislide  timer@ next-slide @ - $-1000 0 within ?EXIT
+  #50 after next-slide !   scredit dpy self
   viewport with hspos draw endwith ;
 : onemore ( -- )  1 more draw-edislide ;
 : more? isfile@ 0= ?EXIT more-alert  1 = IF  onemore  THEN  ;
@@ -191,7 +201,15 @@ Variable imode  imode on
 
 : -line         'line c/l -trailing ;
 
-forward @line   forward ?line   forward !line"
+[defined] VFXForth [IF]
+    defer @line
+    defer ?line
+    defer !line"
+[ELSE]
+    forward @line
+    forward ?line
+    forward !line"
+[THEN]
 
 : copyline      -line @line c/l c ;
 : line>buf      -line @line delline ;
@@ -218,9 +236,8 @@ forward @line   forward ?line   forward !line"
 
 \ from Screen to Screen ...                            21apr97py
 : setscreen  ( n -- )  ?stamp ?range scr ! edilist ;
-' setscreen Alias +-onescr
-: n    scr @  1+  dup capacity =  IF  more?  THEN  +-onescr ;
-: b    scr @  1-  +-onescr ;
+: n    scr @  1+  dup capacity =  IF  more?  THEN  setscreen ;
+: b    scr @  1-  setscreen ;
 : w           scr @ capacity scredit >shadow  setscreen ;
 : mark!       scredit 'r# ! scredit 'scr ! scredit 'edifile ! ;
 : (mark       isfile@  scr @  cur  mark!
@@ -243,7 +260,7 @@ forward @line   forward ?line   forward !line"
    'cursor #remaining insert   linemodified
    c/l c  row lineinsert  linemodified ;
 : ins      'insert count dup 0= IF 2drop EXIT THEN
-  under 'cursor #after  insert  c ;
+  tuck 'cursor #after  insert  c ;
 : ?room  'insert c@ 'find c@ - < abort" not enough room" ;
 : r   c/l   'line over -trailing  nip  -  ?room
    'find c@  dup negate c  'cursor #after rot  delete  ins
@@ -255,9 +272,14 @@ forward @line   forward ?line   forward !line"
 Create comport  0 , 0 , 0 ,
 : array!  1- cells over + DO  I !  -cell +LOOP ;
 : array@  cells bounds ?DO  I @  cell +LOOP ;
-: communicate ( x1 .. xn n cfa -- )  >r comport swap array!
+[defined] VFXForth [IF]
+    : communicate ( x1 .. xn n cfa -- ) drop
+	0 ?DO drop LOOP ;
+[ELSE]
+: communicate ( x1 .. xn n cfa -- ) >r comport swap array!
   (Ftast @ r> (Ftast ! >r  $FFBE 0 scredit callwind keyed
-  BEGIN  pause comport @ 0<  UNTIL  r> (Ftast ! ;
+    BEGIN  pause comport @ 0<  UNTIL  r> (Ftast ! ;
+[THEN]
 : ."done ( -- )  scr @ dup 0<
   IF  invert ." Line #" 4  ELSE  ." Scr #" 3  THEN
   over scr !  .r  2 spaces  "done @ count type  space ;
@@ -275,13 +297,14 @@ Create comport  0 , 0 , 0 ,
   3 ['] !filepos communicate ( scredit close ) 2 throw ;
 : +done ( ff addr -- )  cur r# ! done ;
 : cdone   ( -- tf ) cancel-alert  1 = ?EXIT 'start drop
-                    prev @ emptybuf   false " canceled" +done ;
-: sdone   ( -- tf ) ?stamp save-buffers  false " saved" +done ;
+                    purgebuf   false c" canceled" +done ;
+: sdone   ( -- tf ) ?stamp save-buffers  false c" saved" +done ;
 : xdone   ( -- tf ) ?stamp  scredit update$  scratch place
   false scratch  +done ;
-: ldone   ( -- tf ) ?stamp save-buffers true " loading" +done ;
+: ldone   ( -- tf ) ?stamp save-buffers true c" loading" +done ;
 : edibye  ( -- tf ) ['] sdone catch
-  &100 wait singletask pccuron bye ;
+  [defined] VFXForth [ 0= ] [IF]
+  #100 wait singletask pccuron bye [THEN] ;
 
 \ get User's ID                                        15jul00py
 
@@ -298,46 +321,62 @@ window ptr current-win
   ?set-parent mousemap
   r> r> swap modal with ?dup IF  modal bind active  THEN
   endwith ^ F bind current-win endwith ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ get id                                               04jun08py
 
 : do_getid  ( -- )  S" Enter your ID" MODAL:
-  id 1+ count 0 ST[ ]ST s" ID:" ( ^) infotextfield new
-  2fill  over   S[ set-id ]S s" OK"     ( ^) button new  dup >r
-  2skip  3 pick S[ clr-id ]S s" No ID"  ( ^) button new
-  2skip  5 pick S[ cancel ]S s" Cancel" ( ^) button new
-  2fill  7 ( ^) hatbox new  2 r> 0 ;
+  id 1+ count 0 ST[ ]ST s" ID:" infotextfield new
+  2fill  over   S[ set-id ]S s" OK"     button new  dup >r
+  2skip  3 pick S[ clr-id ]S s" No ID"  button new
+  2skip  5 pick S[ cancel ]S s" Cancel" button new
+  2fill  7 hatbox new  2 r> 0 ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
-Forward date-id
-
+[defined] VFXForth [IF]
+    Defer date-id
+: get-id  id c@  ?EXIT
+  s" " date-id  0 >o  do_getid  o>  current-win stop ;
+[ELSE]
+    Forward date-id
 : get-id  id c@  ?EXIT
   FORTHstart 2+ count + count + count 6 /string -trailing
   date-id  0 >o  do_getid  o>  current-win stop ;
+[THEN]
 
 \ insert- and overwrite-mode, jump to screen           04jun08py
 
 : setimode   imode on  ( :imode checkon  :omode checkoff ) ;
 : clrimode   imode off ( :omode checkon  :imode checkoff ) ;
-forward gotoline
+[defined] VFXForth [IF]
+    defer gotoline
+[ELSE]
+    forward gotoline
+[THEN]
 : jump-to   textfield get drop cancel  edicatch
   isfile@ str?  IF  scr ! gotoline  ELSE  setscreen  THEN ;
 : jumpscreen  S" Screen-Nr:" MODAL:
   0 0 ^ SN[ ]SN textfield new
-  2fill over   S[ jump-to ]S s" OK"   ( ^) button new  dup >r
-  2skip 3 pick S[ cancel  ]S s" Cancel" ( ^) button new
-  2fill 5 ( ^) hatbox new  2  r>  0 ;
+  2fill over   S[ jump-to ]S s" OK"   button new  dup >r
+  2skip 3 pick S[ cancel  ]S s" Cancel" button new
+  2fill 5 hatbox new  2  r>  0 ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
+[defined] VFXForth [IF]
+: >view ( -- )  true abort" hand made" ;
+[ELSE]
 : voc-find ( true string -- f NFA / t string )
   voc-link LIST>  8 - >r over r> (find
   IF  swap  UNLIST  nip nip 0 swap  EXIT  THEN  drop ;
-
-\ viewing words                                        12oct97py
 : >view   ( -- )  'find count 1- 1 /string scratch place
   scratch capitalize bl scratch count + c! find 0=
   IF    true swap  voc-find  swap abort" Huh?"
   ELSE  >name  THEN  ?dup 0= abort" no view-field"
   6 - w@  ?dup 0= abort" hand made"  (view scr ! ;
-: fview  'find count under  scr @ block b/blk c/l /string
-  caps push caps on
+[THEN]
+
+\ viewing words                                        12oct97py
+: fview  'find count tuck  scr @ block b/blk c/l /string
+\  caps push caps on
   2swap search  IF nip b/blk swap - + 1- ELSE 2drop 0 THEN ;
 : !view ( -- ) isfile@ str?
   IF  isfile@ scredit edifile @ =
@@ -349,17 +388,18 @@ forward gotoline
 
 \ viewing words                                        04jun08py
 
-: find! ( addr count -- )  under 'find 2+ swap move 2+
+: find! ( addr count -- )  tuck 'find 2+ swap move 2+
   'find c! bl 'find 1+ c! bl 'find count + 1- c! ;
 : >viewit ( -- )
   infotextfield get  find! cancel  edicatch  >view !view ;
 : >markv  edit-o @ >o (mark o> >viewit ;
 : do_view ( -- ) S" View Word" MODAL:
-  t" " 0 ST[ ]ST s" Word:" ( ^) infotextfield new
-  2fill over   S[ >viewit ]S s" OK"     ( ^) button new
-  2skip 3 pick S[ >markv  ]S s" Mark"   ( ^) button new   dup >r
-  2skip 5 pick S[ cancel  ]S s" Cancel" ( ^) button new
-  2fill 7 ( ^) hatbox new  2 r> 0 ;
+  t" " 0 ST[ ]ST s" Word:" infotextfield new
+  2fill over   S[ >viewit ]S s" OK"     button new
+  2skip 3 pick S[ >markv  ]S s" Mark"   button new   dup >r
+  2skip 5 pick S[ cancel  ]S s" Cancel" button new
+  2fill 7 hatbox new  2 r> 0 ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 : scr:view ( -- )  edicatch (mark
   'line c/l col word@ find! >view !view ;
 Variable ?show_replace ?show_replace on
@@ -400,11 +440,20 @@ Variable fscreen                2Variable <scrs>
 
 \ Replacing ...                                        31aug97py
 
+[defined] VFXForth [IF]
+:noname   ( -- )
+  ?show_replace @ 0= IF  BEGIN  r s  AGAIN  EXIT  THEN
+  pos push  'find c@ negate c
+  scredit show-you  scredit curpos  scredit dpy transback
+  scredit dpy dpy screenpos p+ ^ edit-o !  handle-replace ;
+IS replace-it
+[ELSE]
 : replace-it   ( -- )
   ?show_replace @ 0= IF  BEGIN  r s  AGAIN  EXIT  THEN
   pos push  'find c@ negate c
   scredit show-you  scredit curpos  scredit dpy transback
   scredit dpy dpy screenpos p+ ^ edit-o !  handle-replace ;
+[THEN]
 
 \ Editor's find and replace                            16aug98py
 
@@ -435,7 +484,7 @@ textfield ptr find-field        textfield ptr insert-field
   <some> @ 0= ?show_replace !
   last-scr get drop  1st-scr get drop  <scrs> 2!
   <scrs> >last?  IF  cell+  THEN  @ fscreen !
-  cancel  <caps> @ caps !  repfind ;
+  cancel [defined] caps [IF] <caps> @ caps ! [THEN] repfind ;
 : >repl ( -- )  ?replace on  >find ;
 
 \ find box                                             04jun08py
@@ -443,53 +492,63 @@ textfield ptr find-field        textfield ptr insert-field
 \ : >select ( o flag -- o )  over >o togglechar set? ! o> ;
 
 : screen-field ( -- o )
-  2fill  1. ^ SN[ ]SN s" 1st Scr:" ( ^) infotextfield new
+  2fill  1. ^ SN[ ]SN s" 1st Scr:" infotextfield new
          dup bind 1st-scr
   2skip  0 & >last? ['] noop toggle-var new
-         s"  > " ( ^) flipbutton new
+         s"  > " flipbutton new
   2skip  edit-o @ >o size@ o> 0 ^ SN[ ]SN
-         s" Last Scr:" ( ^) infotextfield new
+         s" Last Scr:" infotextfield new
          dup bind last-scr
-  5 ( ^) habox new hfixbox
-  2fill  3 ( ^) habox new ;
+  5 habox new hfixbox
+  2fill  3 habox new ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ search and replace                                   04jun08py
 
 : switch-field ( -- o )
-         S" Case:" ( ^) text-label new
+         S" Case:" text-label new
   2skip  0 <caps> ['] noop toggle-var new S" Ignore"
-           ( ^) flipbutton new
-  2fill  S" Replace:" ( ^) text-label new
+           flipbutton new
+  2fill  S" Replace:" text-label new
   2skip  0 <some> ['] noop toggle-var new S" All"
-           ( ^) flipbutton new
-         7 ( ^) habox new ;
+           flipbutton new
+         7 habox new ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 : text-field  ( -- o )
   'find   count 0 ST[ ]ST textfield new  dup bind find-field
   'insert count 0 ST[ ]ST textfield new dup bind insert-field
-  2 ( ^) vabox new vskip ;
+  2 vabox new vskip ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ search and replace                                   15jul00py
 
 : button-field ( -- o w )
-        0 S[ cancel ]S s" Cancel"        ( ^) button new
-        0 S[ >find  ]S s" Find:"         ( ^) button new dup >r
-  2 ( ^) habox new hskip
-        0 S[ >repl  ]S s" Replace with:" ( ^) button new
-  2 ( ^) vabox new vskip hfixbox r> ;
+        0 S[ cancel ]S s" Cancel"        button new
+        0 S[ >find  ]S s" Find:"         button new dup >r
+  2 habox new hskip
+        0 S[ >repl  ]S s" Replace with:" button new
+  2 vabox new vskip hfixbox r> ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : text-button  ( -- o w )
-  text-field button-field >r 2skip rot 3 ( ^) habox new r> ;
+  text-field button-field >r 2skip rot 3 habox new r> ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 : do_find ( -- )  ?replace off
   S" Search and Replace" MODAL:
   screen-field switch-field text-button 3 swap find-field self ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : edifind  ( -- )  (findbox on  do_find ;
 
 \ do_file isfile?                                      20may00py
 
 : ?str  scredit edifile @ str? dup 0= IF  ?stamp  THEN ;
+[defined] VFXForth [IF]
+    : isfile? false ;
+[ELSE]
 | : isfile?     ( fcb -- fcb f ) \ is addr a fcb ?
     dup cfa@ [ ' forth.fb cfa@ ] ALiteral = ;
+[THEN]
 Variable path
 Variable file
 : !str ( addr len var -- )  dup >r $! 0 r> $@ + c! ;
@@ -503,7 +562,7 @@ Variable file
 
 \ (use                                                 19jun02py
 : \use ( addr count -- )  here place bl here count + c!
-  here capitalize find  IF  isfile?  IF  execute EXIT  THEN THEN
+  here find  IF  isfile?  IF  execute EXIT  THEN THEN
   drop  NewMP  isfile ! ;
 : (use ( flag -- )  file @str isfile@ assign
   isfile@ str? or IF  1 scr ! r# off edi_open  EXIT  THEN
@@ -664,7 +723,7 @@ include edit.fs
 
 \ Installing the Editor                                05mar00py
 
-: fit?  isfile@ &80 > IF  handle 0= IF open THEN  THEN ;
+: fit?  isfile@ #80 > IF  handle 0= IF open THEN  THEN ;
 : pushes ;           hmacro
 : settings  ( flag -- )  ?clearbuffer ;
 : setmenu ;          hmacro
@@ -675,20 +734,33 @@ include edit.fs
 [THEN]
 : finstall  ( -- )
   fit? ?resource get-id settings ;
+[defined] VFXForth [IF]
+:noname ( addr u -- )
+  1 id c! id 1+ place ; IS date-id
+[ELSE]
 : date-id ( addr u -- )
   1 id c!  $sum push  id 1+ $sum !  dattime
   [defined] win32 [IF]  $1 >>           [THEN]
   [defined] unix [IF]   drop timeval @  [THEN]
   base push decimal  >date id 1+ place  $add ;
+[THEN]
 
 \ Entering the Editor                                  03dec04py
+[defined] VFXForth [IF]
+:noname  o@ & scredit @ =  o@ & stredit @ = or
+  IF  scredit callwind self  bind term  THEN
+  isfile@ str?  IF  opentwind
+  ELSE  scr @ capacity dup 0= IF  1 more  1+  THEN
+        1- umin scr !  wi_open  THEN ; IS edi_open
+[ELSE]
 : edi_open  o@ & scredit @ =  o@ & stredit @ = or
   IF  scredit callwind self  bind term  THEN
   isfile@ str?  IF  opentwind
   ELSE  scr @ capacity dup 0= IF  1 more  1+  THEN
         1- umin scr !  wi_open  THEN ;
+[THEN]
 : v   ( -- )     finstall edi_open ;
-[defined] F' [IF]  &10 F' V [THEN]
+[defined] F' [IF]  #10 F' V [THEN]
 : l   ( scr -- ) 1 arguments
   capacity dup 0= IF  1 more 1+  THEN  1- umin scr ! r# off v ;
 

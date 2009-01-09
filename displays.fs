@@ -96,7 +96,7 @@ how:    : dispose  clicks HandleOff
 	: .catch-rest ( n -- )  ." Error " . cr ;
 	: handle-events ( -- )  handle-event  invoke drop ;
         : do-event  pass^ @ op!
-          up@ TO event-task
+          up@ TO event-task'
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
                  ?dup IF  .catch-rest  THEN
@@ -115,7 +115,7 @@ how:    : dispose  clicks HandleOff
 	: event-task  $20000 $10000 NewTask activate
 	  >tib off $100 newtib
 	  Onlyforth dynamic   " event-task" r0 @ cell+ !
-          up@ TO event-task
+          up@ TO event-task'
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]
           BEGIN  depth >r ['] handle-event catch
 	         ?dup IF  .catch-rest  THEN

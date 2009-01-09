@@ -61,7 +61,7 @@ synonym #! \
 
 : list> ( thread -- element )
   BEGIN  @ dup  WHILE  dup r@ execute
-  REPEAT  drop rdrop ; \ restrict
+  REPEAT  drop rdrop ; DoNotSin \ restrict
 
 -1 cells Constant -cell
 : over2  2 pick ;
@@ -107,6 +107,7 @@ Variable (i)
 : perform @ execute ;
 
 : macro ; \ indicates macro
+: hmacro ; \ indicates macro
 
 : recursive  reveal ; immediate
 
@@ -165,6 +166,8 @@ synonym 0" z"
 
 : 0place ( addr u addr -- )
   swap 2dup + >r move 0 r> c! ;
+
+: "lit r> dup count + >r ; DoNotSin
 
 \ special characters
 
