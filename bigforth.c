@@ -1599,6 +1599,11 @@ int main(int argc, char ** argv, char **env)
 #endif
 #endif
 
+#ifdef DARWIN
+  setenv("DYLD_FALLBACK_LIBRARY_PATH",
+	 "/usr/X11/lib:/usr/X11R6/lib:/opt/local/lib", 1);
+#endif
+
   go_bigforth();
 
   deprep_terminal();
