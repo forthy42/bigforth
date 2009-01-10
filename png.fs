@@ -26,7 +26,13 @@ library: libpng12.so.0
 	s" /usr/X11/lib/libpng12.dylib" file-status nip 0= [IF]
 	    library libpng /usr/X11/lib/libpng12.dylib
 	[ELSE]
-	    library libpng /usr/local/lib/libpng12.dylib
+	    s" /opt/local/lib/libpng12.dylib" filestatus nip 0= [IF]
+		library libpng /opt/local/lib/libpng12.dylib
+	    [ELSE]
+		.( There's no libpng12.dylib on your system) cr
+		.( Install one from Macports) cr
+		abort
+	    [THEN]
 	[THEN]
         : init-png-lib ; \ not supported in VFX Forth
         true value png3
