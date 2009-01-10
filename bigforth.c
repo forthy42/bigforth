@@ -1619,11 +1619,6 @@ int main(int argc, char ** argv, char **env)
      file[strlen(file)-4]=0;
 #endif
 
-#ifdef DARWIN
-  setenv("DYLD_FALLBACK_LIBRARY_PATH",
-	 "/usr/X11/lib:/usr/X11R6/lib:/opt/local/lib", 1);
-#endif
-
   strcpy(file+strlen(file),".fi");
 
   CHECK_ARGS();
