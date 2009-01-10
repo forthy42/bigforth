@@ -9,8 +9,13 @@ DOS also OpenGL
     
 \    library libGL libMesaGL.so.3  $20 allot   depends libXext depends libm
 [IFDEF] osx
-    library libGL /usr/X11/lib/libGL.dylib $20 allot    depends libX11
-    library libGLU /usr/X11/lib/libGLU.dylib
+    s" /usr/X11/lib/libGL.dylib" file-status nip 0= [IF]
+	library libGL /usr/X11/lib/libGL.dylib $20 allot    depends libX11
+	library libGLU /usr/X11/lib/libGLU.dylib
+    [ELSE]
+	library libGL /usr/X11R6/lib/libGL.dylib $20 allot    depends libX11
+	library libGLU /usr/X11R6/lib/libGLU.dylib
+    [THEN]
 [ELSE]
     library libGL libGL.so.1 $20 allot    depends libX11
     library libGLU libGLU.so.1

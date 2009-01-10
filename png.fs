@@ -23,7 +23,11 @@ library: libpng12.so.0
     also DOS
     
     [defined] osx [IF]
-        library libpng /usr/X11/lib/libpng12.dylib
+	s" /usr/X11/lib/libpng12.dylib" file-status nip 0= [IF]
+	    library libpng /usr/X11/lib/libpng12.dylib
+	[ELSE]
+	    library libpng /usr/local/lib/libpng12.dylib
+	[THEN]
         : init-png-lib ; \ not supported in VFX Forth
         true value png3
     [ELSE]

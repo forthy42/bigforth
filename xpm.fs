@@ -9,9 +9,13 @@ legacy off
 also X11
 
 [IFDEF] osx
-library libXpm /usr/X11R6/lib/libXpm.dylib  depends libX11
+    s" /usr/X11/lib/libXpm.dylib" file-status nip 0= [IF]
+	library libXpm /usr/X11/lib/libXpm.dylib  depends libX11
+    [ELSE]
+	library libXpm /usr/X11R6/lib/libXpm.dylib  depends libX11
+    [THEN]
 [ELSE]
-library libXpm libXpm.so.4  depends libX11
+    library libXpm libXpm.so.4  depends libX11
 [THEN]
 
 previous

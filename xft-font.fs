@@ -7,9 +7,13 @@ also dos
 legacy off
 
 [IFDEF] osx
-library libXft /usr/X11/lib/libXft.dylib
+    s" /usr/X11/lib/libXft.dylib" file-status nip 0= [IF]
+	library libXft /usr/X11/lib/libXft.dylib
+    [ELSE]
+	library libXft /usr/X11R6/lib/libXft.dylib
+    [THEN]
 [ELSE]
-library libXft libXft.so.2
+    library libXft libXft.so.2
 [THEN]
 
 libXft XftFontMatch int int int int (int) XftFontMatch ( dpy screen pattern result -- pattern )

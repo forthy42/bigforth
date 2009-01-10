@@ -7,9 +7,13 @@ also dos
 legacy off
 
 [IFDEF] osx
-library libXrender /usr/X11/lib/libXrender.dylib
+    s" /usr/X11/lib/libXrender.dylib" file-status nip 0= [IF]
+	library libXrender /usr/X11/lib/libXrender.dylib
+    [ELSE]
+	library libXrender /usr/X11R6/lib/libXrender.dylib
+    [THEN]
 [ELSE]
-library libXrender libXrender.so.1
+    library libXrender libXrender.so.1
 [THEN]
 
 libXrender XRenderFindFormat ptr int ptr int (ptr) XRenderFindFormat ( dpy mask templ count -- pict )
