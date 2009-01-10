@@ -51,6 +51,8 @@ FVariable rho   0e rho  f!
   k f@ epsilon f@ f**2 !1 f- f/ b f!
   k f@ GM f@ f* fsqrt b f@ f/ U f! ;
 
+: orbit3 180e f/ pi f* rho f! orbit2 ;
+
 : r ( phi -- r )  fcos epsilon f@ f* !1 f+ k f@ fswap f/ ;
 
 : range ( -- maxphi )  epsilon f@ 1/f fnegate facos ;
@@ -100,10 +102,10 @@ FVariable rho   0e rho  f!
 
 \ Examples:
 
-: galileo  959.9e3 2.47e  orbit2 ;
-: NEAR     538.8e3 1.81e  orbit2 ;
-: cassini  1173e3  5.8e   orbit2 ;
-: rosetta  1954e3  1.327e orbit2 ;
+: galileo  959.9e3 2.47e  180e 142.9e f- 47.46e f2/ f-  orbit3 ;
+: NEAR     538.8e3 1.81e  180e 108.8e f- 66.92e f2/ f-  orbit3 ;
+: cassini  1173e3  5.8e   25.4e 19.66e f2/ f- orbit3 ;
+: rosetta  1954e3  1.327e 180e 144.9e f- 99.396e f2/ f- orbit3 ;
 
 \ considder earth rotation
 
@@ -130,3 +132,23 @@ FVariable rho   0e rho  f!
     dup element az+ df@ fx. ." ]" drop cr ;
 
 $1000 to star# init-stars set-earth near set-disc disc-msum disc-a+
+
+\ integrate over precalculated positions
+
+: norm { f: dx f: dy f: dz }
+    dx f**2 dy f**2 dz f**2 f+ f+ fsqrt 1/f
+    dx fover f* fswap dy fover f* fswap dz f* ;
+: v* { f: x1 f: x2 f: x3 }
+    x3 f* fswap x2 f* f+ fswap x1 f* f+ ;
+: vscale { f: x f: y f: z f: scale }
+    x scale f* y scale f* z scale f* ;
+
+: (integrate' ( x end start -- x' ) ?DO
+	I 1- disc >xyz
+	I 1+ disc dxyz@
+	I disc xyz@ fsqsum fsqrt v 1/f vscale
+	I disc a+@ v* f+
+    LOOP ;
+: integrate' ( -- result )
+    0e disc# 1- 2 (integrate' ;
+
