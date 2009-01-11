@@ -102,10 +102,10 @@ FVariable rho   0e rho  f!
 
 \ Examples:
 
-: galileo  959.9e3 2.47e  180e 142.9e f- 47.46e f2/ f-  orbit3 ;
-: NEAR     538.8e3 1.81e  180e 108.8e f- 66.92e f2/ f-  orbit3 ;
-: cassini  1173e3  5.8e   25.4e 19.66e f2/ f- orbit3 ;
-: rosetta  1954e3  1.327e 180e 144.9e f- 99.396e f2/ f- orbit3 ;
+: galileo  959.9e3 2.47e  142.9e  orbit3 ;
+: NEAR     538.8e3 1.81e  108.8e  orbit3 ;
+: cassini  1173e3  5.8e   25.4e   orbit3 ;
+: rosetta  1954e3  1.327e 144.9e  orbit3 ;
 
 \ considder earth rotation
 
@@ -131,7 +131,9 @@ FVariable rho   0e rho  f!
     dup element ay+ df@ fx.
     dup element az+ df@ fx. ." ]" drop cr ;
 
-$1000 to star# init-stars set-earth near set-disc disc-msum disc-a+
+: setups set-disc disc-msum disc-a+ ;
+
+$1000 to star# init-stars set-earth
 
 \ integrate over precalculated positions
 
@@ -151,4 +153,18 @@ $1000 to star# init-stars set-earth near set-disc disc-msum disc-a+
     LOOP ;
 : integrate' ( -- result )
     0e disc# 1- 2 (integrate' ;
+
+: phis' ( m -- )
+    dup negate 1+ ?DO
+	pi I I' 1- fm*/ phi0 f! setups
+	integrate' phi0 f@ pi f/ 180e f* f. f. cr
+    LOOP ;
+
+: run-all
+    ." Galileo:" cr galileo 19 phis'
+    ." Near:"    cr near    19 phis'
+    ." Cassini:" cr cassini 19 phis'
+    ." Rosetta:" cr rosetta 19 phis' ;
+
+
 
