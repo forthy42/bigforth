@@ -65,16 +65,13 @@ Vocabulary oo-types  oo-types also
 2 cells Constant :ilen
 3 cells Constant :inum
 
-\ cell +user op
-synonym op currobj
-
 Forth definitions
-: op! ( o -- )  op ! ;
+: op! ( o -- )  currobj ! ;
 
 Create ostack 0 , 16 cells allot
 
 : ^ ( -- o )
-    state @ IF  postpone op postpone @  ELSE op @  THEN ; immediate
+    state @ IF  postpone currobj postpone @  ELSE currobj @  THEN ; immediate
 : o@ ( -- o )
     state @ IF  postpone ^ postpone @  ELSE  ^ @  THEN  ; immediate
 : >o ( o -- )
@@ -93,12 +90,6 @@ Create ostack 0 , 16 cells allot
 Objects definitions
 
 \ Coding                                               27dec95py
-
-0 Constant #static
-1 Constant #method
-2 Constant #early
-3 Constant #var
-4 Constant #defer
 
 false Value oset?
 
