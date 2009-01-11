@@ -4,13 +4,14 @@
     ' .blk is .status
 [THEN]
 include minos.fs
+[defined] VFXForth 0= [IF]
 include editor.fs
 include browser.fs
 include login.fs
 include ptty.fs
 include status.fb
-[IFDEF] x11
-also x11  [IFDEF] has-xft previous
+[defined] x11 [IF]
+also x11  [defined] has-xft [IF] previous
 include xft-font.fs  also [THEN] previous
 [THEN]
-
+[THEN]

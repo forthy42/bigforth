@@ -161,7 +161,8 @@ oo-types definitions
     mallot (method, ;
 : early    ( -- ) \ oof- oof
 \G Create a method selector for early binding.
-    : postpone crash discard-sinline postpone ; doNotSin ;
+    : postpone ahead postpone then s" dummy string" postpone SLiteral
+    discard-sinline postpone ; doNotSin ;
 : (var, ( offset -- )  >r
     : r> ^+, discard-sinline postpone ; ;
 : var ( size -- ) \ oof- oof
@@ -240,7 +241,8 @@ Objects definitions also oo-types
       drop static# + c@ o@ + @  postpone Literal  EXIT THEN
   over static2? over and  IF 
       drop static#2 + @ o@ + @  postpone Literal  EXIT THEN
-  drop dup early?  IF 1+ dup @ + cell+  THEN  compile, ;
+  drop dup early? over 1+ @ and  IF  1+ dup @ + cell+  compile,
+  ELSE  compile,  THEN  ;
 
 \ : (findo    ( string -- cfa n )
 \     o@ add-order >r find r> drop-order ;
@@ -533,7 +535,7 @@ Forth
     ELSE  dup exec2?
 	IF    method#2 + @ lastob @ + !
 	ELSE
-	    dup 5 + c@ $C3 = IF  1+ dup >r - 4- r> !  EXIT  THEN
+	    dup early? IF  1+ dup >r - 4- r> !  EXIT  THEN
 	    >body dup cell+ @ 0< IF  2@ swap lastob @ + @ + !  EXIT  THEN
 	    drop
 	THEN
