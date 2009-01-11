@@ -140,21 +140,21 @@ IS dummy-canvas
     : >c' ( xt -- offset addr )  dup 2- w@ + &10 - dup 4+ ;
     \ define a few C-callbacks
 
-    Code glVertexTexCoord3fv ( c:addr -- )  R:
-	4 SP D) AX mov  $C # AX add  AX push
+    Code glVertexTexCoord3fv ( c:addr -- )  R:  AX push  AX push
+	$C SP D) AX mov  $C # AX add  AX push
 	' glTexCoord2fv >c' A# AX mov  A#) AX add  AX call  AX pop
-	4 SP D) AX mov  AX push
+	$C SP D) AX mov  AX push
 	' glVertex3fv >c' A# AX mov  A#) AX add  AX call  AX pop
-	ret  end-code
+	AX pop  AX pop  ret  end-code
 
-    Code glVertexNormalTexCoord3fv ( c:addr -- )  R:
-	4 SP D) AX mov  $C # AX add  AX push
+    Code glVertexNormalTexCoord3fv ( c:addr -- )  R:  AX push  AX push
+	$C SP D) AX mov  $C # AX add  AX push
 	' glTexCoord2fv >c' A# AX mov  A#) AX add  AX call  AX pop
-	4 SP D) AX mov  $14 # AX add  AX push
+	$C SP D) AX mov  $14 # AX add  AX push
 	' glNormal3fv >c' A# AX mov  A#) AX add  AX call  AX pop
-	4 SP D) AX mov  AX push
+	$C SP D) AX mov  AX push
 	' glVertex3fv >c' A# AX mov  A#) AX add  AX call  AX pop
-	ret  end-code
+	AX pop  AX pop  ret  end-code
 [THEN]
 
 !1 f>fs Constant #1.
