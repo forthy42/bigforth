@@ -53,6 +53,9 @@ FVariable rho   0e rho  f!
 
 : orbit3 180e f/ pi f* rho f! orbit2 ;
 
+: orbit4 180e f/ pi f* phi0 f! orbit3
+  phi0 f@ rho f@ fsin f/ phi0 f! ;
+
 : r ( phi -- r )  fcos epsilon f@ f* !1 f+ k f@ fswap f/ ;
 
 : range ( -- maxphi )  epsilon f@ 1/f fnegate facos ;
@@ -102,10 +105,10 @@ FVariable rho   0e rho  f!
 
 \ Examples:
 
-: galileo  959.9e3 2.47e  142.9e  orbit3 ;
-: NEAR     538.8e3 1.81e  108.8e  orbit3 ;
-: cassini  1173e3  5.8e   25.4e   orbit3 ;
-: rosetta  1954e3  1.327e 144.9e  orbit3 ;
+: galileo  959.9e3 2.47e  142.9e 23.35e orbit4 ;
+: NEAR     538.8e3 1.81e  108.8e 46.4e  orbit4 ;
+: cassini  1173e3  5.8e   25.4e  8.95e  orbit4 ;
+: rosetta  1954e3  1.327e 144.9e 18.55e orbit4 ;
 
 \ considder earth rotation
 
@@ -131,7 +134,23 @@ FVariable rho   0e rho  f!
     dup element ay+ df@ fx.
     dup element az+ df@ fx. ." ]" drop cr ;
 
-: setups set-disc disc-msum disc-a+ ;
+: disc-a+' ( -- )
+  disc# 0 ?DO  I disc >xyz
+      >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
+      0 fm* vscale
+      0 star star# elements bounds ?DO
+          I dup  a+@  dxyz@abs 1/f vscale v+
+          I dup -a+@ -dxyz@abs 1/f vscale v+
+      sizeof element +LOOP
+      I disc !1 star# 2* fm/
+      >x df@ >y df@ >z df@ vabs fsqrt to-sun vscale
+      dup element msum df@ msum+ f@ f+ f/ vscale
+      dup element az+ df!
+      dup element ay+ df!
+          element ax+ df!
+  pause LOOP ;
+
+: setups set-disc disc-msum disc-a+' ;
 
 $1000 to star# init-stars set-earth
 
@@ -142,8 +161,10 @@ $1000 to star# init-stars set-earth
     dx fover f* fswap dy fover f* fswap dz f* ;
 : v* { f: x1 f: x2 f: x3 }
     x3 f* fswap x2 f* f+ fswap x1 f* f+ ;
+[IFUNDEF] vscale
 : vscale { f: x f: y f: z f: scale }
     x scale f* y scale f* z scale f* ;
+[THEN]
 
 : (integrate' ( x end start -- x' ) ?DO
 	I 1- disc >xyz
@@ -161,10 +182,7 @@ $1000 to star# init-stars set-earth
     LOOP ;
 
 : run-all
-    ." Galileo:" cr galileo 19 phis'
-    ." Near:"    cr near    19 phis'
-    ." Cassini:" cr cassini 19 phis'
-    ." Rosetta:" cr rosetta 19 phis' ;
-
-
-
+    ." Galileo:" galileo setups integrate' f. cr
+    ." Near:   " near    setups integrate' f. cr
+    ." Cassini:" cassini setups integrate' f. cr
+    ." Rosetta:" rosetta setups integrate' f. cr ;
