@@ -337,7 +337,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : 'line  ( n -- addr u )
           scrolls @ cols @ * dup >r + rows @ cols @ * mod r> -
           'start + cols @ -trailing ;
-        : !resized  s" M" !textwh
+        : !resized  s" n" !textwh
           4 dpy xrc font@ bind fnt16 ;
         : !tile  0 scrolls @ texth @ * negate dpy txy! ;
         : focus    focuscol   @ @ dup 8 >> swap $FF and 8 << or
