@@ -58,7 +58,7 @@ Name: "{group}\bigFORTH"; Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"
 Name: "{group}\Remake Kernel"; Filename: "{app}\bigforth.exe"; Parameters: "##include forth.fb save-target forthker-win32 bye"; WorkingDir: "{app}"
 Name: "{group}\Remake bigFORTH"; Filename: "{app}\forthker-win32.exe"; Parameters: "##include startup.fb warning on savesystem bigforth bye"; WorkingDir: "{app}"
 Name: "{group}\Remake Float Module"; Filename: "{app}\bigforth.exe"; Parameters: "##include float.fb m' float savemod float bye"; WorkingDir: "{app}"
-Name: "{group}\Remake Minos"; Filename: "{app}\bigforth.exe"; Parameters: "##use float.fb path ;. include startx.fb savesystem xbigforth bye"; WorkingDir: "{app}"
+Name: "{group}\Remake Minos"; Filename: "{app}\bigforth.exe"; Parameters: "##use float.fb path ;. include startx.fs savesystem xbigforth bye"; WorkingDir: "{app}"
 Name: "{group}\Uninstall bigFORTH"; Filename: "{uninstallexe}"
 
 [Registry]
@@ -69,7 +69,7 @@ Name: "{group}\Uninstall bigFORTH"; Filename: "{uninstallexe}"
 Filename: "{app}\forthker-win32.exe"; Workingdir: "{app}"; Parameters: "##include startup.fb ' .blk is .status warning on savesystem bigforth bye"
 Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs path ;. include float.fb m' float savemod float bye"
 Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs use float.fb path ;. include glconst.fs m' glconst savemod glconst bye"
-Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs use float.fb use glconst.fs path ;. include startx.fb warning on savesystem xbigforth bye"
+Filename: "{app}\bigforth.exe"; WorkingDir: "{app}"; Parameters: "##use x.fs use float.fb use glconst.fs path ;. include startx.fs warning on savesystem xbigforth bye"
 Filename: "{app}\xbigforth.exe"; WorkingDir: "{app}"; Parameters: "##path ';{app};.' include adjust.m"
 
 [UninstallDelete]

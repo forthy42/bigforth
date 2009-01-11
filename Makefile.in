@@ -120,7 +120,7 @@ float.fm: float.fb forthker-$(ARCH).fi $(SYSSRC)
 
 CPYDIST = bigforth/{README,COPYING,CREDITS,LGPLv3}
 
-DOSDIST = bigforth/{forthker,bigforth,xbigforth}$(EXE) bigforth/{forthker,bigforth}.fi bigforth/{version.h,minos-version.h}
+DOSDIST = bigforth/{forthker-*,bigforth,xbigforth}$(EXE) bigforth/{forthker-*,bigforth}.fi bigforth/{version.h,minos-version.h}
 
 DOCDIST = bigforth/help/{*.html,[a-z]*.gif,*.jpg,*.sh} bigforth/doc/bigforth.texi
 
@@ -175,7 +175,7 @@ install:	all
 	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
 	@install -m 644 $(INI) $(INSTDIR)
 	@install -m 644 $(XINI) $(INSTDIR)
-	@install -m 755 {forthker,bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
+	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
 	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
 	@install -m 644 icons/*.png $(INSTDIR)/icons
 	@install -m 644 pattern/dragon{,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
