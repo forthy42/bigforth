@@ -66,7 +66,7 @@ Vocabulary oo-types  oo-types also
 3 cells Constant :inum
 
 \ cell +user op
-: op currobj ;
+synonym op currobj
 
 Forth definitions
 : op! ( o -- )  op ! ;

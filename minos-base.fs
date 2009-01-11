@@ -408,8 +408,7 @@ Forward screen-ic!
   (~~) .Xerror" ;
 : x~~  ~~, postpone .Xerror~~ ; immediate
 [ELSE]
-    Defer screen-sync
-    Defer screen-ic!
+    Forward screen-ic!
 [THEN]
 
 \ Event data structure                                 29jul07py
@@ -854,11 +853,8 @@ Variable own-selection
 
 \ selection                                            23apr06py
 Variable got-selection          Variable str-selection
-[defined] Forward [IF]
-    Forward screen-event
-[ELSE]
-    Defer screen-event
-[THEN]
+Forward screen-event
+
 : wait-for-select ( -- flag )  got-selection off
   #5000 after  BEGIN  screen-event
            timeout? got-selection @ or UNTIL  drop ;

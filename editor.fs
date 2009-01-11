@@ -38,13 +38,8 @@ Variable ?hide    ?hide off
 
 : blank    ( addr count --)     bl fill ;
 
-[defined] VFXForth [IF]
-    Defer edi_open
-    Defer replace-it
-[ELSE]
-    forward edi_open
-    forward replace-it
-[THEN]
+forward edi_open
+forward replace-it
 
 \ Move the Editor's cursor around                      26jun94py
 : top          ( -- )       0. scredit at ;
@@ -201,15 +196,9 @@ Variable imode  imode on
 
 : -line         'line c/l -trailing ;
 
-[defined] VFXForth [IF]
-    defer @line
-    defer ?line
-    defer !line"
-[ELSE]
-    forward @line
-    forward ?line
-    forward !line"
-[THEN]
+forward @line
+forward ?line
+forward !line"
 
 : copyline      -line @line c/l c ;
 : line>buf      -line @line delline ;
@@ -333,12 +322,11 @@ window ptr current-win
   2fill  7 hatbox new  2 r> 0 ;
 [defined] DoNotSin [IF] DoNotSin [THEN]
 
+Forward date-id
 [defined] VFXForth [IF]
-    Defer date-id
 : get-id  id c@  ?EXIT
   s" " date-id  0 >o  do_getid  o>  current-win stop ;
 [ELSE]
-    Forward date-id
 : get-id  id c@  ?EXIT
   FORTHstart 2+ count + count + count 6 /string -trailing
   date-id  0 >o  do_getid  o>  current-win stop ;
@@ -348,11 +336,7 @@ window ptr current-win
 
 : setimode   imode on  ( :imode checkon  :omode checkoff ) ;
 : clrimode   imode off ( :omode checkon  :imode checkoff ) ;
-[defined] VFXForth [IF]
-    defer gotoline
-[ELSE]
-    forward gotoline
-[THEN]
+forward gotoline
 : jump-to   textfield get drop cancel  edicatch
   isfile@ str?  IF  scr ! gotoline  ELSE  setscreen  THEN ;
 : jumpscreen  S" Screen-Nr:" MODAL:
@@ -688,21 +672,12 @@ Variable nokey?    nokey? off
 : !nokey ;
 : edierror  jingle @  IF  alarm  THEN  scredit showerror ;
 
-[defined] VFXforth [IF]
-:noname  r>  updated? not >r
-  scredit curoff  catch
-  updated? r> and IF  scredit slided  THEN
-  2 case? IF  scredit close  EXIT  THEN
-  IF "error @ dup IF edierror 0 THEN "error ! THEN
-  scredit curon ; IS edicatch
-[ELSE]
 : edicatch   r>  updated? not >r
   scredit curoff  catch
   updated? r> and IF  scredit slided  THEN
   2 case? IF  scredit close  EXIT  THEN
   IF "error @ dup IF edierror 0 THEN "error ! THEN
   scredit curon ;
-[THEN]
 
 \ Key event                                            14sep97py
 
@@ -735,8 +710,8 @@ include edit.fs
 : finstall  ( -- )
   fit? ?resource get-id settings ;
 [defined] VFXForth [IF]
-:noname ( addr u -- )
-  1 id c! id 1+ place ; IS date-id
+: date-id ( addr u -- )
+  1 id c! id 1+ place ;
 [ELSE]
 : date-id ( addr u -- )
   1 id c!  $sum push  id 1+ $sum !  dattime
@@ -746,19 +721,12 @@ include edit.fs
 [THEN]
 
 \ Entering the Editor                                  03dec04py
-[defined] VFXForth [IF]
-:noname  o@ & scredit @ =  o@ & stredit @ = or
-  IF  scredit callwind self  bind term  THEN
-  isfile@ str?  IF  opentwind
-  ELSE  scr @ capacity dup 0= IF  1 more  1+  THEN
-        1- umin scr !  wi_open  THEN ; IS edi_open
-[ELSE]
 : edi_open  o@ & scredit @ =  o@ & stredit @ = or
   IF  scredit callwind self  bind term  THEN
   isfile@ str?  IF  opentwind
   ELSE  scr @ capacity dup 0= IF  1 more  1+  THEN
         1- umin scr !  wi_open  THEN ;
-[THEN]
+
 : v   ( -- )     finstall edi_open ;
 [defined] F' [IF]  #10 F' V [THEN]
 : l   ( scr -- ) 1 arguments

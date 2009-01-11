@@ -15,12 +15,6 @@ Variable do-done do-done off
 Variable closing closing off
 
 [defined] VFXforth [IF]
-    defer edicatch
-    defer (scraction
-    defer ev-key
-    defer done
-    defer ?stamp
-    defer scr:view
     defer (block
     defer block
     defer buffer
@@ -49,14 +43,14 @@ Variable closing closing off
     : (#load ( n >in -- )  2drop isfile@ include-file ;
     : (load  2drop true abort" VFX doesn't support blocks!" ;
 [ELSE]
+: purgebuf prev @ emptybuf ;
+[THEN]
 forward edicatch
 forward (scraction
 forward ev-key
 forward done
 forward ?stamp
 forward scr:view
-: purgebuf prev @ emptybuf ;
-[THEN]
 
 terminal class scredit
 public:

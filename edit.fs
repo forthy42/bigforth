@@ -392,13 +392,8 @@ Variable epos
 : a  stredit 'r# @ stredit 'scr @ (mark scr ! pos! gotoline ;
 : mark        (mark  true abort" marked !" ;
 
-[defined] VFXForth [IF]
-:noname cur >r Top scr @ 1 max 1 ?DO  NextLine  LOOP
-    scr on r> pos! ; IS gotoline
-[ELSE]
 : gotoline cur >r Top scr @ 1 max 1 ?DO  NextLine  LOOP
     scr on r> pos! ;
-[THEN]
 
 \ Zeilen                                               07may91py
 

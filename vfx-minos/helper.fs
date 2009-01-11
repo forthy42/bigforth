@@ -109,6 +109,17 @@ Variable (i)
 : macro ; \ indicates macro
 : hmacro ; \ indicates macro
 
+: forward
+    : postpone ahead postpone then s" dummy string" postpone SLiteral
+    discard-sinline postpone ; DoNotSin ;
+
+: forward?  ( xt -- flag ) c@ $E9 = ;
+
+: : ( "name" -- ) >in @ >r bl word find IF
+	dup forward? IF  1+ :noname over - 4- swap ! rdrop
+	    EXIT  THEN THEN  drop
+    r> >in ! : ;
+
 : recursive  reveal ; immediate
 
 : Module  >in @ Vocabulary >in !
