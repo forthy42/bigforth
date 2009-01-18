@@ -24,7 +24,7 @@
 include galaxy.fs
 
 332946e FConstant sun-mass \ relative to earth
-1.496e12 FConstant sun-earth
+1.496e11 FConstant sun-earth
 
 sun-mass sun-earth f**2 f/ FConstant bg-scaler
 
@@ -134,25 +134,30 @@ FVariable rho   0e rho  f!
     dup element ay+ df@ fx.
     dup element az+ df@ fx. ." ]" drop cr ;
 
-: disc-a+' ( -- )
-  disc# 0 ?DO  I disc >xyz
-      >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
-      0 fm* vscale
+: disc-a+'xyz ( x y z -- x' y' z' )
       0 star star# elements bounds ?DO
           I dup  a+@  dxyz@abs 1/f vscale v+
           I dup -a+@ -dxyz@abs 1/f vscale v+
-      sizeof element +LOOP
-      I disc !1 star# 2* fm/
-      >x df@ >y df@ >z df@ vabs fsqrt to-sun vscale
+      sizeof element +LOOP ;
+
+: disc-a+' ( -- )
+  disc# 0 ?DO  I disc >xyz
+      >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
+      central# fm* vscale
+      disc-a+'xyz
+      I disc !1 star# 2* central# + fm/
       dup element msum df@ msum+ f@ f+ f/ vscale
       dup element az+ df!
       dup element ay+ df!
           element ax+ df!
   pause LOOP ;
 
+bg-scaler msum+ f!
+
 : setups set-disc disc-msum disc-a+' ;
 
-$1000 to star# init-stars set-earth
+$4000 to star# init-stars set-earth
+\ star# 20e fm* f>s to central# set-earth-msum+
 
 \ integrate over precalculated positions
 
@@ -181,7 +186,15 @@ $1000 to star# init-stars set-earth
 	integrate' phi0 f@ pi f/ 180e f* f. f. cr
     LOOP ;
 
-: run-all
+: frac-earth ( n -- )
+    star# swap ?DO
+	I star
+	!0 dup element ax df!
+	!0 dup element ay df!
+	!0     element az df!
+    LOOP ;
+
+: run-all cr
     ." Galileo:" galileo setups integrate' f. cr
     ." Near:   " near    setups integrate' f. cr
     ." Cassini:" cassini setups integrate' f. cr

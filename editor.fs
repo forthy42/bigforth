@@ -545,15 +545,20 @@ Variable file
 \   r> 0= IF  rdrop  THEN  scredit curoff ;
 
 \ (use                                                 19jun02py
+[defined] VFXForth [IF]
+    : \use ( addr count -- )  2drop ; \ stub
+    : (use ( flag -- )  drop ; \ stub
+[ELSE]
 : \use ( addr count -- )  here place bl here count + c!
   here find  IF  isfile?  IF  execute EXIT  THEN THEN
   drop  NewMP  isfile ! ;
 : (use ( flag -- )  file @str isfile@ assign
   isfile@ str? or IF  1 scr ! r# off edi_open  EXIT  THEN
   0 block drop isfile@ capacity 1- 0 max 1 min 0 mark! !scr a ;
+[THEN]
 : fp!  2over path !str path+file file !str ;
 : wildcard  path @str 2swap path+file path !str path $@ ;
-: >file ( f l -- f' l' )  2dup + >r  '/ -scan + r> over - ;
+: >file ( f l -- f' l' )  2dup + >r  '/' -scan + r> over - ;
 : UseFile  s" Use File:"  s" "
   [defined] win32 [IF] s" *.f?" [ELSE] s" *.f[sb]" [THEN] wildcard
   ^ S[ fp! [defined] win32 [IF] true [ELSE] ?str [THEN]

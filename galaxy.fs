@@ -89,6 +89,11 @@ FVariable oldgauss !0 oldgauss f!
 \ units: kg, meters, seconds
 \ rotations per day
 
+: set-earth-msum+ ( -- )
+    331950e 149450e6 f**2 f/ \ sun
+    7.349e22 5.974e24 f/ 384.400e6 f**2 f/ f+ \ moon, smaller
+    star# central# + star# fm*/ msum+ f! ;
+
 : set-earth ( -- )  6.37739715e6 6.35607896e6 fover 5.31800028336e-9 f*
     { f: d1 f: d2 f: as |
     star# 0 ?DO
@@ -106,9 +111,7 @@ FVariable oldgauss !0 oldgauss f!
 	d2 f*     element z df!
     LOOP }
     star# 0.13e fm* f>s to central#
-    331950e 149450e6 f**2 f/ \ sun
-    7.349e22 5.974e24 f/ 384.400e6 f**2 f/ f+ \ moon, smaller
-    msum+ f! ;
+    set-earth-msum+ ;
 
 Variable spiral-dist spiral-dist on
 

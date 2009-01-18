@@ -180,6 +180,31 @@ synonym 0" z"
 
 : "lit r> dup count + >r ; DoNotSin
 
+: -scan ( addr len char -- addr' len' ) >r
+    BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  THEN  rdrop ;
+
+\ date & time conversion in files
+
+extern: int localtime ( char * );
+
+Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
+
+: @time   dta [defined] osx [IF] $30 [ELSE] $38 [THEN] + @ ;
+: @attr   dta $18 + w@ ;
+: @length dta [defined] osx [IF] $40 [ELSE] $24 [THEN] + @ ;
+: dtaname  dta @ ;
+
+: >hms  sp@ localtime nip @+ @+ @ swap rot ;
+: >ymd  sp@ localtime nip $C + @+ @+ @ ;
+
+: >time  ( time -- addr count )  base push decimal   >hms
+    0 <# # # ':' hold drop # # ':' hold drop # # #> ;
+
+: >date ( date -- string len )  base push decimal  >ymd
+  0 <#  # # 2drop  >r S" janfebmaraprmayjunjulaugsepoctnovdec"
+        r> 0 max #11 min dup dup + + /string 3 min
+        over + 1- DO  I c@ hold -1  +LOOP  0 # #  #> ;
+
 \ special characters
 
 $08 Constant #bs         $0D Constant #cr

@@ -626,14 +626,28 @@ class;
 
 [defined] VFXFORTH [IF]
     Defer WinI/O
+    Defer terminal-menu             ' noop IS terminal-menu
+    2Variable map-size              80 24 map-size 2!
+    2Variable map-pos
     #1000 Value MaxScroll
     terminal ptr term
-    : openw 0 { term-o } screen self window new
+    hbox ptr term-menu
+    rule ptr term-last
+    forward term-w
+
+    : openw  screen self menu-window new
         menu-window with
-        1 1 viewport new d[ 80 24 terminal new dup to term-o ]d
+	  term-w set-icon
+	  0 1 *fill 0 1 *fil rule new dup F bind term-last
+        1 hbox new vfixbox dup F bind term-menu 1 vbox new
+          1 1 viewport new
+              D[ map-size 2@ terminal new dup F bind term ]D
         s" VFX Forth Dialog" assign
-        80 24 geometry  80 c/line ! 24 c/cols !
-	show endwith term-o bind term
+        terminal-menu
+        map-size 2@ geometry
+        map-pos 2@ d0= 0= IF  map-pos 2@ repos  THEN
+        show endwith
+        map-size 2@ c/cols ! c/line !
     MaxScroll term scrollback WinI/O ;
 [ELSE]
 \ Window IO words                                      10apr04py
@@ -736,8 +750,8 @@ minos
       term-w set-icon
       0 1 *fill 0 1 *fil rule new dup F bind term-last
    1 hbox new vfixbox dup F bind term-menu 1 vbox new
-      map-size 2@ 1 1 viewport new
-          D[ terminal new dup F bind term ]D
+      1 1 viewport new
+          D[ map-size 2@ terminal new dup F bind term ]D
       s" bigFORTH Dialog" assign
       terminal-menu
       map-size 2@ geometry
@@ -747,6 +761,7 @@ minos
   event-task' task's term dup @
   0= IF  term self swap !  ELSE  drop  THEN
   ['] WINi/o IS standardi/o  WINi/o ;
+[THEN]
 
 \ terminal menu operations                             10apr04py
 
@@ -772,7 +787,7 @@ class;
 
 : key"  state @
   IF    postpone ^  postpone S" key-actor postpone new
-  ELSE  ^ '" parse key-actor new  THEN ;        immediate
+  ELSE  ^ '"' parse key-actor new  THEN ;        immediate
 
 \ : term-dpy  term dpy dpy self ;
 
@@ -1006,7 +1021,7 @@ minos
 
 : path+file ( path len file len -- file len )
   >r >r tuck scratch 2+ swap move  scratch 2+ swap  r> r> 2swap
-  '/ -scan + swap 2dup + 0 swap c! move  scratch 2+ >len ;
+  '/' -scan + swap 2dup + 0 swap c! move  scratch 2+ >len ;
 
 : fsel-action ( info len file1 len1 path1 len1 simple -- )
   screen self file-selector new
@@ -1028,5 +1043,9 @@ minos
 
 previous minos
 
+[ELSE]
+: path+file ( path len file len -- file len )
+  >r >r tuck scratch 2+ swap move  scratch 2+ swap  r> r> 2swap
+  '/' -scan + swap 2dup + 0 swap c! move  scratch 2+ >len ;
 [THEN]
 
