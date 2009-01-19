@@ -178,7 +178,7 @@ install:	all
 	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
 	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
 	@install -m 644 icons/*.png $(INSTDIR)/icons
-	@install -m 644 pattern/dragon{,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
+	@install -m 644 pattern/dragon{,-back,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
 	@if [ -d help ]; then install -m 644 help/{*.html,[a-z]*.gif,*.jpg,*.sh} $(INSTDIR)/help; fi
 	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm pattern/dragon.ppm $(INSTDIR)/pattern; fi
 	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(INSTDIR)/Estyle/wood; fi
