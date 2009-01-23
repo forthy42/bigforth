@@ -48,13 +48,13 @@ how:    : >box  'nil bind childs  'nil bind active
 \ combined widgets                                     28mar99py
 
         : remove  ( o -- )
-          link childs childs delete -1 n +! ( resized ) ;
+          link childs childs delete -1 n +! resized ;
         : add ( o before -- )
           over dpy self swap >o dpy! o>
           dup childs self =
           IF    swap bind childs  childs bind widgets
                 self childs bind parent
-          ELSE  childs append  THEN  1 n +! ( resized ) ;
+          ELSE  childs append  THEN  1 n +! resized ;
 
         : ?nodraw ( -- flag )  attribs c@ :flip and 0<>
           flags #hidden bit@ or ;
