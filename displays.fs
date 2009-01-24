@@ -730,7 +730,7 @@ private:
 
 \ Display                                              19jan00py
         : in-time? ( time flag -- flag )
-          lasttime @ rot swap - swap lastclick @ =
+          lasttime @ rot swap - lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
         : samepos? ( event -- flag )  flags #pending bit@
           IF    MSG lparam @ >lohi ( swap ) click^ w@+ w@ p-
