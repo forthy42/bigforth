@@ -115,7 +115,8 @@ how:    : >box  'nil bind childs  'nil bind active
         : dispose dispose-childs tab-step-off super dispose ;
         : focus    ?nodraw ?EXIT  ALLCHILDS  focus   ;
         : defocus  ?nodraw ?EXIT  ALLCHILDS  defocus ;
-        : show     super show ?nodraw ?EXIT  ALLCHILDS  show ;
+        : show     super show
+          ?nodraw IF  ALLCHILDS hide  EXIT  THEN  ALLCHILDS  show ;
         : hide     super hide ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
         : handle-key? active handle-key? ;
