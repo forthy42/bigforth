@@ -132,11 +132,14 @@ how:    : xinc  child xinc ;
           child self  drop child dispose  self cleanup
           title $off
           xwin @  IF
-[defined] x11 [IF]           xrc ic @ dup IF  XDestroyIC  THEN  drop
+[defined] x11 [IF]    xrc ic @ dup IF  XDestroyIC  THEN  drop
                       xrc dpy @ xwin @ XDestroyWindow drop
 [THEN]
-[defined] win32 [IF]         xwin @ DestroyWindow drop
-                      dpy handle-event
+[defined] win32 [IF]  xwin @ DestroyWindow drop
+                      xwin @ app-win @ = IF
+			  screen childs xwin @ app-win !
+		      THEN
+		      dpy handle-event
 [THEN]    THEN
           ?app super dispose ;
 
