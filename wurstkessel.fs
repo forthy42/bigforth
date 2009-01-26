@@ -94,7 +94,7 @@ Create nextstate state# allot
     r> rngs d+c  r> rngs d+c  r> rngs d+c  r> rngs d+c ;
 
 Create round#  1 , 3 , 7 , 13 , 19 , 23 , 31 , 47 ,
-DOES> swap cells + @ ;
+DOES> swap 7 and cells + @ ;
 
 : round ( n -- ) dup 1- swap  8 0 DO
 	I mix2bytes 2>r bytes2sum 2r> 2swap nextstate I 2* cells + 2!
