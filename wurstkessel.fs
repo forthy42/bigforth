@@ -135,7 +135,7 @@ $9915714DB7397949. 2, $AE4180D53650E38C. 2, $C53813781DFF0C2E. 2, $A579435502F22
     size? source 2!  0. source 2 cells + 2! ;
 
 : wurst-hash ( rounds -- )  hash-init
-    source state# 4 cells /string wurst-in read-file throw  over rounds
+    source state# 4 cells /string wurst-in read-file throw  4 cells +  over rounds
     BEGIN  state# =  WHILE
 	    source state# erase  source state# wurst-in read-file throw
 	    over rounds  REPEAT
