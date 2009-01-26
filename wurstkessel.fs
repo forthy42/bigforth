@@ -206,3 +206,12 @@ Create message    state# allot
 	over rounds .xormsg'
 	+entropy  REPEAT
     drop ;
+
+\ wurstkessel rng
+
+: rng-init
+    wurst-salt  source state# move
+    state-init  state  state# move ;
+
+\ just use x rounds for next rng. Each round gives 512 bits random numbers.
+\ occasionally change the source with true random salt if you have one.
