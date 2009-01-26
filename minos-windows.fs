@@ -137,7 +137,7 @@ how:    : xinc  child xinc ;
 [THEN]
 [defined] win32 [IF]  xwin @ DestroyWindow drop
                       xwin @ app-win @ = IF
-			  screen childs xwin @ dup app-win ! re-time
+			  screen childs xwin @ dup re-time app-win !
 		      THEN
 		      dpy handle-event
 [THEN]    THEN

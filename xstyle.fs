@@ -157,13 +157,13 @@ topindex implements
           text $@ state IF  0 o  ELSE  xS negate o xS + THEN
           textcenter
           x @ y @ h @ + xS dup shadow drop dpy box
+	  x @ w @ + xS - y @ h @ + xS dup shadow
           twoborders 0> IF
               x @ y @ h @ + twoborders dup shadow drop 2+ dpy box
               x @ xS + y @ h @ + w @ xS 2* - twoborders
               shadow drop 2+ dpy box
-          THEN
-          x @ w @ + xS - y @ h @ + xS dup shadow
-          widgets self 'nil =
+	  THEN
+	  widgets self 'nil =
           IF  nip  ELSE  drop  THEN  dpy box
           state ;
         : draw  ( -- )

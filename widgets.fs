@@ -69,7 +69,7 @@ how:    : >callback ( cb -- )
 \ draw shadow                                          27jan07py
          : 2+?  dup $10 < IF  2+  THEN ;
          : drawshadow  { lc sc n x y w h }
-           4 pick abs twoborders u<= IF  lc sc n x y w h (drawshadow
+           n abs twoborders u<= IF  lc sc n x y w h (drawshadow
            ELSE
                 n IF  lc    sc n         x y w h (drawshadow
                       lc 2+? sc 2+? n 0< 2* 1+
