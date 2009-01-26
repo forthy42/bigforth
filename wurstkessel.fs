@@ -213,5 +213,8 @@ Create message    state# allot
     wurst-salt  source state# move
     state-init  state  state# move ;
 
-\ just use x rounds for next rng. Each round gives 512 bits random numbers.
-\ occasionally change the source with true random salt if you have one.
+: wurst-rng ( rounds -- )
+    2 0 DO  dup rounds
+	source    state  state# move
+	nextstate source state# move
+    LOOP  drop ;
