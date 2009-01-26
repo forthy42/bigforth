@@ -79,10 +79,10 @@ Create nextstate state# allot
 
 [IFDEF] Code
     Code d+c ( ud1 ud2 -- ud3 )
-	DX pop  CX pop  DX SP ) add  CX AX adc  0 # SP ) adc
+	DX pop  CX pop  DX SP ) add  CX AX adc  0 # SP ) adc  0 # AX adc
 	Next end-code macro
 [ELSE]
-    : d+c ( ud1 ud2 -- ud3 )  rot 0 tuck d+ >r >r 0 tuck d+ 0 r> d+ r> + 0 d+ ;
+    : d+c ( ud1 ud2 -- ud3 )  rot 0 tuck d+ >r >r 0 tuck d+ 0 r> 0 d+ r> + 0 d+ ;
 [THEN]
 
 : mix2bytes ( index n k -- b1 .. b8 index' n ) state + 8 0 DO
