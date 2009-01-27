@@ -78,20 +78,22 @@ Create state     state# allot
 Create nextstate state# allot
 
 [IFDEF] Code
-    Code d+c ( ud1 ud2 -- ud3 )
-	DX pop  CX pop  DX SP ) add  CX AX adc  0 # SP ) adc  0 # AX adc
+    Code wurst ( ud1 ud2 -- ud3 )
+	DX pop  CX pop  SP ) DX add  CX AX adc
+	DX DX adc  AX AX adc  0 # DX adc  0 # AX adc  DX SP ) mov
 	Next end-code macro
 [ELSE]
-    : d+c ( ud1 ud2 -- ud3 )  rot 0 tuck d+ >r >r 0 tuck d+ 0 r> 0 d+ r> + 0 d+ ;
+    : wurst ( ud1 ud2 -- ud3 )  rot 0 tuck d+ >r >r 0 tuck d+ 0 r> 0 d+ r> + 0 d+
+	dup 0< >r 2dup d+ r> negate 0 d+ ;
 [THEN]
 
 : mix2bytes ( index n k -- b1 .. b8 index' n ) state + 8 0 DO
 	>r over source + c@ r@ c@ xor -rot dup >r + $3F and r> r> 8 + LOOP
     drop ;
 
-: bytes2sum ( b1 .. b8 -- ud ) >r >r >r >r  >r >r >r >r
-    r> rngs      r> rngs d+c  r> rngs d+c  r> rngs d+c
-    r> rngs d+c  r> rngs d+c  r> rngs d+c  r> rngs d+c ;
+: bytes2sum ( b1 .. b8 -- ud ) >r >r >r >r  >r >r >r >r  0.
+    r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst
+    r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst ;
 
 Create round#  1 , 3 , 7 , 13 , 19 , 23 , 31 , 47 ,
 DOES> swap 7 and cells + @ ;
@@ -130,7 +132,6 @@ $FEC967C32E46440F. 2, $3F63157E14F89982. 2, $F7364A7F8083EFFA. 2, $FC62572A44559
 $9915714DB7397949. 2, $AE4180D53650E38C. 2, $C53813781DFF0C2E. 2, $A579435502F22741. 2,
 
 : hash-init
-    source-init source state# move
     state-init  state state# move
     size? source 2!  0. source 2 cells + 2! ;
 
