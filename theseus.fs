@@ -1,3 +1,4 @@
+#! /usr/local/bin/xbigforth
 \ graphical widget editor                              14sep97py
 
 [IFUNDEF] fileop  include fileop.fb  [THEN]

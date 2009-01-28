@@ -176,6 +176,7 @@ install:	all
 	@install -m 644 $(INI) $(INSTDIR)
 	@install -m 644 $(XINI) $(INSTDIR)
 	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
+	@install -m 755 theseus.fs $(BININSTDIR)/theseus
 	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
 	@install -m 644 icons/*.png $(INSTDIR)/icons
 	@install -m 644 pattern/dragon{,-back,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
