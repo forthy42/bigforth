@@ -1637,6 +1637,15 @@ class;
 
 previous previous previous previous previous previous
 
+also -options
+
+: -theseus ( addr u -- )
+    2dup dup 2- /string s" .m" str=  IF  included-minos 2
+    ELSE  defers -i  THEN ;
+' -theseus IS -i
+
+previous
+    
 export theseus designer ;
 
 Module;
