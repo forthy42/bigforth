@@ -30,10 +30,21 @@ Variable closing closing off
     $10 Value l/s
     c/l l/s * Value b/blk
     : capacity 2 ;
+    : (view drop 0 ;
+    Variable caps
+    Variable loadfile
+    Variable fpos
     Variable isfile
     Variable r#
     : isfile@ isfile @ ;
     : .file ( file -- ) drop ;
+    : open ( -- ) ; \ dummy
+    : close ( -- ) ; \ dummy
+    : -eof? ( -- flag )
+	loadfile @ file-position throw
+	loadfile @ file-size throw d< ;
+    : readline ( buffer maxlen -- len )
+	loadfile @ read-line throw drop ;
     : !files isfile ! ;
     : purgebuf ;
     : save-buffers ;

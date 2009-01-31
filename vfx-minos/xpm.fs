@@ -8,7 +8,7 @@ library: libXpm.so.4 \ depends libX11
 
 base @ hex
 
-extern: int XpmReadFileToPixmap( int , int , int , int , int , int ); ( dpy d filename pixmap_r shapemask_r attribs -- n )
+LocalExtern: XpmReadFileToPixmap int XpmReadFileToPixmap( int , int , int , int , int , int ); ( dpy d filename pixmap_r shapemask_r attribs -- n )
 
 struct{
     cell valuemask            /* Specifies which attributes are

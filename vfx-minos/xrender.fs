@@ -6,14 +6,14 @@ also xrender definitions
 
 library: libXrender.so.1
 
-extern: char * XRenderFindFormat( char *, int, char *, int );  ( dpy mask templ count -- pict )
-extern: char * XRenderFindVisualFormat( char *, char * );  ( dpy visual -- pict )
-extern: char * XRenderFindStandardFormat( char *, int );  ( dpy format -- pict )
-extern: int XRenderCreatePicture( char *, int, char *, int, char * );  ( dpy drawable format valuemask attributes -- picture )
-extern: void XRenderComposite( char *, int, char *, char *, char *, int, int, int, int, int, int, int, int ); ( dpy op src mask dst srcx srcy maskx masky dstx dsty w h -- )
-extern: void XRenderSetPictureClipRegion( char *, int, int );  ( dpy pict region -- )
-extern: void XRenderSetPictureClipRectangles( char *, char *, int, int, char *, int ); 
-extern: void XRenderFreePicture( char *, char * ); 
+LocalExtern: XRenderFindFormat char * XRenderFindFormat( char *, int, char *, int );  ( dpy mask templ count -- pict )
+LocalExtern: XRenderFindVisualFormat char * XRenderFindVisualFormat( char *, char * );  ( dpy visual -- pict )
+LocalExtern: XRenderFindStandardFormat char * XRenderFindStandardFormat( char *, int );  ( dpy format -- pict )
+LocalExtern: XRenderCreatePicture int XRenderCreatePicture( char *, int, char *, int, char * );  ( dpy drawable format valuemask attributes -- picture )
+LocalExtern: XRenderComposite void XRenderComposite( char *, int, char *, char *, char *, int, int, int, int, int, int, int, int ); ( dpy op src mask dst srcx srcy maskx masky dstx dsty w h -- )
+LocalExtern: XRenderSetPictureClipRegion void XRenderSetPictureClipRegion( char *, int, int );  ( dpy pict region -- )
+LocalExtern: XRenderSetPictureClipRectangles void XRenderSetPictureClipRectangles( char *, char *, int, int, char *, int ); 
+LocalExtern: XRenderFreePicture void XRenderFreePicture( char *, char * ); 
 
 struct{
 cell repeat

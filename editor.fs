@@ -360,7 +360,7 @@ forward gotoline
 
 \ viewing words                                        12oct97py
 : fview  'find count tuck  scr @ block b/blk c/l /string
-\  caps push caps on
+  caps push caps on
   2swap search  IF nip b/blk swap - + 1- ELSE 2drop 0 THEN ;
 : !view ( -- ) isfile@ str?
   IF  isfile@ scredit edifile @ =
@@ -468,7 +468,7 @@ textfield ptr find-field        textfield ptr insert-field
   <some> @ 0= ?show_replace !
   last-scr get drop  1st-scr get drop  <scrs> 2!
   <scrs> >last?  IF  cell+  THEN  @ fscreen !
-  cancel [defined] caps [IF] <caps> @ caps ! [THEN] repfind ;
+  cancel caps <caps> @ caps ! repfind ;
 : >repl ( -- )  ?replace on  >find ;
 
 \ find box                                             04jun08py
@@ -567,8 +567,8 @@ Variable file
 
 \ UseFile MakeFile KillFile MakeDir                    18may03py
 : MakeFile s" Make File:" s" "   s" *.f?" wildcard
-  ^ S[ fp! file @str >file '. scan nip 0=
-       IF  file @str isfile@ str? IF " .fs" ELSE " .fb" THEN
+  ^ S[ fp! file @str >file '.' scan nip 0=
+       IF  file @str isfile@ str? IF c" .fs" ELSE c" .fb" THEN
            path+file  ELSE  file @str  THEN
        2dup + 3 - 3 s" .fs" compare 0= -rot
        r/w create-file throw >r
@@ -639,37 +639,37 @@ here keytable - 4/  Constant #keys
              LOOP  drop ;
 
 \ Table of actions                                     09oct94py
-Table: (scraction  \ File
-UseFile         MakeFile        KillFile        MakeDir
-save-file       edibye
+Create (scraction  \ File
+' UseFile A,         ' MakeFile A,        ' KillFile A,        ' MakeDir A,
+' save-file A,       ' edibye A,
 \ Exits
-cdone           sdone           xdone           ldone
-undo            undo
+' cdone A,           ' sdone A,           ' xdone A,           ' ldone A,
+' undo A,            ' undo A,
 \ Screens
-n               b               n               b
-w               a               jumpscreen      do_view
-clrscr          insscr          delscr          mark
+' n A,               ' b A,               ' n A,               ' b A,
+' w A,               ' a A,               ' jumpscreen A,      ' do_view A,
+' clrscr A,          ' insscr A,          ' delscr A,          ' mark A,
 \ Lines
-line>buf        buf>line        copyline        clrright
-backline        delline         instline        clrline
-split           split           lfsplit         lfsplit
-noop
+' line>buf A,        ' buf>line A,        ' copyline A,        ' clrright A,
+' backline A,        ' delline A,         ' instline A,        ' clrline A,
+' split A,           ' split A,           ' lfsplit A,         ' lfsplit A,
+' noop A,
 
 \ Table of actions continue                            08apr95py
 \ Chars
-char>buf        buf>char        copychar
-backspace       delchar         instchar
-ecr             ecr
+' char>buf A,        ' buf>char A,        ' copychar A,
+' backspace A,       ' delchar A,         ' instchar A,
+' ecr A,             ' ecr A,
 \ Cursor
-curup           curdown         curleft         currite
-+tab            -tab            top             >""end
+' curup A,           ' curdown A,         ' curleft A,         ' currite A,
+' +tab A,            ' -tab A,            ' top A,             ' >""end A,
 \ Specials
-edifind         repfind         setimode        clrimode
-do_getid        \ DoKontrol       ( ^N^O )          do_copyr
-( do_menuhelp     mousehelp       f1-10help  )  noop
+' edifind A,         ' repfind A,         ' setimode A,        ' clrimode A,
+' do_getid A,        \ DoKontrol       ( ^N^O )          do_copyr
+( do_menuhelp     mousehelp       f1-10help  )  ' noop A,
 \ Windows
-Wdup              WShadow          noop
-( 8x8font         8x16font )       (putchar        [
+' Wdup A,              ' WShadow A,          ' noop A,
+( 8x8font         8x16font )       ' (putchar A,
 
 \ !nokey edierror edicatch                             19may97py
 
@@ -681,7 +681,9 @@ Variable nokey?    nokey? off
   scredit curoff  catch
   updated? r> and IF  scredit slided  THEN
   2 case? IF  scredit close  EXIT  THEN
-  IF "error @ dup IF edierror 0 THEN "error ! THEN
+  IF [defined] "error [IF]
+	  "error @ dup IF edierror 0 THEN "error !
+      [THEN] THEN
   scredit curon ;
 
 \ Key event                                            14sep97py
@@ -703,7 +705,11 @@ include edit.fs
 
 \ Installing the Editor                                05mar00py
 
-: fit?  isfile@ #80 > IF  handle 0= IF open THEN  THEN ;
+[defined] VFXForth [IF]
+    : fit?  ;
+[ELSE]
+    : fit?  isfile@ #80 > IF  handle 0= IF open THEN  THEN ;
+[THEN]
 : pushes ;           hmacro
 : settings  ( flag -- )  ?clearbuffer ;
 : setmenu ;          hmacro
@@ -745,7 +751,7 @@ include edit.fs
 
 \ Entering the Editor                                  28dec99py
 
-: view  ( -- )  name count
+: view  ( -- )  bl word count
   ?clearbuffer find! >view
   fit? isfile@ str? 0= IF  fview  ELSE  0  THEN  r# ! vc ;
 : view-name ( view addr u -- )  ?clearbuffer find! (view scr !
@@ -754,27 +760,29 @@ include edit.fs
 
 \ cold: bye:                                           27feb00py
 
+[defined] VFXForth 0= [IF]
 cold: r# off  1 scr ! ;
 
 bye:  r> id push ( linebuffer push )
       (findbox push insbuf push \ assigned push
       ( linebuffer off ) insbuf off \ assigned off
       id off  (findbox off >r ;
+[THEN]
 
 \ ed                                                   09dec01py
 
 | : get# ( string -- string false / # true ) dup c@ dup 0= ?EXIT
     drop number?  dup 0= ?EXIT  0>  IF  drop  THEN  true ;
 | : (edfile ( addr count -- )
-    scratch place scratch count 2dup 2dup '/ -scan nip /string
+    scratch place scratch count 2dup 2dup '/' -scan nip /string
     \use isfile@ assign open 1 scr !  0 r# ! ;
-: ed ( {"name.suffix" [scr/line] [char]} -- ) true >r name count
-  BEGIN  2dup '. scan  nip WHILE
+: ed ( {"name.suffix" [scr/line] [char]} -- ) true >r bl word count
+  BEGIN  2dup '.' scan  nip WHILE
          r>  IF  finstall  THEN  false >r
          ['] (edfile catch  dup
-         IF  ( isfile@ DisposHandle ) forth.fb  THEN  throw
-         name get#
-         IF  scr ! name get#  IF  r# ! name  THEN  THEN  count
+         IF  [defined] forth.fb [IF] forth.fb [THEN]  THEN  throw
+         bl word get#
+         IF  scr ! bl word get#  IF  r# ! bl word  THEN  THEN  count
          ['] edi_open catch UNTIL THEN
   >in @ #tib @ <> - negate >in +!  drop rdrop ;
 

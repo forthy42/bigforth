@@ -869,7 +869,7 @@ how:    : read-files ( addr attr -- w1 .. wn n )
 \ file listbox                                         10apr04py
 
         : read-dir  ( addr attr -- w1 .. wn n )
-          over >len '/ -scan + dup push '* swap w!
+          over >len '/' -scan + dup push '*' swap w!
           fsfirst  0 >r
           BEGIN  pause  0=  WHILE  dir?
                  dtaname >len s" ." compare 0<>
@@ -934,14 +934,14 @@ how:    AVariable file<=
 
         : !path  ( addr len -- )
           2dup  s" ."  compare
-          IF    path get  >r scratch r@ move scratch r@ '/ -scan
+          IF    path get  >r scratch r@ move scratch r@ '/' -scan
                 2over s" .." compare 0=
-                IF    2swap 2drop 2dup + >r 1- '/ -scan
+                IF    2swap 2drop 2dup + >r 1- '/' -scan
                       over + r> over - r@ swap dup >r F delete
                       r> r> swap -
                 ELSE  2 pick 1+ r> + >r r@ swap /string
                       s" /" 2over insert insert scratch r> THEN
-[defined] x11 [IF]     over c@ '/ = IF  path assign  ELSE  2drop  THEN
+[defined] x11 [IF]     over c@ '/' = IF  path assign  ELSE  2drop  THEN
 [ELSE]          path assign   [THEN]
           ELSE  2drop  THEN
           sort-title get reload ;
@@ -965,10 +965,10 @@ how:    AVariable file<=
         : >real-path ( addr n1 -- addr' n2 )
 [defined] win32 [IF]
           over 1+ c@ ': <>
-[ELSE]    over c@ '/ <>   [THEN]
+[ELSE]    over c@ '/' <>   [THEN]
           IF  2dup  pad dup 0 dgetpath drop >len
-[defined] win32 [IF] 2dup bounds ?DO  I c@ '\ = IF  '/ I c!  THEN LOOP
-[THEN]        dup IF  2dup + '/ swap c! 1+  THEN
+[defined] win32 [IF] 2dup bounds ?DO  I c@ '\' = IF  '/' I c!  THEN LOOP
+[THEN]        dup IF  2dup + '/' swap c! 1+  THEN
               dup >r + swap move r> + nip pad swap
           THEN ;
         : sort-menu:    ( -- o )

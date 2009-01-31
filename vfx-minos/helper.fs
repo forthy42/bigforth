@@ -25,6 +25,8 @@ also memory definitions
 : DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
 : Handle! ( len addr -- )  >r NewPtr r> ! ;
 : HandleOff ( addr -- )  dup @ free throw off ;
+: Hlock ( addr -- ) drop ;
+: Hunlock ( addr -- ) drop ;
 : SetHandleSize ( addr size -- ) swap >r
     r@ @ swap resize throw r> ! ;
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
@@ -57,7 +59,9 @@ synonym #! \
 : u<= u> 0= ;
 : @+ dup @ swap cell+ ;
 : rdrop postpone r> postpone drop ; immediate
-: i' rp@ cell+ 2@ swap - $80000000 xor ;
+: i' r> 2r> 2dup 2>r rot >r swap - $80000000 xor ;
+: +i' negate 2r> rot r> + dup >r -rot 2>r 0< ;
+: ith  postpone I postpone cells postpone + postpone @ ; immediate
 
 : list> ( thread -- element )
   BEGIN  @ dup  WHILE  dup r@ execute
@@ -185,7 +189,7 @@ synonym 0" z"
 
 \ date & time conversion in files
 
-extern: int localtime ( char * );
+LocalExtern: localtime int localtime ( char * );
 
 Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
 
@@ -205,6 +209,67 @@ Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
         r> 0 max #11 min dup dup + + /string 3 min
         over + 1- DO  I c@ hold -1  +LOOP  0 # #  #> ;
 
+\ dictionary listing functions
+
+: /ior ( ret -- ret/-ior ) dup -1 =
+    IF drop errno noop @ negate  THEN ;
+: glibc ;
+
+LocalExtern: _open int open( int , int , int );
+LocalExtern: _close int close( int );
+LocalExtern: getdirentries int getdirentries( int , int , int , int );
+Variable dent-basep
+: getdents  dent-basep  getdirentries
+    dup 0= IF  dent-basep off  THEN ;
+LocalExtern: lxstat int lxstat( int , int , int );
+LocalExtern: xstat int xstat( int , int , int );
+: lstat  swap 1 -rot lxstat ;     ( buf name -- r )
+: stat   swap 1 -rot xstat ;      ( buf name -- r )
+LocalExtern: fnmatch int fnmatch( int , int , int );
+LocalExtern: getcwd int getcwd( int , int );
+LocalExtern: fdelete int unlink( int );
+LocalExtern: dcreate int mkdir( int );
+
+: dgetpath ( buffer drive -- ior )  drop $100 getcwd 0= ;
+
+: ?diskabort throw ;
+
+Variable dirbuf dirbuf off
+Variable dirpath
+Variable direndp
+Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
+Create pattern $80 allot
+| dta 1 cells + AConstant diroff
+| dta 2 cells + AConstant dirsize
+| dta 3 cells + AConstant dirfd
+: dirstat ( -- 0/ior )  dta @ >len 1+ direndp @ swap move
+  dta $10 +  dirpath @  2dup stat
+  IF  lstat  ELSE  2drop 0  THEN ;
+: ?allot ( n addr -- )  dup @ IF  2drop EXIT  THEN
+  [ also Memory ]  Handle! [ previous ] ;
+
+: fsend ( -- )  dirfd @ ?dup IF  _close drop  THEN  dirfd off ;
+: fsnext ( -- ior )
+  BEGIN  diroff @ dirsize @ =
+         IF  diroff off
+             dirfd @ dirbuf @ $400 getdents
+             dup 0 max dirsize ! /ior dup 0<=
+             IF  fsend dup 0= or
+                 EXIT  THEN  drop
+         THEN  0  diroff @ dirbuf @ +
+               [defined] osx [IF] 4 + [ELSE] 8 + [THEN] dup w@ diroff +!
+ [defined] glibc [IF] 3 + [ELSE] [defined] osx [IF] 4 + [ELSE] 2 + [THEN] [THEN]
+         dup dta !  pattern -rot swap fnmatch 0= UNTIL
+  dirstat ;
+
+: fsfirst ( C$ attr -- ior )   drop
+  dup dirpath !  diroff off  dirsize off
+  $400 dirbuf ?allot
+  >len '/' -scan over + dup >r >len 1+ pattern swap move
+  '.' r@ c! 0 r@ 1+ c! r> direndp !
+  0 0 _open
+  dup dirfd ! dup /ior swap -1 = ?EXIT  drop  fsnext ;
+   
 \ special characters
 
 $08 Constant #bs         $0D Constant #cr
@@ -251,6 +316,7 @@ Defer idle ' 2drop IS idle
 
 \ constant adders
 
+: 8+ 8 + ;
 : 6+ 6 + ;
 : 3+ 3 + ;
 
@@ -325,3 +391,21 @@ Defer char@ ' count IS char@
     over = dup IF nip THEN ;
 
 0 value script?
+
+\ sorting
+
+: pivot@ ( addr u -- addr u pivot ) 2dup 2/ cells + @ ; macro
+Defer lex       ' <= IS lex
+
+: split< ( addr u pivot -- addr' u' addr" u" )
+  >r 2dup cells bounds 0 r> 2swap
+    ?DO
+	nip I swap
+	dup I @ lex
+	IF  BEGIN  -cell +I' ?LEAVE  I' @ over lex  UNTIL
+	    I @ I' @ I ! I' !  THEN
+	nip I' swap
+    cell +LOOP  drop >r
+  r@ 2 pick - cell/ tuck - r> swap ;
+: sort ( addr u -- )
+  BEGIN  dup 1 >  WHILE  pivot@ split< recurse  REPEAT  2drop ;

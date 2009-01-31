@@ -1,4 +1,4 @@
-\*             *** Streamfile-Editor ***               01sep97py
+/*             *** Streamfile-Editor ***               01sep97py
 
   Wie versprochen, ist hier ein voll in den Screen-Editor 
 eingebundener Streamfile-Editor.
@@ -15,7 +15,7 @@ auch wie eine Screenfile formatiert, wenn auch die logischen
 Einheiten nicht alle gleich lang sind. Auf alle Faelle laesst 
 man sich seltener hinreissen, neue logische Einheiten zu 
 erzeugen, da es so einfach ist, eine neue physikalische (die 
-Zeile) aufzumachen.    *\
+Zeile) aufzumachen.    */
 
 \ Datenstrukturen                                      27apr91py
 
@@ -40,7 +40,7 @@ forward str:view
 Variable do!schib
 Variable :done
 
-?head @ ?head off
+[defined] ?head [IF] ?head @ ?head off [THEN]
 
 scredit class stredit
     early !cursor
@@ -59,7 +59,7 @@ public:
     early maketitle
 class;
 
-?head !
+[defined] ?head [IF] ?head ! [THEN]
 
 stredit implements
     Variable drawbuf
@@ -96,7 +96,7 @@ stredit implements
 
     : updated?  changed @ ;
     : title$ ( -- string ) s" " scratch$ $!  edifile @ ?dup
-        IF  filename >len scratch$ $+!  THEN
+        IF  [defined] filename [IF] filename >len scratch$ $+! [THEN] THEN
         S"   Line # " scratch$ $+!  base push decimal
         line#@ 0 <# bl hold # # # #S #> scratch$ $+!
         update$ scratch$ $+!  scratch$ $@ ;
@@ -165,7 +165,7 @@ class;
 
 \ open window                                          02jul94py
 
-?head @ ?head off
+[defined] ?head [IF] ?head @ ?head off [THEN]
 
 : opentwind ( -- )
     screen self menu-window new menu-window with
@@ -182,7 +182,7 @@ class;
         c/l 1+ l/s 2* geometry show
     endwith ;
 
-?head !
+[defined] ?head [IF] ?head ! [THEN]
 
 : cur       stredit postpone pos@ ; immediate
 : pos!      stredit postpone pos! ; immediate
@@ -217,7 +217,7 @@ class;
 
 \ Aktionen auf thisline                                27apr91py
 
-: Lalign  ( len -- alen ) -$10 and $18 + ;
+: Lalign  ( len -- alen ) $-10 and $18 + ;
 : LineLen ( -- len )  stredit cols @ 1- ;
 
 Variable ?reformat
@@ -240,7 +240,7 @@ Forward FormatPar
 : InsChar  ( char -- )  dup xc-size >r
   r@ +LineLen Liner@ over dup r@ + rot move xc!+ drop r> LineLen+! ;
 : InsString  ( addr count -- )  dup +LineLen
-  Liner@ >r under 2dup + r> move dup >r move r> LineLen+! ;
+  Liner@ >r tuck 2dup + r> move dup >r move r> LineLen+! ;
 : InsSpaces  ( len -- )  thisline @ @ 8+ c@ -
   dup 0> IF    dup +LineLen Line@ + over blank LineLen+!
          ELSE  drop  THEN ;
@@ -330,7 +330,9 @@ Variable epos
   thisline push  loadfile push
   line#@ >r cur >r
   stredit edifile @ >r epos off
-  r@ filehandle @ 0< IF  r@ r/w (open throw  THEN
+  [defined] filehandle [IF]
+      r@ filehandle @ 0< IF  r@ r/w (open throw  THEN
+  [THEN]
   0. r@ resize-file throw
   sbuf# NewHandle >r  Top thisline @
   BEGIN  dup  WHILE  dup @ 8+ count r> r> 2dup >r >r
@@ -360,11 +362,11 @@ Variable epos
 : edone   ( tf string -- )
   line#@ invert cur r# ! scr ! :done on done ;
 : cdone   ( -- )    ??done  cancel-alert  1 = ?EXIT
-  stredit changed off  false " canceled"  edone ;
-: sdone   ( -- )    ??done  false    " saved"     edone ;
+  stredit changed off  false c" canceled"  edone ;
+: sdone   ( -- )    ??done  false    c" saved"     edone ;
 : xdone   ( -- )    ??done  false stredit update$ pad place
   pad edone ;
-: ldone   ( -- )    ??done  true   " loading"     edone ;
+: ldone   ( -- )    ??done  true   c" loading"     edone ;
 
 \ Cursorbewegung                                       04may91py
 
@@ -564,7 +566,7 @@ forward replace-it'
   0< IF  ret@ @line buf>line EXIT  THEN
   retscr @ line#@ = 0= ?EXIT
   cur >r 0 pos! ret@ pad place
-  line@ under >ret  DelString
+  line@ tuck >ret  DelString
   pad count InsString  linemodified r> pos! ;
 
 \ setmaxlen                                            17may91py
@@ -592,9 +594,9 @@ forward replace-it'
 : extractlines ( addr n -- addr' n' )  LineLen >r
   BEGIN  dup r@ >  WHILE
          over r@ bl -scan dup 0= IF  drop LineLen  THEN
-         under (Line! thisline @ AddLine
+         tuck (Line! thisline @ AddLine
          1 line#+! /string
-         under pad 1+ swap move  pad 1+ swap
+         tuck pad 1+ swap move  pad 1+ swap
   REPEAT  rdrop ;
 : reformat ( -- -deleted )  pad 1+ 0  0 >r
   BEGIN  line@ concline  line@ inpar?  WHILE
@@ -610,41 +612,41 @@ forward replace-it'
 
 \ Table of actions                                     22apr91py
 
-?head @ 0 ?head !
-Table: (straction
+[defined] ?head [IF] ?head @ 0 ?head ! [THEN]
+Create (straction
 \ File
-UseFile         MakeFile        KillFile        MakeDir
-saveText        edibye
+' UseFile A,         ' MakeFile A,        ' KillFile A,        ' MakeDir A,
+' saveText A,        ' edibye A,
 \ Exits
-cdone           sdone           xdone           ldone
-undo            undo
+' cdone A,           ' sdone A,           ' xdone A,           ' ldone A,
+' undo A,            ' undo A,
 \ Screens
-n               b               n               b
-w               a               jumpscreen      do_view
-noop            noop            noop            mark
+' n A,               ' b A,               ' n A,               ' b A,
+' w A,               ' a A,               ' jumpscreen A,      ' do_view A,
+' noop A,            ' noop A,            ' noop A,            ' mark A,
 \ Lines
-line>buf        buf>line        copyline        clrright
-backline        delline         instline        clrline
-split           split           lfsplit         lfsplit
-FormatPar
+' line>buf A,        ' buf>line A,        ' copyline A,        ' clrright A,
+' backline A,        ' delline A,         ' instline A,        ' clrline A,
+' split A,           ' split A,           ' lfsplit A,         ' lfsplit A,
+' FormatPar A,
 \ Table of actions continue                            18mar89py
 \ Chars
-char>buf        buf>char        copychar
-backspace       delchar         instchar
-cr              cr
+' char>buf A,        ' buf>char A,        ' copychar A,
+' backspace A,       ' delchar A,         ' instchar A,
+' cr A,              ' cr A,
 \ Cursor
-Prevline        NextLine        curleft         currite
-+tab            -tab            top             bottom
+' Prevline A,        ' NextLine A,        ' curleft A,         ' currite A,
+' +tab A,            ' -tab A,            ' top A,             ' bottom A,
 \ Specials
-edifind         repfind         setimode        clrimode
-do_getid        \ DoKontrol       (  )          do_copyr
-( do_menuhelp     mousehelp       f1-10help  )  setmaxlen
+' edifind A,         ' repfind A,         ' setimode A,        ' clrimode A,
+' do_getid A,        \ DoKontrol       (  )          do_copyr
+( do_menuhelp     mousehelp       f1-10help  )  ' setmaxlen A,
 \ Windows
-noop            stamp           stamp
+' noop A,            ' stamp A,           ' stamp A,
 \ 8x8font         8x16font
-(putchar        [
+' (putchar A,
 
 : setup-edit ( addr n -- ) swap
     stredit with s" " add  1+ cols ! ^ endwith ;
 
-?head !
+[defined] ?head [IF] ?head ! [THEN]
