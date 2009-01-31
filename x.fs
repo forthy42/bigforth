@@ -1957,15 +1957,15 @@ struct{
 
 [defined] nxcall [IF]
 : XDestroyImage ( image -- )
-    dup XImage destroy_image @ 1 nxcall drop drop ;
+    dup XImage destroy_image @ 1 nxcall drop ;
 : XGetPixel ( y x image -- pixel )
-    dup XImage get_pixel @ 2 nxcall >r drop 2drop r> ;
+    dup XImage get_pixel @ 2 nxcall ;
 : XPutPixel ( pixel y x image -- pixel )
-    dup XImage put_pixel @ 4 nxcall >r 2drop 2drop r> ;
+    dup XImage put_pixel @ 4 nxcall  ;
 : XSubImage ( h w y x image -- )
-    dup XImage sub_image @ 5 nxcall 2drop 2drop 2drop ;
+    dup XImage sub_image @ 5 nxcall drop ;
 : XAddPixel ( value image -- )
-    dup XImage get_pixel @ 2 nxcall drop 2drop ;
+    dup XImage get_pixel @ 2 nxcall drop ;
 [ELSE]
 Code XDestroyImage ( image -- )
      AX push  0 XImage destroy_image AX D) call

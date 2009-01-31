@@ -4,18 +4,18 @@
 minos
 library: libpng12.so.0
 
-    extern: void * png_create_read_struct( int , int , char * , int );
-    extern: void * png_create_info_struct( char * );
-    extern: void png_destroy_read_struct( char * , char * , char * );
-    extern: void png_read_png( char * , int , char * , char * );
-    extern: void png_init_io( char * , char * );
-    extern: void * png_get_rows( char * , char * );
-    extern: void png_read_end( char * , char * );
-    extern: void png_free_data( int , int , char * , char * );
+    LocalExtern: png_create_read_struct void * png_create_read_struct( int , int , char * , int );
+    LocalExtern: png_create_info_struct void * png_create_info_struct( char * );
+    LocalExtern:  png_destroy_read_struct void png_destroy_read_struct( char * , char * , char * );
+    LocalExtern: png_read_png void png_read_png( char * , int , char * , char * );
+    LocalExtern: png_init_io void png_init_io( char * , char * );
+    LocalExtern: png_get_rows void * png_get_rows( char * , char * );
+    LocalExtern: png_read_end void png_read_end( char * , char * );
+    LocalExtern: png_free_data void png_free_data( int , int , char * , char * );
     
-    extern: void * fdopen( char * , int );
-    AliasedExtern: _dup int dup( int , int );
-    extern: int setjmp( void * );
+    LocalExtern: fdopen void * fdopen( char * , int );
+    LocalExtern: _dup int dup( int , int );
+    LocalExtern: setjmp int setjmp( void * );
 
     : init-png-lib ; \ not supported in VFX Forth
     true value png3
@@ -183,7 +183,6 @@ $FF w,
     data w h * 3* <>.24
     data w h * 3* w h
     create-pixmap 0 -rot ;
-
 
 : read-png ( fd -- pixmap mask w h )
     read-png-image 4 and IF

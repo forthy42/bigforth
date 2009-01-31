@@ -92,20 +92,31 @@ AVariable icons
   0= IF  icons @ here icons ! A, 0 , ," ficon-does
   ELSE   A, ficon@-does '"' parse 2drop  THEN ;
 
-ficon: dir-icon icons/dir"
-ficon: diro-icon icons/diropen"
-ficon: file-icon icons/file"
-ficon: sym-icon icons/sym"
+[defined] VFXForth [IF]
+ficon: dot-dir' icons/dot-dir"
+ficon: dotdot-dir' icons/dotdot-dir"
+ficon: diro-icon' icons/diropen"
+ficon: term-w' icons/script"
+[ELSE]
 ficon: dot-dir icons/dot-dir"
 ficon: dotdot-dir icons/dotdot-dir"
+ficon: diro-icon icons/diropen"
 ficon: term-w icons/script"
+[THEN]
+ficon: dir-icon icons/dir"
+ficon: file-icon icons/file"
+ficon: sym-icon icons/sym"
 
 \ File icons                                           10apr04py
 
 : icon-table ( -- )  Create
   DOES> ( i -- icon )  swap $1F and cells + perform ;
 
-icon-table ficons
+[defined] VFXForth [IF]
+    icon-table ficons'
+[ELSE]
+    icon-table ficons
+[THEN]
 ' file-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' dir-icon  A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' sym-icon  A,  ' file-icon A,
@@ -114,6 +125,13 @@ icon-table ficons
 ' diro-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' sym-icon  A,  ' file-icon A,
 ' file-icon A,  ' file-icon A,  ' file-icon A,  ' file-icon A,
+[defined] VFXForth [IF]
+    : ficons ficons' ;
+    : dot-dir dot-dir' ;
+    : dotdot-dir dotdot-dir' ;
+    : diro-icon diro-icon' ;
+    : term-w  term-w' ;
+[THEN]
 : set-pixmaps ( pm_0 .. pm_i i -- )
   1- FOR  Pixmaps I cells + !  NEXT
   redraw-all @ redraw-all on  screen draw redraw-all ! ;
