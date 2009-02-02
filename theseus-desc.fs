@@ -309,7 +309,7 @@ descriptor class float-des
         dup F bind edit-string ;
     : null ( -- f ) 0e ;
     : make ( -- f )  get ;
-    : dump ( -- ) get fe. ." ]F ( MINOS ) " ;
+    : dump ( -- ) base push decimal get fe. ." ]F ( MINOS ) " ;
 class;
 
 previous

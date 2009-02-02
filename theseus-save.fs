@@ -130,9 +130,10 @@ Defer do-bug
         cr ." script? [IF]  main  [THEN]"
     THEN ;
 
-also dos
+also dos also float
 
 : dump-file ( addr u -- )
+    6 set-precision
     r/w exe output-file
     ." #! " 0 arg type cr
     ." \ automatic generated code" cr
@@ -142,4 +143,4 @@ also dos
     dump-all
     cr ." previous previous previous" cr eot ;
 
-previous
+previous previous
