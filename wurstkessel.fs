@@ -91,16 +91,20 @@ Create nextstate state# allot
 	>r over source + c@ r@ c@ xor -rot dup >r + $3F and r> r> 8 + LOOP
     drop ;
 
-: bytes2sum ( b1 .. b8 -- ud ) >r >r >r >r  >r >r >r >r  0.
+: bytes2sum ( ud b1 .. b8 -- ud' ) >r >r >r >r  >r >r >r >r
     r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst
     r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst ;
 
 Create round#  1 , 3 , 7 , 13 , 19 , 23 , 31 , 47 ,
 DOES> swap 7 and cells + @ ;
 
+: xors ( addr1 addr2 n -- ) bounds ?DO
+    dup @ I @ xor I ! cell+  cell +LOOP  drop ;
+
 : round ( n -- ) dup 1- swap  8 0 DO
+	state I 2* cells + 2@ 2swap
 	I mix2bytes 2>r bytes2sum 2r> 2swap nextstate I 2* cells + 2!
-    LOOP 2drop  nextstate state state# move ;
+    LOOP 2drop  state source state# xors nextstate state state# move ;
 
 : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
@@ -153,8 +157,7 @@ $6DF5EF6205D55E03. 2, $8859C59812F47028. 2, $F7795F00874ACED7. 2, $5FBE66944DBEC
 
 Create message    state# allot
 
-: xormsg ( -- )  16 0 DO
-    message Ith state Ith xor message I cells + !  LOOP ;
+: xormsg ( -- ) state message state# xors ;
 
 : .xormsg ( -- )  xormsg
     message state# wurst-out write-file throw ;
