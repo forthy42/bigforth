@@ -1,28 +1,25 @@
 \ Wurstkessel data from www.random.org
 
 cell 8 = [IF]
-    ' , Alias 64,
+    : 64, drop , ;
     ' @ Alias 64@
     ' ! Alias 64!
-    ' rot alias 64swap
-    ' -rot alias -64swap
-    [IFDEF] Code
-	Code wurst ( u1 u2 -- u3 )
-	    Next end-code
-    [ELSE]
-	: wurst ( u1 u2 -- u3 ) >r 0 2dup d+ r> 0 d+ + ;
-    [THEN]
+    ' rot Alias 64swap
+    ' -rot Alias -64swap
+    : wurst ( u1 u2 -- u3 ) >r 0 2dup d+ r> 0 d+ + ;
+    ' cells Alias 64s
 [ELSE]
     ' 2swap alias 64swap
     ' 2swap alias -64swap
     : 64,  swap 2, ;
     : 64@  2@ swap ; macro
     : 64!  >r swap r> 2! ; macro
+    ' 8* Alias 64s
     [IFDEF] Code
 	Code wurst ( ud1 ud2 -- ud3 )
 	    DX pop  CX pop  SP ) BX xchg
-	    BX BX adc  AX AX adc
-	    DX BX add  CX AX adc
+	    BX BX add  CX CX adc
+	    DX BX adc  CX AX adc
 	    0 # BX adc  0 # AX adc  SP ) BX xchg
 	    Next end-code  macro
     [ELSE]
@@ -98,12 +95,12 @@ $168A44E4E0FA0504. 64, $42A75FDDE3BA8C01. 64, $FB48A92AE2DAD4D1. 64, $86121899DC
 $10F72AA5B40A344A. 64, $E4926B1781F8C90C. 64, $4F4C3F28EDAD7518. 64, $744C57C4DB14A013. 64, 
 $450FC24B306136AE. 64, $DBE8614B7E18115C. 64, $A4CD66811B0F87FC. 64, $31984500099D06F5. 64, 
 here rngs -
-DOES> swap 2* cells + 64@ ;
+DOES> swap 64s + 64@ ;
 constant rng-size
 
 \ wurstkessel algorithm
 
-8 2* cells Constant state#
+8 64s Constant state#
 
 Create source    state# allot
 Create state     state# allot
@@ -124,16 +121,18 @@ DOES> swap 7 and cells + @ ;
     dup @ I @ xor I ! cell+  cell +LOOP  drop ;
 
 : round ( n -- ) dup 1- swap  8 0 DO
-	state I 2* cells + 64@ -64swap
-	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 2* cells + 64!
+	state I 64s + 64@ -64swap
+	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
     LOOP 2drop  state source state# xors nextstate state state# move ;
 
 : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
-: .16 ( ud -- ) base push hex <# 16 0 DO # LOOP #> type ;
+: .16 ( u[d] -- )
+    [ cell 8 = ] [IF] 0 [THEN]
+    base @ >r hex <# 16 0 DO # LOOP #> type r> base ! ;
 
-: .state  ( -- ) 8 0 DO  state  I 2* cells + 64@ .16  LOOP ;
-: .source ( -- ) 8 0 DO  source I 2* cells + 64@ .16  LOOP ;
+: .state  ( -- ) 8 0 DO  state  I 64s + 64@ .16  LOOP ;
+: .source ( -- ) 8 0 DO  source I 64s + 64@ .16  LOOP ;
 
 \ wurstkessel file functions
 
@@ -159,10 +158,14 @@ $9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502
 
 : hash-init
     state-init  state state# move
-    size? swap source 2!  0. source 2 cells + 2! ;
+    [ cell 4 = ] [IF]
+	size? swap source 64!  0. source 1 64s + 64!
+    [ELSE]
+	size? drop source 64!  0 source 1 64s + 64!
+    [THEN] ;
 
 : wurst-hash ( rounds -- )  hash-init
-    source state# 4 cells /string wurst-in read-file throw  4 cells +  over rounds
+    source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
     BEGIN  state# =  WHILE
 	    source state# erase  source state# wurst-in read-file throw
 	    over rounds  REPEAT
@@ -190,8 +193,12 @@ Create message    state# allot
     wurst-salt  state# wurst-out write-file throw ;
 
 : encrypt-size ( -- remain )
-    size? swap message 2!  0. message 2 cells + 2!
-    message state# 4 cells /string wurst-in read-file throw ;
+    [ cell 4 = ] [IF]
+	size? message 64!  0. message 1 64s + 64!
+    [ELSE]
+	size? drop message 64!  0 message 1 64s + 64!
+    [THEN]
+    message state# 2 64s /string wurst-in read-file throw ;
 
 : encrypt-read ( -- )
     message state# erase  message state# wurst-in read-file throw ;
@@ -200,7 +207,7 @@ Create message    state# allot
     message source state# move ;
 
 : wurst-encrypt ( rounds -- )  encrypt-init
-    encrypt-size  4 cells + over rounds
+    encrypt-size  2 64s + over rounds
     BEGIN
 	+entropy  .xormsg  state# =  WHILE
 	    encrypt-read  over rounds  REPEAT
@@ -214,7 +221,7 @@ Create message    state# allot
 
 : .xormsg-size ( -- )  xormsg
     message 64@ outsize 2!
-    message state# 4 cells /string
+    message state# 2 64s /string
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
 
