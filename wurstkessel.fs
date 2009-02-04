@@ -20,7 +20,8 @@ cell 8 = [IF]
 	    DX pop  CX pop  SP ) BX xchg
 	    BX BX add  CX CX adc
 	    DX BX adc  CX AX adc
-	    0 # BX adc  0 # AX adc  SP ) BX xchg
+	    0 # BX adc  0 # AX adc
+	    SP ) BX xchg
 	    Next end-code  macro
     [ELSE]
 	: wurst ( ud1 ud2 -- ud3 )  2>r
@@ -159,7 +160,7 @@ $9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502
 : hash-init
     state-init  state state# move
     [ cell 4 = ] [IF]
-	size? swap source 64!  0. source 1 64s + 64!
+	size?      source 64!  0. source 1 64s + 64!
     [ELSE]
 	size? drop source 64!  0 source 1 64s + 64!
     [THEN] ;
