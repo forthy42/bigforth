@@ -124,7 +124,9 @@ DOES> swap 7 and cells + @ ;
 : round ( n -- ) dup 1- swap  8 0 DO
 	state I 64s + 64@ -64swap
 	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
-    LOOP 2drop  state source state# xors nextstate state state# move ;
+    LOOP 2drop
+    state source state# xors
+    nextstate state state# move ;
 
 : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
@@ -157,6 +159,8 @@ Create state-init
 $FEC967C32E46440F. 64, $3F63157E14F89982. 64, $F7364A7F8083EFFA. 64, $FC62572A44559951. 64,
 $9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502F22741. 64,
 
+Create message    state# allot
+
 : hash-init
     state-init  state state# move
     [ cell 4 = ] [IF]
@@ -165,12 +169,18 @@ $9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502
 	size? drop source 64!  0 source 1 64s + 64!
     [THEN] ;
 
+: +entropy ( -- )
+    message source state# xors ;
+
+: encrypt-read ( -- )
+    message state# erase  message state# wurst-in read-file throw ;
+
 : wurst-hash ( rounds -- )  hash-init
     source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
     BEGIN  state# =  WHILE
-	    source state# erase  source state# wurst-in read-file throw
+	    encrypt-read +entropy
 	    over rounds  REPEAT
-    drop .state ;
+    drop .source ;
 
 \ wurstkessel encryption
 
@@ -181,12 +191,8 @@ Create wurst-salt
 $39A157A31F7D62BC. 64, $51C3BD3BA4F4F803. 64, $21D7D0ED16A5243A. 64, $3C80195D8D80874F. 64,
 $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944DBECB7F. 64,
 
-Create message    state# allot
-
-: xormsg ( -- ) state message state# xors ;
-
-: .xormsg ( -- )  xormsg
-    message state# wurst-out write-file throw ;
+: source> ( -- )
+    source state# wurst-out write-file throw ;
 
 : encrypt-init ( -- )
     wurst-key   state  state# move
@@ -201,16 +207,10 @@ Create message    state# allot
     [THEN]
     message state# 2 64s /string wurst-in read-file throw ;
 
-: encrypt-read ( -- )
-    message state# erase  message state# wurst-in read-file throw ;
-
-: +entropy ( -- )
-    message source state# move ;
-
 : wurst-encrypt ( rounds -- )  encrypt-init
     encrypt-size  2 64s + over rounds
     BEGIN
-	+entropy  .xormsg  state# =  WHILE
+	+entropy  source>  state# =  WHILE
 	    encrypt-read  over rounds  REPEAT
     drop ;
 
@@ -220,13 +220,13 @@ Create message    state# allot
 
 2Variable outsize
 
-: .xormsg-size ( -- )  xormsg
-    message 64@ outsize 2!
+: .xormsg-size ( -- )  source message state# xors
+    message 64@ [ cell 8 = ] [IF] 0 [THEN] outsize 2!
     message state# 2 64s /string
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
 
-: .xormsg' ( -- )  xormsg
+: .xormsg' ( -- )  source message state# xors
     message state#
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
