@@ -15,6 +15,7 @@ Variable do-done do-done off
 Variable closing closing off
 
 [defined] VFXforth [IF]
+    also Forth definitions
     defer (block
     defer block
     defer buffer
@@ -53,6 +54,7 @@ Variable closing closing off
     : str? ( file -- flag )  drop true ;
     : (#load ( n >in -- )  2drop isfile@ include-file ;
     : (load  2drop true abort" VFX doesn't support blocks!" ;
+    minos definitions previous
 [ELSE]
 : purgebuf prev @ emptybuf ;
 [THEN]
@@ -210,10 +212,10 @@ how:
 \    backing :: keyed
 class;
 
-: (menu"  "lit count edimenu-entry new ;               restrict
-: menu"   postpone (menu" ," ;               immediate restrict
-: (label" "lit count       menu-label new ;          restrict
-: label"  postpone (label" ," ;              immediate restrict
+: (menu"  edimenu-entry new ;
+: menu"   '"' parse postpone SLiteral postpone (menu" ; immediate restrict
+: (label" menu-label new ;
+: label"  '"' parse postpone SLiteral postpone (label" ; immediate restrict
 
 : file-menu: ( -- o )
     label"  File System"

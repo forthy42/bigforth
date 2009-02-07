@@ -546,7 +546,7 @@ Variable file
 
 \ (use                                                 19jun02py
 [defined] VFXForth [IF]
-    : \use ( addr count -- )  2drop ; \ stub
+    : \use ( addr count -- )  r/w open-file throw isfile ! ;
     : (use ( flag -- )  drop ; \ stub
 [ELSE]
 : \use ( addr count -- )  here place bl here count + c!
@@ -732,8 +732,8 @@ include edit.fs
 [THEN]
 
 \ Entering the Editor                                  03dec04py
-: edi_open  o@ & scredit @ =  o@ & stredit @ = or
-  IF  scredit callwind self  bind term  THEN
+: edi_open  ^ IF o@ & scredit @ =  o@ & stredit @ = or
+  IF  scredit callwind self  bind term  THEN THEN
   isfile@ str?  IF  opentwind
   ELSE  scr @ capacity dup 0= IF  1 more  1+  THEN
         1- umin scr !  wi_open  THEN ;

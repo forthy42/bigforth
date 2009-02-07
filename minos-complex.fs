@@ -566,12 +566,12 @@ how:    6 colors focuscol !     1 colors defocuscol !
 
 \ IO-Window                                            21aug99py
 
-        : readline  >r >r at? drop cols @ * 'line
+        : copyline  >r >r at? drop cols @ * 'line
           r@ swap 4 pick min dup 3 pin move
           r> over r> min ;
         : >atxy  ( msap xy -- msap )  at? >r >r $100 /mod swap
           2dup at r> rot <>
-          IF  >r readline r> rdrop over >r  THEN  r>
+          IF  >r copyline r> rdrop over >r  THEN  r>
           - + dup 0min dup negate c - 2 pick over -
           0min dup c + ;
 

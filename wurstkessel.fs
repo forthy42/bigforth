@@ -6,7 +6,7 @@ cell 8 = [IF]
     ' ! Alias 64!
     ' rot Alias 64swap
     ' -rot Alias -64swap
-    : wurst ( u1 u2 -- u3 ) >r 0 2dup d+ r> 0 d+ + ;
+    : wurst ( u1 u2 -- u3 ) >r dup 2* swap 0< - r> xor ;
     ' cells Alias 64s
 [ELSE]
     ' 2swap alias 64swap
@@ -19,14 +19,13 @@ cell 8 = [IF]
 	Code wurst ( ud1 ud2 -- ud3 )
 	    DX pop  CX pop  SP ) BX xchg
 	    BX BX add  CX CX adc
-	    DX BX adc  CX AX adc
-	    0 # BX adc  0 # AX adc
+	    0 # BX adc   DX BX xor  CX AX xor
 	    SP ) BX xchg
 	    Next end-code  macro
     [ELSE]
 	: wurst ( ud1 ud2 -- ud3 )  2>r
 	    dup 0< >r d2* r> dup d- 2r>
-	    rot 0 tuck d+ >r >r 0 tuck d+ 0 r> 0 d+ r> + 0 d+ ;
+	    rot xor >r xor r> ;
     [THEN]
 [THEN]
 
@@ -103,30 +102,30 @@ constant rng-size
 
 8 64s Constant state#
 
-Create source    state# allot
-Create state     state# allot
+Create wurst-source    state# allot
+Create wurst-state     state# allot
 Create nextstate state# allot
 
-: mix2bytes ( index n k -- b1 .. b8 index' n ) state + 8 0 DO
-	>r over source + c@ r@ c@ xor -rot dup >r + $3F and r> r> 8 + LOOP
+: mix2bytes ( index n k -- b1 .. b8 index' n ) wurst-state + 8 0 DO
+	>r over wurst-source + c@ r@ c@ xor -rot dup >r + $3F and r> r> 8 + LOOP
     drop ;
 
 : bytes2sum ( ud b1 .. b8 -- ud' ) >r >r >r >r  >r >r >r >r
     r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst
     r> rngs wurst  r> rngs wurst  r> rngs wurst  r> rngs wurst ;
 
-Create round#  1 , 3 , 7 , 13 , 19 , 23 , 31 , 47 ,
+Create round# 13 , 29 , 19 , 23 , 31 , 47 , 17 , 37 ,
 DOES> swap 7 and cells + @ ;
 
 : xors ( addr1 addr2 n -- ) bounds ?DO
     dup @ I @ xor I ! cell+  cell +LOOP  drop ;
 
 : round ( n -- ) dup 1- swap  8 0 DO
-	state I 64s + 64@ -64swap
+	wurst-state I 64s + 64@ -64swap
 	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
     LOOP 2drop
-    state source state# xors
-    nextstate state state# move ;
+    wurst-state wurst-source state# xors
+    nextstate wurst-state state# move ;
 
 : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
@@ -134,8 +133,8 @@ DOES> swap 7 and cells + @ ;
     [ cell 8 = ] [IF] 0 [THEN]
     base @ >r hex <# 16 0 DO # LOOP #> type r> base ! ;
 
-: .state  ( -- ) 8 0 DO  state  I 64s + 64@ .16  LOOP ;
-: .source ( -- ) 8 0 DO  source I 64s + 64@ .16  LOOP ;
+: .state  ( -- ) 8 0 DO  wurst-state  I 64s + 64@ .16  LOOP ;
+: .source ( -- ) 8 0 DO  wurst-source I 64s + 64@ .16  LOOP ;
 
 \ wurstkessel file functions
 
@@ -148,6 +147,10 @@ DOES> swap 7 and cells + @ ;
     wurst-in file-size throw ;
 
 : wurst-outfile ( addr u -- )  w/o create-file throw to wurst-out ;
+
+: wurst-close ( -- )
+    wurst-in  ?dup IF  close-file 0 to wurst-in  throw  THEN
+    wurst-out ?dup IF  close-file 0 to wurst-out throw  THEN ;
 
 \ wurstkessel hash
 
@@ -162,25 +165,25 @@ $9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502
 Create message    state# allot
 
 : hash-init
-    state-init  state state# move
+    state-init  wurst-state state# move
     [ cell 4 = ] [IF]
-	size?      source 64!  0. source 1 64s + 64!
+	size?      wurst-source 64!  0. wurst-source 1 64s + 64!
     [ELSE]
-	size? drop source 64!  0 source 1 64s + 64!
+	size? drop wurst-source 64!  0 wurst-source 1 64s + 64!
     [THEN] ;
 
 : +entropy ( -- )
-    message source state# xors ;
+    message wurst-source state# xors ;
 
-: encrypt-read ( -- )
+: encrypt-read ( -- n )
     message state# erase  message state# wurst-in read-file throw ;
 
 : wurst-hash ( rounds -- )  hash-init
-    source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
+    wurst-source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
     BEGIN  state# =  WHILE
 	    encrypt-read +entropy
 	    over rounds  REPEAT
-    drop .source ;
+    drop .source wurst-close ;
 
 \ wurstkessel encryption
 
@@ -192,11 +195,11 @@ $39A157A31F7D62BC. 64, $51C3BD3BA4F4F803. 64, $21D7D0ED16A5243A. 64, $3C80195D8D
 $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944DBECB7F. 64,
 
 : source> ( -- )
-    source state# wurst-out write-file throw ;
+    wurst-source state# wurst-out write-file throw ;
 
 : encrypt-init ( -- )
-    wurst-key   state  state# move
-    wurst-salt  source state# move
+    wurst-key   wurst-state  state# move
+    wurst-salt  wurst-source state# move
     wurst-salt  state# wurst-out write-file throw ;
 
 : encrypt-size ( -- remain )
@@ -207,48 +210,55 @@ $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944D
     [THEN]
     message state# 2 64s /string wurst-in read-file throw ;
 
-: wurst-encrypt ( rounds -- )  encrypt-init
-    encrypt-size  2 64s + over rounds
+: wurst-encrypt ( rounds -- ) >r encrypt-init
+    encrypt-size  2 64s + r@ rounds
     BEGIN
 	+entropy  source>  state# =  WHILE
-	    encrypt-read  over rounds  REPEAT
-    drop ;
+	    encrypt-read  r@ rounds  REPEAT
+    rdrop wurst-close ;
 
 : decrypt-init ( -- )
-    wurst-key   state  state# move
-    source state# wurst-in read-file throw drop ;
+    wurst-key   wurst-state  state# move
+    wurst-source state# wurst-in read-file throw drop ;
 
 2Variable outsize
 
-: .xormsg-size ( -- )  source message state# xors
+: .xormsg-size ( -- )  wurst-source message state# xors
     message 64@ [ cell 8 = ] [IF] 0 [THEN] outsize 2!
     message state# 2 64s /string
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
 
-: .xormsg' ( -- )  source message state# xors
+: .xormsg' ( -- )  wurst-source message state# xors
     message state#
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
 
-: wurst-decrypt ( rounds -- )  decrypt-init
+: wurst-decrypt ( rounds -- ) >r decrypt-init
     encrypt-read
-    over rounds .xormsg-size
+    r@ rounds .xormsg-size
     +entropy
     BEGIN  state# =  WHILE
 	encrypt-read
-	over rounds .xormsg'
+	r@ rounds .xormsg'
 	+entropy  REPEAT
-    drop ;
+    rdrop  wurst-close ;
 
 \ wurstkessel rng
 
 : rng-init
-    wurst-salt  source state# move
-    state-init  state  state# move ;
+    wurst-salt  wurst-source state# move
+    state-init  wurst-state  state# move ;
 
 : wurst-rng ( rounds -- )
-    2 0 DO  dup rounds
-	source    state  state# move
-	nextstate source state# move
-    LOOP  drop ;
+    rounds ; \ result is in wurst-source
+
+2 Value rounds#
+
+: test-hash
+    s" wurstkessel.fs" wurst-file rounds# wurst-hash ;
+: test-encrypt
+    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst" wurst-outfile rounds# wurst-encrypt ;
+: test-decrypt
+    s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile rounds# wurst-decrypt ;
+: wurst-test test-hash test-encrypt test-decrypt ;

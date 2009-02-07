@@ -13,7 +13,7 @@ also MINOS
         ELSE  true  THEN
     LOOP  drop scratch count ;
 
-: fl  tflush screen sync ;
+: fl  [defined] tflush [IF] tflush [THEN] screen sync ;
 
 ficon: open-icon icons/open"
 ficon: close-icon icons/close"
@@ -30,13 +30,15 @@ also editor
   dup object-view swap object" view-name ;
 
 : view-word ( name-field -- )
-  cell+ count $1F and ">tib debugging view ;
+    [defined] ">tib [IF]
+	cell+ count $1F and ">tib debugging view
+    [ELSE] drop [THEN] ;
 
 : struct-list ( voc addr u class -- )
   >r text-label new 2 rot
   BEGIN  @ dup  WHILE
          r@ swap dup >r DT[ view-word ]DT
-         r@ cell+ name> 4 object ' init -text 0=
+         r@ cell+ name> 4 object ' init over compare 0=
          IF    green-dot
          ELSE  r@ cell+ c@ $20 and
                IF  red-dot  ELSE  blue-dot  THEN

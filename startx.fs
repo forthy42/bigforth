@@ -4,8 +4,8 @@
     ' .blk is .status
 [THEN]
 include minos.fs
-[defined] VFXForth 0= [IF]
 include editor.fs
+[defined] VFXForth 0= [IF]
 include browser.fs
 include login.fs
 include ptty.fs

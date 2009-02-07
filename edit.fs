@@ -96,7 +96,8 @@ stredit implements
 
     : updated?  changed @ ;
     : title$ ( -- string ) s" " scratch$ $!  edifile @ ?dup
-        IF  [defined] filename [IF] filename >len scratch$ $+! [THEN] THEN
+	IF  [defined] filename [IF] filename >len scratch$ $+!
+	    [ELSE] drop [THEN] THEN
         S"   Line # " scratch$ $+!  base push decimal
         line#@ 0 <# bl hold # # # #S #> scratch$ $+!
         update$ scratch$ $+!  scratch$ $@ ;
@@ -126,7 +127,7 @@ stredit implements
         edifile @ dup isfile ! loadfile ! fpos off  open  c/l 0
         BEGIN  -eof?  WHILE
             dup $3F and $3F = IF  pause  THEN
-            readbuf dup $100 F ReadLine dup $100 =
+            readbuf dup $100 ReadLine dup $100 =
             IF    3 FOR  over c/l -trailing add
                          c/l /string  NEXT  2drop 4+
             ELSE  un-tab
@@ -613,7 +614,11 @@ forward replace-it'
 \ Table of actions                                     22apr91py
 
 [defined] ?head [IF] ?head @ 0 ?head ! [THEN]
-Create (straction
+[defined] VFXForth [IF]
+    Create (straction'
+[ELSE]
+    Create (straction
+[THEN]
 \ File
 ' UseFile A,         ' MakeFile A,        ' KillFile A,        ' MakeDir A,
 ' saveText A,        ' edibye A,
@@ -645,6 +650,10 @@ Create (straction
 ' noop A,            ' stamp A,           ' stamp A,
 \ 8x8font         8x16font
 ' (putchar A,
+
+[defined] VFXForth [IF]
+    : (straction (straction' ;
+[THEN]
 
 : setup-edit ( addr n -- ) swap
     stredit with s" " add  1+ cols ! ^ endwith ;
