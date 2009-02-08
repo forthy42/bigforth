@@ -1,4 +1,4 @@
-\ Wurstkessel data from www.random.org
+\ Wurstkessel data from www.random.org                 26jan09py
 
 cell 8 = [IF]
     : 64, drop , ;
