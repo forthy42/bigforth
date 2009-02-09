@@ -262,3 +262,28 @@ $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944D
 : test-decrypt
     s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile rounds# wurst-decrypt ;
 : wurst-test test-hash test-encrypt test-decrypt ;
+
+Create wurst-tmp state# allot
+
+: wurst-break-ini  1 to rounds#
+    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst1" wurst-outfile rounds# wurst-encrypt
+    s" wurstkessel.fs" wurst-file encrypt-size drop wurst-close
+    message wurst-tmp state# move
+    s" wurstkessel.wurst1" wurst-file
+    s" wurstkessel.fs3" wurst-outfile
+    encrypt-read drop message wurst-source state# move
+    encrypt-read drop message wurst-state  state# move
+    wurst-tmp message state# move
+    wurst-source wurst-state state# xors
+    message      wurst-state state# xors rounds# rounds
+    wurst-source message     state# xors ;
+
+: wurst-break
+    wurst-break-ini
+    .xormsg-size state#
+    +entropy
+    BEGIN  state# =  WHILE
+	encrypt-read
+	rounds# rounds .xormsg'
+	+entropy  REPEAT
+    rdrop  wurst-close ;
