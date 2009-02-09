@@ -6,7 +6,6 @@ cell 8 = [IF]
     ' ! Alias 64!
     ' rot Alias 64swap
     ' -rot Alias -64swap
-    : wurst ( u1 u2 -- u3 ) >r dup 2* swap 0< - r> xor ;
     ' cells Alias 64s
 [ELSE]
     ' 2swap alias 64swap
@@ -15,21 +14,32 @@ cell 8 = [IF]
     : 64@  2@ swap ; macro
     : 64!  >r swap r> 2! ; macro
     ' 8* Alias 64s
-    [IFDEF] Code
-	Code wurst ( ud1 ud2 -- ud3 )
-	    DX pop  CX pop  SP ) BX xchg
-	    BX BX add  CX CX adc
-	    0 # BX adc   DX BX xor  CX AX xor
-	    SP ) BX xchg
-	    Next end-code  macro
-    [ELSE]
-	: wurst ( ud1 ud2 -- ud3 )  2>r
-	    dup 0< >r d2* r> dup d- 2r>
-	    rot xor >r xor r> ;
-    [THEN]
 [THEN]
 
-Create rngs
+8 64s Constant state#
+
+Create wurst-source    state# allot
+Create wurst-state     state# allot
+Create nextstate       state# allot
+Create message         state# allot
+
+Create source-init
+$6C5F6F6CBE627172. 64, $7164C30603661C2E. 64, $CE5009401B441346. 64, $454FA335A6E63AD2. 64,
+$ABE9D0D648C15F6E. 64, $B90FD4060D7935D6. 64, $F7EDA8E2E8D6CB32. 64, $6230D90DBE8E061B. 64,
+
+Create state-init
+$FEC967C32E46440F. 64, $3F63157E14F89982. 64, $F7364A7F8083EFFA. 64, $FC62572A44559951. 64,
+$9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502F22741. 64,
+
+Create wurst-key
+$20799FEC4B2E86C7. 64, $9F5454CDBDF51F76. 64, $EE1905FFF4B24C3D. 64, $9841F78BA1E0A3B7. 64,
+$B6C33E39C326A161. 64, $FD4E8C0EAA7C4362. 64, $839E0910FFD9401A. 64, $2785F5C10D610C68. 64,
+
+Create wurst-salt
+$39A157A31F7D62BC. 64, $51C3BD3BA4F4F803. 64, $21D7D0ED16A5243A. 64, $3C80195D8D80874F. 64,
+$6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944DBECB7F. 64,
+
+Create 'rngs
 $EA576B15A7AFBA08. 64, $BF4888DC02131EF7. 64, $5F49A40B1DAAF5FD. 64, $7798975E5233C89D. 64, 
 $A70A1BD518B3FBC6. 64, $8E31D54ECB7BCDF9. 64, $949D107029F94EAA. 64, $7B40261F6B3E0763. 64, 
 $E845F90477A30AC5. 64, $6BF5CDC094B7A657. 64, $B0796C9F61F990F9. 64, $C149FABA50014BFC. 64, 
@@ -94,17 +104,33 @@ $3213F9193BDB3C69. 64, $7BC2F0864E7C480E. 64, $539F82006AB05B2C. 64, $D684DD5C69
 $168A44E4E0FA0504. 64, $42A75FDDE3BA8C01. 64, $FB48A92AE2DAD4D1. 64, $86121899DC7429C7. 64, 
 $10F72AA5B40A344A. 64, $E4926B1781F8C90C. 64, $4F4C3F28EDAD7518. 64, $744C57C4DB14A013. 64, 
 $450FC24B306136AE. 64, $DBE8614B7E18115C. 64, $A4CD66811B0F87FC. 64, $31984500099D06F5. 64, 
-here rngs -
-DOES> swap 64s + 64@ ;
+here 'rngs -
 constant rng-size
 
+\ wurstkessel primitives
+
+cell 8 = [IF]
+    : wurst ( u1 u2 -- u3 ) >r dup 2* swap 0< - r> xor ;
+    : rngs 64s 'rngs + 64@ ;
+[ELSE]
+    s" bigFORTH" environment? [IF] 2drop
+	Code wurst ( ud1 ud2 -- ud3 )
+	    DX pop  CX pop  SP ) BX xchg
+	    BX BX add  CX CX adc
+	    0 # BX adc   DX BX xor  CX AX xor
+	    SP ) BX xchg
+	    Next end-code  macro
+	Code rngs  'rngs AX *8 I#) push  'rngs cell+ AX *8 I#) AX mov
+	    Next end-code  macro
+    [ELSE]
+	: rngs 64s 'rngs + 64@ ; macro
+	: wurst ( ud1 ud2 -- ud3 )  2>r
+	    dup 0< >r d2* r> dup d- 2r>
+	    rot xor >r xor r> ;
+    [THEN]
+[THEN]
+
 \ wurstkessel algorithm
-
-8 64s Constant state#
-
-Create wurst-source    state# allot
-Create wurst-state     state# allot
-Create nextstate state# allot
 
 : mix2bytes ( index n k -- b1 .. b8 index' n ) wurst-state + 8 0 DO
 	>r over wurst-source + c@ r@ c@ xor -rot dup >r + $3F and r> r> 8 + LOOP
@@ -120,14 +146,57 @@ DOES> swap 7 and cells + @ ;
 : xors ( addr1 addr2 n -- ) bounds ?DO
     dup @ I @ xor I ! cell+  cell +LOOP  drop ;
 
+: update-state ( -- )
+    wurst-state wurst-source state# xors
+    nextstate wurst-state state# move ;
 : round ( n -- ) dup 1- swap  8 0 DO
 	wurst-state I 64s + 64@ -64swap
 	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
-    LOOP 2drop
-    wurst-state wurst-source state# xors
-    nextstate wurst-state state# move ;
+    LOOP 2drop update-state ;
 
-: rounds ( n -- )  0 ?DO  I round# round  LOOP ;
+\ fast mixing
+
+[IFUNDEF] ]]
+    : [[ ; \ token to end bulk-postponing
+    : ]] BEGIN  >in @ ' ['] [[ <> WHILE  >in ! postpone postpone  REPEAT
+	drop ; immediate
+[THEN]
+s" bigFORTH" environment? [IF] 2drop
+    $F487 Constant [s~r]
+    : S:  ( -- )  lastdes c@ dup :r =
+	IF   drop [s~r] w,
+	ELSE :s = 0= IF  -2 allot  THEN  THEN  :s lastdes c! ;
+    : wurst-mix ( a1 a2 -- ) S: [ also assembler ]
+	AX push  .b A#) AX movzx  A#) AL xor
+	[ previous ] [s~r] w, ]] rngs wurst [[ ; immediate
+[ELSE]
+    : wurst-mix ]] Literal c@ Literal c@ xor rngs wurst [[ ; immediate
+[THEN]
+: mix2bytes, ( index n k -- index' n ) wurst-state + 8 0 DO
+	>r over wurst-source + r@ ]] wurst-mix [[
+	dup >r + $3F and r> r> 8 + LOOP
+    drop ;
+
+: round, ( n -- ) dup 1- swap  8 0 DO
+	wurst-state I 64s + ]] Literal 64@ [[
+	I mix2bytes, nextstate I 64s + ]] Literal 64! [[
+    LOOP 2drop ]] update-state [[ ;
+
+: round0 ( -- )  [ 0 round# round, ] ; 
+: round1 ( -- )  [ 1 round# round, ] ; 
+: round2 ( -- )  [ 2 round# round, ] ; 
+: round3 ( -- )  [ 3 round# round, ] ; 
+: round4 ( -- )  [ 4 round# round, ] ; 
+: round5 ( -- )  [ 5 round# round, ] ; 
+: round6 ( -- )  [ 6 round# round, ] ; 
+: round7 ( -- )  [ 7 round# round, ] ; 
+
+Create 'rounds
+    ' round0 A, ' round1 A, ' round2 A, ' round3 A,
+    ' round4 A, ' round5 A, ' round6 A, ' round7 A,
+
+: rounds ( n -- )  0 ?DO  I 7 and cells 'rounds + perform  LOOP ;
+\ : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
 : .16 ( u[d] -- )
     [ cell 8 = ] [IF] 0 [THEN]
@@ -154,16 +223,6 @@ DOES> swap 7 and cells + @ ;
 
 \ wurstkessel hash
 
-Create source-init
-$6C5F6F6CBE627172. 64, $7164C30603661C2E. 64, $CE5009401B441346. 64, $454FA335A6E63AD2. 64,
-$ABE9D0D648C15F6E. 64, $B90FD4060D7935D6. 64, $F7EDA8E2E8D6CB32. 64, $6230D90DBE8E061B. 64,
-
-Create state-init
-$FEC967C32E46440F. 64, $3F63157E14F89982. 64, $F7364A7F8083EFFA. 64, $FC62572A44559951. 64,
-$9915714DB7397949. 64, $AE4180D53650E38C. 64, $C53813781DFF0C2E. 64, $A579435502F22741. 64,
-
-Create message    state# allot
-
 : hash-init
     state-init  wurst-state state# move
     [ cell 4 = ] [IF]
@@ -186,13 +245,6 @@ Create message    state# allot
     drop .source wurst-close ;
 
 \ wurstkessel encryption
-
-Create wurst-key
-$20799FEC4B2E86C7. 64, $9F5454CDBDF51F76. 64, $EE1905FFF4B24C3D. 64, $9841F78BA1E0A3B7. 64,
-$B6C33E39C326A161. 64, $FD4E8C0EAA7C4362. 64, $839E0910FFD9401A. 64, $2785F5C10D610C68. 64,
-Create wurst-salt
-$39A157A31F7D62BC. 64, $51C3BD3BA4F4F803. 64, $21D7D0ED16A5243A. 64, $3C80195D8D80874F. 64,
-$6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944DBECB7F. 64,
 
 : source> ( -- )
     wurst-source state# wurst-out write-file throw ;
@@ -265,9 +317,15 @@ $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944D
     0 ?DO
 	rounds# wurst-rng
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
+: out-rng ( n -- ) stdout to wurst-out rng-init
+    0 ?DO
+	rounds# wurst-rng
+	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
 : time-rng ( n -- )
+    0 ?DO  rounds# wurst-rng  LOOP ;
+: eval-rng ( n -- )
     0 ?DO  rounds# wurst-rng
 	wurst-state state# bounds ?DO
 	    1 I c@ cells rng-histogram + +!  LOOP
@@ -296,7 +354,7 @@ Create wurst-tmp state# allot
     .xormsg-size state#
     +entropy
     BEGIN  state# =  WHILE
-	encrypt-read
-	rounds# rounds .xormsg'
-	+entropy  REPEAT
-    rdrop  wurst-close ;
+	    encrypt-read
+	    rounds# rounds .xormsg'
+	    +entropy  REPEAT
+    wurst-close ;
