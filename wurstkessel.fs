@@ -261,6 +261,19 @@ $6DF5EF6205D55E03. 64, $8859C59812F47028. 64, $F7795F00874ACED7. 64, $5FBE66944D
     s" wurstkessel.fs" wurst-file s" wurstkessel.wurst" wurst-outfile rounds# wurst-encrypt ;
 : test-decrypt
     s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile rounds# wurst-decrypt ;
+: test-rng ( n -- ) s" wurst.random" wurst-outfile rng-init
+    0 ?DO
+	rounds# wurst-rng
+	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
+
+Create rng-histogram $100 0 [DO] 0 , [LOOP]
+: time-rng ( n -- )
+    0 ?DO  rounds# wurst-rng
+	wurst-state state# bounds ?DO
+	    1 I c@ cells rng-histogram + +!  LOOP
+    LOOP
+    state# 0 DO rng-histogram I cells + @ . cr LOOP ;
+
 : wurst-test test-hash test-encrypt test-decrypt ;
 
 Create wurst-tmp state# allot
