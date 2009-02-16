@@ -206,7 +206,7 @@ s" gforth" environment? [IF] 2drop
 	    dup >r + $3F and r> r> 8 + LOOP
 	drop ;
     : round_ind, ( n -- )
-	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" void round" holds #> \c,
+	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c,
 	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7;" \c,
 	round# dup 1- swap 8 0 DO
 	    I mix2bytes_ind,
