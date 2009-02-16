@@ -18,10 +18,17 @@ cell 8 = [IF]
 
 8 64s Constant state#
 
-Create wurst-source    state# allot
-Create wurst-state     state# allot
-Create nextstate       state# allot
-Create message         state# allot
+align
+here state# allot \ source
+here state# allot \ state
+here state# allot \ nextstate
+here state# allot \ message
+swap 2swap swap
+
+Constant wurst-source
+Constant wurst-state
+Constant nextstate
+Constant message
 
 Create source-init
 $6C5F6F6CBE627172. 64, $7164C30603661C2E. 64, $CE5009401B441346. 64, $454FA335A6E63AD2. 64,
@@ -182,6 +189,73 @@ s" bigFORTH" environment? [IF] 2drop
 	I mix2bytes, nextstate I 64s + ]] Literal 64! [[
     LOOP 2drop ]] update-state [[ ;
 
+s" gforth" environment? [IF] 2drop
+    require libcc.fs
+    : \c, ( addr u -- ) save-c-prefix-line ;
+    : holds ( addr u -- )
+	dup negate holdptr +! holdptr @ dup holdbuf u< -17 and throw swap move ;
+    : mix2bytes_ind, ( index n k -- index' n ) 8 0 DO
+	    >r over r@ 64 +
+	    <#
+	    s" );" holds
+	    r> 7 I - 0 #s 2drop >r
+	    s" ]]," holds 0 #s 2drop
+	    s" ]^states[" holds 0 #s 2drop
+	    s" =ROL(rnds[states[" holds
+	    r> I 0 #s 2drop s" a" holds >r 0. #> \c,
+	    dup >r + $3F and r> r> 8 + LOOP
+	drop ;
+    : round_ind, ( n -- )
+	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" void round" holds #> \c,
+	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7;" \c,
+	round# dup 1- swap 8 0 DO
+	    I mix2bytes_ind,
+	    <#
+	    s" )), a0, a1, a2, a3, a4, a5, a6, a7);" holds I 8 + 64s 0 #S 2drop
+	    s" ))=COMBINE(*((uint64_t*)(states+" holds I 16 + 64s 0 #S
+	    s" *((uint64_t *)(states+" holds #> \c,
+	LOOP  2drop
+	8 0 DO
+	    <#
+	    s" ));" holds I 8 + 64s 0 #s 2drop
+	    s" )) ^= *((uint64_t *)(states+" holds I 64s 0 #s
+	    s" *((uint64_t *)(states+" holds
+	    #> \c,
+	LOOP
+	wurst-state wurst-source state# xors
+	s" memcpy(states+64, states+128, 64); }" \c, ;
+	
+    c-library libwurst
+    \c #include <stdint.h>
+    \c #include <string.h>
+    \c #define ROL(x, n) (n==0)?x:((x << n) | (x >> (64-n)))
+    \c #define COMBINE(x0,a1,a2,a3,a4,a5,a6,a7,a8) (ROL(x0,8)^a1^a2^a3^a4^a5^a6^a7^a8)
+    0 round_ind,
+    1 round_ind,
+    2 round_ind,
+    3 round_ind,
+    4 round_ind,
+    5 round_ind,
+    6 round_ind,
+    7 round_ind,
+    c-function round0_ind round0_ind a a -- void
+    c-function round1_ind round1_ind a a -- void
+    c-function round2_ind round2_ind a a -- void
+    c-function round3_ind round3_ind a a -- void
+    c-function round4_ind round4_ind a a -- void
+    c-function round5_ind round5_ind a a -- void
+    c-function round6_ind round6_ind a a -- void
+    c-function round7_ind round7_ind a a -- void
+    end-c-library
+    : round0 wurst-source 'rngs round0_ind ;
+    : round1 wurst-source 'rngs round1_ind ;
+    : round2 wurst-source 'rngs round2_ind ;
+    : round3 wurst-source 'rngs round3_ind ;
+    : round4 wurst-source 'rngs round4_ind ;
+    : round5 wurst-source 'rngs round5_ind ;
+    : round6 wurst-source 'rngs round6_ind ;
+    : round7 wurst-source 'rngs round7_ind ;
+[ELSE]
 : round0 ( -- )  [ 0 round# round, ] ; 
 : round1 ( -- )  [ 1 round# round, ] ; 
 : round2 ( -- )  [ 2 round# round, ] ; 
@@ -190,6 +264,7 @@ s" bigFORTH" environment? [IF] 2drop
 : round5 ( -- )  [ 5 round# round, ] ; 
 : round6 ( -- )  [ 6 round# round, ] ; 
 : round7 ( -- )  [ 7 round# round, ] ; 
+[THEN]
 
 Create 'rounds
     ' round0 A, ' round1 A, ' round2 A, ' round3 A,
