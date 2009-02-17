@@ -213,7 +213,7 @@ s" gforth" environment? [IF] 2drop
 	    s" a" holds #> \c,
 	LOOP
 	8 0 DO
-	    s\" asm volatile(\"# line break\");" \c,
+	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
