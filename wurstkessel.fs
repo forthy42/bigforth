@@ -249,7 +249,6 @@ s" gforth" environment? [IF] 2drop
     6 round_ind,
     7 round_ind,
     \c void rounds_ind(int n, unsigned char * states, uint64_t * rnds) {
-    \c do {
     \c if(n>=1) round0_ind(states, rnds);
     \c if(n>=2) round1_ind(states, rnds);
     \c if(n>=3) round2_ind(states, rnds);
@@ -258,7 +257,6 @@ s" gforth" environment? [IF] 2drop
     \c if(n>=6) round5_ind(states, rnds);
     \c if(n>=7) round6_ind(states, rnds);
     \c if(n>=8) round7_ind(states, rnds);
-    \c n-=8; } while(n>0);
     \c }
     c-function rounds_ind rounds_ind n a a -- void
     end-c-library
@@ -277,10 +275,10 @@ Create 'rounds
     ' round0 A, ' round1 A, ' round2 A, ' round3 A,
     ' round4 A, ' round5 A, ' round6 A, ' round7 A,
 
-: rounds ( n -- )  0 ?DO  I 7 and cells 'rounds + perform  LOOP ;
+: rounds ( n -- )  8 umin 0 ?DO  I cells 'rounds + perform  LOOP ;
 [THEN]
 
-\ : rounds ( n -- )  0 ?DO  I 7 and round# round  LOOP ;
+\ : rounds ( n -- )  8 umin 0 ?DO  I round# round  LOOP ;
 
 : .16 ( u[d] -- )
     [ cell 8 = ] [IF] 0 [THEN]
