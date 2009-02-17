@@ -213,7 +213,7 @@ s" gforth" environment? [IF] 2drop
 	    s" a" holds #> \c,
 	LOOP
 	8 0 DO
-\	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
+	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
@@ -248,30 +248,19 @@ s" gforth" environment? [IF] 2drop
     5 round_ind,
     6 round_ind,
     7 round_ind,
-    \c void round2_bench(int n, unsigned char * states, uint64_t * rnds) {
-    \c   while(n--) {
-    \c     round0_ind(states, rnds);
-    \c     round1_ind(states, rnds);
-    \c   }
+    \c void rounds_ind(int n, unsigned char * states, uint64_t * rnds) {
+    \c if(n>=1) round0_ind(states, rnds);
+    \c if(n>=2) round1_ind(states, rnds);
+    \c if(n>=3) round2_ind(states, rnds);
+    \c if(n>=4) round3_ind(states, rnds);
+    \c if(n>=5) round4_ind(states, rnds);
+    \c if(n>=6) round5_ind(states, rnds);
+    \c if(n>=7) round6_ind(states, rnds);
+    \c if(n>=8) round7_ind(states, rnds);
     \c }
-    c-function round0_ind round0_ind a a -- void
-    c-function round1_ind round1_ind a a -- void
-    c-function round2_ind round2_ind a a -- void
-    c-function round3_ind round3_ind a a -- void
-    c-function round4_ind round4_ind a a -- void
-    c-function round5_ind round5_ind a a -- void
-    c-function round6_ind round6_ind a a -- void
-    c-function round7_ind round7_ind a a -- void
-    c-function round2_bench round2_bench n a a -- void
+    c-function rounds_ind rounds_ind n a a -- void
     end-c-library
-    : round0 wurst-source 'rngs round0_ind ;
-    : round1 wurst-source 'rngs round1_ind ;
-    : round2 wurst-source 'rngs round2_ind ;
-    : round3 wurst-source 'rngs round3_ind ;
-    : round4 wurst-source 'rngs round4_ind ;
-    : round5 wurst-source 'rngs round5_ind ;
-    : round6 wurst-source 'rngs round6_ind ;
-    : round7 wurst-source 'rngs round7_ind ;
+    : rounds ( n -- ) wurst-source 'rngs rounds_ind ;
 [ELSE]
 : round0 ( -- )  [ 0 round# round, ] ; 
 : round1 ( -- )  [ 1 round# round, ] ; 
@@ -281,13 +270,14 @@ s" gforth" environment? [IF] 2drop
 : round5 ( -- )  [ 5 round# round, ] ; 
 : round6 ( -- )  [ 6 round# round, ] ; 
 : round7 ( -- )  [ 7 round# round, ] ; 
-[THEN]
 
 Create 'rounds
     ' round0 A, ' round1 A, ' round2 A, ' round3 A,
     ' round4 A, ' round5 A, ' round6 A, ' round7 A,
 
 : rounds ( n -- )  0 ?DO  I 7 and cells 'rounds + perform  LOOP ;
+[THEN]
+
 \ : rounds ( n -- )  0 ?DO  I round# round  LOOP ;
 
 : .16 ( u[d] -- )
@@ -415,12 +405,8 @@ Create 'rounds
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
-[IFDEF] round2_bench
-    : time-rng ( n -- )  wurst-source 'rngs round2_bench ;
-[ELSE]
-    : time-rng ( n -- )
-	0 ?DO  rounds# wurst-rng  LOOP ;
-[THEN]
+: time-rng ( n -- )
+    0 ?DO  rounds# wurst-rng  LOOP ;
 : eval-rng ( n -- )
     0 ?DO  rounds# wurst-rng
 	wurst-state state# bounds ?DO
