@@ -194,27 +194,38 @@ s" gforth" environment? [IF] 2drop
     : \c, ( addr u -- ) save-c-prefix-line ;
     : holds ( addr u -- )
 	dup negate holdptr +! holdptr @ dup holdbuf u< -17 and throw swap move ;
-    : mix2bytes_ind, ( index n k -- index' n ) 8 0 DO
+    : mix2bytes_ind, ( index n k i -- index n ) >r
 	    >r over r@ 64 +
 	    <#
-	    s" );" holds
-	    r> 7 I - 0 #s 2drop >r
+	    s" );" holds r> 7 r@ - 0 #s 2drop >r
 	    s" ]]," holds 0 #s 2drop
 	    s" ]^states[" holds 0 #s 2drop
-	    s" =ROL(rnds[states[" holds
-	    r> I 0 #s 2drop s" a" holds >r 0. #> \c,
-	    dup >r + $3F and r> r> 8 + LOOP
-	drop ;
+	    s" ^=ROL(rnds[states[" holds r@ 7 and 0 #s 2drop
+	    s" a" holds 0. #> \c,
+	rdrop rdrop ;
     : round_ind, ( n -- )
 	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c,
 	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7;" \c,
 	round# dup 1- swap 8 0 DO
-	    I mix2bytes_ind,
 	    <#
-	    s" )), a0, a1, a2, a3, a4, a5, a6, a7);" holds I 8 + 64s 0 #S 2drop
-	    s" ))=COMBINE(*((uint64_t*)(states+" holds I 16 + 64s 0 #S
-	    s" *((uint64_t *)(states+" holds #> \c,
-	LOOP  2drop
+	    s" )),8);" holds I 8 + 64s 0 #S 2drop
+	    s" =ROL(*((uint64_t*)(states+" holds I 0 #S
+	    s" a" holds #> \c,
+	LOOP
+	8 0 DO
+	    s\" asm volatile(\"# line break\");" \c,
+	    8 0 DO  I J 8 * + J mix2bytes_ind,
+		dup >r 8 * + $3F and r>
+	    LOOP  dup >r + $3F and r>
+	LOOP
+	2drop
+	8 0 DO
+	    <#
+	    s" ;" holds I 0 #s
+	    s" )) = a" holds I 16 + 64s 0 #s
+	    s" *((uint64_t *)(states+" holds
+	    #> \c,
+	LOOP
 	8 0 DO
 	    <#
 	    s" ));" holds I 8 + 64s 0 #s 2drop
@@ -222,14 +233,13 @@ s" gforth" environment? [IF] 2drop
 	    s" *((uint64_t *)(states+" holds
 	    #> \c,
 	LOOP
-	wurst-state wurst-source state# xors
 	s" memcpy(states+64, states+128, 64); }" \c, ;
 	
     c-library libwurst
     \c #include <stdint.h>
     \c #include <string.h>
     \c #define ROL(x, n) (n==0)?x:((x << n) | (x >> (64-n)))
-    \c #define COMBINE(x0,a1,a2,a3,a4,a5,a6,a7,a8) (ROL(x0,8)^a1^a2^a3^a4^a5^a6^a7^a8)
+    \c #define COMBINE(x0,a1,a2,a3,a4,a5,a6,a7,a8) (ROL(x0,8)^ROL(a1,7)^ROL(a2,6)^ROL(a3,5)^ROL(a4,4)^ROL(a5,3)^ROL(a6,2)^ROL(a7,1)^a8)
     0 round_ind,
     1 round_ind,
     2 round_ind,
