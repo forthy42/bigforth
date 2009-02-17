@@ -213,7 +213,7 @@ s" gforth" environment? [IF] 2drop
 	    s" a" holds #> \c,
 	LOOP
 	8 0 DO
-	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
+\	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
@@ -248,6 +248,12 @@ s" gforth" environment? [IF] 2drop
     5 round_ind,
     6 round_ind,
     7 round_ind,
+    \c void round2_bench(int n, unsigned char * states, uint64_t * rnds) {
+    \c   while(n--) {
+    \c     round0_ind(states, rnds);
+    \c     round1_ind(states, rnds);
+    \c   }
+    \c }
     c-function round0_ind round0_ind a a -- void
     c-function round1_ind round1_ind a a -- void
     c-function round2_ind round2_ind a a -- void
@@ -256,6 +262,7 @@ s" gforth" environment? [IF] 2drop
     c-function round5_ind round5_ind a a -- void
     c-function round6_ind round6_ind a a -- void
     c-function round7_ind round7_ind a a -- void
+    c-function round2_bench round2_bench n a a -- void
     end-c-library
     : round0 wurst-source 'rngs round0_ind ;
     : round1 wurst-source 'rngs round1_ind ;
@@ -408,8 +415,12 @@ Create 'rounds
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
-: time-rng ( n -- )
-    0 ?DO  rounds# wurst-rng  LOOP ;
+[IFDEF] round2_bench
+    : time-rng ( n -- )  wurst-source 'rngs round2_bench ;
+[ELSE]
+    : time-rng ( n -- )
+	0 ?DO  rounds# wurst-rng  LOOP ;
+[THEN]
 : eval-rng ( n -- )
     0 ?DO  rounds# wurst-rng
 	wurst-state state# bounds ?DO
