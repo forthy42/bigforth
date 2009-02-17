@@ -7,6 +7,7 @@ cell 8 = [IF]
     ' rot Alias 64swap
     ' -rot Alias -64swap
     ' cells Alias 64s
+    ' l@ Alias 32@
 [ELSE]
     ' 2swap alias 64swap
     ' 2swap alias -64swap
@@ -14,6 +15,7 @@ cell 8 = [IF]
     : 64@  2@ swap ; macro
     : 64!  >r swap r> 2! ; macro
     ' 8* Alias 64s
+    ' @ Alias 32@
 [THEN]
 
 8 64s Constant state#
@@ -384,8 +386,7 @@ Create 'rounds
     wurst-salt  wurst-source state# move
     state-init  wurst-state  state# move ;
 
-: wurst-rng ( rounds -- )
-    rounds ; \ result is in wurst-source
+' rounds Alias wurst-rng ( rounds -- )
 
 2 Value rounds#
 
@@ -405,7 +406,7 @@ Create 'rounds
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
-: time-rng ( n -- )
+: time-rng ( n -- ) rng-init
     0 ?DO  rounds# wurst-rng  LOOP ;
 : eval-rng ( n -- )
     0 ?DO  rounds# wurst-rng
@@ -440,3 +441,56 @@ Create wurst-tmp state# allot
 	    rounds# rounds .xormsg'
 	    +entropy  REPEAT
     wurst-close ;
+
+s" gforth" environment? [IF] 2drop
+    require fft.fs
+[THEN]
+s" bigforth" environment? [IF] 2drop
+    include fft.fb
+[THEN]
+
+: 32>f dup $80000000 and negate or s>f 4.6566128731E-10 f* ;
+
+: rng-fft-test ( n -- ) dup points rng-init
+    dup 0 ?DO
+	rounds# wurst-rng
+	I wurst-source state# bounds ?DO
+	    I     32@ 32>f
+	    I 4 + 32@ 32>f dup values z! 1+
+	8 +LOOP drop
+    8 +LOOP
+    fft #points s>f 1/f fsqrt fftscale ;
+
+: rngs-fft-test ( -- ) $100 points
+    'rngs $100 64s bounds ?DO
+	    I     32@ 32>f
+	    I 4 + 32@ 32>f dup values z! 1+
+    8 +LOOP
+    fft #points s>f 1/f fsqrt fftscale ;
+
+Create fft-test-2d here $1000 cells dup allot erase
+
+: >test-2d ( -- )
+    #points 0 ?DO
+	I values z@
+	$8 fm* 32e f+ f>s $8 fm* 32e f+ f>s 6 lshift + cells fft-test-2d + 1 swap +!
+    LOOP ;
+
+: .test-2d ( -- )
+    $40 0 DO
+	$40 0 DO
+	    J 6 lshift I + cells fft-test-2d + ?
+	LOOP cr
+    LOOP ;
+
+: >test-1d ( -- )
+    #points 0 ?DO
+	I values z@
+	$8 fm* 32e f+ f>s cells fft-test-2d + 1 swap +!
+	$8 fm* 32e f+ f>s cells fft-test-2d + 1 swap +!
+    LOOP ;
+
+: .test-1d ( -- )
+    $40 0 DO
+	I cells fft-test-2d + ?
+    LOOP ;
