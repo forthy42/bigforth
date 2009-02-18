@@ -400,7 +400,7 @@ Create 'rounds
     0 ?DO
 	rounds# wurst-rng
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
-: out-rng ( n -- ) stdout to wurst-out rng-init
+: out-rng ( n -- ) stdout to wurst-out \ rng-init
     0 ?DO
 	rounds# wurst-rng
 	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;

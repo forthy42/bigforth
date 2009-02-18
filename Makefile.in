@@ -2,7 +2,7 @@
 
 DATE= $$(date '+%d%b%Y' | tr '[A-Z]' '[a-z]')
 SRCREV=@PACKAGE_VERSION@
-MINOSREV=1.3.0
+MINOSREV=1.3.1
 BINREV=$(SRCREV)
 PATREV=1.0.1
 EWOODREV=1.0.2
@@ -128,7 +128,7 @@ EXAMPLEDIST = bigforth/3dskull/{*.fs,*.m,*.dat}
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn $(DRAGONDIST)
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn,convert-m.sh} $(ICONDIST)
 
 DRAGONDIST = bigforth/pattern/dragon{,-back,-head,-wing,-claw}.png \
 	bigforth/pattern/{bark,normal-w1,back,focus}.ppm

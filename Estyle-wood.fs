@@ -25,7 +25,7 @@ how:
             Eimage @ dpy xrc imdata @ ImlibMoveImageToPixmap pixmap !
 	    
 	    4 dpy xrc set-function  0 dpy xrc set-color
-	    dpy drawable' nip shape @ pixmap @ rot
+	    dpy drawable nip shape @ pixmap @ rot
 	    0 0 w @ h @ 0 0 1 XCopyPlane
 	    3 dpy xrc set-function
         THEN

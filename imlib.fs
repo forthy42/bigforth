@@ -42,8 +42,8 @@ struct{
    ptr visual
    cell depth
    cell root_cmap
-   1 shm
-   1 shmp
+   byte shm
+   byte shmp
    cell shm_event
    ptr last_xim
    ptr last_sxim
@@ -70,21 +70,21 @@ struct{
    struct ImlibBorder border
    cell pixmap
    cell shape_mask
-   1 cache
+   byte cache
    struct ImlibColorModifier mod
    struct ImlibColorModifier rmod
    struct ImlibColorModifier gmod
    struct ImlibColorModifier bmod
-   256 rmap
-   256 gmap
-   256 bmap
+   256 string rmap
+   256 string gmap
+   256 string bmap
 } Image
 
 struct{
    ptr file
    ptr im
    cell refnum
-   1 dirty
+   byte dirty
    ptr prev
    ptr next
 } image_cache
@@ -92,7 +92,7 @@ struct{
 struct{
    ptr im
    ptr file
-   1 dirty
+   byte dirty
    cell width
    cell height
    cell pmap
