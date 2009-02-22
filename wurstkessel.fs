@@ -151,6 +151,8 @@ cell 8 = [IF]
 
 Create round# 13 , 29 , 19 , 23 , 31 , 47 , 17 , 37 ,
 DOES> swap 7 and cells + @ ;
+Create permut# 2 , 6 , 1 , 4 , 7 , 0 , 5 , 3 , \ permut length 15
+DOES> swap 7 and cells + @ ;
 
 : xors ( addr1 addr2 n -- ) bounds ?DO
     dup @ I @ xor I ! cell+  cell +LOOP  drop ;
@@ -159,7 +161,7 @@ DOES> swap 7 and cells + @ ;
     wurst-state wurst-source state# xors
     nextstate wurst-state state# move ;
 : round ( n -- ) dup 1- swap  8 0 DO
-	wurst-state I 64s + 64@ -64swap
+	wurst-state I permut# 64s + 64@ -64swap
 	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
     LOOP 2drop update-state ;
 
@@ -187,7 +189,7 @@ s" bigFORTH" environment? [IF] 2drop
     drop ;
 
 : round, ( n -- ) dup 1- swap  8 0 DO
-	wurst-state I 64s + ]] Literal 64@ [[
+	wurst-state I permut# 64s + ]] Literal 64@ [[
 	I mix2bytes, nextstate I 64s + ]] Literal 64! [[
     LOOP 2drop ]] update-state [[ ;
 
@@ -210,7 +212,7 @@ s" gforth" environment? [IF] 2drop
 	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7, t;" \c,
 	round# dup 1- swap 8 0 DO
 	    <#
-	    s" )),8);" holds I 8 + 64s 0 #S 2drop
+	    s" )),8);" holds I permut# 8 + 64s 0 #S 2drop
 	    s" =ROL(*((uint64_t*)(states+" holds I 0 #S
 	    s" a" holds #> \c,
 	LOOP
