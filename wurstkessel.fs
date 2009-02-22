@@ -200,14 +200,14 @@ s" gforth" environment? [IF] 2drop
 	    >r over r@ 64 +
 	    <#
 	    s" );" holds r> 7 r@ - 0 #s 2drop >r
-	    s" ]]," holds 0 #s 2drop
-	    s" ]^states[" holds 0 #s 2drop
+	    s" ))]," holds $7 and 8 * 0 #s 2drop
+	    s" ]^(0xff&(t>>" holds 0 #s 2drop
 	    s" ^=ROL(rnds[states[" holds r@ 7 and 0 #s 2drop
 	    s" a" holds 0. #> \c,
 	rdrop rdrop ;
     : round_ind, ( n -- )
 	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c,
-	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7;" \c,
+	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7, t;" \c,
 	round# dup 1- swap 8 0 DO
 	    <#
 	    s" )),8);" holds I 8 + 64s 0 #S 2drop
@@ -216,6 +216,9 @@ s" gforth" environment? [IF] 2drop
 	LOOP
 	8 0 DO
 	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
+	    <#
+	    s" ));" holds I 8 * 64 + 0 #s
+	    s" t=*((uint64_t*)(states+" holds #> \c,
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
