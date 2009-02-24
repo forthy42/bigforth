@@ -525,7 +525,7 @@ libGL glResizeBuffersMESA (void/fp) glResizeBuffersMESA ( -- )
 \ glX calls                                            04oct97py
 
 [IFDEF] x11
-libGL glXChooseVisual int int int (int) glXChooseVisual
+libGL glXChooseVisual int int int (int/fp) glXChooseVisual
                         ( dpy screen attriblist -- XVisualInfo )
 libGL glXCreateContext int int int int (int) glXCreateContext
                         ( dpy vis shareList direct -- GLXContext )

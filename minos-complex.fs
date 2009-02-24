@@ -69,9 +69,7 @@ class;
 
 \ OpenGL canvas                                        22jun02py
 
-[defined] VFXFORTH 0= [IF]
-
-opengl also glconst also
+also opengl also glconst
 
 [defined] win32 [IF]
         | Create pfd  sizeof PIXELFORMATDESCRIPTOR w, 1 w,
@@ -262,7 +260,7 @@ previous previous
 
 : GL[  postpone :[ glcanvas postpone with ;        immediate
 : ]GL  glcanvas postpone endwith  postpone ]: ;    immediate
-[THEN]
+
 : CV[  postpone :[ canvas postpone with ;        immediate
 : ]CV  canvas postpone endwith  postpone ]: ;    immediate
 

@@ -326,12 +326,12 @@ Create 'rounds
 : encrypt-read ( -- n )
     message state# erase  message state# wurst-in read-file throw ;
 
-: wurst-hash ( rounds -- )  hash-init
+: wurst-hash ( final-rounds rounds -- )  hash-init
     wurst-source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
     BEGIN  state# =  WHILE
 	    encrypt-read +entropy
 	    over rounds  REPEAT
-    drop .source wurst-close ;
+    drop rounds .source wurst-close ;
 
 \ wurstkessel encryption
 
@@ -351,8 +351,8 @@ Create 'rounds
     [THEN]
     message state# 2 64s /string wurst-in read-file throw ;
 
-: wurst-encrypt ( rounds -- ) >r encrypt-init
-    encrypt-size  2 64s + r@ rounds
+: wurst-encrypt ( first-rounds rounds -- ) >r >r encrypt-init
+    encrypt-size  2 64s + r> rounds
     BEGIN
 	+entropy  source>  state# =  WHILE
 	    encrypt-read  r@ rounds  REPEAT
@@ -375,9 +375,9 @@ Create 'rounds
     0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
     wurst-out write-file throw ;
 
-: wurst-decrypt ( rounds -- ) >r decrypt-init
+: wurst-decrypt ( first-rounds rounds -- ) >r >r decrypt-init
     encrypt-read
-    r@ rounds .xormsg-size
+    r> rounds .xormsg-size
     +entropy
     BEGIN  state# =  WHILE
 	encrypt-read
@@ -394,13 +394,14 @@ Create 'rounds
 ' rounds Alias wurst-rng ( rounds -- )
 
 2 Value rounds#
+4 Value roundse#
 
 : test-hash
-    s" wurstkessel.fs" wurst-file rounds# wurst-hash ;
+    s" wurstkessel.fs" wurst-file roundse# rounds# wurst-hash ;
 : test-encrypt
-    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst" wurst-outfile rounds# wurst-encrypt ;
+    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst" wurst-outfile roundse# rounds# wurst-encrypt ;
 : test-decrypt
-    s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile rounds# wurst-decrypt ;
+    s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile roundse# rounds# wurst-decrypt ;
 : test-rng ( n -- ) s" wurst.random" wurst-outfile rng-init
     0 ?DO
 	rounds# wurst-rng
@@ -424,8 +425,8 @@ Create rng-histogram $100 0 [DO] 0 , [LOOP]
 
 Create wurst-tmp state# allot
 
-: wurst-break-ini  1 to rounds#
-    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst1" wurst-outfile rounds# wurst-encrypt
+: wurst-break-ini
+    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst1" wurst-outfile 1 1 wurst-encrypt
     s" wurstkessel.fs" wurst-file encrypt-size drop wurst-close
     message wurst-tmp state# move
     s" wurstkessel.wurst1" wurst-file
@@ -434,7 +435,7 @@ Create wurst-tmp state# allot
     encrypt-read drop message wurst-state  state# move
     wurst-tmp message state# move
     wurst-source wurst-state state# xors
-    message      wurst-state state# xors rounds# rounds
+    message      wurst-state state# xors 1 rounds
     wurst-source message     state# xors ;
 
 : wurst-break
@@ -443,9 +444,17 @@ Create wurst-tmp state# allot
     +entropy
     BEGIN  state# =  WHILE
 	    encrypt-read
-	    rounds# rounds .xormsg'
+	    1 rounds .xormsg'
 	    +entropy  REPEAT
     wurst-close ;
+: find-same ( d -- )
+    $100 0 DO
+	$100 I DO
+	    j rngs i rngs rot xor -rot xor swap
+	    8 0 DO 2over 2over d= IF I . J . K . cr THEN 0. wurst
+	    LOOP 2drop
+	LOOP
+    LOOP 2drop ;
 
 s" gforth" environment? [IF] 2drop
     require fft.fs

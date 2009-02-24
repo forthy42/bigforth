@@ -24,6 +24,7 @@ also memory definitions
 : DisposPtr ( addr -- )  free throw ;
 : DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
 : Handle! ( len addr -- )  >r NewPtr r> ! ;
+: SetHandle ( addr MP -- )  ! ;
 : HandleOff ( addr -- )  dup @ free throw off ;
 : Hlock ( addr -- ) drop ;
 : Hunlock ( addr -- ) drop ;

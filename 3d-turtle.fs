@@ -1,17 +1,24 @@
 \ 3D turtle graphics                                   27dec98py
 
-memory also dos also
-\needs float import float
+also memory also dos
+[defined] VFXForth [IF]
+    mpe-float
+    include /usr/share/doc/VfxForth/Lib/Ndp387.fth
+    ans-float
+    : float ;
+[ELSE]
+    \needs float import float
+[THEN]
 \needs glconst | import glconst
-[IFDEF] x11
+[defined] x11 [IF]
 \needs xconst  | import xconst
 [THEN]
-float also glconst also
-[IFDEF] x11  x11 also [THEN]
-[IFDEF] win32  win32 also [THEN]
-opengl also
+also float also glconst
+[defined] x11 [IF]  also x11 [THEN]
+[defined] win32 [IF]  also win32 [THEN]
+also opengl also
 
-[IFDEF] win32
+[defined] win32 [IF]
 :noname  ['] noop noop-act 1 1 1 1  glcanvas new  glcanvas with
          screen self dpy!  render  dispose  endwith  drop ;
 IS dummy-canvas
@@ -21,25 +28,38 @@ IS dummy-canvas
 [THEN]
 
 \ r,phi extraction                                     31dec98py
+[defined] ftuck 0= [IF]  : ftuck fswap fover ;  [THEN]
+[defined] f-rot 0= [IF]  : f-rot frot frot ;  [THEN]
+[defined] fover2 0= [IF]  : fover2 2 fpick ;  [THEN]
+[defined] f>fs  0= [IF]  Variable 'f>fs : f>fs 'f>fs sf! 'f>fs @ ;  [THEN]
+[defined] fs>f  0= [IF]  : fs>f 'f>fs ! 'f>fs sf@ ;  [THEN]
+[defined] %pi [IF] %pi FConstant pi [THEN]
+[defined] f**2 0= [IF]  : f**2 fdup f* ;  [THEN]
+[defined] fm/ 0= [IF]  : fm/ s>f f/ ;  [THEN]
+[defined] fm* 0= [IF]  : fm* s>f f* ;  [THEN]
+[defined] fm*/ 0= [IF]  : fm*/ s>f f/ s>f f* ;  [THEN]
 
-[IFUNDEF] r,phi>xy
+[defined] r,phi>xy 0= [IF]
     : r,phi>xy ( r phi -- x y )
-      fsincos frot funder f* f-rot f* ;
+      fsincos frot ftuck f* f-rot f* ;
 [THEN]
 
-[IFUNDEF] 9*
-    Code 9*  AX AX *8 I) AX lea  Next end-code macro
-    \ : 9* 9 * ;
+[defined] 9* 0= [IF]
+    [defined] VFXForth [IF]
+	: 9* 9 * ;
+    [ELSE]
+	Code 9*  AX AX *8 I) AX lea  Next end-code macro
+    [THEN]
 [THEN]
 
-[IFUNDEF] 3*
+[defined] 3* 0= [IF]
     : 3* dup 2* + ; macro
 [THEN]
 
 \ doesn't work for -1
 : >2** ( a -- n )  1  BEGIN  2dup u>  WHILE  2*  REPEAT  nip ;
 
-[IFUNDEF] Code
+[defined] VFXForth [IF]
     : inner-get ( addr -- sf ) 3 swap dup sf@ sfloat+
           [ 3 sfloats ] Literal bounds
           DO   dup fpick I sf@ f* f+ 1-
@@ -60,14 +80,14 @@ IS dummy-canvas
     : .nysf! dup $18 + sf! ; macro
     : .nzsf! dup $1C + sf! ; macro
     : left-over ( vl v vr -- x1 y1 z1 x2 y2 z2 )
-      { vl v vr |
+      { vl v vr }
       vl .x v .x f-  vl .y v .y f-  vl .z v .z f-
-      vr .x v .x f-  vr .y v .y f-  vr .z v .z f- } ;
+      vr .x v .x f-  vr .y v .y f-  vr .z v .z f- ;
     : cross* ( x1 y1 z1 x2 y2 z2 -- x3 y3 z3 )
-      { f: x1 f: y1 f: z1 f: x2 f: y2 f: z2 |
+      { f: x1 f: y1 f: z1 f: x2 f: y2 f: z2 }
         y1 z2 f* z1 y2 f* f- ( x )
         z1 x2 f* x1 z2 f* f- ( y )
-        x1 y2 f* y1 x2 f* f- ( z ) } ;
+        x1 y2 f* y1 x2 f* f- ( z ) ;
     : get-normal ( vl v vr -- fx fy fz )
       left-over cross* ;
     : negate3 ( fx fy fz -- -fx -fy -fz )
@@ -135,7 +155,7 @@ IS dummy-canvas
          2 ST fxch  1 ST fxch  Next end-code macro
 [THEN]
 
-[IFDEF] libGLU
+[defined] libGLU [IF]
     : >c ( xt -- )  dup 2- w@ + &11 - cfa@ ;
     : >c' ( xt -- offset addr )  dup 2- w@ + &10 - dup 4+ ;
     \ define a few C-callbacks
@@ -157,19 +177,19 @@ IS dummy-canvas
 	AX pop  AX pop  ret  end-code
 [THEN]
 
-!1 f>fs Constant #1.
+1e f>fs Constant #1.
 pi f2* FConstant 2pi
 2pi 1/f FConstant 1/2pi
 
 \ : .matrix ( addr -- )
 \   &12 sfloats bounds
 \   DO  cr  I 4 sfloats bounds
-\       DO  I sf@ !2 f+ !2 f- f.  1 sfloats +LOOP
+\       DO  I sf@ 2e f+ 2e f- f.  1 sfloats +LOOP
 \       4 sfloats +LOOP ;
 
 Create .white #1. , #1. , #1. , #1. ,
 
-[IFDEF] debug-points
+[defined] debug-points [IF]
 Variable maxpoints
 Variable #points
 
@@ -179,8 +199,8 @@ $7FFFFFFF maxpoints !
   #points @ maxpoints @ >  IF  drop rdrop  THEN ;
 : points+  1 #points +! ;
 [ELSE]
-' noop alias ?maxpoints immediate
-' noop alias points+    immediate
+    : ?maxpoints ; immediate
+    : points+ ; immediate
 [THEN]
 
 \ class declaration                                    03jan99py
@@ -213,7 +233,7 @@ public:
     1 sfloats  var rot-mode
     cell       var flip
     cell       var point#
-[IFDEF] glarrays
+[defined] glarrays [IF]
     cell       var path
     cell       var #path
     cell       var #path'
@@ -375,10 +395,10 @@ class;
 
 3d-turtle implements
     : init-matrix ( -- )
-      trans     &12 sfloats erase
-      !1  trans-2,0 ( &02 sfloats + ) sf!
-      !1  trans-1,1 ( &05 sfloats + ) sf!
-      !-1 trans-3,2 ( &11 sfloats + ) sf! ;
+      trans     #12 sfloats erase
+      1e  trans-2,0 ( #02 sfloats + ) sf!
+      1e  trans-1,1 ( #05 sfloats + ) sf!
+      -1e trans-3,2 ( #11 sfloats + ) sf! ;
     : init-OpenGL ( -- )
       GL_CW glFrontFace
       GL_LESS glDepthFunc  depth >r
@@ -397,7 +417,7 @@ class;
       GL_FRONT GL_FILL glPolygonMode
       GL_LINE_SMOOTH glEnable
       
-      GL_FOG_DENSITY  !0     glFogf
+      GL_FOG_DENSITY  0e     glFogf
       GL_FOG_COLOR    .white glFogfv
       GL_FOG_MODE     GL_EXP2 glFogi ;
     : init-device ( fnear ffar w h -- ) { f: near f: far w h }
@@ -408,9 +428,9 @@ class;
       GL_FOG_END   far   glFogf
       
       w h >  IF
-         w s>f h fm/ fdup fnegate fswap !-1 !1
+         w s>f h fm/ fdup fnegate fswap -1e 1e
       ELSE
-         !-1 !1 h s>f w fm/ fdup fnegate fswap
+         -1e 1e h s>f w fm/ fdup fnegate fswap
       THEN  near far glFrustum
       
       GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT or glClear
@@ -423,13 +443,13 @@ class;
 \ matrix operations                                    10jan99py
 
     | $10 Constant maxstack
-    | &20 sfloats Constant /matrix
+    | #20 sfloats Constant /matrix
 
     : matrix? ( -- ) matrix-stack @ 0=
       IF    [ /matrix maxstack * cell+ ] Literal
             matrix-stack Handle!  matrix-stack @ off
       ELSE  matrix-stack dup @ @
-            maxstack + 1+ -$10 and /matrix * cell+
+            maxstack + 1+ $-10 and /matrix * cell+
             SetHandleSize
       THEN ;
     : matrix-sp ( -- addr )
@@ -446,7 +466,7 @@ class;
 \ scale operations                                     10jan99py
 
     : scale-xyz ( fx fy fz -- )
-      trans [ &12 sfloats ] Literal bounds
+      trans [ #12 sfloats ] Literal bounds
       DO  2 I sfloat+ [ 3 sfloats ] Literal bounds
           DO   dup fpick I sf@ f* I sf! 1-
                [ 1 sfloats ] Literal +LOOP  drop
@@ -465,7 +485,7 @@ class;
       drop fdrop fdrop ;
 
     : do-turn ( fs fc v1 v2 -- )
-      [ &12 sfloats ] Literal bounds
+      [ #12 sfloats ] Literal bounds
       DO  fover I sf@ f* fover dup sf@ f* f+ f-rot
           fover dup sf@ f* fover I sf@ f*
           fswap f- I sf! frot dup sf!
@@ -476,7 +496,7 @@ class;
 \ turn operations                                      31dec98py
 
     : phi>xy ( f -- f1 f2 )
-      rot-mode sf@ f* fsincos !1 f- !1 f+ ;
+      rot-mode sf@ f* fsincos 1e f- 1e f+ ;
     : degrees ( f -- )  1/2pi f* rot-mode ! ;
 
     : left ( f -- )       phi>xy  trans-2,0 trans-3,0 do-turn ;
@@ -501,27 +521,27 @@ class;
 
     : forward-xyz ( fx fy fz -- )
       fdup z-off sf@ f+ z-off sf!
-      trans [ &12 sfloats ] Literal bounds
+      trans [ #12 sfloats ] Literal bounds
       DO  3 I sf@ I sfloat+ [ 3 sfloats ] Literal bounds
           DO   dup fpick I sf@ f* f+ 1-
                [ 1 sfloats ] Literal +LOOP  drop I sf!
           [ 4 sfloats ] Literal +LOOP  fdrop fdrop fdrop ;
 
-    : forward ( fz -- )  !0 !0 frot forward-xyz ;
+    : forward ( fz -- )  0e 0e frot forward-xyz ;
 
 \ complex operation                                    16feb99py
 
     : matrix* ( -- )   -1 matrix-stack @ +!
       trans-1,0 [ 3 sfloats ] Literal bounds
-      DO  matrix-sp [ &12 sfloats ] Literal bounds
-          DO  J !0 I sfloat+ [ 3 sfloats ] Literal bounds
+      DO  matrix-sp [ #12 sfloats ] Literal bounds
+          DO  J 0e I sfloat+ [ 3 sfloats ] Literal bounds
               DO   dup sf@ I sf@ f* f+ [ 4 sfloats ] Literal +
                    [ 1 sfloats ] Literal +LOOP  drop
               [ 4 sfloats ] Literal +LOOP
-          fswap frot I [ &12 sfloats ] Literal bounds
+          fswap frot I [ #12 sfloats ] Literal bounds
           DO  I sf!  [ 4 sfloats ] Literal +LOOP
           [ 1 sfloats ] Literal +LOOP
-      trans  matrix-sp [ &12 sfloats ] Literal bounds
+      trans  matrix-sp [ #12 sfloats ] Literal bounds
       DO  I sf@ dup sf! [ 4 sfloats ] Literal +
           [ 4 sfloats ] Literal +LOOP  drop ;
 
@@ -534,7 +554,7 @@ class;
       trans-0,0 sf@
       trans-0,2 sf@ fnegate ;
     : sqsum ( addr n -- )
-      !0 4* sfloats bounds
+      0e 4* sfloats bounds
       ?DO  I sf@ fdup f* f+ [ 4 sfloats ] Literal +LOOP ;
     : scale@ ( -- fsx2 fsy2 fsz2 )
       trans-1,0 3 sqsum
@@ -551,34 +571,34 @@ class;
 \ orthogonalize matrix                                 28dec99py
 
     : ortho ( -- ) \ x x z -> y  y x z -> x
-      scale@ { f: x f: y f: z |
+      scale@ { f: x f: y f: z }
       trans-3,0 sf@ trans-3,1 sf@ trans-3,2 sf@
       trans-1,0 sf@ trans-1,1 sf@ trans-1,2 sf@  cross*
       trans-2,2 sf! trans-2,1 sf! trans-2,0 sf!
       trans-2,0 sf@ trans-2,1 sf@ trans-2,2 sf@
       trans-3,0 sf@ trans-3,1 sf@ trans-3,2 sf@  cross*
       trans-1,2 sf! trans-1,1 sf! trans-1,0 sf!
-      x y z f* f/ y x z f* f/ fsqrt !1 scale-xyz } ;
+      x y z f* f/ y x z f* f/ fsqrt 1e scale-xyz ;
 
 \ points relative to current turtle position           03jan99py
 
     : set-dphi ( fphi -- )  rot-mode sf@ f* dphi sf! ;
 
-    : get-xy ( fx fy -- z' y' x' )  !0 get-xyz ;
+    : get-xy ( fx fy -- z' y' x' )  0e get-xyz ;
     : get-rpz ( fr fphi fz -- z' y' x' )
       f-rot rot-mode sf@ f* fdup phi sf! r,phi>xy frot get-xyz ;
-    : get-rp ( fr fphi -- z' y' x' ) !0 get-rpz ;
+    : get-rp ( fr fphi -- z' y' x' ) 0e get-rpz ;
     : get-rz ( fr fz -- z' y' x' )
       fswap phi sf@ r,phi>xy frot get-xyz
       dphi sf@ phi sf@ f+ phi sf! ;
-    : get-r ( fr -- z' y' x' ) !0 get-rz ;
+    : get-r ( fr -- z' y' x' ) 0e get-rz ;
 
 \ path address                                         03jan99py
 
 \ path layout:
 \ oldpoint x y z  tx ty  nx ny nz
 
-[IFDEF] glarrays
+[defined] glarrays [IF]
     : path+   ( offset -- addr )  9* 1+ cells path @ + ; macro
     : cur-point   ( n -- addr )  #path  @ + path+ ; macro
     : prev-point  ( n -- addr )  #path' @ + path+ ; macro
@@ -615,7 +635,7 @@ class;
     : add-rp ( fr fphi -- )      get-rp  do-point ;
     : add-rz ( fr fz -- )        get-rz  do-point ;
     : add-r ( fr -- )            get-r   do-point ;
-    : add ( -- )  !0 add-r ;
+    : add ( -- )  0e add-r ;
 
     : set-xyz ( fx fy fz --  )   add-xyz drop-point ;
     : set-xy ( fx fy --  )       add-xy  drop-point ;
@@ -623,12 +643,12 @@ class;
     : set-rp ( fr fphi -- )      add-rp  drop-point ;
     : set-rz ( fr fz -- )        add-rz  drop-point ;
     : set-r ( fr -- )            add-r   drop-point ;
-    : set ( -- )  !0 set-r ;
+    : set ( -- )  0e set-r ;
 
 \ path handling                                        03jan99py
 
     : open-round ( -- )
-[IFDEF] glarrays
+[defined] glarrays [IF]
       #path' @ #path'' !  #path @ #path' !
       2 path# +! path# @ #path !
 [ELSE]
@@ -656,11 +676,11 @@ class;
       trans-3,1 sf@ fnegate f>fs
       trans-3,0 sf@ fnegate f>fs ;
     : start-path ( n -- )
-        look-back { z y x |
+        look-back { z y x }
         dup open-path  0 ?DO  add  LOOP
         path-points @ 2+ 1 ?DO
             z y x I path+ !normal
-        LOOP } ;
+        LOOP ;
 
 \ auto-texturing                                       30jan99py
 
@@ -682,13 +702,13 @@ class;
       fover2 fover2 fswap fatan2 y-text@ !text ;
 
     : >texture  ( addr f -- )
-      IS do-texture y-text sf! !0 z-off sf! ;
-    : xy-texture    ['] do-xy-text    !1    >texture ;
+      IS do-texture y-text sf! 0e z-off sf! ;
+    : xy-texture    ['] do-xy-text    1e    >texture ;
     : zphi-texture  ['] do-zphi-text  1/2pi >texture ;
     : zphi2-texture ['] do-zphi2-text 1/2pi >texture ;
-    : zp-texture    ['] do-zp-text    !1    >texture ;
+    : zp-texture    ['] do-zp-text    1e    >texture ;
     : rphi-texture  ['] do-rphi-text  1/2pi >texture ;
-    : no-texture    ['] noop          !1    >texture ;
+    : no-texture    ['] noop          1e    >texture ;
 
 \ texture loading (ppm)                                31jan99py
 
@@ -764,7 +784,7 @@ class;
       >r
       scratch $100 r@ read-line throw 2drop
       scratch $100
-      BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#
+      BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#'
              <>  UNTIL
       0. 2swap >number 1 /string 0. 2swap >number 2drop drop nip
       scratch $100 r@ read-line throw 2drop
@@ -773,7 +793,7 @@ class;
       r> close-file throw ( w h addr )
       -rot over2 over2 over2 * 3* <>.24 create-mipmap3 DisposPtr
 [ELSE]  close-file throw  [THEN] ;
-[IFDEF] has-png
+[defined] has-png [IF]
     : load-texture-png ( fd -- )
 \       & pngflags push $0015 to pngflags
         read-png-image 4 and IF
@@ -783,7 +803,7 @@ class;
         THEN  DisposPtr ;
 [THEN]
     : load-texture ( addr u -- )
-[IFDEF] has-png
+[defined] has-png [IF]
          s" .png" suffix? IF  load-texture-png  EXIT  THEN
 [ELSE]
          s" .ppm" suffix? IF  load-texture-ppm  EXIT  THEN
@@ -793,7 +813,7 @@ class;
 
 \ text drawing                                       23jul2005py
 
-[IFDEF] xft  also xconst also xft
+[defined] xft [IF]  also xconst also xft
     : map>addrwh ( image -- addr w h ) >r
         r@ XImage data @
         r@ XImage width @
@@ -842,7 +862,7 @@ class;
 \ texture path primitives                              25feb99py
 
     : path-bound ( p' p p+ -- pold pnewhi pnewlo )
-[IFDEF] glarrays
+[defined] glarrays [IF]
       >r swap path+ cell+ swap 1- path+ r> 2- path+ swap ;
 [ELSE]
       drop swap $B cells + swap
@@ -875,8 +895,8 @@ class;
 
     : draw-textured-path ( p'' p' p -- )
       gl-mode @ glBegin
-      dup  [IFDEF] glarrays  path+  [THEN]
-      &15 cells + dup @ #1. = IF  off  ELSE  drop  THEN
+      dup  [defined] glarrays [IF]  path+  [THEN]
+      #15 cells + dup @ #1. = IF  off  ELSE  drop  THEN
       2dup <> smooth @ and
       IF  2dup path# @ 1+ compute-normals  THEN
       path-bound smooth @
@@ -955,12 +975,13 @@ class;
 
 \ polygon tesselation
 
+  [defined] libGLU [IF]
     : draw-textured-poly-path ( p'' p' p -- )
-	[IFDEF] gluNewTess
-	    !0 !0 !0 get-xyz >r >r >r  !0 !0 !1 get-xyz
+	[defined] gluNewTess [IF]
+	    0e 0e 0e get-xyz >r >r >r  0e 0e 1e get-xyz
 	    fs>f r> fs>f f-
 	    fs>f r> fs>f f-
-	    fs>f r> fs>f f- f>fs f>fs f>fs { nx ny nz |
+	    fs>f r> fs>f f- f>fs f>fs f>fs { nx ny nz }
 	    gluNewTess >r
 	    r@ GLU_TESS_VERTEX ['] glVertexNormalTexCoord3fv gluTessCallback
 	    r@ GLU_TESS_BEGIN ['] glBegin >c gluTessCallback
@@ -982,7 +1003,7 @@ class;
 	    /point +LOOP >r >r drop
 	    r@ gluTessEndContour
 	    r@ gluTessEndPolygon
-	    r> rdrop r> DisposPtr gluDeleteTess }
+	    r> rdrop r> DisposPtr gluDeleteTess
 	[ELSE]	    
 	    gl-mode @ glBegin
 	    path-bound ?DO
@@ -991,17 +1012,20 @@ class;
 	    /point +LOOP  drop
 	    glEnd
 	[THEN] ;
-
+    [THEN]
+    
 \ drawing modes                                        25feb99py
 
     : textured ( -- ) ['] draw-textured-path IS draw-path
       GL_TEXTURE_2D glEnable GL_QUAD_STRIP gl-mode ! ;
+[defined] libGLU [IF]
     : textured-poly ( -- ) ['] draw-textured-poly-path IS draw-path
       GL_TEXTURE_2D glEnable GL_POLYGON gl-mode ! ;
-    : triangles ( -- ) ['] draw-triangle-path IS draw-path
-      GL_TEXTURE_2D glDisable GL_QUAD_STRIP gl-mode ! ;
     : poly ( -- ) ['] draw-textured-poly-path IS draw-path
       GL_TEXTURE_2D glDisable GL_POLYGON gl-mode ! ;
+[THEN]
+    : triangles ( -- ) ['] draw-triangle-path IS draw-path
+      GL_TEXTURE_2D glDisable GL_QUAD_STRIP gl-mode ! ;
     : points ( -- ) ['] draw-point-path IS draw-path
       GL_TEXTURE_2D glDisable GL_POINTS gl-mode ! ;
     : textured-points ( -- ) ['] draw-textured-point-path IS draw-path
@@ -1014,7 +1038,7 @@ class;
 \ close pathes and rounds                              30jan99py
 
     : finish-round ( -- )  -1 path# +!
-[IFDEF] glarrays
+[defined] glarrays [IF]
       path# @ 1- path+  #path @ 1- path+  /point move
       #path'' @ IF  #path'' @ #path' @ #path @ draw-path  THEN
       #path'' off
@@ -1024,7 +1048,7 @@ class;
           path'' HandleOff  THEN
 [THEN] ;
     : close-round ( -- )
-      [IFDEF] glarrays
+      [defined] glarrays [IF]
           #path @ path+ path# @ path+ /point 2* move 
           #path' @
       [ELSE]
@@ -1035,7 +1059,7 @@ class;
       1 path @ +!  finish-round ;
     : next-round ( -- )  close-round open-round ;
 
-[IFDEF] glarrays
+[defined] glarrays [IF]
     : close-path ( -- )
       #path'' @  IF  close-round  THEN
       #path' @   IF  #path' @ #path @ dup draw-path  THEN
@@ -1049,13 +1073,13 @@ class;
       path'' @   IF  path''   HandleOff  THEN ;
 [THEN]
     : end-path ( -- )
-        look-at { z y x |
+        look-at { z y x }
         next-round  path-points @ 0 ?DO
             set
         LOOP  close-round
         path-points @ 2+ 1 ?DO
             z y x I path+ !normal
-        LOOP  close-path } ;
+        LOOP  close-path ;
 
 \ debugging aids                                       03jan99py
 
@@ -1069,7 +1093,7 @@ class;
       r@ @ r@ GetHandleSize dup r@ Handle!
       r> @ swap move ;
     : clone ( -- o )
-[IFDEF] glarrays
+[defined] glarrays [IF]
       #path'' @  IF  close-round  THEN
 [ELSE]
       path'' @   IF  close-round  THEN
@@ -1078,7 +1102,7 @@ class;
       trans 3d-turtle new 3d-turtle with
           trans last-turtle over - move
           path     clone-handle
-[IFUNDEF] glarrays
+[defined] glarrays [ 0= ] [IF]
           path'    clone-handle
           path''   off
 [THEN]
@@ -1091,42 +1115,42 @@ class;
 \ high level primitives                                27dec99py
 
     : segment ( r d n -- )  forward
-      { f: r | next-round  0 DO  r set-r  LOOP } ;
+      { f: r } next-round  0 DO  r set-r  LOOP ;
     : sphere ( r n -- )
       pi dup fm/ set-dphi
       dup 2* start-path
       dup 1 DO  >matrix I'
           pi I I' fm*/ fover f>r fsincos f>r fover f*
-          fswap !1 fr> f- f* 2* segment
+          fswap 1e fr> f- f* 2* segment
           fr>  matrix>
       LOOP  f2* forward
       drop end-path ;
-    : cylinder ( r1 r2 d n -- ) { f: r1 f: r2 f: d |
+    : cylinder ( r1 r2 d n -- ) { f: r1 f: r2 f: d }
       2pi dup fm/ set-dphi
       dup start-path
-      r1 !.01 f* !0 dup segment  \ ugly workaround
-      r1 !0 dup segment
-      r1 !0 dup segment
+      r1 .01e f* 0e dup segment  \ ugly workaround
+      r1 0e dup segment
+      r1 0e dup segment
       r2 d  dup segment
-      r2 !0     segment
-      end-path } ;
+      r2 0e     segment
+      end-path ;
 
 \ init and dispose                                     10jan99py
   
     : init ( fnear ffar w h / -- )
       clone-init @ ?EXIT
-[IFDEF] debug-points
+[defined] debug-points [IF]
       #points off
 [THEN]
-[IFDEF] glarrays
+[defined] glarrays [IF]
       [ $8000 4+ 9* cells ] Literal path Handle!
       0 path# !
 [THEN]
-      !1 x-text sf!  !1 y-text sf!
-      !1 rot-mode sf! init-matrix init-OpenGL init-device
+      1e x-text sf!  1e y-text sf!
+      1e rot-mode sf! init-matrix init-OpenGL init-device
       triangles no-texture ;
     : dispose ( -- )  close-path
-[IFDEF] glarrays
+[defined] glarrays [IF]
       path         @ IF  path         HandleOff  THEN
 [THEN]
       matrix-stack @ IF  matrix-stack HandleOff  THEN
@@ -1146,7 +1170,7 @@ class;
 	.005e w @ fm* .005e h @ fm* 1e texture @ r> 3d-turtle with
 	    set-texture textured xy-texture
 	    >matrix scale-xyz
-	    swap s>f f2/ fnegate s>f f2/ fnegate !0 forward-xyz
+	    swap s>f f2/ fnegate s>f f2/ fnegate 0e forward-xyz
 	    y-text sf! x-text sf!
 	    0e fdup x-toff sf! y-toff sf!
 	    3 open-path
@@ -1156,4 +1180,4 @@ class;
 	endwith GL_TEXTURE_2D r> IF  glEnable  ELSE  glDisable  THEN ;
 class;
 
-previous previous previous previous previous previous
+previous previous previous previous previous previous previous

@@ -5,13 +5,13 @@ dos also memory also
 \needs 3d-turtle include 3d-turtle.fs
 float also glconst also opengl also
 
-Create .white !&1  f>fs , !&1  f>fs , !&1  f>fs , !1  f>fs ,
-Create .red   !&.8 f>fs , !&.1 f>fs , !&0  f>fs , !1  f>fs ,
-Create .green !&0  f>fs , !&.8 f>fs , !&.2 f>fs , !1  f>fs ,
-Create .blue  !&.2 f>fs , !&.2 f>fs , !&1  f>fs , !1  f>fs ,
+Create .white 1e  f>fs , 1e  f>fs , 1e  f>fs , 1e  f>fs ,
+Create .red   .8e f>fs , .1e f>fs , 0e  f>fs , 1e  f>fs ,
+Create .green 0e  f>fs , .8e f>fs , .2e f>fs , 1e  f>fs ,
+Create .blue  .2e f>fs , .2e f>fs , 1e  f>fs , 1e  f>fs ,
 
 : rotation ( speed teeth -- fn )
-    &2160 * * s>f [ pi !$.00000002 f* ] Fliteral f* ;
+    #2160 * * s>f [ pi 2147483648e f/ ] Fliteral f* ;
 
 3d-turtle with
   F : gear ( ri rm ro h teeth color -- ) 4*
@@ -57,9 +57,9 @@ endwith
 
 : draw-gear  ( o alx aly alz pitch bend roll zoom speed
                shade tx sx sy sz t1 t2 t3 -- )
-{ alx aly alz alp alb alr zoom speed shade txt sx sy sz t1 t2 t3 |
+    { alx aly alz alp alb alr zoom speed shade txt sx sy sz t1 t2 t3 }
     glcanvas with
-        !5 !60 w @ h @ 3d-turtle new  3d-turtle with
+        5e 60e w @ h @ 3d-turtle new  3d-turtle with
 
             shade 0 = IF  triangles  THEN
             shade 1 = IF  textured   1 wait' +! THEN
@@ -69,11 +69,11 @@ endwith
 
             test-list GL_COMPILE glNewList
 
-            0 !5 !5 !-10 get-xyz GL_POSITION 0 set-light
+            0 5e 5e -10e get-xyz GL_POSITION 0 set-light
 
-            zoom 100 + s>f !0.08 f* forward
+            zoom 100 + s>f 0.08e f* forward
 
-            pi !180 f/
+            pi 180e f/
             fdup alx fm* x-left
             fdup aly fm* y-left
             fdup alz fm* z-left
@@ -81,38 +81,34 @@ endwith
             fdup alb fm* up
                  alr fm* roll-left
 
-            !.01 sx fm* !.01 sy fm* !.01 sz fm* scale-xyz
-
-            !0    5  speed rotation f+
-            !-9 -10  speed rotation f+
-            !9  -10  speed rotation f+ { f: rr f: br f: gr |
+            .01e sx fm* .01e sy fm* .01e sz fm* scale-xyz
 
                           xy-texture  
             txt   1 = IF  rphi-texture  THEN
             txt   2 = IF  zphi-texture  THEN
 
-            !-.6  !-.4 !0 forward-xyz
-            >matrix  rr roll-left
+            -.6e  -.4e 0e forward-xyz
+            >matrix  0e    5  speed rotation f+ roll-left
             shade 1 <> IF    .red   .color
                   ELSE  t1 .text  THEN
-            !.2  !.73 !.87 !.2   20  gear
+            .2e  .73e .87e .2e   20  gear
             matrix@
-            !0 !1.22 !0 forward-xyz  gr roll-left
+            0e 1.22e 0e forward-xyz  9e  -10  speed rotation f+ roll-left
             shade 1 <> IF    .green .color
                   ELSE  wait' @ 3 < IF  t1  ELSE  t2  THEN .text  THEN
-            !.10 !.33 !.47 !.5
-                  rr fsin !.2 f* f+ f**2 10  gear
+            .10e .33e .47e .5e
+                  0e    5  speed rotation f+ fsin .2e f* f+ f**2 10  gear
             matrix>
-            !1.22 !0 !0 forward-xyz  br roll-left
+            1.22e 0e 0e forward-xyz  -9e -10  speed rotation f+ roll-left
             shade 1 <> IF    .blue  .color
                   ELSE  wait' @ 3 < IF  t1  ELSE
                         wait' @ 6 < IF  t2  ELSE
                                         t3  THEN THEN  .text  THEN
-            !.26 !.33 !.47 !.5
-                  rr fsin !.2 f* f- f**2 10  gear }
+            .26e .33e .47e .5e
+                  0e    5  speed rotation f+ fsin .2e f* f- f**2 10  gear
             glEndList                     \ cr .time
             test-list glCallList          \    .time
         dispose endwith
-    endwith } ;
+    endwith ;
 
 previous previous previous previous previous
