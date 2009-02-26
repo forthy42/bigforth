@@ -8,6 +8,7 @@ modal class component
     early dialog immediate
     early open-app immediate
     early menu immediate
+    early open-win
     method params
     method widget
   how:
@@ -15,6 +16,8 @@ modal class component
     : params   DF[ 0 ]DF s" No Title" ;
     : init ( -- ) ^>^^ assign
 	widget 1 ^ params 2drop nip super init ;
+    : open-win ( -- )  self params rot drop
+	screen self window new  window with  assign show  endwith ;
     : make     ( o -- win )
 	new, dup >o params o> rot drop
 	screen self window new  window with  assign ^  endwith ;
