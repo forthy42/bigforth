@@ -20,17 +20,24 @@ cell 8 = [IF]
 
 8 64s Constant state#
 
-align
+$10 here $F and - allot 
 here state# allot \ source
 here state# allot \ state
 here state# allot \ nextstate
-here state# allot \ message
+here state# 8 * allot \ message
 swap 2swap swap
 
 Constant wurst-source
 Constant wurst-state
 Constant nextstate
 Constant message
+
+: .16 ( u[d] -- )
+    [ cell 8 = ] [IF] 0 [THEN]
+    base @ >r hex <# 16 0 DO # LOOP #> type r> base ! ;
+
+: .state  ( -- ) 8 0 DO  wurst-state  I 64s + 64@ .16  LOOP ;
+: .source ( -- ) 8 0 DO  wurst-source I 64s + 64@ .16  LOOP ;
 
 Create source-init
 $6C5F6F6CBE627172. 64, $7164C30603661C2E. 64, $CE5009401B441346. 64, $454FA335A6E63AD2. 64,
@@ -228,7 +235,7 @@ s" gforth" environment? [IF] 2drop
 	2drop
 	8 0 DO
 	    <#
-	    s" ;" holds I 0 #s
+	    s" ;" holds I 0 #s 2drop
 	    s" )) = a" holds I 16 + 64s 0 #s
 	    s" *((uint64_t *)(states+" holds
 	    #> \c,
@@ -255,19 +262,81 @@ s" gforth" environment? [IF] 2drop
     5 round_ind,
     6 round_ind,
     7 round_ind,
-    \c void rounds_ind(int n, unsigned char * states, uint64_t * rnds) {
-    \c if(n>=1) round0_ind(states, rnds);
-    \c if(n>=2) round1_ind(states, rnds);
-    \c if(n>=3) round2_ind(states, rnds);
-    \c if(n>=4) round3_ind(states, rnds);
-    \c if(n>=5) round4_ind(states, rnds);
-    \c if(n>=6) round5_ind(states, rnds);
-    \c if(n>=7) round6_ind(states, rnds);
-    \c if(n>=8) round7_ind(states, rnds);
+    \c static inline void add_entropy(uint64_t * a, uint64_t * b) {
+    \c a[0] = b[0] = a[0] ^ b[0];
+    \c a[1] = b[1] = a[1] ^ b[1];
+    \c a[2] = b[2] = a[2] ^ b[2];
+    \c a[3] = b[3] = a[3] ^ b[3];
+    \c a[4] = b[4] = a[4] ^ b[4];
+    \c a[5] = b[5] = a[5] ^ b[5];
+    \c a[6] = b[6] = a[6] ^ b[6];
+    \c a[7] = b[7] = a[7] ^ b[7];
+    \c }
+    \c static inline void set_entropy(uint64_t * a, uint64_t * b) {
+    \c a[0] ^= b[0]; b[0] ^= a[0];
+    \c a[1] ^= b[1]; b[1] ^= a[1];
+    \c a[2] ^= b[2]; b[2] ^= a[2];
+    \c a[3] ^= b[3]; b[3] ^= a[3];
+    \c a[4] ^= b[4]; b[4] ^= a[4];
+    \c a[5] ^= b[5]; b[5] ^= a[5];
+    \c a[6] ^= b[6]; b[6] ^= a[6];
+    \c a[7] ^= b[7]; b[7] ^= a[7];
+    \c }
+    \c void rounds_ind(unsigned int n, unsigned char * states, uint64_t * rnds) {
+    \c if((n&15)>=1) round0_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=2) round1_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x20) add_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=3) round2_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*5),(uint64_t *)(states));
+    \c if((n&15)>=4) round3_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*6),(uint64_t *)(states));
+    \c if(n&0x20) add_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x40) add_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=5) round4_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*7),(uint64_t *)(states));
+    \c if((n&15)>=6) round5_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*8),(uint64_t *)(states));
+    \c if(n&0x20) add_entropy((uint64_t *)(states+64*5),(uint64_t *)(states));
+    \c if((n&15)>=7) round6_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*9),(uint64_t *)(states));
+    \c if((n&15)>=8) round7_ind(states, rnds);
+    \c if(n&0x10) add_entropy((uint64_t *)(states+64*10),(uint64_t *)(states));
+    \c if(n&0x20) add_entropy((uint64_t *)(states+64*6),(uint64_t *)(states));
+    \c if(n&0x40) add_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x80) add_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c }
+    \c void rounds_decrypt(unsigned int n, unsigned char * states, uint64_t * rnds) {
+    \c if((n&15)>=1) round0_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=2) round1_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x20) set_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=3) round2_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*5),(uint64_t *)(states));
+    \c if((n&15)>=4) round3_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*6),(uint64_t *)(states));
+    \c if(n&0x20) set_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x40) set_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
+    \c if((n&15)>=5) round4_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*7),(uint64_t *)(states));
+    \c if((n&15)>=6) round5_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*8),(uint64_t *)(states));
+    \c if(n&0x20) set_entropy((uint64_t *)(states+64*5),(uint64_t *)(states));
+    \c if((n&15)>=7) round6_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*9),(uint64_t *)(states));
+    \c if((n&15)>=8) round7_ind(states, rnds);
+    \c if(n&0x10) set_entropy((uint64_t *)(states+64*10),(uint64_t *)(states));
+    \c if(n&0x20) set_entropy((uint64_t *)(states+64*6),(uint64_t *)(states));
+    \c if(n&0x40) set_entropy((uint64_t *)(states+64*4),(uint64_t *)(states));
+    \c if(n&0x80) set_entropy((uint64_t *)(states+64*3),(uint64_t *)(states));
     \c }
     c-function rounds_ind rounds_ind n a a -- void
+    c-function rounds_decrypt rounds_decrypt n a a -- void
     end-c-library
     : rounds ( n -- ) wurst-source 'rngs rounds_ind ;
+    : rounds-decrypt ( n -- ) wurst-source 'rngs rounds_decrypt ;
 [ELSE]
 : round0 ( -- )  [ 0 round# round, ] ; 
 : round1 ( -- )  [ 1 round# round, ] ; 
@@ -281,18 +350,33 @@ s" gforth" environment? [IF] 2drop
 Create 'rounds
     ' round0 A, ' round1 A, ' round2 A, ' round3 A,
     ' round4 A, ' round5 A, ' round6 A, ' round7 A,
+Create 'round-flags
+    $10 , $30 , $10 , $70 , $10 , $30 , $10 , $F0 ,
 
-: rounds ( n -- )  8 umin 0 ?DO  I cells 'rounds + perform  LOOP ;
+: +entropy ( message -- message' )
+    dup wurst-source state# xors  wurst-source over state# move
+    state# + ;
+
+: -entropy ( message -- message' )
+    wurst-source over state# xors
+    dup wurst-source state# xors state# + ;
+
+: rounds ( n -- )  message swap  dup $F and 8 umin 0 ?DO
+	'rounds Ith execute
+	dup 'round-flags Ith and IF
+	    swap +entropy swap
+	THEN
+    LOOP 2drop ;
+
+: rounds-decrypt ( n -- )  message swap  dup $F and 8 umin 0 ?DO
+	'rounds Ith execute
+	dup 'round-flags Ith and IF
+	    swap -entropy swap
+	THEN
+    LOOP 2drop ;
 [THEN]
 
 \ : rounds ( n -- )  8 umin 0 ?DO  I round# round  LOOP ;
-
-: .16 ( u[d] -- )
-    [ cell 8 = ] [IF] 0 [THEN]
-    base @ >r hex <# 16 0 DO # LOOP #> type r> base ! ;
-
-: .state  ( -- ) 8 0 DO  wurst-state  I 64s + 64@ .16  LOOP ;
-: .source ( -- ) 8 0 DO  wurst-source I 64s + 64@ .16  LOOP ;
 
 \ wurstkessel file functions
 
@@ -313,49 +397,47 @@ Create 'rounds
 \ wurstkessel hash
 
 : hash-init
-    state-init  wurst-state state# move
+    source-init wurst-source state# move
+    state-init  wurst-state  state# move ;
+
+: wurst-size ( -- )
     [ cell 4 = ] [IF]
-	size?      wurst-source 64!  0. wurst-source 1 64s + 64!
+	size?      message 64!  0. message 1 64s + 64!
     [ELSE]
-	size? drop wurst-source 64!  0 wurst-source 1 64s + 64!
+	size? drop message 64!  0  message 1 64s + 64!
     [THEN] ;
 
-: +entropy ( -- )
-    message wurst-source state# xors ;
+: >reads ( flags -- n )  dup $F and swap 4 rshift / ;
 
-: encrypt-read ( -- n )
-    message state# erase  message state# wurst-in read-file throw ;
+: encrypt-read ( flags -- n )  >reads >r
+    message state# r> * 2dup erase  wurst-in read-file throw ;
+: read-first ( flags -- n )  wurst-size  >reads >r
+    message state# r> * 2 64s /string wurst-in read-file throw  2 64s + ;
 
-: wurst-hash ( final-rounds rounds -- )  hash-init
-    wurst-source state# 2 64s /string wurst-in read-file throw  2 64s +  over rounds
-    BEGIN  state# =  WHILE
-	    encrypt-read +entropy
-	    over rounds  REPEAT
+: wurst-hash ( final-rounds rounds -- )
+    hash-init dup read-first
+    BEGIN  0>  WHILE
+	    dup rounds
+	    dup encrypt-read
+    REPEAT
     drop rounds .source wurst-close ;
 
 \ wurstkessel encryption
 
-: source> ( -- )
-    wurst-source state# wurst-out write-file throw ;
+: message> ( flags -- ) >reads
+    message swap state# * wurst-out write-file throw ;
 
 : encrypt-init ( -- )
     wurst-key   wurst-state  state# move
     wurst-salt  wurst-source state# move
     wurst-salt  state# wurst-out write-file throw ;
 
-: encrypt-size ( -- remain )
-    [ cell 4 = ] [IF]
-	size? message 64!  0. message 1 64s + 64!
-    [ELSE]
-	size? drop message 64!  0 message 1 64s + 64!
-    [THEN]
-    message state# 2 64s /string wurst-in read-file throw ;
-
-: wurst-encrypt ( first-rounds rounds -- ) >r >r encrypt-init
-    encrypt-size  2 64s + r> rounds
-    BEGIN
-	+entropy  source>  state# =  WHILE
-	    encrypt-read  r@ rounds  REPEAT
+: wurst-encrypt ( first-rounds rounds -- )
+    >r >r encrypt-init
+    r> rounds  r@ read-first
+    BEGIN  0>  WHILE
+	    r@ rounds  r@ message>
+	    r@ encrypt-read  REPEAT
     rdrop wurst-close ;
 
 : decrypt-init ( -- )
@@ -364,52 +446,58 @@ Create 'rounds
 
 2Variable outsize
 
-: .xormsg-size ( -- )  wurst-source message state# xors
+: out- ( n -- n' )
+    0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop ;
+
+: .xormsg-size ( flags -- )  >reads
     message 64@ [ cell 8 = ] [IF] 0 [THEN] outsize 2!
-    message state# 2 64s /string
-    0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
+    message swap state# * 2 64s /string out-
     wurst-out write-file throw ;
 
-: .xormsg' ( -- )  wurst-source message state# xors
-    message state#
-    0 outsize 2@ dmin outsize 2@ 2over d- outsize 2! drop
-    wurst-out write-file throw ;
+: message>' ( flags -- ) >reads
+    message swap state# * out- wurst-out write-file throw ;
 
-: wurst-decrypt ( first-rounds rounds -- ) >r >r decrypt-init
-    encrypt-read
-    r> rounds .xormsg-size
-    +entropy
-    BEGIN  state# =  WHILE
-	encrypt-read
-	r@ rounds .xormsg'
-	+entropy  REPEAT
+: wurst-decrypt ( first-rounds rounds -- )
+    >r >r decrypt-init
+    r> rounds
+    r@ encrypt-read r@ rounds-decrypt r@ .xormsg-size
+    BEGIN  0>  WHILE
+	r@ encrypt-read
+	r@ rounds-decrypt  r@ message>'
+    REPEAT
     rdrop  wurst-close ;
 
 \ wurstkessel rng
 
 : rng-init
     wurst-salt  wurst-source state# move
-    state-init  wurst-state  state# move ;
+    state-init  wurst-state  state# move
+    message     state# 8 * erase ;
 
 ' rounds Alias wurst-rng ( rounds -- )
 
-2 Value rounds#
+$18 Value roundsh#
+$28 Value rounds#
 4 Value roundse#
 
 : test-hash
-    s" wurstkessel.fs" wurst-file roundse# rounds# wurst-hash ;
+    s" wurstkessel.fs" wurst-file roundse# roundsh# wurst-hash ;
 : test-encrypt
     s" wurstkessel.fs" wurst-file s" wurstkessel.wurst" wurst-outfile roundse# rounds# wurst-encrypt ;
 : test-decrypt
     s" wurstkessel.wurst" wurst-file s" wurstkessel.fs2" wurst-outfile roundse# rounds# wurst-decrypt ;
 : test-rng ( n -- ) s" wurst.random" wurst-outfile rng-init
+    rounds# >reads state# * swap
     0 ?DO
 	rounds# wurst-rng
-	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
+	message over wurst-out write-file throw
+	message over erase  LOOP wurst-close ;
 : out-rng ( n -- ) stdout to wurst-out \ rng-init
+    rounds# >reads state# * swap
     0 ?DO
 	rounds# wurst-rng
-	wurst-source state# wurst-out write-file throw  LOOP wurst-close ;
+	message over wurst-out write-file throw
+	message over erase  LOOP wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
 : time-rng ( n -- ) rng-init
@@ -425,28 +513,6 @@ Create rng-histogram $100 0 [DO] 0 , [LOOP]
 
 Create wurst-tmp state# allot
 
-: wurst-break-ini
-    s" wurstkessel.fs" wurst-file s" wurstkessel.wurst1" wurst-outfile 1 1 wurst-encrypt
-    s" wurstkessel.fs" wurst-file encrypt-size drop wurst-close
-    message wurst-tmp state# move
-    s" wurstkessel.wurst1" wurst-file
-    s" wurstkessel.fs3" wurst-outfile
-    encrypt-read drop message wurst-source state# move
-    encrypt-read drop message wurst-state  state# move
-    wurst-tmp message state# move
-    wurst-source wurst-state state# xors
-    message      wurst-state state# xors 1 rounds
-    wurst-source message     state# xors ;
-
-: wurst-break
-    wurst-break-ini
-    .xormsg-size state#
-    +entropy
-    BEGIN  state# =  WHILE
-	    encrypt-read
-	    1 rounds .xormsg'
-	    +entropy  REPEAT
-    wurst-close ;
 : find-same ( d -- )
     $100 0 DO
 	$100 I DO
@@ -466,12 +532,14 @@ s" bigforth" environment? [IF] 2drop
 : 32>f dup $80000000 and negate or s>f 4.6566128731E-10 f* ;
 
 : rng-fft-test ( n -- ) dup points rng-init
+    rounds# >reads state# * swap
     dup 0 ?DO
 	rounds# wurst-rng
-	I wurst-source state# bounds ?DO
+	I message 2 pick bounds ?DO
 	    I     32@ 32>f
 	    I 4 + 32@ 32>f dup values z! 1+
 	8 +LOOP drop
+	message over erase
     8 +LOOP
     fft #points s>f 1/f fsqrt fftscale ;
 
