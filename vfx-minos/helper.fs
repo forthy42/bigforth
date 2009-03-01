@@ -164,8 +164,8 @@ Vocabulary DOS
 
 also DOS definitions
 
-extern: char * setlocale ( int , char * ); ( locale addr -- addr )
-extern: void gettimeofday ( int * , int * ); ( timeval timezone -- )
+Extern: char * setlocale ( int , char * ); ( locale addr -- addr )
+Extern: void gettimeofday ( int * , int * ); ( timeval timezone -- )
 
 synonym env$ readenv
 
@@ -391,8 +391,6 @@ Defer char@ ' count IS char@
 : case? ( n1 n2 -- n1 false / true )
     over = dup IF nip THEN ;
 
-0 value script?
-
 \ sorting
 
 : pivot@ ( addr u -- addr u pivot ) 2dup 2/ cells + @ ; macro
@@ -409,4 +407,33 @@ Defer lex       ' <= IS lex
     cell +LOOP  drop >r
   r@ 2 pick - cell/ tuck - r> swap ;
 : sort ( addr u -- )
-  BEGIN  dup 1 >  WHILE  pivot@ split< recurse  REPEAT  2drop ;
+    BEGIN  dup 1 >  WHILE  pivot@ split< recurse  REPEAT  2drop ;
+
+\ Argument parsing
+
+0 value script?
+
+Vocabulary -options  also -options definitions
+
+: -i included 2 ;
+: -e evaluate 2 ;
+synonym --evaluate -e
+
+: -h  ( addr u -- n )  2drop 1  ." Image Options:" cr
+  ."   FILE                              load FILE" cr
+  ."   -e STRING, --evaluate STRING      interpret STRING" cr
+  bye ;
+synonym --help -h
+
+get-current Constant '-options
+Forth definitions -options
+
+Variable arg#
+: arg ( n -- addr u ) argv[ >len ;
+: do-arg ( addr u addr u -- n )
+    2dup '-options search-wordlist
+    IF  nip nip execute  ELSE  2swap 2drop -i 1-  THEN ;
+: interpret-args ( -- )  argc 1 ?DO  I arg# !
+	I 1+ I' = IF  s" "  ELSE  I 1+ arg  THEN
+    I arg do-arg  +LOOP ;
+previous

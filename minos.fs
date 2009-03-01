@@ -186,7 +186,11 @@ ficon: minos-win icons/minos1+.icn"
 : event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
     :noname win-init ; atcold
-\    :noname WinI/O .cold quit ; IS entrypoint
+    : minos-entry
+	2drop 2drop drop
+	true to script? interpret-args false to script?
+	WinI/O .cold quit ;
+    ASSIGN minos-entry TO-DO entrypoint
     Create fds here $400 8 / dup allot erase
     Create >timeout 0 , 0 ,
 
