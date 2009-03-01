@@ -1,14 +1,14 @@
 #! xbigforth
 \ graphical widget editor                              14sep97py
 
-[IFUNDEF] fileop  include fileop.fb  [THEN]
-also minos [IFUNDEF] float-action
+[defined] fileop 0= [IF]  include fileop.fb  [THEN]
+also minos [defined] float-action 0= [IF]
     previous include minos-float.fs
 [ELSE]
     previous
 [THEN]
 
-[IFDEF] x11  \needs xconst | import xconst
+[defined] x11 [IF]  \needs xconst | import xconst
 [THEN]
 
 Module theseus
@@ -500,7 +500,7 @@ resource:dialog implements
              ^ ST[ IF-field get implementation-file $! ]ST
              ( s" SF:" info) textfield new dup bind IF-field  2 habox new
              dialog-stack self IF  9  ELSE  7  THEN  vabox new
-             2 borderbox dup >r [IFDEF] x11 dpy get-win swap [THEN]
+             2 borderbox dup >r [defined] x11 [IF] dpy get-win swap [THEN]
 	     menu-icon with menu-frame popup endwith ?menu-call
              r> with dispose endwith
            ]S TT" Dialog Menu"
@@ -1368,13 +1368,13 @@ widget ptr cut-stack
     kbshift @ 1 and  IF  click-ccp  EXIT THEN
                          click-ecn ;
 
-[IFDEF] x11
+[defined] x11 [IF]
 also xconst
 Create do-edit ' click-all A, ' key-edit A, XC_xterm ,
 previous
 [THEN]
 
-[IFDEF] win32
+[defined] win32 [IF]
 also win32api
 Create do-edit ' click-all A, ' key-edit A,  IDC_IBEAM ,
 previous
@@ -1384,7 +1384,7 @@ do-edit do-it !
 
 also dos
 
-[IFUNDEF] system
+[defined] system 0= [IF]
 : system 2drop -1 ;
 [THEN]
 
@@ -1408,7 +1408,7 @@ also dos
     cur save-state @  cur file-name @ 0= or
     IF    auto-save-add
     ELSE  cur file-name $@ $add  THEN  s" '" $add
-[IFUNDEF] win32
+[defined] win32 [ 0= ] [IF]
     s"  &" $add
 [THEN]
     pad c>0"  pad system drop ;
@@ -1516,7 +1516,7 @@ Variable auto-save-file
 
 : modes ( -- o )
     backing new D[
-    [IFDEF] edit-modes
+    [defined] edit-modes [IF]
         edit-modes
         hline
     [THEN]
@@ -1525,7 +1525,7 @@ Variable auto-save-file
     navigation
     hline
     file-io
-    [IFDEF] edit-modes  7  [ELSE]  5  [THEN]
+    [defined] edit-modes [IF]  7  [ELSE]  5  [THEN]
     vabox new 2 borderbox ]D
     0fill
     2 vabox new hfixbox ;
@@ -1560,7 +1560,7 @@ include theseus-help.m
 also dos
 
 : help-menu ( -- o )
-[IFDEF] win32
+[defined] win32 [IF]
     ^ S[ 0" help/theseus.html" system drop ]S
 [ELSE]
     ^ S[ 0" cd help; ${BROWSER-./netscape.sh} file://$PWD/theseus.html >/dev/null 2>/dev/null &" system drop ]S
