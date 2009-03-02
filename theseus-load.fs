@@ -101,8 +101,19 @@ also minos-load definitions
         parse-name content $!  parse-name 2drop
         self endwith ;
 : S[  drop
-    S" " action-des new action-des with assign
+    S" " simple-des new simple-des with assign
         s"  ]S ( MINOS ) " content scan-strings
+        0 typ !
+        self endwith ;
+: R[  drop
+    S" " simple-des new simple-des with assign
+        s"  ]R ( MINOS ) " content scan-strings
+        1 typ !
+        self endwith ;
+: M[  drop
+    S" " simple-des new simple-des with assign
+        s"  ]M ( MINOS ) " content scan-strings
+        2 typ !
         self endwith ;
 : T[   nip S" " S" "
     toggle-des new toggle-des with assign

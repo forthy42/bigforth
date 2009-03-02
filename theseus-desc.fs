@@ -531,6 +531,29 @@ how:
     : dump ( -- ) ." ^^ CK[ " get type ."  ]CK ( MINOS ) " ;
 class;
 
+action-des class simple-des
+    cell var typ
+  how:
+    : edit-field ( -- o )  ^ F cur bind action
+	0 TN[ 0 typ ]T[ ]TN s" Simple" rbutton new
+	0 TN[ 1 typ ]T[ ]TN s" Repeat" rbutton new
+	0 TN[ 2 typ ]T[ ]TN s" Drag" rbutton new
+	cur back with 2fill endwith 4 hartbox new
+        s" Code:" text-label new
+        0 1 *fill 2dup glue new
+        2 vabox new
+        content HLock
+        get content new-code dup bind code-lines
+        dup F bind code-string
+        content HUnLock
+        1 habox new -2 borderbox
+        0 1 *fill 2dup glue new
+        3 habox new
+	tooltip-field 3 vabox new vskip ;
+    : .srm s" SRM" drop typ @ + c@ emit ;
+    : dump ( -- ) ." ^^ " .srm ." [ "
+	get type ."  ]" .srm ."  ( MINOS ) " dump-tooltip ;
+class;
 action-des class canvas-des
 how:
     : edit-field ( -- o )  ^ F cur bind action
