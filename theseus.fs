@@ -1370,7 +1370,7 @@ widget ptr cut-stack
 
 [defined] x11 [IF]
 also xconst
-Create do-edit ' click-all A, ' key-edit A, XC_xterm ,
+Create do-edit ' click-all A, ' key-edit A, XC_crosshair ,
 previous
 [THEN]
 

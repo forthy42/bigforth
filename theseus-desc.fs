@@ -401,7 +401,7 @@ how:
         3 habox new hskip ;
     : assign  dup 0< IF  drop 2drop  EXIT  THEN
         super assign  item self 0= ?EXIT
-        make item with glue w+ ! 3 max glue wmin ! parent resized 
+        make item with glue w+ ! 5 max glue wmin ! parent resized 
         endwith ;
     : dump ( -- ) base push hex
         ." $" pixels @ . ." $" fills @ . quantity @ 0=
@@ -430,7 +430,7 @@ how:
         3 habox new hskip ;
     : assign  dup 0< IF  drop 2drop  EXIT  THEN
         super assign  item self 0= ?EXIT
-        make item with glue h+ ! 3 max glue hmin ! parent resized
+        make item with glue h+ ! 5 max glue hmin ! parent resized
         endwith ;
     : dump ( -- ) base push hex
         ." $" pixels @ . ." $" fills @ . quantity @ 0=
