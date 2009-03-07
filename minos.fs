@@ -24,12 +24,12 @@
     include vfx-minos/oof.fs
     include vfx-minos/lambda.fs
     include vfx-minos/helper.fs
-    include vfx-minos/accept.fs
     include sincos.fs
     include vfx-minos/points.fs
 \    include vfx-minos/qsort.fs
     include vfx-minos/string.fs
     include vfx-minos/xchar.fs
+    include vfx-minos/accept.fs
     include i18n.fs
     include vfx-minos/struct.fs
 [ELSE]
