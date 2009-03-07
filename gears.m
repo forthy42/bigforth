@@ -31,15 +31,23 @@ class;
 include gears.fs
 gears implements
  ( [methodstart] ) : make-gear-task recursive
-  1 gear-task !  &1000 speed @ 1 max / &100 min after >r
-  glgear render &100 0 DO  pause  LOOP
-  glgear draw   &100 0 DO  pause  LOOP
+  1 gear-task !  #1000 speed @ 1 max / #100 min after >r
+  glgear render #100 0 DO  pause  LOOP
+  glgear draw   #100 0 DO  pause  LOOP
   ['] make-gear-task self r> screen schedule ;
+: init-texture ( -- t1 t2 t3 )
+    glgear with
+        5e 60e w @ h @ 3d-turtle new  3d-turtle with
+            3 textures dup 2over swap
+            set-texture S" pattern/normal-w1" load-texture
+            set-texture S" pattern/back"      load-texture
+            set-texture S" pattern/focus"     load-texture
+        dispose endwith
+    endwith ;
 : draw-gears
-  gear-task @ 0= IF  glgear with init-texture endwith
-                     textures !+ !+ !  make-gear-task  THEN
+  gear-task @ 0= IF  init-texture  textures !+ !+ !  make-gear-task  THEN
   timer@ dup last-time @ -
-  speed @ &20 */ gear-time +! last-time !
+  speed @ #20 */ gear-time +! last-time !
   glgear self
   alphax @ alphay @ alphaz @
   alphapitch @ alphabend @ alpharoll @
@@ -50,12 +58,12 @@ gears implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             GL[ outer with draw-gears endwith ]GL ( MINOS ) ^^ S[ 2drop 2drop ]S ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
-            ^^ #0 #360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
-            ^^ #0 #360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
-            ^^ #0 #360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
-            ^^ #35 #360 SC[ &360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
-            ^^ #331 #360 SC[ &360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
-            ^^ #350 #360 SC[ &360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
+            ^^ #0 #360 SC[ #360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
+            ^^ #0 #360 SC[ #360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
+            ^^ #0 #360 SC[ #360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
+            ^^ #35 #360 SC[ #360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
+            ^^ #331 #360 SC[ #360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
+            ^^ #350 #360 SC[ #360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
             ^^ #0 #100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
             ^^ #20 #40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 
             ^^ #100 #100 SC[ scale-x ! ]SC ( MINOS )  TT" Scale X" hscaler new 

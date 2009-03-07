@@ -1,8 +1,25 @@
 \ helper words for VFX Forth
-
+-idata
 : | ; \ headerless becomes a noop
 
-Vocabulary editor \ empty vocabulary
+\ simple stores
+
+: c@+ count swap ;
+: w@+ dup w@ swap 2+ ;
+: @+ dup @ swap cell+ ;
+
+: c!+  tuck c! char+ ;
+: w!+  tuck w! 2+ ;
+: !+  tuck ! cell+ ;
+
+: wextend dup $8000 and negate or ;
+: cextend dup $80 and negate or ;
+
+: cx@ c@ cextend ;
+: wx@ w@ wextend ;
+: wx@+ dup wx@ swap 2+ ;
+
+\ Floating point
 
 : ans-float
     '.' dp-char !
@@ -19,22 +36,25 @@ ans-float
 vocabulary memory
 
 also memory definitions
-: NewPtr ( len -- addr )  allocate throw ;
-: NewHandle ( len -- addr )  NewPtr 1 cells NewPtr tuck ! ;
-: DisposPtr ( addr -- )  free throw ;
-: DisposHandle ( addr -- )  dup @ DisposPtr DisposPtr ;
-: Handle! ( len addr -- )  >r NewPtr r> ! ;
-: SetHandle ( addr MP -- )  ! ;
-: HandleOff ( addr -- )  dup @ free throw off ;
-: Hlock ( addr -- ) drop ;
-: Hunlock ( addr -- ) drop ;
-: SetHandleSize ( addr size -- ) swap >r
-    r@ @ swap resize throw r> ! ;
+: NewPtr ( len -- addr )  dup cell+ allocate throw !+ ;
+: DisposPtr ( addr -- )  ?dup IF cell- free throw THEN ;
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
 : NewFix  ( root len # -- addr )
   BEGIN  2 pick @ ?dup  0= WHILE  2dup * NewPtr
          over 0 ?DO  dup 4 pick DelFix 2 pick +  LOOP  drop
   REPEAT  >r drop r@ @ rot ! r@ swap erase r> ;
+Variable Masters
+: NewMP ( -- MP ) Masters cell $200 NewFix ;
+: NewHandle ( len -- addr )  NewPtr NewMP tuck ! ;
+: DisposHandle ( addr -- )  dup @ DisposPtr Masters DelFix ;
+: Handle! ( len addr -- )  >r NewPtr r> ! ;
+: SetHandle ( addr MP -- )  ! ;
+: HandleOff ( addr -- )  dup @ DisposPtr off ;
+: Hlock ( addr -- ) drop ;
+: Hunlock ( addr -- ) drop ;
+: SetHandleSize ( addr size -- ) swap >r
+    r@ @ cell- over cell+ resize throw !+ r> ! ;
+: GetHandleSize ( addr -- size ) cell- @ ;
 
 previous definitions
 
@@ -132,21 +152,6 @@ Variable (i)
     also ' execute also definitions ;
 
 : Module;  previous previous definitions previous ;
-
-: c@+ count swap ;
-: w@+ dup w@ swap 2+ ;
-: @+ dup @ swap cell+ ;
-
-: c!+  tuck c! char+ ;
-: w!+  tuck w! 2+ ;
-: !+  tuck ! cell+ ;
-
-: wextend dup $8000 and negate or ;
-: cextend dup $80 and negate or ;
-
-: cx@ c@ cextend ;
-: wx@ w@ wextend ;
-: wx@+ dup wx@ swap 2+ ;
 
 : v! ! ;
 

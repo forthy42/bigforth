@@ -123,7 +123,7 @@ Variable color_type
     3 pick png_info_struct rowbytes @
     { png info w h ctype rowbytes }
     png info png_get_rows
-    w h * cells allocate throw tuck
+    w h * cells NewPtr tuck
     h 0 ?DO  over @ over rowbytes move  cell rowbytes d+  LOOP
     2drop w h
 \    png info png_read_end

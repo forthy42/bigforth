@@ -1,9 +1,8 @@
 \ gl test window
 
-dos also memory also
 \needs glconst | import glconst
 \needs 3d-turtle include 3d-turtle.fs
-float also glconst also opengl also
+dos also memory also float also glconst also opengl also
 
 Create .white 1e  f>fs , 1e  f>fs , 1e  f>fs , 1e  f>fs ,
 Create .red   .8e f>fs , .1e f>fs , 0e  f>fs , 1e  f>fs ,
@@ -15,7 +14,7 @@ Create .blue  .2e f>fs , .2e f>fs , 1e  f>fs , 1e  f>fs ,
 
 3d-turtle with
   F : gear ( ri rm ro h teeth color -- ) 4*
-      { f: ri f: rm f: ro f: h n |
+      { f: ri f: rm f: ro f: h n }
         pi f2* n fm/ set-dphi
         h f2/ fnegate forward
         n open-path
@@ -30,7 +29,7 @@ Create .blue  .2e f>fs , .2e f>fs , 1e  f>fs , 1e  f>fs ,
             h fnegate forward
             next-round n 0 DO  ri set-r  LOOP
         LOOP  GL_SMOOTH glShadeModel
-        close-path } ;
+        close-path ;
 endwith
 
 : .color ( addr -- )
@@ -42,16 +41,6 @@ Variable wait' 6 wait' !
 ?texture [IF]
   .white .color GL_TEXTURE_2D swap glBindTexture ;
 [ELSE]  drop ;  [THEN]
-
-3d-turtle with
-  F : init-texture ( -- t1 t2 t3 )
-?texture [IF]
-      3 textures dup 2over swap
-      set-texture S" pattern/normal-w1" load-texture
-      set-texture S" pattern/back"      load-texture
-      set-texture S" pattern/focus"     load-texture ;
-[ELSE]  0 0 0 ;  [THEN]
-endwith
 
 -1 Value test-list
 

@@ -1,6 +1,5 @@
 \ 3D turtle graphics                                   27dec98py
 
-also memory also dos
 [defined] VFXForth [IF]
     mpe-float
     include /usr/share/doc/VfxForth/Lib/Ndp387.fth
@@ -13,7 +12,7 @@ also memory also dos
 [defined] x11 [IF]
 \needs xconst  | import xconst
 [THEN]
-also float also glconst
+also memory also dos also float also glconst
 [defined] x11 [IF]  also x11 [THEN]
 [defined] win32 [IF]  also win32 [THEN]
 also opengl also
@@ -38,6 +37,22 @@ IS dummy-canvas
 [defined] fm/ 0= [IF]  : fm/ s>f f/ ;  [THEN]
 [defined] fm* 0= [IF]  : fm* s>f f* ;  [THEN]
 [defined] fm*/ 0= [IF]  : fm*/ s>f f/ s>f f* ;  [THEN]
+[defined] f>r 0= [IF]
+    Code f>r
+	pop edx
+	add esp, #-12
+	fstp fword 0 [esp]
+	push edx
+	fnext,
+    end-code
+    Code fr>
+	pop edx
+	fld fword 0 [esp]
+	add esp, #12
+	push edx
+	fnext,
+    end-code
+    [THEN]
 
 [defined] r,phi>xy 0= [IF]
     : r,phi>xy ( r phi -- x y )
@@ -725,8 +740,8 @@ class;
       GL_TEXTURE_2D swap glBindTexture ;
 [ELSE]  drop ;  [THEN]
     : create-mipmap1 ( addr w h -- addr )
-      0
-      BEGIN  { w h n | dup >r
+      0 { w h n }
+      BEGIN  dup >r
              GL_TEXTURE_2D n GL_ALPHA8 w h
              0 GL_ALPHA GL_UNSIGNED_BYTE
              r> glTexImage2D
@@ -737,11 +752,11 @@ class;
                          swap c!+
                      2 +LOOP
                      w 2* +LOOP  drop
-                 w 2/  h 2/  n 1+  false
-             ELSE  true  THEN  }  UNTIL ;
+                 w 2/ to w h 2/ to  n 1+ to n  false
+             ELSE  true  THEN  UNTIL ;
     : create-mipmap3 ( addr w h -- addr )
-      over 3* 0
-      BEGIN  { w h w3 n | dup >r
+      over 3* 0 { w h w3 n }
+      BEGIN  dup >r
              GL_TEXTURE_2D n GL_RGB8 w h
              0 GL_BGR GL_UNSIGNED_BYTE
              r> glTexImage2D
@@ -756,11 +771,11 @@ class;
                          swap c!+
                      6 +LOOP
                      w3 2* +LOOP  drop
-                 w 2/  h 2/  over 3*  n 1+  false
-             ELSE  true  THEN  }  UNTIL ;
+                 w 2/ to w  h 2/ to h  w3 2/ to w3  n 1+ to n  false
+             ELSE  true  THEN  UNTIL ;
     : create-mipmap4 ( addr w h -- addr )
-      over 4* 0
-      BEGIN  { w h w4 n | dup >r
+      over 4* 0 { w h w4 n }
+      BEGIN  dup >r
              GL_TEXTURE_2D n GL_RGBA w h
              0 GL_BGRA GL_UNSIGNED_BYTE
              r> glTexImage2D
@@ -777,8 +792,8 @@ class;
                          swap c!+
                      8 +LOOP
                      w4 2* +LOOP  drop
-                 w 2/  h 2/  over 4*  n 1+  false
-             ELSE  true  THEN  }  UNTIL ;
+                 w 2/ to w  h 2/ to h  w4 2/ to w4  n 1+ to n  false
+             ELSE  true  THEN  UNTIL ;
     : load-texture-ppm ( fd -- )
 ?texture [IF]
       >r
@@ -853,11 +868,11 @@ class;
     : nextpoint ( -- addr )
       I [ /point cell+ ] Literal + ; macro
     : oldpoint ( addr -- addr )
-      I @ 9* cells + ; macro
+      @ 9* cells + ; macro
     : oldprevpoint ( addr -- addr )
-      I /point - @ 9* cells + ; macro
+      /point - @ 9* cells + ; macro
     : oldnextpoint ( addr -- addr )
-      I /point + @ 9* cells + ; macro
+      /point + @ 9* cells + ; macro
   
 \ texture path primitives                              25feb99py
 
@@ -870,10 +885,10 @@ class;
 [THEN]
     : compute-normals ( p' p p+ -- p )
       path-bound ?DO
-          point over oldpoint over2 oldprevpoint  set-normal+!
-          dup oldnextpoint over oldpoint point    set-normal+!
-          prevpoint  point over2  oldpoint        set-normal+!
-          dup oldpoint  point  nextpoint          set-normal+!
+          point over I oldpoint over2 I oldprevpoint  set-normal+!
+          dup I oldnextpoint over I oldpoint point    set-normal+!
+          prevpoint  point over2  I oldpoint        set-normal+!
+          dup I oldpoint  point  nextpoint          set-normal+!
           /point +LOOP  drop ;
     : flat-vertex ( addr -- )  ?maxpoints
       glVertex3fv ;
@@ -885,10 +900,10 @@ class;
     : normal-vertex ( addr -- )  ?maxpoints
       dup $14 + glNormal3fv  glVertex3fv ;
     : normal-1 ( addr i -- addr )  1 bounds
-      DO  point over oldpoint  over2 oldprevpoint  LOOP
+      DO  point over I oldpoint  over2 I oldprevpoint  LOOP
       set-normal ;
     : normal-2 ( addr i -- addr )  1 bounds
-      DO  prevpoint  point over2  oldpoint  LOOP
+      DO  prevpoint  point over2  I oldpoint  LOOP
       set-normal ;
 
 \ path drawing                                         27feb99py
@@ -900,12 +915,12 @@ class;
       2dup <> smooth @ and
       IF  2dup path# @ 1+ compute-normals  THEN
       path-bound smooth @
-      IF    ?DO  dup oldpoint text-normal-vertex
+      IF    ?DO  dup I oldpoint text-normal-vertex
                  point        text-normal-vertex
                  points+
             /point +LOOP
       ELSE  ?DO  I normal-1
-                 dup oldpoint text-vertex
+                 dup I oldpoint text-vertex
                  I normal-2
                  point        text-vertex
                  points+
@@ -918,12 +933,12 @@ class;
       2dup <> smooth @ and
       IF  2dup path# @ 2+ compute-normals  THEN
       path-bound smooth @
-      IF    ?DO  dup oldpoint normal-vertex
+      IF    ?DO  dup I oldpoint normal-vertex
                  point        normal-vertex
                  points+
             /point +LOOP
       ELSE  ?DO  I normal-1
-                 dup oldpoint flat-vertex
+                 dup I oldpoint flat-vertex
                  I normal-2
                  point        flat-vertex
                  points+
@@ -951,10 +966,10 @@ class;
       gl-mode @ glBegin
       path-bound ?DO
           I normal-1
-          dup oldpoint     flat-vertex
-          dup oldprevpoint flat-vertex
+          dup I oldpoint     flat-vertex
+          dup I oldprevpoint flat-vertex
           I normal-2
-          dup oldpoint     flat-vertex
+          dup I oldpoint     flat-vertex
           point            flat-vertex
           points+
           /point +LOOP  drop
@@ -964,10 +979,10 @@ class;
       gl-mode @ glBegin
       path-bound ?DO
           I normal-1
-          dup oldpoint     text-vertex
-          dup oldprevpoint text-vertex
+          dup I oldpoint     text-vertex
+          dup I oldprevpoint text-vertex
           I normal-2
-          dup oldpoint     text-vertex
+          dup I oldpoint     text-vertex
           point            text-vertex
           points+
           /point +LOOP  drop
