@@ -4,10 +4,10 @@
 \needs 3d-turtle include 3d-turtle.fs
 dos also memory also float also glconst also opengl also
 
-Create .white 1e  f>fs , 1e  f>fs , 1e  f>fs , 1e  f>fs ,
-Create .red   .8e f>fs , .1e f>fs , 0e  f>fs , 1e  f>fs ,
-Create .green 0e  f>fs , .8e f>fs , .2e f>fs , 1e  f>fs ,
-Create .blue  .2e f>fs , .2e f>fs , 1e  f>fs , 1e  f>fs ,
+Create .white 1e  sf, 1e  sf, 1e  sf, 1e  sf,
+Create .red   .8e sf, .1e sf, 0e  sf, 1e  sf,
+Create .green 0e  sf, .8e sf, .2e sf, 1e  sf,
+Create .blue  .2e sf, .2e sf, 1e  sf, 1e  sf,
 
 : rotation ( speed teeth -- fn )
     #2160 * * s>f [ pi 2147483648e f/ ] Fliteral f* ;

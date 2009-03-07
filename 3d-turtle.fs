@@ -74,7 +74,7 @@ IS dummy-canvas
 \ doesn't work for -1
 : >2** ( a -- n )  1  BEGIN  2dup u>  WHILE  2*  REPEAT  nip ;
 
-[defined] VFXForth [IF]
+[defined] VFXForth true or [IF]
     : inner-get ( addr -- sf ) 3 swap dup sf@ sfloat+
           [ 3 sfloats ] Literal bounds
           DO   dup fpick I sf@ f* f+ 1-
@@ -446,7 +446,7 @@ class;
          w s>f h fm/ fdup fnegate fswap -1e 1e
       ELSE
          -1e 1e h s>f w fm/ fdup fnegate fswap
-      THEN  near far glFrustum
+      THEN  far near glFrustum
       
       GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT or glClear
       GL_MODELVIEW glMatrixMode glLoadIdentity ;
@@ -862,11 +862,11 @@ class;
 
 \ point access                                         27feb99py
 
-    : point ( -- addr )  I cell+ ; macro
+    : point ( -- addr )  cell+ ; macro
     : prevpoint ( -- addr )
-      I [ /point negate cell+ ] Literal + ; macro
+      [ /point negate cell+ ] Literal + ; macro
     : nextpoint ( -- addr )
-      I [ /point cell+ ] Literal + ; macro
+      [ /point cell+ ] Literal + ; macro
     : oldpoint ( addr -- addr )
       @ 9* cells + ; macro
     : oldprevpoint ( addr -- addr )
@@ -885,10 +885,10 @@ class;
 [THEN]
     : compute-normals ( p' p p+ -- p )
       path-bound ?DO
-          point over I oldpoint over2 I oldprevpoint  set-normal+!
-          dup I oldnextpoint over I oldpoint point    set-normal+!
-          prevpoint  point over2  I oldpoint        set-normal+!
-          dup I oldpoint  point  nextpoint          set-normal+!
+          I point over I oldpoint over2 I oldprevpoint  set-normal+!
+          dup I oldnextpoint over I oldpoint I point    set-normal+!
+          I prevpoint  I point over2  I oldpoint        set-normal+!
+          dup I oldpoint  I point  I nextpoint          set-normal+!
           /point +LOOP  drop ;
     : flat-vertex ( addr -- )  ?maxpoints
       glVertex3fv ;
@@ -900,10 +900,10 @@ class;
     : normal-vertex ( addr -- )  ?maxpoints
       dup $14 + glNormal3fv  glVertex3fv ;
     : normal-1 ( addr i -- addr )  1 bounds
-      DO  point over I oldpoint  over2 I oldprevpoint  LOOP
+      DO  I point over I oldpoint  over2 I oldprevpoint  LOOP
       set-normal ;
     : normal-2 ( addr i -- addr )  1 bounds
-      DO  prevpoint  point over2  I oldpoint  LOOP
+      DO  I prevpoint  I point over2  I oldpoint  LOOP
       set-normal ;
 
 \ path drawing                                         27feb99py
@@ -916,13 +916,13 @@ class;
       IF  2dup path# @ 1+ compute-normals  THEN
       path-bound smooth @
       IF    ?DO  dup I oldpoint text-normal-vertex
-                 point        text-normal-vertex
+                 I point        text-normal-vertex
                  points+
             /point +LOOP
       ELSE  ?DO  I normal-1
                  dup I oldpoint text-vertex
                  I normal-2
-                 point        text-vertex
+                 I point        text-vertex
                  points+
             /point +LOOP
       THEN  drop
@@ -934,13 +934,13 @@ class;
       IF  2dup path# @ 2+ compute-normals  THEN
       path-bound smooth @
       IF    ?DO  dup I oldpoint normal-vertex
-                 point        normal-vertex
+                 I point        normal-vertex
                  points+
             /point +LOOP
       ELSE  ?DO  I normal-1
                  dup I oldpoint flat-vertex
                  I normal-2
-                 point        flat-vertex
+                 I point        flat-vertex
                  points+
             /point +LOOP
       THEN  drop
@@ -949,7 +949,7 @@ class;
     : draw-point-path ( p'' p' p -- )
       gl-mode @ glBegin
       path-bound ?DO
-          I normal-2  point  flat-vertex
+          I normal-2  I point  flat-vertex
           points+
           /point +LOOP  drop
       glEnd ;
@@ -957,7 +957,7 @@ class;
     : draw-textured-point-path ( p'' p' p -- )
       gl-mode @ glBegin
       path-bound ?DO
-          ( I normal-2 ) point  text-vertex
+          ( I normal-2 ) I point  text-vertex
           points+
           /point +LOOP  drop
       glEnd ;
@@ -970,7 +970,7 @@ class;
           dup I oldprevpoint flat-vertex
           I normal-2
           dup I oldpoint     flat-vertex
-          point            flat-vertex
+          I point            flat-vertex
           points+
           /point +LOOP  drop
       glEnd ;
@@ -983,7 +983,7 @@ class;
           dup I oldprevpoint text-vertex
           I normal-2
           dup I oldpoint     text-vertex
-          point            text-vertex
+          I point            text-vertex
           points+
           /point +LOOP  drop
       glEnd ;
@@ -1009,11 +1009,11 @@ class;
 	    path-bound 2dup - /point / 3* dfloats NewPtr
 	    r> swap dup >r 2swap
 	    ?DO
-		point nx ny nz 3 pick !normal
+		I point nx ny nz 3 pick !normal
 		sf@+ swap df!+ swap
 		sf@+ swap df!+ swap
 		sf@+ swap df!+ nip -3 dfloats +
-		2dup point gluTessVertex
+		2dup I point gluTessVertex
 		points+
 	    /point +LOOP >r >r drop
 	    r@ gluTessEndContour
@@ -1022,7 +1022,7 @@ class;
 	[ELSE]	    
 	    gl-mode @ glBegin
 	    path-bound ?DO
-		point  text-vertex
+		I point  text-vertex
 		points+
 	    /point +LOOP  drop
 	    glEnd
