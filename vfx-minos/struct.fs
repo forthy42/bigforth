@@ -8,8 +8,8 @@
     swap Create dup , +
     DOES> @ + ;
 
-: struct ( -- length ) ' >body @ ;
-: sizeof ( -- length ) struct ?lit, ; immediate
+: 'struct ( -- length ) ' >body @ ;
+: sizeof ( -- length ) 'struct ?lit, ; immediate
 
 Variable #struct
 Vocabulary (struct
@@ -31,7 +31,7 @@ also (struct definitions
 : ptr cell ;
 : double 2 cells struct: ;
 : string chars struct: ;
-: struct struct struct: ;
+: struct 'struct struct: ;
 
 previous definitions
 

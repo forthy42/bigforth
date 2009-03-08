@@ -1,6 +1,6 @@
 \ MINOS descriptor classes
 
-: .d  base push decimal '# emit dup 0< IF '- emit THEN abs . ;
+: .d  base push decimal '#' emit dup 0< IF '-' emit THEN abs . ;
 
 descriptor class descriptors
 public:
@@ -261,8 +261,8 @@ how:
         t" +" 0 ST[ ]ST s" On-Char:" infotextfield new
         t" -" 0 ST[ ]ST s" Off-Char:" infotextfield new
         2 habox new 1 hskips ;
-    : null ( -- char- char+ ) '- '+ ;
-    : make ( -- char- char+ ) '- '+ ;
+    : null ( -- char- char+ ) '-' '+' ;
+    : make ( -- char- char+ ) '-' '+' ;
     : .char ( char -- )
         0= IF ." bl" drop  ELSE ." '" c@ emit THEN space ;
     : dump ( -- ) space

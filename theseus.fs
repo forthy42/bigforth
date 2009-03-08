@@ -1,7 +1,11 @@
 #! xbigforth
 \ graphical widget editor                              14sep97py
 
-[defined] fileop 0= [IF]  include fileop.fb  [THEN]
+[defined] VFXFORTH [IF]
+    include vfx-minos/fileop.fs
+[ELSE]
+    [defined] fileop 0= [IF]  include fileop.fb  [THEN]
+[THEN]
 also minos [defined] float-action 0= [IF]
     previous include minos-float.fs
 [ELSE]
@@ -29,8 +33,13 @@ ficon: on-icon icons/mini-exclam"
 ficon: off-icon icons/mini-cross"
 ficon: minos-icon icons/minos"
 ficon: minos-win icons/minos1+"
+[defined] alias [IF]
 ' dir-icon Alias res-icon
 ' diro-icon Alias resopen-icon
+[ELSE]
+    synonym res-icon dir-icon
+    synonym resopen-icon diro-icon
+[THEN]
 
 \ tools
 
@@ -164,7 +173,7 @@ Create &boxes
 
 Variable indent
 
-&40 Value delay-to
+#40 Value delay-to
 
 \ class descriptor
 
@@ -242,12 +251,14 @@ class;
     r@ swap link-resource
     r> designerbox with <box> endwith ;
 
+theseus
+
 designer ptr cur
 
 forward auto-save-minos
 forward do-auto-save
 : schedule-auto-save ( -- )
-    ['] do-auto-save cur self &120000 after
+    ['] do-auto-save cur self #120000 after
     cur dpy schedule ;
 : do-auto-save
     cur self >r  ^ bind cur
@@ -382,9 +393,9 @@ designerbox implements
             childs widgets self cur bind topbox
         THEN ;
     : clicked ( x y b n -- ) <box> do-click <rebox> <redpy>
-        ['] draw-decor ^ &50 after screen schedule ;
+        ['] draw-decor ^ #50 after screen schedule ;
     : keyed ( key sh -- )  <box> do-key
-        ['] draw-decor ^ &50 after screen schedule ;
+        ['] draw-decor ^ #50 after screen schedule ;
     : moved ( x y -- )
         2drop  do-it @ 2 cells + @ dpy set-cursor ;
     : init ( o1 .. on n -- )
@@ -741,8 +752,8 @@ Variable reenter
       0 :[ cur +borderw ! ?cur-box
            cur +borderw @ cur box borderw c! cur box resized ]:
         :[ ?cur-box:0 cur box borderw cx@ dup cur +borderw ! ]:
-        &18 scale-act new TT" border"       hscaler new
-        hscaler with  -&9 offset !  ^ endwith
+        #18 scale-act new TT" border"       hscaler new
+        hscaler with  #-9 offset !  ^ endwith
         0 1 *fill 2dup glue new
     4 vabox new ;
 
@@ -1127,10 +1138,10 @@ endgroup
     fields:   0 >vfbox s" Text Fields" topindex new >r
     toggles:  0 >vfbox s" Toggles"     topindex new >r
     buttons: -1 >vfbox s" Buttons"     topindex new >r
-    &10 vabox new  2 borderbox :notshadow noborderbox
+    #10 vabox new  2 borderbox :notshadow noborderbox
     r> r> r> r> r> r> r> r> r> r>
     topglue new
-    &11 harbox new swap
+    #11 harbox new swap
     2 vabox new
     0 S[ ?cur-box  true  addbox ]S s" hbox"       button new
     0 1 *fil 2dup glue new
@@ -1623,7 +1634,7 @@ designer implements
         2 vasbox new dup >r
         2 0 modal new 0 hskips 0 vskips
         s" Theseus" assign
-        r> vasbox with xN 7 * xS &16 * + dpy xrc hM @ 6 * + xS 3 * 2/ + vsize !
+        r> vasbox with xN 7 * xS #16 * + dpy xrc hM @ 6 * + xS 3 * 2/ + vsize !
             resized endwith
         minos-win set-icon
         resized show ;
