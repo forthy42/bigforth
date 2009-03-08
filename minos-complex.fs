@@ -590,7 +590,8 @@ how:    6 colors focuscol !     1 colors defocuscol !
           ELSE  0  THEN ;
         : key   ( -- key )  flush  1 cursor# ! curon
           BEGIN  key?  0= WHILE
-                 dpy xrc fid #50 idle  REPEAT
+		  dpy xrc fid [defined] VFXFORTH [IF] #1 [ELSE] #50 [THEN] idle
+	  REPEAT
           getkey curoff ;
 
 \ IO-Window                                            06jan05py
