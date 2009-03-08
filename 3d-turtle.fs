@@ -446,7 +446,7 @@ class;
          w s>f h fm/ fdup fnegate fswap -1e 1e
       ELSE
          -1e 1e h s>f w fm/ fdup fnegate fswap
-      THEN  far near glFrustum
+      THEN  near far glFrustum
       
       GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT or glClear
       GL_MODELVIEW glMatrixMode glLoadIdentity ;
