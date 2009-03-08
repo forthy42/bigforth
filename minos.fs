@@ -209,7 +209,7 @@ ficon: minos-win icons/minos1+.icn"
 [THEN]
 
 \ init sequence                                        10apr04py
-[defined] x11 [defined] VFXFORTH 0= and [IF]
+[defined] x11 [IF]
 : "geometry ( addr u -- ) scratch 0place
   0 sp@ >r 0 0 0 scratch r> dup cell- dup cell- dup cell-
   XParseGeometry >r
@@ -219,11 +219,17 @@ ficon: minos-win icons/minos1+.icn"
   IF  map-pos  2!  ELSE  2drop  THEN  2 ;
 : -geometry ( -- )  bl word count "geometry drop ;
 
+[defined] VFXFORTH 0= [IF]
 also -options definitions
 ' "geometry Alias -geometry
 previous definitions
 
-export minos -geometry ;
+    export minos -geometry ;
+[ELSE]
+    also -options definitions
+    synonym -geometry "geometry
+    previous definitions
+[THEN]
 [THEN]
 
 [defined] unix [IF]
