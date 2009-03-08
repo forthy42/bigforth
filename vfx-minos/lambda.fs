@@ -1,6 +1,6 @@
 \ anonymous definitions in a definition
 
-\ *** Steve: check if this is complete ***
+\ *** Stephen: check if this is complete ***
 
 : :[ ( compile-time: -- orig colon-sys )
     state @ IF  <headerless> @ last @
