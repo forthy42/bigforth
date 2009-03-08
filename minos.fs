@@ -194,7 +194,7 @@ ficon: minos-win icons/minos1+.icn"
     Create fds here $400 8 / dup allot erase
     Create >timeout 0 , 0 ,
 
-    extern: int select( int , int , int , int , int );
+    extern: int select( int , void * , void * , void * , void * );
     : unix-wait ( fid ms -- )
 	#1000 um* #1000000 um/mod >timeout 2!
 	fds $80 erase fds swap +bit
@@ -203,7 +203,7 @@ ficon: minos-win icons/minos1+.icn"
     : minos-idle screen handle-events ;
     :noname ( fid ms -- )
 	unix-wait minos-idle ; IS idle
-    : event-loop ( -- ) BEGIN  minos-idle  apprefcnt @ 0=  UNTIL ;
+    : event-loop ( -- ) BEGIN  #1 screen do-idle  apprefcnt @ 0=  UNTIL ;
 [THEN]
 
 \ init sequence                                        10apr04py
