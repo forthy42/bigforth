@@ -93,8 +93,12 @@ how:    : dispose  clicks HandleOff
 
       [defined] VFXFORTH [IF]
 	Variable pass^
+	Variable events-lock  events-lock off
 	: .catch-rest ( n -- )  ." Error " . cr ;
-	: handle-events ( -- )  handle-event  invoke drop ;
+	: handle-events ( -- )  events-lock @ ?EXIT
+	    events-lock on
+	    :[ handle-event  invoke drop ]: catch
+	    events-lock off throw ;
         : do-event  pass^ @ op!
           up@ TO event-task'
 [defined]  win32 [IF]    up@ 'event-task !              [THEN]

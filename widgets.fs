@@ -2,9 +2,7 @@
 
 gadget class widget             early >callback
 public: displays ptr dpy        actor ptr callback
-[defined] VFXFORTH 0= [IF]
         early dopress           early whilepress
-[THEN]
         early shadow            early xS
         early drawshadow        early textsize
         early xN                early xM
@@ -34,6 +32,7 @@ how:    : >callback ( cb -- )
                         THEN  dpy invoke dpy do-idle
                  REPEAT dpy click nip 1 and  WHILE
           2drop  REPEAT  dpy moved! ;
+[defined] doNotSin [IF] doNotSin [THEN]
 
 \ widget                                               01mar98py
 
@@ -49,6 +48,7 @@ how:    : >callback ( cb -- )
                     dpy click nip nip nip 1 and 0=  UNTIL
                 rdrop dpy moved!
           ELSE  #50 after >timeout  THEN ;
+[defined] doNotSin [IF] doNotSin [THEN]
 
 \ draw shadow                                          25mar99py
 

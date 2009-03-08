@@ -84,15 +84,13 @@ Variable wait' 6 wait' !
             matrix@
             0e 1.22e 0e forward-xyz  9e  -10  speed rotation f+ roll-left
             shade 1 <> IF    .green .color
-                  ELSE  wait' @ 3 < IF  t1  ELSE  t2  THEN .text  THEN
+                  ELSE  t2 .text  THEN
             .10e .33e .47e .5e
                   0e    5  speed rotation f+ fsin .2e f* f+ f**2 10  gear
             matrix>
             1.22e 0e 0e forward-xyz  -9e -10  speed rotation f+ roll-left
             shade 1 <> IF    .blue  .color
-                  ELSE  wait' @ 3 < IF  t1  ELSE
-                        wait' @ 6 < IF  t2  ELSE
-                                        t3  THEN THEN  .text  THEN
+                  ELSE  t3 .text  THEN
             .26e .33e .47e .5e
                   0e    5  speed rotation f+ fsin .2e f* f- f**2 10  gear
             glEndList                     \ cr .time
