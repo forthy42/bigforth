@@ -203,7 +203,9 @@ ficon: minos-win icons/minos1+.icn"
     : minos-idle screen handle-events ;
     :noname ( fid ms -- )
 	unix-wait minos-idle ; IS idle
-    : event-loop ( -- ) BEGIN  #1 screen do-idle  apprefcnt @ 0=  UNTIL ;
+    : event-loop ( -- ) BEGIN  screen with
+	    handle-event invoke do-idle endwith
+	apprefcnt @ 0=  UNTIL ;
 [THEN]
 
 \ init sequence                                        10apr04py
