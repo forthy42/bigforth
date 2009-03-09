@@ -11,12 +11,15 @@ Variable fcode
 : tcode  ( char index -- ) transcode + c! ;
 
 : vt100-decode ( max span addr pos1 -- max span addr pos2 flag )
-    key '[ = IF  0  base @ >r decimal
+    key dup '[' = IF  drop 0  base @ >r decimal
         BEGIN  key dup digit?  WHILE  nip swap &10 * +  REPEAT
         r> base !
-        dup '~ =  IF  drop transcode  ELSE  nip translate  THEN
+        dup '~' =  IF  drop transcode  ELSE  nip translate  THEN
         over fcode ! + c@ dup  IF  decode  THEN
-    ELSE  0  THEN ;
+    ELSE 'O' = IF
+	    key 'P' - &11 +
+	    transcode over fcode ! + c@ dup IF  decode  THEN
+	ELSE  drop 0  THEN  THEN ;
 
 ctrl B 'D trans
 ctrl F 'C trans
