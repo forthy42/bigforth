@@ -420,7 +420,8 @@ Defer lex       ' <= IS lex
 
 Vocabulary -options  also -options definitions
 
-: -i included 2 ;
+Defer -i
+: --include included 2 ; ' --include IS -i
 : -e evaluate 2 ;
 synonym --evaluate -e
 

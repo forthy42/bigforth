@@ -533,13 +533,18 @@ also dos
     cur pane resized
     cur status resized <rebox> <redpy> ;
 
+also minos-load definitions
+[defined] Synonym [IF]
+    Synonym #! create-classes
+[ELSE]
+    ' create-classes Alias #!
+[THEN]
+previous theseus definitions
+
 : included-minos ( addr u -- )  loading on
 [ also float [defined] f-init [IF] ] f-init [ [THEN] previous ]
     2dup cur file-name $!
-    r/o open-file throw $1000 input-file
-    Onlyforth minos also minos-load also
-    ['] create-classes catch dup IF  saveerr  THEN  throw
-    loadfile @ close-file throw
+    Onlyforth minos also minos-load also included
     strip-names Onlyforth cur save-state off
     cur with
         s" Theseus: " window title! file-name $@ window title+!

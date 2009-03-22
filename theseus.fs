@@ -953,7 +953,8 @@ Variable #entities
 : group  #entities off  : ;
 : endgroup  postpone 0fill  #entities @ 1+ postpone Literal
     & habox @  postpone ALiteral postpone new,
-    postpone panel postpone ; ; immediate
+    postpone panel postpone ;
+    [defined] DoNotSin [IF] DoNotSin [THEN] ; immediate
 
 : (entity ( addr u -- ) simple new -rot button new ;
 
@@ -1159,6 +1160,7 @@ endgroup
     3 vabox new 1 vabox new panel 2 borderbox
     2 habox new
     vfixbox ]D ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ load file
 
@@ -1409,15 +1411,18 @@ also dos
 : system 2drop -1 ;
 [THEN]
 
+Variable $acc
+: +$ ( addr u -- ) $acc $+! ;
+
 : auto-save-add ( --- )
-    cur file-name @  IF  cur file-name $@ '/ -scan $add  THEN
-    s" .#" $add
-    cur file-name @  IF  cur file-name $@ 2dup '/ -scan nip /string $add  THEN
+    cur file-name @  IF  cur file-name $@ '/' -scan +$  THEN
+    s" .#" +$
+    cur file-name @  IF  cur file-name $@ 2dup '/' -scan nip /string +$  THEN
     base push hex cur self dup $10 >> + $FFFF and dup $8 >> + $FF and
-    0 <# '# hold #S '- hold #> $add ;
+    0 <# '#' hold #S '-' hold #> +$ ;
 : auto-save-name ( -- addr u )
-    pad $sum ! 0 pad c!  auto-save-add
-    pad count ;
+    s" " $acc $!  auto-save-add
+    $acc $@ ;
 
 : auto-save-minos
     auto-save-name dump-file
@@ -1425,30 +1430,30 @@ also dos
 
 : run-minos
     cur save-state @  IF  auto-save-minos  THEN
-    pad $sum ! s" xbigforth '" pad place
+    s" xbigforth '" $acc $!
     cur save-state @  cur file-name @ 0= or
     IF    auto-save-add
-    ELSE  cur file-name $@ $add  THEN  s" '" $add
+    ELSE  cur file-name $@ +$  THEN  s" '" +$
 [defined] win32 [ 0= ] [IF]
-    s"  &" $add
+    s"  &" +$
 [THEN]
-    pad c>0"  pad system drop ;
+    $acc $@ drop system drop ;
 
-Create quote 1 c, '" c,
+Create quote 1 c, '"' c,
 
 : mod-minos
-    s" Create Module:" s" " s" *.bfm"
+    s" Create Module:" s" " s" *.fm"
     0 S[ path+file
-         '. -scan 1-  2dup 2dup '/ -scan nip /string
+         '.' -scan 1-  2dup 2dup '/' -scan nip /string
          s" theseus-test" dump-file
-         pad $sum ! 0 pad c!
-         s' xbigforth -e "' $add quote count $add S" windows openw forth " $add
-         s"  false to script? " $add
-         s"  module " $add 2dup $add
-         s"  include theseus-test main: main ; MODULE;" $add
-         s"  m' " $add $add s"  savemod " $add $add
-         s'  bye"' $add quote count $add
-         pad c>0" pad system drop ]S fsel-dialog ;
+         s" " $acc $!
+         s' xbigforth -e "' +$ quote count +$ S" minos openw forth " +$
+         s"  false to script? " +$
+         s"  module " +$ 2dup +$
+         s"  include theseus-test main: main ; MODULE;" +$
+         s"  m' " +$ +$ s"  savemod " +$ +$
+         s'  bye"' +$ quote count +$
+         $acc $@ drop system drop ]S fsel-dialog ;
 
 Variable ren-files
 Variable auto-save-file
@@ -1504,6 +1509,7 @@ Variable auto-save-file
                TT" Add after current object"
                icon" icons/after"        flipicon new
    4 varbox new vfixbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : navigation ( -- o )
    0fill 0 ['] go-up simple new
@@ -1519,6 +1525,7 @@ Variable auto-save-file
           TT" First child in hierarchy"
           3        tributton new 0fill 3 habox new
    3 vabox new vfixbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : file-io ( -- o )
    0 ['] load-minos simple new
@@ -1534,6 +1541,7 @@ Variable auto-save-file
           TT" Save as module"
           icon" icons/mod"        icon-but new
    4 vabox new vfixbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : modes ( -- o )
     backing new D[
@@ -1550,6 +1558,7 @@ Variable auto-save-file
     vabox new 2 borderbox ]D
     0fill
     2 vabox new hfixbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : designer-file ( -- )
     s" Load:" s" " s" *.m"
@@ -1570,12 +1579,15 @@ Variable auto-save-file
     hline
     ^ S[ cur close ]S           s" Quit"              menu-entry new
     8 vabox new 2 borderbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : edit-menu ( -- o )
     ^ S[ new:dialog cur pane !resized ]S      s" New Dialog"      menu-entry new
     ^ S[ new:menu-window cur pane !resized ]S s" New Menu Window" menu-entry new
     2 vabox new 2 borderbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
+[defined] gpl-about 0= [IF] include gpl-about.m [THEN]
 include theseus-help.m
 
 also dos
@@ -1590,6 +1602,7 @@ also dos
     hline
     ^ S[ minos-about open ]S s" About Theseus" menu-entry new
     3 vabox new 2 borderbox ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 previous
 
@@ -1605,7 +1618,7 @@ designer implements
     : open-file ( -- )
         open load-minos ;
     : close  save-state @ 0=  IF  super close  EXIT  THEN
-        $8000 $3000 NewTask activate
+	[defined] NewTask [IF] $8000 $3000 NewTask activate [THEN]
         s" Data may have been modified!"
         s" Really want to close?"
         2 s" No" s" Yes" 2 1 alert
@@ -1659,17 +1672,23 @@ class;
 
 previous previous previous previous previous previous
 
-also -options
+also -options definitions
 
-: -theseus ( addr u -- )
+: --theseus ( addr u -- )
     2dup dup 2- /string s" .m" str=  IF  included-minos 2
-    ELSE  defers -i  THEN ;
-' -theseus IS -i
+    ELSE  [defined] defers [IF] defers -i [ELSE] --include [THEN] THEN ;
+' --theseus IS -i
 
-previous
+previous theseus definitions
+
+[defined] VFXForth [IF]
+    Module;
     
-export theseus designer ;
+    also theseus synonym designer designer previous
+[ELSE]
+    export theseus designer ;
 
 Module;
+[THEN]
 
 script? [IF] minos openw forth designer open [THEN]
