@@ -534,7 +534,7 @@ how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
           THEN  stroke @ called send ;
         : store ( d -- ) ># edit assign ;
         : fetch ( -- d ) edit get base push decimal s>number ;
-        : init  #10 nbase ! super init ;
+        : init  ( o addr -- ) #10 nbase ! super init ;
 class;
 
 \ number input field                                   28aug99py

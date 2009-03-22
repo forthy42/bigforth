@@ -91,8 +91,8 @@ descriptors implements
         dump-class ."  ptr " dump-name ;
     : create-ptr ( -- )
         name $@ nip IF
-            name $@ ">tib item ptr >in off
-            item self F postpone bind
+            name $@ :[ item ptr >in off
+	    item self F postpone bind ]: execute-parsing
         THEN ;
 class;
 

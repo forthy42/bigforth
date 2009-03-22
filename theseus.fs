@@ -118,6 +118,7 @@ links ptr first-link
         first-link self bind next
         ^ 
     endwith bind first-link ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ name hints for boxes and displays
 
@@ -408,8 +409,9 @@ resource:dialog ptr dialog-stack
 
 resource:dialog implements
     : ?menu-call ( flag -- )
-        IF  menu-call toggle  THEN ;
-    : edit-box { addr u taddr tu content icon | ( --> box edit )
+	IF  menu-call toggle  THEN ;
+    : edit-toggle combined +flip changed ;
+    : edit-box { addr u taddr tu content icon } ( --> box edit )
         s" " content $!
         addr u text-label new
         content codeedit new dup >r
@@ -419,9 +421,9 @@ resource:dialog implements
         0 1 *fill 2dup glue new
         2 habox new 2 vabox new
         dup >r flipbox
-        false :[ combined +flip changed ]: combined ' -flip toggle new
+        false ['] edit-toggle combined ' -flip toggle new
         taddr tu TT-string
-        icon flipicon new r> r> } ;
+        icon flipicon new r> r> ;
     : send-key ( c -- )  0 callwind keyed ;
     : send-keys ( addr u -- )
         bounds ?DO  I c@ send-key  LOOP ;

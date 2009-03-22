@@ -442,3 +442,33 @@ Variable arg#
 	I 1+ I' = IF  s" "  ELSE  I 1+ arg  THEN
     I arg do-arg  +LOOP ;
 previous
+
+\ execute parsing - from Gforth compat/
+
+wordlist constant execute-parsing-wordlist
+
+get-current execute-parsing-wordlist set-current
+
+\ X is prepended to the string, then the string is EVALUATEd
+: X ( xt -- )
+    previous execute
+    source >in ! drop ; immediate \ skip remaining input
+
+set-current
+
+: >order ( wid -- )
+  >r get-order 1+ r> swap set-order ;
+
+: execute-parsing ( ... c-addr u xt -- ... )
+    >r dup >r
+    dup 2 chars + allocate throw >r  \ construct the string to be EVALUATEd
+    s" X " r@ swap chars move
+    r@ 2 chars + swap chars move
+    r> r> 2 + r> rot dup >r rot ( xt c-addr1 u1 r: c-addr1 )
+    execute-parsing-wordlist >order  \ make sure the right X is executed
+    ['] evaluate catch               \ now EVALUATE the string
+    r> free throw throw ;            \ cleanup
+
+\ single quote string
+
+: .' ''' parse postpone SLiteral postpone type ; immediate

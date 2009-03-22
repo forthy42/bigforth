@@ -29,13 +29,13 @@ class;
 ',' #[ sp@ 1 ins drop 1 c ]#F
 'e' #[ sp@ 1 ins drop 1 c ]#F
 'E' #[ sp@ 1 ins drop 1 c ]#F
-: ]SF postpone ]: float-action postpone new ;
+: ]SF postpone ]: float-action postpone new ; DoNotSin
                                              immediate restrict
 [defined] alias [IF]
 ' :[ alias SF[                               immediate restrict
 ' noop alias ]F 
 [ELSE]
-    synonym SF[ :[ immediate restrict
+    synonym SF[ :[
     synonym ]F noop
 [THEN]
 

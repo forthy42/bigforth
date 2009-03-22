@@ -505,7 +505,7 @@ oo-types definitions
     cell+ @ Create immediate
     lastob @ here lastob ! , ,  instptr> ;
 
-: Fpostpone  postpone postpone ; immediate
+synonym Fpostpone postpone
 
 : : ( <methodname> -- ) \ oof- oof colon
     decl @ abort" HOW: missing! "  class-o @ op!
