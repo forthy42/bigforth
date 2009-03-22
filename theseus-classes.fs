@@ -82,6 +82,7 @@ class;
 resource:dialog class resource:menu-window
 public:
     combined ptr menubox
+    early .default
 class;
 
 menu-window class designer

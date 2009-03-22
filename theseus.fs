@@ -741,6 +741,7 @@ Variable reenter
           s" border" tbutton new
     0 1 *fill 2dup glue new
   4 vabox new ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : box-detail ( -- o )
       0 :[ cur +hskip ! ?cur-box
@@ -758,6 +759,7 @@ Variable reenter
         hscaler with  #-9 offset !  ^ endwith
         0 1 *fill 2dup glue new
     4 vabox new ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : >hfbox  ( o flag -- o o +do -do )
     >r 1 habox new r@ 0= IF flipbox THEN dup
@@ -955,8 +957,14 @@ Variable #entities
 
 : (entity ( addr u -- ) simple new -rot button new ;
 
+[defined] lastdes [IF]
+    : lastdes-reset  $80 lastdes ! ;
+[ELSE]
+    : lastdes-reset ;
+[THEN]
+
 : entity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-entity
     postpone ]:  postpone (entity
@@ -964,7 +972,7 @@ Variable #entities
 ; immediate
 
 : font-entity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-font-entity
     postpone ]:  postpone (entity
@@ -972,7 +980,7 @@ Variable #entities
 ; immediate
 
 : ref-entity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-ref-entity
     postpone ]:  postpone (entity
@@ -980,7 +988,7 @@ Variable #entities
 ; immediate
 
 : edit-entity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-edit-entity
     postpone ]:  postpone (entity
@@ -995,7 +1003,7 @@ Variable #entities
 ; immediate
 
 : dentity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-dentity
     postpone ]:  postpone (entity
@@ -1003,7 +1011,7 @@ Variable #entities
 ; immediate
 
 : ventity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-ventity
     postpone ]:  postpone (entity
@@ -1011,7 +1019,7 @@ Variable #entities
 ; immediate
 
 : hsentity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-hsentity
     postpone ]:  postpone (entity
@@ -1019,7 +1027,7 @@ Variable #entities
 ; immediate
 
 : vsentity ( -- )
-    postpone AHEAD  entity, >r  $80 lastdes ! postpone THEN
+    postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
     postpone :[  r> postpone ALiteral postpone make-vsentity
     postpone ]:  postpone (entity

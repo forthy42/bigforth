@@ -14,10 +14,10 @@ Variable last-file
         rdrop EXIT  THEN
     nip source >in @ /string rot - dup r> + >in +! true ;
 
-: scan-strings { addr u string |
+: scan-strings { addr u string }
     BEGIN  addr u parse-string? 0= WHILE
         string $+line refill 0= UNTIL
-    ELSE  string $+line  THEN } ;
+    ELSE  string $+line  THEN ;
 
 : find-entity ( class -- entity )
     >r 0 0 entities @
@@ -87,7 +87,7 @@ DOES> ( class1 .. classn -- o )
     r> @ @ new-desc ;
 
 : ?(name) ( addr u -- flag )
-    over c@ '( = >r + 1- c@ ') = r> and ;
+    over c@ '(' = >r + 1- c@ ')' = r> and ;
 
 also minos-load definitions
 
@@ -200,13 +200,13 @@ previous
         s"  ]SL ( MINOS ) " content scan-strings
         self endwith ;
 
-: icon" ( -- o )  '" parse
+: icon" ( -- o )  '"' parse
     icon-des new icon-des with assign self endwith ;
     
-: 2icon" ( -- o )  '" parse '" parse 2swap
+: 2icon" ( -- o )  '"' parse '"' parse 2swap
     2icon-des new 2icon-des with assign self endwith ;
 
-: font" ( o -- o )  '" parse
+: font" ( o -- o )  '"' parse
     new-font over all-descs find-object
     font-descriptors with
         & font-descriptors @ class?  IF  font!  ELSE  drop  THEN
@@ -371,7 +371,7 @@ also dos
     BEGIN  refill  WHILE
         source s" ( [methodstart] ) " search nip nip
         IF
-            ') parse 2drop 1 >in +!
+            ')' parse 2drop 1 >in +!
             s" " cur resources methods-content $!
             s"  ( [methodend] ) "
             r@ resource:dialog with methods-content endwith
@@ -435,7 +435,7 @@ also dos
     endwith ;
 
 : add-vars ( -- )
-    ') parse 2drop 1 >in +!
+    ')' parse 2drop 1 >in +!
     s" " cur resources var-content $!
     s"  ( [varend] ) "
     cur resources var-content dup >r scan-strings
@@ -443,7 +443,7 @@ also dos
 
 : set-title ( o -- ) >r  s" "
     BEGIN  2drop refill  WHILE  s'  s" ' parse-string? nip nip
-        IF  '" parse true  ELSE  s" " s" class;" source compare 0=  THEN
+        IF  '"' parse true  ELSE  s" " s" class;" source compare 0=  THEN
         UNTIL  THEN
     r> resource:dialog with
         dup IF  title-field assign  ELSE  2drop  THEN
@@ -451,7 +451,7 @@ also dos
 
 : set-title' ( o -- ) >r
     s'  s" ' parse-string? nip nip
-    IF  '" parse  ELSE  s" "  THEN
+    IF  '"' parse  ELSE  s" "  THEN
     r> resource:dialog with
         dup IF  title-field assign  ELSE  2drop  THEN
     endwith ;
@@ -488,56 +488,53 @@ also dos
 : create-classes ( -- )
     reenter dup push on
     BEGIN  refill  WHILE
-        BEGIN
+        true CASE
             source s' " included?' postfix?
             source s' s" ' prefix? and
-            IF  bl word drop '" parse last-file $!  LEAVE  THEN
+            OF  bl word drop '"' parse last-file $!  ENDOF
             source s" include " prefix?
-            IF  bl word drop bl parse last-file $!  LEAVE  THEN
+            OF  bl word drop bl parse last-file $!  ENDOF
             source s" component class " prefix?
-            IF  create-dialog  LEAVE  THEN
+            OF  create-dialog  ENDOF
 \ FIXME dated alternatives: to be removed for final version
             source s" window class " prefix?
-            IF  create-dialog  LEAVE  THEN
+            OF  create-dialog  ENDOF
             source s" vabox class " prefix?
-            IF  create-dialog  LEAVE  THEN
+            OF  create-dialog  ENDOF
             source s" menu-window class " prefix?
-            IF  create-menu-window  LEAVE  THEN
+            OF  create-menu-window  ENDOF
 \ FIXME end dated alternatives
             source s" menu-component class " prefix?
-            IF  create-menu-window  LEAVE  THEN
+            OF  create-menu-window  ENDOF
             source s" ( [varstart] ) " search nip nip
-            IF  add-vars  LEAVE  THEN
+            OF  add-vars  ENDOF
             source s"   : open-app new DF[ " prefix?
-            IF  s"   : open-app new DF[ " >in ! drop bl parse
+            OF  s"   : open-app new DF[ " >in ! drop bl parse
                 2dup s" 0" compare
-                IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
-            THEN
+                IF  cur resources default $!  ELSE  2drop  THEN  ENDOF
             source s"   : params   DF[ " prefix?
-            IF  s"   : params   DF[ " >in ! drop bl parse
+            OF  s"   : params   DF[ " >in ! drop bl parse
                 2dup s" 0" compare
 		IF  cur resources default $!  ELSE  2drop  THEN
-		cur resources self  set-title'  LEAVE
-            THEN
+		cur resources self  set-title'  ENDOF
             source s"     widget 1 " prefix?
-            IF  s"     widget 1 " >in ! drop bl parse
+            OF  s"     widget 1 " >in ! drop bl parse
                 2dup s" 0" compare
-                IF  cur resources default $!  ELSE  2drop  THEN  LEAVE
-            THEN
+                IF  cur resources default $!  ELSE  2drop  THEN  ENDOF
             source s" implements" search nip nip
-            IF 
+            OF 
                 bl word count cur resources find-name ?dup
-                IF  load-dialog  THEN  LEAVE  THEN
+                IF  load-dialog  THEN  ENDOF
             source s" : main" prefix?
-            IF  read-titles  LEAVE  THEN
-        DONE
+            OF  read-titles  ENDOF
+        ENDCASE
     REPEAT
     cur pane !resized
     cur pane resized
     cur status resized <rebox> <redpy> ;
 
 : included-minos ( addr u -- )  loading on
-[ also float ] f-init [ previous ]
+[ also float [defined] f-init [IF] ] f-init [ [THEN] previous ]
     2dup cur file-name $!
     r/o open-file throw $1000 input-file
     Onlyforth minos also minos-load also

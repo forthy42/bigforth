@@ -443,6 +443,8 @@ Variable arg#
     I arg do-arg  +LOOP ;
 previous
 
+: exe ;
+
 \ execute parsing - from Gforth compat/
 
 wordlist constant execute-parsing-wordlist
@@ -472,3 +474,4 @@ set-current
 \ single quote string
 
 : .' ''' parse postpone SLiteral postpone type ; immediate
+: s' ''' parse postpone SLiteral ; immediate

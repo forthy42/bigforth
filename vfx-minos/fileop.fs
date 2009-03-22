@@ -50,9 +50,13 @@ Module;
 
 also fileop
 
-: output-file ( addr u mode -- )
-  fhandle @ ?dup  IF  close-file drop  fhandle off  THEN
+: ?close ( -- )
+    fhandle @ ?dup  IF  close-file drop  fhandle off  THEN ;
+
+: output-file ( addr u mode -- ) ?close
   create-file throw fhandle !
   op-handle @ oldout !  FILEout ;
+
+: eot  ?close  oldout @ op-handle ! ;
 
 previous

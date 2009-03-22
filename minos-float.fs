@@ -29,7 +29,8 @@ class;
 ',' #[ sp@ 1 ins drop 1 c ]#F
 'e' #[ sp@ 1 ins drop 1 c ]#F
 'E' #[ sp@ 1 ins drop 1 c ]#F
-: ]SF postpone ]: float-action postpone new ; DoNotSin
+: ]SF postpone ]: float-action postpone new ;
+[defined] DoNotSin [IF] DoNotSin [THEN]
                                              immediate restrict
 [defined] alias [IF]
 ' :[ alias SF[                               immediate restrict
