@@ -508,11 +508,11 @@ Create 'round-flags
     message state#32 r> * 2dup erase  wurst-in read-file throw ;
 : read-first32 ( flags -- n )  wurst-size32  >reads >r
     message state#32 r> * 2 2* /string wurst-in read-file throw  2 2* + ;
-: .4 ( u -- )
+: .4h ( u -- )
     0 base @ >r hex <# # # # # #> type r> base ! ;
 
-: .source32 ( -- ) 2 0 DO  wurst-source I 2* + w@ .4  LOOP ;
-: .state32  ( -- ) 2 0 DO  wurst-state I 2* + w@ .4  LOOP ;
+: .source32 ( -- ) 2 0 DO  wurst-source I 2* + w@ .4h  LOOP ;
+: .state32  ( -- ) 2 0 DO  wurst-state I 2* + w@ .4h  LOOP ;
 
 : wurst-hash32 ( final-rounds rounds -- )
     hash-init dup read-first32
@@ -676,6 +676,8 @@ Create fft-test-2d here $1000 cells dup allot erase
     $40 0 DO
 	I cells fft-test-2d + ?
     LOOP ;
+
+\ check for dupes
 
 : test32 ( n -- )  message $20 erase base @ >r hex
     0 ?DO  hash-init I message ! roundsh# rounds32 roundse# rounds32
