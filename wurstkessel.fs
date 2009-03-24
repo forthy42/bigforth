@@ -585,7 +585,7 @@ Create 'round-flags
 
 $18 Value roundsh#
 $28 Value rounds#
-8 Value roundse#
+4 Value roundse#
 
 : test-hash
     s" wurstkessel.fs" wurst-file roundse# roundsh# wurst-hash ;
