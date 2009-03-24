@@ -428,6 +428,13 @@ Create 'round-flags
 	THEN
     LOOP 2drop ;
 
+\ : rounds' ( n -- )  message swap  dup $F and 8 umin 0 ?DO
+\ 	'rounds Ith execute .source cr .state cr cr
+\ 	dup 'round-flags Ith and IF
+\ 	    swap +entropy swap
+\ 	THEN
+\     LOOP 2drop ;
+
 : rounds-decrypt ( n -- )  message swap  dup $F and 8 umin 0 ?DO
 	'rounds Ith execute
 	dup 'round-flags Ith and IF
@@ -598,6 +605,39 @@ $28 Value rounds#
 	rounds# wurst-rng
 	message over wurst-out write-file throw
 	message over erase  LOOP wurst-close ;
+
+\ test for quality
+
+: wurst-break  s" wurstkessel.fs" wurst-file s" wurstkessel.wurst2" wurst-outfile roundse# roundsh# wurst-encrypt
+    s" wurstkessel.fs" wurst-file roundsh# read-first drop
+    s" wurstkessel.wurst2" wurst-file
+    wurst-source state# wurst-in read-file throw drop
+    s" wurstkessel.wurst2" wurst-file
+    wurst-source state# wurst-in read-file throw drop
+    wurst-state state# wurst-in read-file throw drop
+    wurst-state wurst-source state# xors
+    message wurst-source state# xors
+    wurst-source wurst-state state# xors
+    wurst-state wurst-source state# xors
+    wurst-state state# wurst-in read-file throw drop
+    wurst-source wurst-state state# xors
+    message state# + wurst-state state# xors
+    message wurst-source state# xors
+    state# 0 wurst-in reposition-file throw
+    s" wurstkessel.fs3" wurst-outfile roundsh# >r
+    r@ encrypt-read
+    r@  message swap  dup $F and 8 umin 0 ?DO
+	I 0> IF 'rounds I cells + @ execute THEN
+	dup 'round-flags Ith and IF
+	    swap -entropy swap
+	THEN
+    LOOP 2drop
+    r@ .xormsg-size
+    BEGIN  0>  WHILE
+	r@ encrypt-read
+	r@ rounds-decrypt  r@ message>'
+    REPEAT
+    rdrop  wurst-close ;
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
 : time-rng ( n -- ) rng-init
