@@ -608,6 +608,7 @@ $28 Value rounds#
 
 \ test for quality
 
+[IFDEF] 'rounds
 : wurst-break  s" wurstkessel.fs" wurst-file s" wurstkessel.wurst2" wurst-outfile roundse# roundsh# wurst-encrypt
     s" wurstkessel.fs" wurst-file roundsh# read-first drop
     s" wurstkessel.wurst2" wurst-file
@@ -638,6 +639,7 @@ $28 Value rounds#
 	r@ rounds-decrypt  r@ message>'
     REPEAT
     rdrop  wurst-close ;
+[THEN]
 
 Create rng-histogram $100 0 [DO] 0 , [LOOP]
 : time-rng ( n -- ) rng-init
