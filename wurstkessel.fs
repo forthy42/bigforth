@@ -19,6 +19,7 @@ cell 8 = [IF]
 [THEN]
 
 8 64s Constant state#
+2 2*  Constant state#32
 
 $10 here $F and - allot 
 here state# allot \ source
@@ -146,6 +147,37 @@ cell 8 = [IF]
     [THEN]
 [THEN]
 
+\ permutation generation
+
+0 [IF]
+Create permut# 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 ,
+permut#
+DOES> swap 7 and cells + @ ;
+
+Constant 'permut
+
+create state1 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 ,
+create state2 8 cells allot
+: permut 8 0 DO  state1 I permut# cells + @ state2 I cells + ! LOOP
+    state2 state1 8 cells move ;
+: permut@ 0 8 0 DO 3 lshift state1 I cells + @ or  LOOP ;
+
+permut@ Constant init-permut
+
+: permut-count ( -- n )
+    0 BEGIN 1+ permut permut@ init-permut = UNTIL ;
+
+: (permut-counts { n }
+    n 0= IF  permut-count . 8 0 DO I permut# . LOOP  cr  EXIT  THEN
+    8 0 DO
+	'permut I cells + dup @ 0= IF
+	    n swap ! n 1- recurse 'permut I cells + off
+	ELSE  drop  THEN
+    LOOP ;
+
+: permut-counts 'permut 8 cells erase  7 (permut-counts ;
+[THEN]
+
 \ wurstkessel algorithm
 
 : mix2bytes ( index n k -- b1 .. b8 index' n ) wurst-state + 8 0 DO
@@ -171,6 +203,34 @@ DOES> swap 7 and cells + @ ;
 	wurst-state I permut# 64s + 64@ -64swap
 	I mix2bytes 2>r bytes2sum 2r> 64swap nextstate I 64s + 64!
     LOOP 2drop update-state ;
+
+\ wurstkessel32 primitives
+
+: wurst32 ( u1 u2 -- u3 )  >r 2* dup 16 rshift 1 and or $FFFF and r> xor ;
+: rngs32 2* 'rngs + w@ ;
+
+: mix2bytes32 ( index n k -- b1 .. b2 index' n ) wurst-state + 2 0 DO
+	>r over wurst-source + c@ r@ c@ xor -rot dup >r + $3 and r> r> 2 + LOOP
+    drop ;
+
+: bytes2sum32 ( ud b1 .. b2 -- ud' ) >r >r
+    r> rngs32 wurst32  r> rngs32 wurst32 ;
+
+: update-state32 ( -- )
+    wurst-state wurst-source state#32 xors
+    nextstate wurst-state state#32 move ;
+
+Create permut#32 1 , 0 , \ permut length 2
+DOES> swap 1 and cells + @ ;
+
+: round32 ( n -- ) dup 1- swap  2 0 DO
+	wurst-state I permut#32 2* + w@ -rot
+	I mix2bytes32 2>r bytes2sum32 2r> rot nextstate I 2* + w!
+    LOOP 2drop update-state32 ;
+
+: +entropy32 ( message -- message' )
+    dup wurst-source state#32 xors  wurst-source over state#32 move
+    state#32 + ;
 
 \ fast mixing
 
@@ -376,6 +436,20 @@ Create 'round-flags
     LOOP 2drop ;
 [THEN]
 
+\ 32 bit rounds
+
+[IFUNDEF] 'round-flags
+    Create 'round-flags
+    $10 , $30 , $10 , $70 , $10 , $30 , $10 , $F0 ,
+[THEN]
+
+: rounds32 ( n -- )  message swap  dup $F and 8 umin 0 ?DO
+	I round# round32
+	dup 'round-flags I cells + @ and IF
+	    swap +entropy32 swap
+	THEN
+    LOOP 2drop ;
+
 \ : rounds ( n -- )  8 umin 0 ?DO  I round# round  LOOP ;
 
 \ wurstkessel file functions
@@ -421,6 +495,32 @@ Create 'round-flags
 	    dup encrypt-read
     REPEAT
     drop rounds .source wurst-close ;
+
+\ 32 bit wurst for testing
+
+: wurst-size32 ( -- )
+    [ cell 4 = ] [IF]
+	size? drop message !
+    [ELSE]
+	size? drop message l!
+    [THEN] ;
+: encrypt-read32 ( flags -- n )  >reads >r
+    message state#32 r> * 2dup erase  wurst-in read-file throw ;
+: read-first32 ( flags -- n )  wurst-size32  >reads >r
+    message state#32 r> * 2 2* /string wurst-in read-file throw  2 2* + ;
+: .4 ( u -- )
+    0 base @ >r hex <# # # # # #> type r> base ! ;
+
+: .source32 ( -- ) 2 0 DO  wurst-source I 2* + w@ .4  LOOP ;
+: .state32  ( -- ) 2 0 DO  wurst-state I 2* + w@ .4  LOOP ;
+
+: wurst-hash32 ( final-rounds rounds -- )
+    hash-init dup read-first32
+    BEGIN  0>  WHILE
+	    dup rounds32
+	    dup encrypt-read32
+    REPEAT
+    drop rounds32 .source32 wurst-close ;
 
 \ wurstkessel encryption
 
@@ -478,7 +578,7 @@ Create 'round-flags
 
 $18 Value roundsh#
 $28 Value rounds#
-4 Value roundse#
+8 Value roundse#
 
 : test-hash
     s" wurstkessel.fs" wurst-file roundse# roundsh# wurst-hash ;
@@ -576,3 +676,16 @@ Create fft-test-2d here $1000 cells dup allot erase
     $40 0 DO
 	I cells fft-test-2d + ?
     LOOP ;
+
+: test32 ( n -- )  message $20 erase base @ >r hex
+    0 ?DO  hash-init I message ! roundsh# rounds32 roundse# rounds32
+	.source32 space .state32 space I 8 u.r cr LOOP
+    r> base ! ;
+
+Variable lastx
+
+root definitions
+: x? ( -- )
+    2 pick lastx @ = IF  pad count type source type cr  THEN  2drop lastx !
+    source pad place ;
+forth definitions
