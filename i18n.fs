@@ -128,56 +128,32 @@ Vocabulary macros
 
 L" <>" AConstant delimiters
 
-[defined] lastxt [IF]
-: macro:  Create s" " here 0 , $! DOES> $@ ;
+: macro: ( addr u -- ) Create here 0 , $! DOES> $@ ;
 
-[defined] ">tib [IF]
-: set-macro ( addr1 len1 addr2 len2 -- )
+[defined] execute-parsing [IF]
+: replaces ( addr1 len1 addr2 len2 -- )
     2dup & macros search-wordlist IF  nip nip >body $!
     ELSE
-	get-current & macros set-current -rot ">tib -rot macro:
-	lastxt >body $! set-current
+	get-current >r & macros set-current
+	s" macro:" execute-parsing
+	r> set-current
     THEN ;
-[ELSE]
-    [defined] nextname [IF]
-	: set-macro ( addr1 len1 addr2 len2 -- )
-	    2dup & macros search-wordlist IF  nip nip >body $!
-	    ELSE
-		get-current & macros set-current -rot nextname -rot macro:
-		lastxt >body $! set-current
-	    THEN ;
-    [ELSE]
-	Variable macro-string
-	: set-macro ( addr1 len1 addr2 len2 -- )
-	    2dup & macros search-wordlist IF  nip nip >body $!
-	    ELSE
-		get-current & macros set-current -rot
-		s" macro: " macro-string $! macro-string $+! -rot
-		macro-string $@ evaluate
-		lastxt >body $! set-current
-	    THEN ;
-    [THEN]
-[ELSE]
-    Variable last-macro
-    Variable macro-string
-    
-    : macro:  Create s" " here dup last-macro ! 0 , $! DOES> $@ ;
-    : set-macro ( addr1 len1 addr2 len2 -- )
-	2dup & macros search-wordlist IF  nip nip >body $!
-	ELSE
-	    get-current & macros set-current -rot
-	    s" macro: " macro-string $! macro-string $+! -rot
-	    macro-string $@ evaluate
-	    last-macro @ $! set-current
-	THEN ;
 [THEN]
-
 
 Variable macro$
 
-: <delimiter  delimiters lsid@ drop xc@+ nip ;
-: ldelimiter  delimiters lsid@ over swap x-size ;
-: delimiter>  delimiters lsid@ drop xc@+ drop xc@+ nip ;
+2Variable 'delims
+Create ldel-buf 8 allot
+
+: set-delimiter ( lead end -- )  over swap 'delims 2!
+    ldel-buf xc!+ drop ;
+: get-delimiter ( -- lead end )  'delims 2@ ;
+
+: default-delimiter ( -- ) '%' dup set-delimiter ;
+default-delimiter
+
+: i18n-delimiter ( -- )
+    delimiters locale@ drop xc@+ swap xc@+ nip set-delimiter ;
 
 : xscan ( addr u xc -- addr' u' ) >r bounds
     BEGIN  xc@+ r@ <> WHILE  2dup u<=  UNTIL  ELSE  xchar-  THEN
@@ -188,13 +164,13 @@ Variable macro$
 
 : $substitute ( addr1 len1 -- addr2 len2 n )
     s" " macro$ $! 0 >r
-    BEGIN  dup  WHILE  <delimiter $split
+    BEGIN  dup  WHILE  'delims cell+ @ $split
 	    2swap macro$ $+! dup IF
-		over xc@+ nip <delimiter = IF
+		over xc@+ nip 'delims cell+ @ = IF
 		    over dup xchar+ over - macro$ $+! +x/string
 		ELSE
-		    delimiter> $xsplit 2swap dup 0= IF
-			2drop ldelimiter macro$ $+! r> 1+ >r
+		    'delims @ $xsplit 2swap dup 0= IF
+			2drop ldel-buf dup 8 x-size macro$ $+! r> 1+ >r
 		    ELSE
 			2dup & macros search-wordlist  IF
 			    execute 2swap 2drop r> 1+ >r macro$ $+!

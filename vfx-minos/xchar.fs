@@ -49,9 +49,9 @@ base @ hex
 : xstring- ( xcaddr u -- xcaddr u' )
     over + xchar- over - ;
 
-: +xstring ( xc-addr1 u1 -- xc-addr2 u2 )
+: +x/string ( xc-addr1 u1 -- xc-addr2 u2 )
     over dup xchar+ swap - /string ;
-: -xstring ( xc-addr1 u1 -- xc-addr2 u2 )
+: x\string- ( xc-addr1 u1 -- xc-addr2 u2 )
     over dup xchar- swap - /string ;
 
 \ skip trailing garbage
