@@ -370,7 +370,7 @@ User curpos
 
 export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
   +x/string x/string- save-cursor restore-cursor
-  xkey xemit x-width xdecode xaccept xhold holds ;
+  xkey xemit x-size x-width xdecode xaccept xhold holds ;
 
 also DOS
 : utf-8-coding  $80 to maxascii

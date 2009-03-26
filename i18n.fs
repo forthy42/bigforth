@@ -176,6 +176,7 @@ L" <>" AConstant delimiters
 Variable macro$
 
 : <delimiter  delimiters lsid@ drop xc@+ nip ;
+: ldelimiter  delimiters lsid@ over swap x-size ;
 : delimiter>  delimiters lsid@ drop xc@+ drop xc@+ nip ;
 
 : xscan ( addr u xc -- addr' u' ) >r bounds
@@ -192,10 +193,13 @@ Variable macro$
 		over xc@+ nip <delimiter = IF
 		    over dup xchar+ over - macro$ $+! +x/string
 		ELSE
-		    delimiter> $xsplit 2swap
-		    2dup & macros search-wordlist  IF
-			execute 2swap 2drop r> 1+ >r
-		    THEN  macro$ $+!
+		    delimiter> $xsplit 2swap dup 0= IF
+			2drop ldelimiter macro$ $+!
+		    ELSE
+			2dup & macros search-wordlist  IF
+			    execute 2swap 2drop r> 1+ >r macro$ $+!
+			ELSE  2drop  THEN
+		    THEN
 		THEN
 	    THEN
     REPEAT  2drop macro$ $@ r> ;
