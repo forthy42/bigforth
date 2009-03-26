@@ -194,7 +194,7 @@ Variable macro$
 		    over dup xchar+ over - macro$ $+! +x/string
 		ELSE
 		    delimiter> $xsplit 2swap dup 0= IF
-			2drop ldelimiter macro$ $+!
+			2drop ldelimiter macro$ $+! r> 1+ >r
 		    ELSE
 			2dup & macros search-wordlist  IF
 			    execute 2swap 2drop r> 1+ >r macro$ $+!
