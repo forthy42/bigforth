@@ -8,8 +8,9 @@
      postpone [ :noname ; immediate
      
 : ]: ( compile-time: orig colon-sys -- ; run-time: -- xt )
-    POSTPONE ; >r IF ]  POSTPONE THEN  r> POSTPONE Literal
-	last ! <headerless> !
+    discard-sinline  POSTPONE ; >r
+    IF ]  POSTPONE THEN  r> POSTPONE Literal
+	last ! <headerless> !  discard-sinline
     ELSE  r>  THEN ( xt ) ; immediate
 
 0 [IF]

@@ -741,7 +741,6 @@ Variable reenter
           s" border" tbutton new
     0 1 *fill 2dup glue new
   4 vabox new ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : box-detail ( -- o )
       0 :[ cur +hskip ! ?cur-box
@@ -759,7 +758,6 @@ Variable reenter
         hscaler with  #-9 offset !  ^ endwith
         0 1 *fill 2dup glue new
     4 vabox new ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : >hfbox  ( o flag -- o o +do -do )
     >r 1 habox new r@ 0= IF flipbox THEN dup
@@ -950,11 +948,10 @@ forward new:dialog
 
 Variable #entities
 
-: group  #entities off  : ;
+: group  #entities off  : [defined] discard-sinline [IF] discard-sinline [THEN] ;
 : endgroup  postpone 0fill  #entities @ 1+ postpone Literal
     & habox @  postpone ALiteral postpone new,
-    postpone panel postpone ;
-    [defined] DoNotSin [IF] DoNotSin [THEN] ; immediate
+    postpone panel postpone ; ; immediate
 
 : (entity ( addr u -- ) simple new -rot button new ;
 
@@ -1160,7 +1157,6 @@ endgroup
     3 vabox new 1 vabox new panel 2 borderbox
     2 habox new
     vfixbox ]D ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 \ load file
 
@@ -1509,7 +1505,6 @@ Variable auto-save-file
                TT" Add after current object"
                icon" icons/after"        flipicon new
    4 varbox new vfixbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : navigation ( -- o )
    0fill 0 ['] go-up simple new
@@ -1525,7 +1520,6 @@ Variable auto-save-file
           TT" First child in hierarchy"
           3        tributton new 0fill 3 habox new
    3 vabox new vfixbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : file-io ( -- o )
    0 ['] load-minos simple new
@@ -1541,7 +1535,6 @@ Variable auto-save-file
           TT" Save as module"
           icon" icons/mod"        icon-but new
    4 vabox new vfixbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : modes ( -- o )
     backing new D[
@@ -1558,7 +1551,6 @@ Variable auto-save-file
     vabox new 2 borderbox ]D
     0fill
     2 vabox new hfixbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : designer-file ( -- )
     s" Load:" s" " s" *.m"
@@ -1579,13 +1571,11 @@ Variable auto-save-file
     hline
     ^ S[ cur close ]S           s" Quit"              menu-entry new
     8 vabox new 2 borderbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 : edit-menu ( -- o )
     ^ S[ new:dialog cur pane !resized ]S      s" New Dialog"      menu-entry new
     ^ S[ new:menu-window cur pane !resized ]S s" New Menu Window" menu-entry new
     2 vabox new 2 borderbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 [defined] gpl-about 0= [IF] include gpl-about.m [THEN]
 include theseus-help.m
@@ -1602,7 +1592,6 @@ also dos
     hline
     ^ S[ minos-about open ]S s" About Theseus" menu-entry new
     3 vabox new 2 borderbox ;
-[defined] DoNotSin [IF] DoNotSin [THEN]
 
 previous
 
