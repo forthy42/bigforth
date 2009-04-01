@@ -56,7 +56,7 @@ also MINOS also
 [IFDEF] win32
     key" sh help/index.html"
 [ELSE]
-    key" sh ${BROWSER-help/netscape.sh} file://$PWD/help/index.html &"
+    key" sh ${BROWSER-/usr/local/lib/bigforth/help/netscape.sh} file:///usr/local/lib/bigforth/help/theseus.html >/dev/null 2>/dev/null &"
 [THEN]
     s" Help" menu-entry new
     key" [IFUNDEF] tip1  include tip.m [THEN] tip1 open"
