@@ -59,7 +59,9 @@ XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
 	  resources.fs minos-float.fs convert-m.sh
 
-all:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi ok
+all:	build ok
+
+build:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi
 
 ok:	xbigforth.fi xbigforth$(EXE)
 	@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
@@ -168,7 +170,7 @@ dist-files:
 
 INSTDIRS = pattern icons help src Estyle Estyle/wood Estyle/ShinyMetal
 
-install:	all
+install:	build
 	@install -d $(BININSTDIR)
 	@install -d $(INSTDIR)
 	@for i in $(INSTDIRS); do install -d $(INSTDIR)/$$i; done
