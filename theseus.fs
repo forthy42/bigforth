@@ -1586,7 +1586,7 @@ also dos
 [defined] win32 [IF]
     ^ S[ 0" help/theseus.html" system drop ]S
 [ELSE]
-    ^ S[ 0" ${BROWSER-/usr/local/lib/bigforth/help/netscape.sh} file:///usr/local/lib/bigforth/help/theseus.html >/dev/null 2>/dev/null &" system drop ]S
+    ^ S[ 0" ${BROWSER-/usr/local/lib/bigforth/help/netscape.sh} http://www.jwdt.com/~paysan/help/theseus.html >/dev/null 2>/dev/null &" system drop ]S
 [THEN]
     s" Using Theseus" menu-entry new
     hline
