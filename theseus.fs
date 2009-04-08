@@ -1035,12 +1035,12 @@ Variable #entities
 \ object description:
 
 group buttons:
-s" Button"       font-entity button        action-des string-des
-s" LButton"      font-entity lbutton       action-des string-des
-s" Icon-Button"  font-entity icon-button   action-des icon-des string-des
-s" Icon"         font-entity icon-but      action-des icon-des
-s" Big-Icon"     font-entity big-icon      action-des icon-des string-des
-s" Tri-Button"   entity tributton          action-des tri-des
+s" Button"       font-entity button        simple-des string-des
+s" LButton"      font-entity lbutton       simple-des string-des
+s" Icon-Button"  font-entity icon-button   simple-des icon-des string-des
+s" Icon"         font-entity icon-but      simple-des icon-des
+s" Big-Icon"     font-entity big-icon      simple-des icon-des string-des
+s" Tri-Button"   entity tributton          simple-des tri-des
 endgroup
 
 group toggles:

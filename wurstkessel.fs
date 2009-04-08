@@ -265,6 +265,9 @@ s" gforth" environment? [IF] 2drop
     : \c, ( addr u -- ) save-c-prefix-line ;
     : holds ( addr u -- )
 	dup negate holdptr +! holdptr @ dup holdbuf u< -17 and throw swap move ;
+    \ : mix2bytes_ind, ( index n k i -- index n ) >r
+    \	    >r over r@ 64 + swap
+    \       %> a<% r@ 7 and 0 .r %> ^=ROL(rnds[states[<% 0 .r %> ]^(0xff&(t>><% $7 and 8 * 0 .r %> ))],<% r> 7 r@ - 0 .r %> );<% \c, ;
     : mix2bytes_ind, ( index n k i -- index n ) >r
 	    >r over r@ 64 +
 	    <#
