@@ -128,7 +128,9 @@ Vocabulary macros
 
 L" <>" AConstant delimiters
 
+also macros definitions
 : macro: ( addr u -- ) Create here 0 , $! DOES> $@ ;
+previous Forth definitions
 
 [defined] execute-parsing [IF]
 : replaces ( addr1 len1 addr2 len2 -- )
