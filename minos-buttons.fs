@@ -909,9 +909,9 @@ how:    : #>text ( n -- addr u )  base push decimal
 
         : lstep get o- nip nip 1- 0max             o+ reslide ;
         : rstep get o- >r - r> 1+ min              o+ reslide ;
-        : lpage get o- nip nip text*/ 2@ swap /
+        : lpage get o- nip nip text*/ 2@ swap / 1 max
           - 0max     o+ reslide ;
-        : rpage get o- >r - r> text*/ 2@ swap /
+        : rpage get o- >r - r> text*/ 2@ swap / 1 max
           + min      o+ reslide ;
         : clicked ( x y b n -- )
           over $10 and  IF  2drop 2drop rpage  EXIT  THEN
