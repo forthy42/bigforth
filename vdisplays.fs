@@ -242,7 +242,7 @@ backing class beamer            cell var resize!
 public: ptr nextb               ptr firstb
         cell var enable         method clone
         early all-on            early all-off
-        early resize-all        early all-wh
+        early resize-all        \ early all-wh
         early delete-me         early set-first
 how:    : drops  cells sp@ + cell+ sp! ;
         : line ( x y x y color -- ) >r
@@ -297,10 +297,10 @@ how:    : drops  cells sp@ + cell+ sp! ;
           firstb self nextb self ( rot ) new bind nextb
           child self IF  child self nextb assign  THEN
           nextb self ;
-        : all-on  enable on
-          nextb self IF  nextb goto all-on THEN ;
-        : all-off  enable off
-          nextb self IF  nextb goto all-off THEN ;
+        : all-on  BEGIN  enable on
+          nextb self WHILE  nextb self op!  REPEAT ;
+        : all-off  BEGIN  enable off
+          nextb self WHILE  nextb self op!  REPEAT ;
 
 \ beamer                                               28mar99py
 
@@ -310,9 +310,9 @@ how:    : drops  cells sp@ + cell+ sp! ;
         : vglue  first? IF  super vglue
           ELSE  firstb h @ 0  THEN ;
         : resize-all ( -- )
-          xywh 2drop  firstb xywh 2swap 2drop  super resize
-          parent resized
-          nextb self  IF  nextb goto resize-all  THEN ;
+          BEGIN  xywh 2drop  firstb xywh 2swap 2drop  super resize
+	      parent resized
+	      nextb self  WHILE  nextb self op!  REPEAT ;
         : resize ( x y w h -- )
           first? IF  super resize resize! on
           ELSE  gadget :: resize THEN ;
@@ -322,12 +322,13 @@ how:    : drops  cells sp@ + cell+ sp! ;
 
 \ beamer                                               28mar99py
 
-        : delete-me ( beam -- )  dup nextb self =
-          IF    nextb nextb self bind nextb
-          ELSE  nextb self  IF  nextb delete-me  THEN
-          THEN ;
-        : set-first ( beam -- )  dup bind firstb
-          nextb self IF  nextb goto set-first  THEN ;
+        : delete-me ( beam -- )
+	  BEGIN  dup nextb self =
+	      0= WHILE  nextb self  WHILE  nextb self op!  REPEAT
+	  ELSE  nextb nextb self bind nextb  THEN ;
+        : set-first ( beam -- )
+	  BEGIN  dup bind firstb
+	      nextb self WHILE  nextb self op!  REPEAT ;
         : dispose  first? nextb self and
           IF  nextb self nextb set-first drop  THEN
           self firstb delete-me drop
@@ -345,7 +346,8 @@ how:    : drops  cells sp@ + cell+ sp! ;
           !resized  child xywh  resize ;
         : assign ( widget -- )  set-child
           first?  IF  self child dpy!  THEN
-          rest-child ;
+	  rest-child ;
+        : hide  flags #hidden +bit ;
         : close  dpy close ;
 class;
 : :beamer  0 0 ;

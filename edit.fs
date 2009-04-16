@@ -43,7 +43,7 @@ Variable :done
 [defined] ?head [IF] ?head @ ?head off [THEN]
 
 scredit class stredit
-    early !cursor
+\    early !cursor
 public:
     cell var thisline
     cell var changed

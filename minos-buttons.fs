@@ -858,7 +858,7 @@ hslider class hscaler public:   cell var offset
         early part1             early part3
         early part4             early part5
         early slide1
-public: method #>text           early scalekey
+public: method #>text           \ early scalekey
 
 \ new scaler                                           03dec06py
 
@@ -945,7 +945,7 @@ vslider class vscaler public:   cell var offset
         early part1             early part3
         early part4             early part5
         early slide1
-public: method #>text           early scalekey
+public: method #>text           \ early scalekey
 
 \ new scaler                                           08mar07py
 how:    : #>text ( n -- addr u )  base push decimal
