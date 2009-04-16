@@ -157,8 +157,8 @@ cr 2 lotus @ .
 cr 0 lotus @ .
 cr 5 1 lotus ! lotus .
 
-\ Interface test
-
+\ Interface test - doesn't work yet
+0 [IF]
 interface bla
 method fasel
 method blubber
@@ -181,7 +181,7 @@ cr test1 fasel
 cr test1 blubber
 cr test1 .
 cr test1 self >o bla blubber o>
-
+[THEN]
 \ This should output the following lines:
 \
 \ (This (is a) (example list))
