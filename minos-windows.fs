@@ -568,7 +568,7 @@ how:    : init ( actor tip -- )  bind tip  bind feed
           [defined] win32 [IF]  tip-frame self ?EXIT  [THEN]
           ['] show-tip ^ tooltip-delay after screen schedule ;
         : toggle leave feed toggle ;
-        : fetch  leave feed fetch ;
+        : fetch  feed fetch ;
         : store  leave feed store ;
         : set-called  dup super set-called feed set-called ;
 class;
