@@ -84,9 +84,10 @@ synonym #! \
 : +i' negate 2r> rot r> + dup >r -rot 2>r 0< ;
 : ith  postpone I postpone cells postpone + postpone @ ; immediate
 
-: list> ( thread -- element )
+: (list> ( thread -- element )
   BEGIN  @ dup  WHILE  dup r@ execute
   REPEAT  drop rdrop ; DoNotSin \ restrict
+: list> ( thread -- element )  postpone (list> discard-sinline ;
 
 -1 cells Constant -cell
 : over2  2 pick ;
