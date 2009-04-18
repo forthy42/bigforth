@@ -14,19 +14,12 @@
 
 decimal
 
-: ]             \ -- 
-\ *G Switch compiler into compilation state.
-  state on  discard-sinline
-;
+\ debugging tools
 
-: IMMEDIATE     \ --
-\ *G Mark the last defined word as immediate. Immediate words
-\ ** will execute whenever encountered regardless of
-\ ** *\fo{STATE}.
-  doNotSin immediate
+: .NextToken	\ --
+\ *G Display the next token in the input stream.
+  >in @  parse-name type  >in !
 ;
-
-\ debugging tool
 
 : my.s ( ... -- ... )  base @ >r hex ." <" depth 0 .r ." > "
     depth 0 max $10 min
@@ -68,7 +61,8 @@ Vocabulary oo-types  oo-types also
 Forth definitions
 : op! ( o -- )  currobj ! ;
 
-Create ostack 0 , 16 cells allot
+17 cells buffer: ostack	\ -- addr
+  0 ostack !
 
 : ^ ( -- o )
     state @ IF  postpone currobj postpone @  ELSE currobj @  THEN ; immediate
@@ -140,27 +134,35 @@ Variable 'link
 
 oo-types definitions
 
-: (static, ( offset -- ) >r : r> o@+, discard-sinline postpone ; ;
+: (static, ( offset -- )
+    >r : r> o@+,  discard-sinline
+    postpone ;
+;
 : static   ( -- ) \ oof- oof
     \G Create a class-wide cell-sized variable.
     mallot (static, ;
-: (method, ( offset -- )  >r
-    : r> o@+,
-      postpone @ postpone execute discard-sinline postpone ; ;
-: method   ( -- ) \ oof- oof
+: (method, ( offset "<name>" -- )
+    >r : r> o@+,  discard-sinline
+    postpone @ postpone execute
+    postpone ;
+;
+: method   ( "<name>" -- ) \ oof- oof
 \G Create a method selector.
-    mallot (method, ;
+\ cr ." METHOD " .NextToken
+    mallot (method,
+\ latest-xt disasm/f
+;
 : early    ( -- ) \ oof- oof
 \G Create a method selector for early binding.
     : postpone ahead postpone then s" dummy string" postpone SLiteral
     discard-sinline postpone ; doNotSin ;
-: (var, ( offset -- )  >r
-    : r> ^+, discard-sinline postpone ; ;
+: (var, ( offset -- )
+   >r : r> ^+, discard-sinline postpone ; ;
 : var ( size -- ) \ oof- oof
 \G Create an instance variable
     vallot (var, ;
-: (defer, ( n -- ) >r
-    : r> ^+,
+: (defer, ( n -- )
+    >r : r> ^+,
     postpone @ postpone execute discard-sinline postpone ; ;
 : defer    ( -- ) \ oof- oof
 \G Create an instance defer
@@ -195,7 +197,7 @@ Objects definitions also oo-types
 : exec2? ['] xxx3 method#2 tuck compare 0= ;
 : exec?    ( addr -- flag )
     dup exec1? swap exec2? or ;
-: static1? ['] sss1 static# tuck compare 0= ; 
+: static1? ['] sss1 static# tuck compare 0= ;
 : static2? ['] sss3 static#2 tuck compare 0= ;
 : static?  ( addr -- flag )
     dup static1? swap static2? or ;
@@ -204,6 +206,10 @@ Objects definitions also oo-types
 : defer?   ( addr -- flag )
     dup ['] ddd1 defer# tuck compare 0=
     swap ['] ddd3 defer#2 tuck compare 0= or ;
+: ifm?		\ addr -- flag
+\ Is this an interface method?
+  c@ $E8 =				\ CALL opcode
+;
 
 \ dealing with threads                                 29oct94py
 
@@ -224,20 +230,20 @@ Objects definitions also oo-types
 \ object compiling/executing                           20feb95py
 
 : o, ( xt early? -- )
-  over exec1?   over and  IF 
+  over exec1?   over and  IF
       drop method# + c@ o@ + @  compile,  EXIT  THEN
-  over exec2?   over and  IF 
+  over exec2?   over and  IF
       drop method#2 + @ o@ + @  compile,  EXIT  THEN
-  over static1? over and  IF 
+  over static1? over and  IF
       drop static# + c@ o@ + @  postpone Literal  EXIT THEN
-  over static2? over and  IF 
+  over static2? over and  IF
       drop static#2 + @ o@ + @  postpone Literal  EXIT THEN
   drop dup early? over 1+ @ and  IF  1+ dup @ + cell+  compile,
   ELSE  compile,  THEN  ;
 
 \ : (findo    ( string -- cfa n )
 \     o@ add-order >r find r> drop-order ;
-: (findo    ( string -- cfa n / f ) { string }
+: (findo    ( string -- cfa n / f ) { string -- }
     o@ >r  0  BEGIN  drop
 	r> 2@ swap >r
 	string count rot search-wordlist
@@ -279,13 +285,13 @@ Variable alloc
 
 : oallot ( n -- )  ohere + to ohere ;
 
-: ((new, ( link -- )
+: ((new, ( link -- )			\ ))
   dup @ ?dup IF  recurse  THEN   cell+ 2@ swap ohere + >r
   ?dup IF  ohere >r dup >r :newlink + @ recurse r> r> !  THEN
   r> to ohere ;
 
 : (new  ( object -- )
-  ohere >r dup >r :newlink + @ ((new, r> r> ! ;
+  ohere >r dup >r :newlink + @ ((new, r> r> ! ;		\ ))
 
 : init-instance ( pos link -- pos )
     dup >r @ ?dup IF  recurse  THEN  r> cell+ 2@
@@ -296,21 +302,21 @@ Variable alloc
 : init-object ( object -- size )
     >o o@ :init + @ execute  0 o@ :newlink + @ init-instance o> ;
 
-: (new, ( object -- ) ohere dup >r over size@ erase (new
+: (new, ( object -- ) ohere dup >r over size@ erase (new	\ )
     r> init-object drop ;
 
 : (new[],   ( n o -- addr ) ohere >r
     dup size@ rot over * oallot r@ ohere dup >r 2 pick -
-    ?DO  I to ohere >r dup >r (new, r> r> dup negate +LOOP
+    ?DO  I to ohere >r dup >r (new, r> r> dup negate +LOOP	\ )
     2drop r> to ohere r> ;
 
 \ new,                                                 29oct94py
 
-Create chunks here 16 cells dup allot erase
+#16 cells buffer: chunks	\ -- addr
+: init-oo-mem  ( -- ) chunks 16 cells erase ;
+init-oo-mem
 
-: init-oo-mem  chunks 16 cells erase ;
-
-[defined] DelFix 0= [IF]
+[DEFINED] DelFix 0= [IF]
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;
 [THEN]
 
@@ -424,10 +430,10 @@ Variable ob-interface
 
 \ bind instance pointers                               27mar94py
 
-: ((link ( addr -- o addr' ) 2@ drop ^ + ;
+: ((link ( addr -- o addr' ) 2@ drop ^ + ;	\ ))
 
 : (link  ( -- o addr )  bl word findo drop >body state @
-    IF postpone Literal postpone ((link EXIT THEN ((link ;
+    IF postpone Literal postpone ((link EXIT THEN ((link ;	\ ))
 
 : parent? ( class o -- class class' ) @
   BEGIN  2dup = ?EXIT dup  WHILE  :parent + @  REPEAT ;
@@ -435,7 +441,7 @@ Variable ob-interface
 : (bound ( obj1 adr2 -- )  ! ;
 
 : (bind ( addr -- ) \ <name>
-    (link state @ IF postpone (bound EXIT THEN (bound ;
+    (link state @ IF postpone (bound EXIT THEN (bound ;	\ )
 
 Forth definitions
 
@@ -509,14 +515,14 @@ synonym Fpostpone postpone
 
 : : ( <methodname> -- ) \ oof- oof colon
     decl @ abort" HOW: missing! "  class-o @ op!
-    >in @ >r bl word (findo 0=
+    >in @ >r bl word (findo 0=		\ )
     IF  r> >in ! m-name off :
     ELSE  r> drop
-	dup exec? over early? or
-	0= abort" not a method"
+	dup exec?  over early? or  over ifm? or
+        0= abort" OO-TYPES: not a method"
 	m-name ! :noname
     THEN ;
-    
+
 Forth
 
 : ; ( xt colon-sys -- ) \ oof- oof
@@ -537,7 +543,7 @@ Forth definitions
 
 \ object                                               23mar95py
 
-Create object  immediate  0 (class \ do not create as subclass
+Create object  immediate  0 (class \ do not create as subclass )
          cell var  oblink       \ create offset for backlink
          static    thread       \ method/variable wordlist
          static    parento      \ pointer to parent
@@ -617,7 +623,7 @@ how:
     : is      ( cfa -- )   (is ;
     : self    ( -- obj )   ^ ;
     : init    ( -- )       ;
-    
+
     : '       ( -- xt )  bl word findo drop
 	state @ IF  Fpostpone Literal  THEN ;
     : send    ( xt -- )  execute ;
@@ -625,7 +631,7 @@ how:
 	o@ add-order ^ Fpostpone Literal Fpostpone >o
 	Fpostpone Fpostpone  Fpostpone o>
 	drop-order voc# ! ;
-    
+
     : with ( -- n )  voc# @
 	state @ oset? 0= and IF  Fpostpone >o  THEN
 	o@ add-order voc# ! false to oset? ;
@@ -664,7 +670,7 @@ Vocabulary interfaces  interfaces definitions
 
 : method  ( -- ) \ oof-interface- oof
     mallot Create , inter# @ ,
-DOES> 2@ swap o@ + @ + @ execute ;
+    DOES> 2@ swap o@ + @ + @ execute ;
 
 : how: ( -- ) \ oof-interface- oof
     align
@@ -681,7 +687,7 @@ DOES> 2@ swap o@ + @ + @ execute ;
     decl @ abort" HOW: missing! "
     bl word count lastif @ @ :ilist + @
     search-wordlist 0= abort" not found"
-    dup >body cell+ @ 0< 0= abort" not a method"
+    dup >body cell+ @ 0< 0= abort" INTERFACES: not a method"
     m-name ! :noname ;
 
 Forth
