@@ -29,7 +29,7 @@ decimal
 : ~~ ( -- )
     >in @ postpone Literal LINE# @ postpone Literal
     'SourceFile @ postpone Literal
-    postpone (~~) ; immediate
+    postpone (~~) discard-sinline ; immediate
 : [~~]  >in @ LINE# @ 'SourceFile @ (~~) ; immediate
 
 : \G postpone \ ; immediate

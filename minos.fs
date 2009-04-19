@@ -235,7 +235,7 @@ previous definitions
 [defined] unix [IF]
 include xstyle.fs
 toss toss toss toss toss
-Module;
+[defined] VFXForth [IF] Forth definitions [ELSE] Module; [THEN]
 [THEN]
 [defined] win32 [IF]
 include xstyle.fs

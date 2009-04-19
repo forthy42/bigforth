@@ -95,6 +95,8 @@ also minos-load definitions
 : ^^ cur pane self ;
 : with  drop ;
 : endwith ;
+: ( ')' parse 2drop ; immediate
+: dup dup ;
 
 : M:
     S" " menu-des new menu-des with assign
@@ -377,7 +379,7 @@ also dos
             r@ resource:dialog with methods-content endwith
             dup >r scan-strings r>
             r@ resource:dialog with methods-edit self endwith
-            add-stream  LEAVE  THEN
+            add-stream  THEN
         source s" ( [dumpstart] )" search nip nip
     UNTIL  THEN  rdrop ;
 

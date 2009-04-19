@@ -86,8 +86,8 @@ synonym #! \
 
 : (list> ( thread -- element )
   BEGIN  @ dup  WHILE  dup r@ execute
-  REPEAT  drop rdrop ; DoNotSin \ restrict
-: list> ( thread -- element )  postpone (list> discard-sinline ;
+  REPEAT  drop rdrop ;
+: list> ( thread -- element )  postpone (list> discard-sinline ; immediate
 
 -1 cells Constant -cell
 : over2  2 pick ;
