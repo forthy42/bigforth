@@ -111,7 +111,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : -border ( x y w h -- x' y' w' h' )
           borderw cx@ abs xS * 2/ xywh- ;
         : dispose-childs  ALLCHILDS  dispose ;
-        : tab-step-off  tab-steps HandleOff ;
+        : tab-step-off  tab-steps $off ;
         : dispose dispose-childs tab-step-off super dispose ;
         : focus    ?nodraw ?EXIT  ALLCHILDS  focus   ;
         : defocus  ?nodraw ?EXIT  ALLCHILDS  defocus ;
