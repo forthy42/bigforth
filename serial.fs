@@ -27,6 +27,13 @@
     9600 Constant B9600
     19200 Constant B19200
     38400 Constant B38400
+    57600 Constant B57600
+    115200 Constant B115200
+    230400 Constant B230400
+    460800 Constant B460800
+    500000 Constant B500000
+    576000 Constant B576000
+    921600 Constant B921600
     
     struct{
         cell DCBlength
