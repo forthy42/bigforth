@@ -61,10 +61,13 @@ XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 
 all:	build ok
 
-build:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi
+build:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi theseus
 
 ok:	xbigforth.fi xbigforth$(EXE)
 	@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
+
+theseus:	theseus.fs
+	sed -e "s,^#! xbigforth,#! $(BININSTDIR)/xbigforth$(EXE)," <theseus.fs >theseus
 
 version.h:	Makefile.in
 	echo '"'$(SRCREV)'"' >$@
@@ -178,7 +181,6 @@ install:	build
 	@install -m 644 $(INI) $(INSTDIR)
 	@install -m 644 $(XINI) $(INSTDIR)
 	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
-	@sed -e "s,^#! xbigforth,#! $(BININSTDIR)/xbigforth$(EXE)," <theseus.fs >theseus
 	@install -m 755 theseus $(BININSTDIR)/theseus
 	@$(RM) theseus
 	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
