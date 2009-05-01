@@ -78,7 +78,7 @@ synonym #! \
 : 0<= 0> 0= ;
 : u>= u< 0= ;
 : u<= u> 0= ;
-: @+ dup @ swap cell+ ;
+
 : rdrop postpone r> postpone drop ; immediate
 : i' r> 2r> 2dup 2>r rot >r swap - $80000000 xor ;
 : +i' negate 2r> rot r> + dup >r -rot 2>r 0< ;
@@ -137,7 +137,7 @@ Variable (i)
 
 : forward
     : postpone ahead postpone then s" dummy string" postpone SLiteral
-    discard-sinline postpone ; DoNotSin ;
+    discard-sinline postpone ; ;
 
 : forward?  ( xt -- flag ) c@ $E9 = ;
 
@@ -189,7 +189,7 @@ synonym 0" z"
 : 0place ( addr u addr -- )
   swap 2dup + >r move 0 r> c! ;
 
-: "lit r> dup count + >r ; DoNotSin
+: "lit r> dup count + >r ;
 
 : -scan ( addr len char -- addr' len' ) >r
     BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  THEN  rdrop ;

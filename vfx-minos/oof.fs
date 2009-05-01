@@ -135,14 +135,14 @@ Variable 'link
 oo-types definitions
 
 : (static, ( offset -- )
-    >r : r> o@+,  discard-sinline
+    >r : r> o@+,
     postpone ;
 ;
 : static   ( -- ) \ oof- oof
     \G Create a class-wide cell-sized variable.
     mallot (static, ;
 : (method, ( offset "<name>" -- )
-    >r : r> o@+,  discard-sinline
+    >r : r> o@+,
     postpone @ postpone execute
     postpone ;
 ;
@@ -155,15 +155,15 @@ oo-types definitions
 : early    ( -- ) \ oof- oof
 \G Create a method selector for early binding.
     : postpone ahead postpone then s" dummy string" postpone SLiteral
-    discard-sinline postpone ; doNotSin ;
+      postpone ; ;
 : (var, ( offset -- )
-   >r : r> ^+, discard-sinline postpone ; ;
+   >r : r> ^+, postpone ; ;
 : var ( size -- ) \ oof- oof
 \G Create an instance variable
     vallot (var, ;
 : (defer, ( n -- )
     >r : r> ^+,
-    postpone @ postpone execute discard-sinline postpone ; ;
+    postpone @ postpone execute postpone ; ;
 : defer    ( -- ) \ oof- oof
 \G Create an instance defer
     valign cell vallot (defer, ;
