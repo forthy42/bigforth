@@ -353,7 +353,7 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
         : stroke ( -- ) startp 2@ poly> color c@ dpy stroke ;
         : fill ( -- ) startp 2@ poly> color 1+ c@ dpy fill ;
         : path ( -- )
-          xp 2@ wextend swap wextend <poly startp 2! ;
+          xp 2@ swap <poly startp 2! ;
         : dhome! ( dx dy -- ) dx off  dy off  angle off
           sh 2@ d* dy+ -rot sw 2@ d* dx+ y @ x @ p+ xp 2! ;
         : home! ( p -- )  0 tuck dhome! ;

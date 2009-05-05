@@ -234,12 +234,16 @@ how:    : dispose  clicks HandleOff
         : box ( x y w h color -- )  set-color \ clip-box
           2>r 2>r drawable 2r> 2r> XFillRectangle ;
         : fill ( x y array n color -- )  set-color
-          2swap swap 2over drop w!+ w!
-	  2>r drawable 2r> Complex CoordModePrevious
-	  XFillPolygon ;
+	  2swap over $-4000 $4000 within over $-4000 $4000 within and
+	  IF  swap 2over drop w!+ w!
+	      2>r drawable 2r> Complex CoordModePrevious
+	      XFillPolygon
+	  ELSE  2drop 2drop  THEN ;
         : stroke ( x y array n color -- )  set-color
-          2swap swap 2over drop w!+ w!
-	  2>r drawable 2r> CoordModePrevious XDrawLines ;
+	  2swap over $-4000 $4000 within over $-4000 $4000 within and
+	  IF  swap 2over drop w!+ w!
+	      2>r drawable 2r> CoordModePrevious XDrawLines
+	  ELSE  2drop 2drop  THEN ;
 
 \ Display                                              11nov06py
 
