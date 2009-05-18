@@ -193,7 +193,7 @@ IF  star-path $@  ELSE  s" *.star"  THEN
 fsel-action ]S ( MINOS )  icon" icons/save" icon-but new 
               #2 hatbox new vfixbox 
               ^^ S[ iterate-step ]S ( MINOS ) X" Run" button new  ^^bind iterate
-              ^^ S[ iterations get drop 0 DO iterate-step LOOP ]S ( MINOS ) X" Runs" button new  ^^bind iterates
+              ^^ S[ iterations get drop 0 DO iterate-step LOOP write-csv ]S ( MINOS ) X" Runs" button new  ^^bind iterates
               ^^ S[ iterate-disc ]S ( MINOS ) X" Disc" button new  ^^bind iterates
               ^^ S[ close ]S ( MINOS ) X" Close" button new 
               ^^ S[ about open ]S ( MINOS ) X" About" button new 

@@ -1,6 +1,7 @@
 \ compute rotation behaviour of galaxies               21may00py
 
 \needs float     import float
+\needs output-file  include fileop.fb
 [IFDEF] glcanvas
 \needs glconst | import glconst
 \needs 3d-turtle include 3d-turtle.fs
@@ -283,8 +284,9 @@ $40 Value vismax
 : !vis-array ( addr -- )  to vis-array
     s" " vis-array $!
     vismax 2+ 2* cells vis-array $!len  vis-array $@ erase ;
+: r#@ ( addr -- r )  xyz@ fsqsum fsqrt ;
 : vis+ ( val i -- )
-    star xyz@ fsqsum fsqrt vis* 1+ 2* cells
+    star r#@ vis* 1+ 2* cells
     vis-array $@ drop + >r 2 r@ +! dup 2* r@ cell+ +!
     r> 2 cells - >r  1 r@ +! dup r@ cell+ +!
     r> 4 cells + >r  1 r@ +!     r> cell+ +! ;
@@ -300,7 +302,7 @@ $40 Value vismax
 : draw-vis-array
   ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!
       rgb> drawcolor  path
-      0 vismax 0 ?DO  I vis@
+      0 vismax 0 ?DO  I vis@ 2*
                       dup >r - negate
                       1 swap to r>  LOOP
       drop stroke
@@ -309,22 +311,25 @@ $40 Value vismax
   star# 0 ?DO  I star element msum df@
                !1 f* vis'* I vis+  LOOP
   $00 $FF $00  draw-vis-array ;
+: >dir ( fx fy fz -- sum )
+    dirsens @ IF  sv*  ELSE drop fsqsum fsqrt THEN ;
 : visualize-a#  vis-a !vis-array
     star# 0 ?DO
-        I star a@ dirsens @ IF
-            I star sv*
-        ELSE fsqsum fsqrt THEN
+	I star a@ I star >dir I star r#@ f* fsqrt
         !.5 f* vis'* I vis+  LOOP ;
 : visualize-a
     visualize-a#  $00 $00 $FF   draw-vis-array ;
 : visualize-a+#  vis-a+ !vis-array
     star# 0 ?DO
-	I star a+@ dirsens @ IF
-            I star sv*
-        ELSE fsqsum fsqrt THEN
+	I star a+@ I star >dir I star r#@ f* fsqrt
         !.5 f* vis'* I vis+  LOOP ;
 : visualize-a+
     visualize-a+#  $FF $00 $00  draw-vis-array ;
+: write-csv ( -- ) 6 set-precision decimal
+    s" stars.csv" r/w output-file +buffer
+    star# 0 ?DO
+	I star r#@ fe. I star a@ I star >dir fe. I star a+@ I star >dir fe. cr
+    LOOP  eot ;
 
 \ test structure
 [THEN]
