@@ -18,7 +18,9 @@ Variable dummy
 0 Value scratch
 $4000 Constant scratch#
 Variable scratch$
-: char$ ( char -- addr u )  scratch xc!+ scratch tuck - ;
+
+Create char$buf 8 allot
+: char$ ( char -- addr u )  char$buf xc!+ char$buf tuck - ;
 
 \ Color system - RGB table                             25mar99py
 

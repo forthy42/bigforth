@@ -192,13 +192,13 @@ synonym 0" z"
 : "lit r> dup count + >r ;
 
 : -scan ( addr len char -- addr' len' ) >r
-    BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  THEN  rdrop ;
+    BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  1+  THEN  rdrop ;
 
 \ date & time conversion in files
 
 LocalExtern: localtime int localtime ( char * );
 
-Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
+$50 [defined] osx [IF] $100 + [THEN] Buffer: dta
 
 : @time   dta [defined] osx [IF] $30 [ELSE] $38 [THEN] + @ ;
 : @attr   dta $18 + w@ ;
@@ -228,10 +228,10 @@ LocalExtern: getdirentries int getdirentries( int , int , int , int );
 Variable dent-basep
 : getdents  dent-basep  getdirentries
     dup 0= IF  dent-basep off  THEN ;
-LocalExtern: lxstat int lxstat( int , int , int );
-LocalExtern: xstat int xstat( int , int , int );
-: lstat  swap 1 -rot lxstat ;     ( buf name -- r )
-: stat   swap 1 -rot xstat ;      ( buf name -- r )
+LocalExtern: lxstat int __lxstat( int , int , int );
+LocalExtern: xstat int __xstat( int , int , int );
+: lstat  swap 1 -rot lxstat ; DoNotSin    ( buf name -- r )
+: stat   swap 1 -rot xstat ; DoNotSin     ( buf name -- r )
 LocalExtern: fnmatch int fnmatch( int , int , int );
 LocalExtern: getcwd int getcwd( int , int );
 LocalExtern: fdelete int unlink( int );
@@ -244,13 +244,13 @@ LocalExtern: dcreate int mkdir( int );
 Variable dirbuf dirbuf off
 Variable dirpath
 Variable direndp
-Create dta $50 allot [defined] osx [IF] $100 allot [THEN]
-Create pattern $80 allot
-| dta 1 cells + AConstant diroff
-| dta 2 cells + AConstant dirsize
-| dta 3 cells + AConstant dirfd
+$80 Buffer: pattern
+: diroff   dta 1 cells + ;
+: dirsize  dta 2 cells + ;
+: dirfd    dta 3 cells + ;
+: dirstat' dta 4 cells + ;
 : dirstat ( -- 0/ior )  dta @ >len 1+ direndp @ swap move
-  dta $10 +  dirpath @  2dup stat
+  dirstat'  dirpath @ 2dup stat
   IF  lstat  ELSE  2drop 0  THEN ;
 : ?allot ( n addr -- )  dup @ IF  2drop EXIT  THEN
   [ also Memory ]  Handle! [ previous ] ;
@@ -260,17 +260,18 @@ Create pattern $80 allot
   BEGIN  diroff @ dirsize @ =
          IF  diroff off
              dirfd @ dirbuf @ $400 getdents
-             dup 0 max dirsize ! /ior dup 0<=
+	     dup 0 max dirsize ! /ior dup 0<=
              IF  fsend dup 0= or
                  EXIT  THEN  drop
          THEN  0  diroff @ dirbuf @ +
-               [defined] osx [IF] 4 + [ELSE] 8 + [THEN] dup w@ diroff +!
- [defined] glibc [IF] 3 + [ELSE] [defined] osx [IF] 4 + [ELSE] 2 + [THEN] [THEN]
-         dup dta !  pattern -rot swap fnmatch 0= UNTIL
-  dirstat ;
+	 [defined] osx [IF] 4 + [ELSE] 8 + [THEN] dup w@ diroff +!
+	 [defined] glibc [IF] 3 + [ELSE] [defined] osx [IF] 4 + [ELSE] 2 + [THEN] [THEN]
+	 dup dta !
+     pattern -rot swap fnmatch 0= UNTIL
+     dirstat ;
 
 : fsfirst ( C$ attr -- ior )   drop
-  dup dirpath !  diroff off  dirsize off
+  dup dirpath !  diroff off  dirsize off  dta off
   $400 dirbuf ?allot
   >len '/' -scan over + dup >r >len 1+ pattern swap move
   '.' r@ c! 0 r@ 1+ c! r> direndp !

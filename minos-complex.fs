@@ -874,13 +874,13 @@ how:    : read-files ( addr attr -- w1 .. wn n )
           over >len '/' -scan + dup push '*' swap w!
           fsfirst  0 >r
           BEGIN  pause  0=  WHILE  dir?
-                 dtaname >len s" ." compare 0<>
+                 dtaname >len s" ."  compare 0<>
                  dtaname >len s" .." compare 0<> and and
                  IF  \ cr ." dir " dtaname >file type
                      path self
                      @length @time @attr
                      dtaname >len file-widget new
-                     r> 1+ >r  THEN  fsnext  REPEAT  r> ;
+                     r> 1+ >r  THEN  fsnext  REPEAT r> ;
 
         : close   dpy close ;
 
@@ -902,8 +902,8 @@ how:    : read-files ( addr attr -- w1 .. wn n )
 
 \ file listbox                                         10apr04py
 
-        : widget ( addr len attr -- object )
-          scratch 0place
+        : widget ( addr len -- object )
+	  scratch 0place
           file<= @ F IS lex
           scratch $1C0 read-dir   >r  sp@ r@ sort
           scratch $0C0 read-files >r  sp@ r@ sort

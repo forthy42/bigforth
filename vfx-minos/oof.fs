@@ -25,7 +25,7 @@ decimal
     depth 0 max $10 min
     dup 0  ?DO  dup i - pick .  LOOP  drop r> base ! ;
 : (~~) ( in line source -- )  cr
-    .SourceName ." :" 0 .r ." ," 0 .r space my.s ;
+    .SourceName  ." :" 0 .r ." :" 0 .r space my.s ;
 : ~~ ( -- )
     >in @ postpone Literal LINE# @ postpone Literal
     'SourceFile @ postpone Literal
