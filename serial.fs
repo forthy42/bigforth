@@ -140,7 +140,7 @@
     cell c_cflag           /* control mode flags */
     cell c_lflag           /* local mode flags */
     byte c_line            /* line discipline */
-    31 string c_cc
+    32 string c_cc
     cell c_ispeed          /* input speed */
     cell c_ospeed          /* output speed */
     } termios
