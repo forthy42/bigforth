@@ -2,7 +2,7 @@
 
 [defined] VFXForth [IF]
     mpe-float
-    include /usr/share/doc/VfxForth/Lib/Ndp387.fth
+    include %VFXPATH%/Lib/Ndp387.fth
     ans-float
     : float ;
     : fx$  pad dup f>ascii ;
