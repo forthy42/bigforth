@@ -10,8 +10,8 @@ include browser.fs
 include login.fs
 include ptty.fs
 include status.fb
+[THEN]
 [defined] x11 [IF]
 also x11  [defined] has-xft [IF] previous
 include xft-font.fs  also [THEN] previous
-[THEN]
 [THEN]

@@ -2,11 +2,35 @@
 
 Module xft
 
+[defined] VFXForth [IF]
+    library: libXft.so.2
+
+    LocalExtern: XftFontMatch int XftFontMatch( int , int , int , int ); ( dpy screen pattern result -- pattern )
+    LocalExtern: XftFontOpenPattern int XftFontOpenPattern( int , int ); ( dpy pattern -- font )
+    LocalExtern: XftFontOpenXlfd int XftFontOpenXlfd( int , int , int ); ( dpy screen xlfd -- font )
+    LocalExtern: XftXlfdParse int XftXlfdParse( int , int , int ); ( xlfd igf compf -- pattern )
+    LocalExtern: XftTextExtents8 void XftTextExtents8( int , int , int , int , int ); ( dpy font string len extents -- )
+    LocalExtern: XftTextExtentsUtf8 void XftTextExtentsUtf8( int , int , int , int , int ); ( dpy font string len extents -- )
+    LocalExtern: XftDrawCreate int XftDrawCreate( int , int , int , int ); ( dpy drawable visual colormap -- draw )
+    LocalExtern: XftDrawCreateAlpha int XftDrawCreateAlpha( int , int , int ); ( dpy drawable depth -- draw )
+    LocalExtern: XftDrawChange void XftDrawChange( int , int ); ( draw drawable -- )
+    LocalExtern: XftDrawDestroy void XftDrawDestroy( int ); ( draw -- )
+    LocalExtern: XftDrawString8 void XftDrawString8( int , int , int , int , int , int , int ); ( d color font x y addr u -- )
+    LocalExtern: XftDrawString16 void XftDrawString16( int , int , int , int , int , int , int ); ( d color font x y addr u -- )
+    LocalExtern: XftDrawString32 void XftDrawString32( int , int , int , int , int , int , int ); ( d color font x y addr u -- )
+    LocalExtern: XftDrawStringUtf8 void XftDrawStringUtf8( int , int , int , int , int , int , int ); ( d color font x y addr u -- )
+    LocalExtern: XftDrawRect void XftDrawRect( int , int , int , int , int , int , int ); ( d color x y w h -- )
+    LocalExtern: XftColorAllocValue int XftColorAllocValue( int , int , int , int , int ); ( d v cmap color result -- )
+    LocalExtern: XftColorFree void XftColorFree( int , int , int , int ); ( d v cmap color -- )
+    LocalExtern: XftDrawSetClip int XftDrawSetClip( int , int ); ( d r -- bool )
+
+[ELSE]
+
 also dos
 
 legacy off
 
-[IFDEF] osx
+[defined] osx [IF]
     s" /usr/X11/lib/libXft.dylib" file-status nip 0= [IF]
 	library libXft /usr/X11/lib/libXft.dylib
     [ELSE]
@@ -35,12 +59,13 @@ libXft XftColorAllocValue int int int int int (int) XftColorAllocValue ( d v cma
 libXft XftColorFree int int int int (void) XftColorFree ( d v cmap color -- )
 libXft XftDrawSetClip int int (int) XftDrawSetClip ( d r -- bool )
 
+previous
+[THEN]
+
 : XftTextExtents  maxascii $80 =
     IF  XftTextExtentsUtf8  ELSE  XftTextExtents8  THEN ;
 : XftDrawString  maxascii $80 =
     IF  XftDrawStringUtf8  ELSE  XftDrawString8  THEN ;
-
-previous
 
 0 Constant XftTypeVoid
 1 Constant XftTypeInteger
@@ -228,7 +253,7 @@ class;
 
 : (normal-font ( -- )
     screen xrc with
-    [IFDEF] osx
+    [defined] osx [IF]
         s" -*-Helvetica Neue-bold-r-normal--12-*-*-*-p-*-iso10646-1" 0 font!
         s" -*-Andale Mono-medium-r-normal--12-*-*-*-c-*-iso10646-1" 1 font!
         s" -*-Helvetica Neue-medium-r-normal--8-*-*-*-p-*-iso10646-1" 2 font!
@@ -251,7 +276,7 @@ class;
 
 : (large-font ( -- )
     screen xrc with
-    [IFDEF] osx
+    [defined] osx [IF]
        s" -*-Helvetica Neue-bold-r-normal--16-*-*-*-p-*-iso10646-1" 0 font!
        s" -*-Andale Mono-medium-r-normal--16-*-*-*-c-*-iso10646-1" 1 font!
        s" -*-Helvetica Neue-medium-r-normal--10-*-*-*-p-*-iso10646-1" 2 font!
@@ -272,22 +297,38 @@ class;
     0" -*-FreeSans-*-r-*-*-*-120-*-*-*-*-*-*,-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*" screen xrc fontset!
     screen !resized ;
 
-also xft
+[defined] VFXForth [IF]
+    also minos xft
+[ELSE]
+    also xft
+[THEN]
 
 : xft-fonts ( -- )
     ['] xft-new-font IS new-font
     ['] (large-font IS large-font
     ['] (normal-font IS normal-font ;
 
-main: xft-fonts ;
-
 previous previous
+
+[defined] VFXForth [IF]
+    module;
+    also minos also xft
+    synonym (normal-font (normal-font
+    synonym (large-font (large-font
+    synonym clear-font clear-font
+    synonym xft-fonts xft-fonts
+
+    ' xft-fonts IS font-init
+
+    xft-fonts
+    previous previous
+[ELSE]
+main: xft-fonts ;
 
 export xft (normal-font (large-font clear-font xft-fonts ;
 
 module;
 
 xft-fonts
+[THEN]
 
-\ 4 0 [DO] [I] clear-font [LOOP]
-\ normal-font

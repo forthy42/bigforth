@@ -185,7 +185,8 @@ ficon: minos-win icons/minos1+.icn"
 [THEN]
 : event-loop  BEGIN  stop  apprefcnt @ 0<=  UNTIL ;
 [ELSE]
-    :noname win-init ; atcold
+    Defer font-init ' noop IS font-init
+    :noname font-init win-init ; atcold
     : minos-entry
 	2drop 2drop drop
 	true to script? interpret-args false to script?
