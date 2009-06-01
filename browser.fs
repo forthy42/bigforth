@@ -90,14 +90,22 @@ also editor
       hrtsizer new
       1 1 viewport new dup F bind class-struct DS[
         s" Class structure" text-label new ]DS
-      2 hasbox new  dup hasbox with &200 hsize ! endwith
+      2 hasbox new  dup hasbox with #200 hsize ! endwith
     2 habox new
     S" Class Browser" assign
-    &200 $18 geometry show
+    #200 $18 geometry show
   endwith ;
 
 previous previous
 
-export browser ;
+[defined] VFXForth [IF]
+    Module;
+
+    also class-browser
+    synonym browser browser
+    previous
+[ELSE]
+    export browser ;
 
 Module;
+[THEN]
