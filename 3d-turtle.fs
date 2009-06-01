@@ -752,7 +752,7 @@ class;
                          swap c!+
                      2 +LOOP
                      w 2* +LOOP  drop
-                 w 2/ to w h 2/ to  n 1+ to n  false
+                 w 2/ to w h 2/ to h  n 1+ to n  false
              ELSE  true  THEN  UNTIL ;
     : create-mipmap3 ( addr w h -- addr )
       over 3* 0 { w h w3 n }

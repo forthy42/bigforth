@@ -20,7 +20,7 @@
   at? >r >r  2dup 4 pick swap /string 1- 2dup
              over 1+ -rot move type space rot 1- -rot
   r> r> at ;
-: cur+       >r at? r> + c/cols @ /mod swap >r + r> at ;
+: cur+       >r at? r> + c/line @ /mod swap >r + r> at ;
 : >string  ( span addr pos1 -- span addr pos1 addr2 len )
     over 3 pick 2 pick chars /string ;
 : <xcins>  ( max span addr pos1 xcchar -- max span addr pos2 )
