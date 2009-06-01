@@ -56,8 +56,7 @@ sub-menu implements
           color 2+ c@ IF  shadow xS xywh drawshadow  THEN
           xM >r x @ w @ + r@ - xS - 1- y @ h @ r@ - 2/ + r>
           shadow color 2+ c@ IF swap  THEN
-[defined] VFXFORTH [ 0= ] [IF] \ !!!FIXME: confuses VFXFORTH
-	  tributton tritable 2 cells + perform [THEN] ;
+	  tributton tritable 2 cells + perform ;
         : hglue ( -- glue )  menu-entry :: hglue
           xM 1+ 0 p+ ;
 class;

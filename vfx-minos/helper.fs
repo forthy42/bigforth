@@ -70,7 +70,8 @@ synonym extend s>d
 synonym #! \
 
 : cont >r ;
-: push r> swap dup @ >r >r cont r> r> swap ! ;
+: (push) r> swap dup @ >r >r cont r> r> swap ! ;
+: push postpone (push) discard-sinline ; immediate
 
 : & ' >body state @ IF postpone Literal THEN ; immediate
 

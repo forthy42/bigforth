@@ -76,7 +76,7 @@ include sincos.fs
 : lctype  bounds ?DO  I c@ tolower emit  LOOP ;
 
 Patch .class
-:noname ." class: " base push hex ^ . o@ . cr ;  IS .class
+:noname cr ." class: " base push hex ^ . ^ >class" lctype ~~ ;  IS .class
 \ :noname ( object -- )  >class" lctype cr ; IS .class
 [THEN]
 

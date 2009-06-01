@@ -255,7 +255,8 @@ how:    : >hglue ( -- min glue ) 0 0  ALLCHILDS hglue@ p+ ;
           ALLCHILDS xywh drop +skip @ + nip over +
                     eclip @ umin sclip @ umax swap
                     eclip @ umin sclip @ umax u<= ?EXIT
-depth 1+ >r ['] draw catch depth r> <> or IF .class THEN
+	            sp@ >r ['] draw catch sp@ cell+ r@ <> or
+                    IF .class r@ sp! THEN  rdrop
                     /skip @ 0= IF widgets self 'nil = ?EXIT THEN
                     +skip @ 0= ?EXIT  x @ w @ + y @ +skip @ h @
                     bc dpy box ;

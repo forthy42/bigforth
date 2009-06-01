@@ -361,8 +361,6 @@ AVariable do-it
     THEN ;
 
 designerbox implements
-    8 colors defocuscol !
-    8 colors focuscol !
     : hide ( -- )
         0 cur bind box  0 cur bind widget super hide ;
     : draw-decor ( -- )
@@ -402,6 +400,9 @@ designerbox implements
     : init ( o1 .. on n -- )
         super init ^ panel drop ;
 class;
+
+8 colors designerbox defocuscol !
+8 colors designerbox focuscol !
 
 \ resource bar
 
