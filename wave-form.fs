@@ -55,7 +55,7 @@ how:
     : wave-x  outer self wave-form with wave-x endwith ;
     : wave-y  outer self wave-form with wave-y endwith ;
     : hsteps  addr $@len cell/ 2+ ;
-    : >coord  hsteps w @ */ 1- 0max ;
+    : >coord  hsteps w @ */f 1- 0max ;
     : info-line ( n -- )  >r
       hsteps h @ steps r@ 1+ h @ home!
       path  0 h @ to stroke
@@ -108,7 +108,7 @@ how:
       1 and IF  2drop 0 r> dpy moved!
                 DOPRESS  2swap >r drop  THEN
       2dup dpy scroll drop 2* step-x @
-      dup 0> IF / ELSE 2 swap negate << * THEN
+      dup 0> IF /f ELSE 2 swap negate << * THEN
       1- 2/ 0max addr $@ nip cell/ min
       r@ @ case? IF  rdrop  EXIT  THEN  r> !
       outer self wave-form with set-dist endwith
@@ -130,7 +130,7 @@ how:
     : dispose  comment HandleOff  addr HandleOff
       super dispose ;
     : hglue@  hsteps step-x @ dup 0>
-      IF  *  ELSE  negate 1+ 1 swap << / THEN 0 ;
+      IF  *  ELSE  negate 1+ 1 swap << /f THEN 0 ;
     : xinc  0 step-x @ 1 max ;
 class;
 

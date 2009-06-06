@@ -247,8 +247,8 @@ how:    : xinc  child xinc ;
           0 counter ! rw on  rh on
           x @ y @ xinc gw * + yinc gh * + resize ;
         : geometry? ( -- w h )
-          w @ xinc >r - r> /
-          h @ yinc >r - r> / ;
+          w @ xinc >r - r> /f
+          h @ yinc >r - r> /f ;
         : draw ( -- ) \ base push hex xwin @ . ." : w-draw "
           clip-should off  clip-is off
           0 clip-rect  child draw ;
@@ -292,7 +292,7 @@ how:    : xinc  child xinc ;
           dup bind innerwin  decoration  bind child
           self child dpy!  self child bind parent ;
         : adjust-inc ( n off inc -- n' )
-          >r tuck - r@ 2/ + r@ / r> * + ;
+          >r tuck - r@ 2/ + r@ /f r> * + ;
         : min-max ( n glue -- n' ) over + >r umax r> umin ;
         : child-size? ( -- x y )  child xywh 2swap 2drop  2dup
           yinc adjust-inc vglue min-max h !

@@ -137,11 +137,11 @@ extern: int gettimeofday ( void * , void * );
 Create timeval 0 , 0 ,
 Create timezone 0 , 0 ,
 : XTime ( -- time )  timeval timezone gettimeofday
-  timeval 2@ #1000 * swap #1000 / + ;
+  timeval 2@ #1000 * swap #1000 /f + ;
 [ELSE]
 also dos
 : XTime ( -- time )  timeval timezone gettimeofday
-  timeval 2@ #1000 * swap #1000 / + ;
+  timeval 2@ #1000 * swap #1000 /f + ;
 previous
 [THEN]
 : get-td ( win dpy -- n ) { win dpy }

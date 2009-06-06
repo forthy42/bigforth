@@ -106,7 +106,7 @@ class;
 rbutton implements
         : draw ( -- ) halfshade
           xN   xM over + 2/ xS + swap
-          #169 #239 */  dup xS + 1+   callback fetch
+          #169 #239 */f  dup xS + 1+   callback fetch
           { m n np s }  shadow
             s 0= IF  swap  THEN  >r >r
             x @ m + np -  y @ h @ 2/ +  over 1- over 1+ 2swap
@@ -156,12 +156,12 @@ topindex implements
           text $@ state IF  0 o  ELSE  xS negate o xS + THEN
           textcenter
           x @ y @ h @ + xS dup shadow drop dpy box
-	  x @ w @ + xS - y @ h @ + xS dup shadow
           twoborders 0> IF
               x @ y @ h @ + twoborders dup shadow drop 2+ dpy box
               x @ xS + y @ h @ + w @ xS 2* - twoborders
               shadow drop 2+ dpy box
 	  THEN
+	  x @ w @ + xS - y @ h @ + xS dup shadow
 	  widgets self 'nil =
           IF  nip  ELSE  drop  THEN  dpy box
           state ;
@@ -171,11 +171,7 @@ topindex implements
           x @ w @ + xS - y @ h @ + widgets self 'nil <>
           xS + shadow   callback fetch
 	    IF nip ELSE drop THEN  swap
-	    [defined] VFXFORTH [IF] dup { n }
-		0 ?DO  >r 2dup n I - 1 r@ dpy box 1+ r>  LOOP
-	    [ELSE]
-		0 ?DO  >r 2dup I' I - 1 r@ dpy box 1+ r>  LOOP
-	    [THEN]
+	    0 ?DO  >r 2dup r> I' I - swap >r 1 r@ dpy box 1+ r>  LOOP
           drop 2drop ;
         button :: hglue
         button :: vglue

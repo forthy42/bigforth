@@ -52,7 +52,7 @@ how:    : >callback ( cb -- )
 
 \ draw shadow                                          25mar99py
 
-        : draw-edge ( x y n col -- )  >r 1-
+        : draw-edge ( x y n col -- ) >r 1-
           dup 1 <  IF  2drop drop rdrop  EXIT  THEN
           dup 1 =  IF  dup r> dpy box    EXIT  THEN  >r
           <poly r@ 0 poly, 0 r@ - r> poly, poly> r> dpy fill ;
@@ -344,7 +344,7 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
         : dto ( x y -- )  dnegate sh 2@ d* dy+
                              -rot sw 2@ d* dx+ pixel, ;
         : to ( x y -- )  swap extend rot extend dto ;
-        : rt ( n -- ) 2pi 2* coord @ */ 1+ 2/ angle +! ;
+        : rt ( n -- ) 2pi 2* coord @ */f 1+ 2/ angle +! ;
         : bk ( n -- ) negate fd ;
         : lt ( n -- ) negate rt ;
 

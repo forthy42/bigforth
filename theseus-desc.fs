@@ -368,9 +368,9 @@ how:
     : init  $10 pixels !  1 fills !  1 quantity ! ;
     : >assign ( pix fill -- pix fill quan )
         dup 0= IF  0  EXIT  THEN
-        dup 1 *fil   1- and 0= IF 1 *fil   / 1  EXIT  THEN
-        dup 1 *fill  1- and 0= IF 1 *fill  / 2  EXIT  THEN
-        dup 1 *filll 1- and 0= IF 1 *filll / 3  EXIT  THEN
+        dup 1 *fil   1- and 0= IF 1 *fil   /f 1  EXIT  THEN
+        dup 1 *fill  1- and 0= IF 1 *fill  /f 2  EXIT  THEN
+        dup 1 *filll 1- and 0= IF 1 *filll /f 3  EXIT  THEN
         0 ;
     : null  make ;
     | Create 'fills

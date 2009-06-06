@@ -56,13 +56,13 @@ tbutton implements
         x @ m 2/ + y @ h @ n - 1+ 2/ +  n dup
         2over 2over $D dpy box
         s IF  2over 2over xS 1+ xywh- { w h |
-            0 h 3 / p+
+            0 h 3 /f p+
             <poly
-            w 3 / h 3 / poly,
-            w w 3 / - h h 3 / - negate poly,
-            0 h 3 / poly,
-            w w 3 / - negate h h 3 / - negate negate poly,
-            w 3 / negate h 3 / negate poly,
+            w 3 /f h 3 /f poly,
+            w w 3 /f - h h 3 /f - negate poly,
+            0 h 3 /f poly,
+            w w 3 /f - negate h h 3 /f - negate negate poly,
+            w 3 /f negate h 3 /f negate poly,
             poly> $C dpy fill }
         THEN
         drawshadow

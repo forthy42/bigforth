@@ -53,6 +53,8 @@ include sincos.fs
         : 0min dup 0< and ;
         : 8*  ( n -- 8*n ) 3 lshift ;
         : 3*  ( n -- 3*n ) dup 2* + ;
+	: */modf ( a b c -- n )  >r m* r> fm/mod ;
+	: */f ( a b c -- n )  */modf nip ;
     [ELSE]
         Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
             Next end-code macro :dx :ax T&P
@@ -60,7 +62,11 @@ include sincos.fs
         : 0max dup 0>= and ;
         : 0min dup 0< and ;
         Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
-        Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
+	Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
+	' */ alias */f
+	' /mod alias /modf
+	' / alias /f
+	' mod alias modf
     [THEN]      
 \ class utility                                        01jan00py
 | : cell-@  dup IF cell- @ THEN ;
@@ -139,7 +145,7 @@ include resources.fs
   clear-icons  clear-fonts [defined] term [IF] 0 bind term [THEN] ;
 
 [defined] x11 [IF]  also DOS
-: win-init ( -- ) !time clear-resources
+: win-init ( -- )  !time clear-resources
   xresource new  xresource with
      s" DISPLAY" env$ 0= IF drop s" :0.0" THEN open connect
      colors ^ endwith

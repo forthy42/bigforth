@@ -25,10 +25,10 @@ how:    : init  ( sx sy -- )  noback on  super init
           orgx @ hstep @ * x @ -
           orgy @ vstep @ * y @ - p- ;
         : <max  ( x y -- xmy y )  tuck max swap ;
-        : hslide  w @ hstep @ /
-          sw @ hstep @ / <max  orgx @ ;
-        : vslide  h @ vstep @ /
-          sh @ vstep @ / <max  orgy @ ;
+        : hslide  w @ hstep @ /f
+          sw @ hstep @ /f <max  orgx @ ;
+        : vslide  h @ vstep @ /f
+          sh @ vstep @ /f <max  orgy @ ;
         : screenpos ( -- x y )  dpy screenpos trans' ;
         gadget :: delete
 
@@ -249,17 +249,17 @@ how:    : init  ( sx sy -- )  noback on  super init
         : inside?  ( x y -- )
           y @ - sh @ u< swap x @ - sw @ u< and ;
         : xlegal ( x -- x' )
-          w @ sw @ - hstep @ / min 0max ;
+          w @ sw @ - hstep @ /f min 0max ;
         : ylegal ( y -- y' )
-          h @ sh @ - vstep @ / min 0max ;
+          h @ sh @ - vstep @ /f min 0max ;
         : slided ( -- )
           hspos self  IF  hspos draw  THEN
           vspos self  IF  vspos draw  THEN ;
         : show-me  ( x y -- ) sw @ sh @
           { x y w h }  y orgy @ vstep @ * - h u>= dup
-            IF  y h 2/ - vstep @ / ylegal ypos!  THEN
+            IF  y h 2/ - vstep @ /f ylegal ypos!  THEN
             x orgx @ hstep @ * - w u>= dup
-            IF  x w 2/ - hstep @ / xlegal xpos!  THEN
+            IF  x w 2/ - hstep @ /f xlegal xpos!  THEN
             or IF  slided  THEN  x y trans' dpy show-me ;
 
 \ viewport                                             02jan05py
@@ -268,11 +268,11 @@ how:    : init  ( sx sy -- )  noback on  super init
           y orgy @ vstep @ * - dup
           0<    IF  drop y  ELSE
           h >=  IF  y h - orgy @ 1+ vstep @ * max BUT  THEN
-                    vstep @ / ylegal ypos! true  ELSE false THEN
+                    vstep @ /f ylegal ypos! true  ELSE false THEN
           x orgx @ hstep @ * - dup
           0<    IF  drop x  ELSE
           w >=  IF  x w - orgx @ 1+ hstep @ * max BUT  THEN
-                    hstep @ / xlegal xpos! true  ELSE false THEN
+                    hstep @ /f xlegal xpos! true  ELSE false THEN
           or IF  slided moved!  THEN
           x y trans' dpy scroll ;
         : focus    child focus   ;
@@ -280,7 +280,7 @@ how:    : init  ( sx sy -- )  noback on  super init
 
 \ viewport                                             22jan05py
 
-        : ud ( -- n )  /mslide vstep @ / 1+ ;
+        : ud ( -- n )  /mslide vstep @ /f 1+ ;
         : clicked ( x y b n -- )
           over $18 and over 1 and 0= and
           sh @ h @ < and IF  \ scroll
@@ -292,8 +292,8 @@ how:    : init  ( sx sy -- )  noback on  super init
 
 \ viewport                                             22jan05py
 
-        : /vpage ( -- n )  sh @ vstep @ / 1- 1 max ;
-        : /hpage ( -- n )  sw @ hstep @ / 1- 1 max ;
+        : /vpage ( -- n )  sh @ vstep @ /f 1- 1 max ;
+        : /hpage ( -- n )  sw @ hstep @ /f 1- 1 max ;
         : keyed ( key sh -- )  dup 1 and IF
           over $FF55 =  IF  orgy @ /vpage - ylegal ypos!
                             slided  2drop  EXIT  THEN

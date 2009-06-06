@@ -98,7 +98,7 @@ how:    : >box  'nil bind childs  'nil bind active
         : y+ ( dy -- )  xy +! ;
         : maxglue ( g1 g2 -- g )  rot min -rot max swap ;
         : gsize   ( g1 g2 -- g n )  swap
-          2over 2over >r 2* rot ?dup  IF  */  ELSE  min  THEN
+          2over 2over >r 2* rot ?dup  IF  */f  ELSE  min  THEN
           1+ 2/ >r drop negate r@ negate p+ r> r> + ;
         : >range  vglues 2@ range swap hglues 2@ range swap ;
         : resize  ( x y w h -- ) hglue@ 2drop vglue@ 2drop
@@ -237,7 +237,7 @@ how:    : >hglue ( -- min glue ) 0 0  ALLCHILDS hglue@ p+ ;
         : vglue ( -- glue )
           >vglue over + >vmax  swap
           1- yinc 2dup >r >r swap y @ - tuck
-          >r >r - r> tuck / 1+ * r> + tuck -
+          >r >r - r> tuck /f 1+ * r> + tuck -
           swap vskips+
           tuck + swap  r> r>  >inc tuck -
           dup 0< IF  + 0  THEN
@@ -313,7 +313,7 @@ how:    : >hglue ( -- min glue ) 0 mi n @ 0<> and
                   r> r> tabs 1- tab@ d= UNTIL
           over + >hmax  swap
           1- xinc 2dup >r >r swap x @ - tuck
-          >r >r - r> tuck / 1+ * r> + tuck -
+          >r >r - r> tuck /f 1+ * r> + tuck -
           swap hskips+
           tuck + swap  r> r>  >inc tuck -
           dup 0< IF  + 0  THEN

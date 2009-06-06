@@ -287,9 +287,9 @@ $09 Constant #tab        $07 Constant #bell
 
 \ division - make sure everything is floored
 
-: /mod ( n1 n2 -- rem quot ) >r s>d r> fm/mod ;
-: / /mod nip ;
-: mod /mod drop ;
+: /modf ( n1 n2 -- rem quot ) >r s>d r> fm/mod ;
+: /f /modf nip ;
+: modf /modf drop ;
 
 : ud/mod ( ud1 u2 -- urem udquot )  >r 0 r@ um/mod r> swap >r
                                     um/mod r> ;

@@ -1,7 +1,7 @@
 \ bigForth structure creation                          18aug96py
 
 : align-by ( w l -- w' ) dup 1- swap invert and invert negate
-  cell min >r 1- r@ / 1+ r> * ;
+  cell min >r 1- r@ /f 1+ r> * ;
 
 : struct: ( w+ length -- w+ )
     dup >r align-by r>

@@ -64,10 +64,10 @@ class;
 stredit implements
     Variable drawbuf
     : pos@     pos @ cols @ mod ;
-    : pos!     pos @ cols @ / cols @ * + pos ! ;
+    : pos!     pos @ cols @ /f cols @ * + pos ! ;
     : pos+!    pos +! pos @ 0 max pos ! ;
 
-    : line#@   pos @ cols @ / 1+ ;
+    : line#@   pos @ cols @ /f 1+ ;
     : line#!   1- pos @ cols @ mod swap cols @ * + pos !
                line#@ thisline# ! ;
     : line#+!  cols @ * pos +! line#@ thisline# ! ;

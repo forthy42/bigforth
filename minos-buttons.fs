@@ -737,7 +737,7 @@ how:    : get  ( -- steps step pos )
         : do-slide  drop  ( pos x0 x )
           over - >r over r> ( pos dx )
           get 2drop 2* w @ hglue drop -
-          ?dup IF  */ 1+ 2/  ELSE  2drop 0  THEN  +
+          ?dup IF  */f 1+ 2/  ELSE  2drop 0  THEN  +
           0max get drop - min reslide 2drop ;
         : slide ( x y b n -- ) drop
           nip 1 and 0= IF  2drop 0  EXIT  THEN
@@ -788,7 +788,7 @@ how:    : get  ( -- steps step pos )
         : do-slide  nip  ( pos y0 y )
           over - >r over r> ( pos dy )
           get 2drop 2* h @ vglue drop -
-          ?dup IF  */ 1+ 2/  ELSE  2drop 0  THEN  +
+          ?dup IF  */f 1+ 2/  ELSE  2drop 0  THEN  +
           0max get drop - min reslide 2drop ;
         : slide ( x y b n -- ) drop
           nip 1 and 0= IF  2drop 0  EXIT  THEN
@@ -844,7 +844,7 @@ class;
 
 : max10 ( n max -- n' )  >r  #1000000000
   BEGIN  tuck mod dup r@ u>  WHILE
-         swap #10 /  REPEAT  nip rdrop ;
+         swap #10 /f  REPEAT  nip rdrop ;
 : digit+ ( digit max n -- max n' )
   #10 * rot '0' - over 0< IF  -  ELSE  +  THEN ;
 
@@ -871,21 +871,21 @@ how:    : #>text ( n -- addr u )  base push decimal
         : get  ( -- steps step pos )  super get 0 swap ;
         : o+  ( n -- n' )  offset @  + ;
         : o-  ( n -- n' )  offset @  - ;
-        : o'+ ( n -- n' )  offset @  text*/ 2@ */  + ;
-        : o'- ( n -- n' )  offset @  text*/ 2@ */  - ;
+        : o'+ ( n -- n' )  offset @  text*/ 2@ */f  + ;
+        : o'- ( n -- n' )  offset @  text*/ 2@ */f  - ;
         : init  1 1 text*/ 2!  super init ;
 
 \ new scaler                                           03dec06py
         : keyed ( k s -- k s )  over '0' '9' 1+ within
-          IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
+          IF  drop get >r - text*/ 2@ */f r> text*/ 2@ */f digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
-              text*/ 2@ swap */
+              text*/ 2@ swap */f
               reslide  EXIT  THEN                    over #bs =
           IF  2drop get nip nip s>d #10 sm/rem nip o- 0max o+
               reslide  EXIT  THEN                     over '%' =
           IF  2drop get >r - r> 0max #100 min
-              #100 */ o+ reslide  EXIT  THEN          over '-' =
+              #100 */f o+ reslide  EXIT  THEN          over '-' =
           IF  2drop get >r - 1- r> negate o- 0max min o+ reslide
               EXIT  THEN  >r
           $FF50 case? IF  0 o+ reslide          rdrop  EXIT THEN
@@ -909,9 +909,9 @@ how:    : #>text ( n -- addr u )  base push decimal
 
         : lstep get o- nip nip 1- 0max             o+ reslide ;
         : rstep get o- >r - r> 1+ min              o+ reslide ;
-        : lpage get o- nip nip text*/ 2@ swap / 1 max
+        : lpage get o- nip nip text*/ 2@ swap /f 1 max
           - 0max     o+ reslide ;
-        : rpage get o- >r - r> text*/ 2@ swap / 1 max
+        : rpage get o- >r - r> text*/ 2@ swap /f 1 max
           + min      o+ reslide ;
         : clicked ( x y b n -- )
           over $10 and  IF  2drop 2drop rpage  EXIT  THEN
@@ -922,7 +922,7 @@ how:    : #>text ( n -- addr u )  base push decimal
         : do-slide  ( pos x0 x y  -- )  drop  ( pos x0 x )
           over - >r over r> ( pos dx )
           get 2drop 2* w @ hglue drop -
-          ?dup IF  */ 1+ 2/  ELSE  2drop 0  THEN  +
+          ?dup IF  */f 1+ 2/  ELSE  2drop 0  THEN  +
           o- 0max get drop - min o+ reslide 2drop ;
         : slide1 ( x y b n -- ) drop >r drop  0 -rot
           0 o+ x @ part4 drop 2* + 2swap
@@ -957,8 +957,8 @@ how:    : #>text ( n -- addr u )  base push decimal
         : get  ( -- steps step pos )  super get 0 swap ;
         : o+ ( n -- n' ) offset @ + ;
         : o- ( n -- n' ) offset @ - ;
-        : o'+ ( n -- n' ) offset @  text*/ 2@ */  + ;
-        : o'- ( n -- n' ) offset @  text*/ 2@ */  - ;
+        : o'+ ( n -- n' ) offset @  text*/ 2@ */f  + ;
+        : o'- ( n -- n' ) offset @  text*/ 2@ */f  - ;
         : clicked ( x y b n -- )  leave
           over $10 and  IF  2drop 2drop lpage  EXIT  THEN
           over $08 and  IF  2drop 2drop rpage  EXIT  THEN
@@ -967,15 +967,15 @@ how:    : #>text ( n -- addr u )  base push decimal
 \ new scaler                                           08mar07py
         : init  1 1 text*/ 2!  super init ;
         : keyed ( k s -- k s )  over '0' '9' 1+ within
-          IF  drop get >r - text*/ 2@ */ r> text*/ 2@ */ digit+
+          IF  drop get >r - text*/ 2@ */f r> text*/ 2@ */f digit+
               dup 0< IF  nip negate 0 o'- max10 negate
                    ELSE  swap o'+ max10  THEN
-              text*/ 2@ swap */
+              text*/ 2@ swap */f
               reslide  EXIT  THEN                    over #bs =
           IF  2drop get nip nip s>d #10 sm/rem nip o- 0max o+
               reslide  EXIT  THEN                     over '%' =
           IF  2drop get >r - r> 0max #100 min
-              #100 */ o+ reslide  EXIT  THEN          over '-' =
+              #100 */f o+ reslide  EXIT  THEN          over '-' =
           IF  2drop get >r - 1- r> negate o- 0max min o+ reslide
               EXIT  THEN  drop
 
@@ -1000,7 +1000,7 @@ how:    : #>text ( n -- addr u )  base push decimal
         : do-slide  ( pos y0 x y -- )  nip  ( pos y0 y )
           over - >r over r> ( pos dy )
           get 2drop 2* h @ vglue drop -
-          ?dup IF  */ 1+ 2/  ELSE  2drop 0  THEN  +
+          ?dup IF  */f 1+ 2/  ELSE  2drop 0  THEN  +
           o- 0max get 2drop tuck min - o+ reslide 2drop ;
         : slide1 ( x y b n -- ) drop >r drop  0 -rot
           0 o+ y @ part4 drop + xS + 2swap

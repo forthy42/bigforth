@@ -336,7 +336,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : 'start ( -- addr ) start @
           scrolls @ cols @ * + ;
         : 'line  ( n -- addr u )
-          scrolls @ cols @ * dup >r + rows @ cols @ * mod r> -
+          scrolls @ cols @ * dup >r + rows @ cols @ * modf r> -
           'start + cols @ -trailing ;
         : !resized  s" n" !textwh
           4 dpy xrc font@ bind fnt16 ;
@@ -451,7 +451,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           IF  1 rows +!   screen-resize
               cols @ rows @ 1- * 'line drop cols @ bl fill
               EXIT  THEN
-          scrolls @ 1+ rows @ mod scrolls !
+          scrolls @ 1+ rows @ modf scrolls !
           cols @ dup negate pos +!
           cols @ rows @ 1- * 'line drop swap bl fill  do-scroll
           IF    x @ y @ texth @ dup >r +  dpy transback
@@ -482,7 +482,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 
 \ IO-Window                                            06jan05py
         : win-type  ( addr len -- )  cols @ >r
-          BEGIN  dup pos @ r@ mod r@ - + dup 0>=  WHILE
+          BEGIN  dup pos @ r@ modf r@ - + dup 0>=  WHILE
                  tuck - >r over r@ + swap rot r> linetype REPEAT
           drop linetype rdrop  ;
         : type  ( addr len -- )  typebuf @ @ over + cols @ >=
@@ -505,7 +505,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           swap 0max rows @ 1- min
           cols @ * + curoff pos ! curon ;
         : at? ( -- r c )
-          pos @ typebuf @ @ + cols @ /mod swap ;
+          pos @ typebuf @ @ + cols @ /modf swap ;
         : show-you ( -- ) dpy self 0= ?EXIT
           at? textwh 2@ rot * -rot * x @ y @ p+ dpy show-me ;
         : ?sel-scroll  ( c r -- c r )
@@ -532,7 +532,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           c# cursor# ! p pos ! s1 selw ! ;
 
 \ IO-Window                                            30dec99py
-        : clrline   flush  curoff pos @ dup cols @ mod - pos !
+        : clrline   flush  curoff pos @ dup cols @ modf - pos !
           pos @ 'line drop cols @
           2dup -trailing >r drop 2dup bl fill
           r> showtext curon ;
@@ -543,21 +543,21 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : c  ( n -- )  flush  curoff  pos @ + 0max  pos !
           BEGIN pos @ cols @ rows @ * >= WHILE  scrollup  REPEAT
           curon ;
-        : cr  ( -- ) flush cols @ pos @ over mod - c
+        : cr  ( -- ) flush cols @ pos @ over modf - c
           resize! c@ ?EXIT show-you ;
         : curup    cols @ negate c ;
         : curdown  cols @        c ;
 
 \ IO-Window                                            09mar99py
         : selecting ( -- )  flush  textwh 2@ swap
-          DOPRESS  x @ y @ p- 2swap swap >r / swap r> / at-sel ;
+          DOPRESS  x @ y @ p- 2swap swap >r /f swap r> /f at-sel ;
         : (dpy  [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN] ;
         : mark-selection ( x y -- )  defocus  at? >r >r
           swap at pos @ >r selecting
           -select selw @ pos @ + r>
           2dup max -rot min  0 -rot
-          ?DO  drop cols @ I over mod -
+          ?DO  drop cols @ I over modf -
                I 'line ( drop over -trailing ) I' I - min  tuck
                +select  over I' I - min  <> swap  +LOOP
           IF  s" " +select  THEN  (dpy !select
@@ -570,7 +570,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
         : copyline  >r >r at? drop cols @ * 'line
           r@ swap 4 pick min dup 3 pin move
           r> over r> min ;
-        : >atxy  ( msap xy -- msap )  at? >r >r $100 /mod swap
+        : >atxy  ( msap xy -- msap )  at? >r >r $100 /modf swap
           2dup at r> rot <>
           IF  >r copyline r> rdrop over >r  THEN  r>
           - + dup 0min dup negate c - 2 pick over -
@@ -586,7 +586,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           keys @ @ 0= IF  pause  THEN  keys @ @ 0> ;
         : getkey ( -- key )  keys @ @
           IF    keys @ cell+ @  keys @ 8 + dup cell- $78 move
-                -1 keys @ +! $10000 /mod kbshift !
+                -1 keys @ +! dup $10 rshift kbshift ! $FFFF and
           ELSE  0  THEN ;
         : key   ( -- key )  flush  1 cursor# ! curon
           BEGIN  key?  0= WHILE
@@ -615,7 +615,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 
         : init ( w h -- )  $80 keys Handle!  keys @ off
         ^ CK[ 2swap y @ -
-              texth @ / swap x @ - textwh @ / swap 2swap
+              texth @ /f swap x @ - textwh @ /f swap 2swap
               1 and  IF  drop mark-selection  EXIT  THEN
               1 and 0=  IF  2drop (dpy @select paste-selection
                             EXIT  THEN

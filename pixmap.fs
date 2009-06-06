@@ -79,7 +79,7 @@ Create trigger
             3 +LOOP
         drop rot 4+ $F and -rot
         line +LOOP
-    dpy ImageByteOrder 0= IF data size #24 / <>.8  THEN
+    dpy ImageByteOrder 0= IF data size #24 /f <>.8  THEN
     2drop drop ;
 
 [defined] old_trans.8 [IF]
@@ -132,7 +132,7 @@ Create colcorrect 3 allot
     LOOP  swap rot colcorrect c!+ c!+ c! ;
 
 : trans.8 ( data size line dpy -- )
-    2 pick 3 / 2 pick 3 / 0 0 0 0 { data size line dpy size/3 line/3 dend K K' J' }
+    2 pick 3 /f 2 pick 3 /f 0 0 0 0 { data size line dpy size/3 line/3 dend K K' J' }
     size/3 NewHandle dup @ dup size/3 + to dend
     colcorrect 3 erase
     data size bounds over to K' ?DO  I to K
@@ -149,7 +149,7 @@ Create colcorrect 3 allot
             ditherbuf $100 bounds DO
                 dup dend <
                 IF
-                    I over $10 J' J - 3 / min move
+                    I over $10 J' J - 3 /f min move
                 ELSE  LEAVE  THEN
                 line/3 +
             $10 +LOOP  drop
@@ -174,7 +174,7 @@ Create colcorrect 3 allot
     ImageByteOrder 0= IF  <>.24  ELSE  2drop  THEN ;
 
 : trans.32 ( data size line dpy -- ) nip { data size dpy }
-    size 3 / 1-  dpy ImageByteOrder 0=
+    size 3 /f 1-  dpy ImageByteOrder 0=
     IF
         FOR  0 data I pixels + c@+ c@+ c@ data I 4* + c!+ c!+ c!+ c!  NEXT
     ELSE

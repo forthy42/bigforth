@@ -2,7 +2,8 @@
 
 [defined] VFXForth [IF]
     mpe-float
-    include %VFXPATH%/Lib/Ndp387.fth
+    include /usr/share/doc/VfxForth/Lib/Ndp387.fth
+    \ !!!FIXME!!! This should be a %macro%-related path
     ans-float
     : float ;
     : fx$  pad dup f>ascii ;
