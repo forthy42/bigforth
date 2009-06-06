@@ -756,7 +756,9 @@ include edit.fs
   fit? isfile@ str? 0= IF  fview  ELSE  0  THEN  r# ! vc ;
 : view-name ( view addr u -- )  ?clearbuffer find! (view scr !
   fit? isfile@ str? 0= IF  fview  ELSE  0  THEN  r# ! vc ;
-' view-name debugging view!
+[defined] VFXForth 0= [IF]
+    ' view-name debugging view!
+[THEN]
 
 \ cold: bye:                                           27feb00py
 
