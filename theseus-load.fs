@@ -412,13 +412,13 @@ also dos
     last-file @
     IF  last-file $@ file-status nip 0=
         IF  last-file $@ resource:dialog class-file $!  THEN
-        last-file HandleOff  THEN ;
+        last-file $off  THEN ;
         
 : !implementation-file ( -- )
     last-file @
     IF  last-file $@ file-status nip 0=
         IF  last-file $@ resource:dialog implementation-file $!  THEN
-        last-file HandleOff  THEN ;
+        last-file $off  THEN ;
         
 : create-dialog ( -- )
     bl word drop bl word drop
