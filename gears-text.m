@@ -26,9 +26,9 @@ class;
 include gears-text.fs
 gears-text implements
  ( [methodstart] ) : make-gear-task recursive
-  1 gear-task !  &60 after >r
-  glgear render &100 0 DO  pause  LOOP
-  glgear draw   &100 0 DO  pause  LOOP
+  1 gear-task !  #60 after >r
+  glgear render #100 0 DO  pause  LOOP
+  glgear draw   #100 0 DO  pause  LOOP
   ['] make-gear-task self r> screen schedule ;
 : draw-gears  recursive
   gear0 @ 0= IF  create-gears gear2 ! gear1 ! gear0 !  THEN
@@ -43,12 +43,12 @@ gears-text implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         GL[ outer with draw-gears endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
-          ^^ #325 #360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
-          ^^ #45 #360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
-          ^^ #43 #360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
-          ^^ #0 #360 SC[ &360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
-          ^^ #0 #360 SC[ &360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
-          ^^ #0 #360 SC[ &360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
+          ^^ #325 #360 SC[ #360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
+          ^^ #45 #360 SC[ #360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
+          ^^ #43 #360 SC[ #360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
+          ^^ #0 #360 SC[ #360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
+          ^^ #0 #360 SC[ #360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
+          ^^ #0 #360 SC[ #360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
           ^^ #0 #100 SC[ zoom ! ]SC ( MINOS )  TT" Zoom" hscaler new 
           ^^ TV[ texture ]T[ ( MINOS )  ]TV ( MINOS )  TT" Switches texture on/off" X" Texture" tbutton new 
             ^^ S[ gears-text open ]S ( MINOS ) X" One more" button new 

@@ -127,7 +127,7 @@ go implements
 : go-task ( -- )  done off  taskid @ ?dup IF  kill  THEN
   ^ 1 $1000 dup NewTask dup taskid ! pass op! decimal
   BEGIN  $100 0 DO  BEGIN  fpad I + 1 goout @ read-file
-                    WHILE  drop goout @ filehandle @ &5000 idle
+                    WHILE  drop goout @ filehandle @ #5000 idle
                     REPEAT  drop fpad I + c@ #lf <> WHILE
          LOOP  fpad $100  ELSE  fpad I  UNLOOP  THEN
   eval-line done @ 0< UNTIL close-game taskid off ;

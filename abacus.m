@@ -37,7 +37,7 @@ abacus-comp implements
   : widget  ( [dumpstart] )
           ^^ TN[ 0 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 5 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
-          ^^ TN[ &10 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
+          ^^ TN[ #10 *v @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/blue-dot"icons/gold-hwire" toggleicon new 
         #3 harbox new
           ^^ TN[ 0 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
           ^^ TN[ 1 *i @ ]T[ ( MINOS ) re-calc  ]TN ( MINOS )  2icon" icons/red-dot"icons/gold-hwire" toggleicon new 
@@ -52,13 +52,13 @@ class;
 
 abacus implements
  ( [methodstart] ) : re-calc
-  0 v0 &20 cells bounds ?DO  I @ 0< or  cell +LOOP  ?EXIT
+  0 v0 #20 cells bounds ?DO  I @ 0< or  cell +LOOP  ?EXIT
   0. v0 
-  &10 0 DO  >r &10. d* r@ 2@ + m+ r> 2 cells +  LOOP drop
+  #10 0 DO  >r #10. d* r@ 2@ + m+ r> 2 cells +  LOOP drop
   num assign ;
 : re-number  num get
   v0 v9 DO
-      &10 ud/mod rot 5 /mod 5 * I ! I cell+ !  -2 cells +LOOP
+      #10 ud/mod rot 5 /mod 5 * I ! I cell+ !  -2 cells +LOOP
   2drop draw ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         #0. ]N ( MINOS ) ^^ SN[ re-number ]SN ( MINOS ) X" #" infotextfield new  ^^bind num

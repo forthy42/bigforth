@@ -61,7 +61,7 @@ midi implements
          LOOP  THEN  drop
      outer with
         scheduled @ 0< IF  ['] do-draw channel0 self
-                           &40 after screen schedule  THEN
+                           #40 after screen schedule  THEN
         scheduled off
      endwith
   endwith pause ; ( [methodend] ) 

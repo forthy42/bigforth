@@ -109,7 +109,7 @@ graphs implements
   r@ task-graph name" @ IF
       r@ task-graph name" $@ task assign  THEN
   r> task-graph date @
-  &100 /mod &100 /mod 0 year assign 0 month assign 0 day assign
+  #100 /mod #100 /mod 0 year assign 0 month assign 0 day assign
   :: show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
           T" " ^^ ST[  ]ST ( MINOS ) X" Task Graph:" infotextfield new  ^^bind task
@@ -121,7 +121,7 @@ graphs implements
           $10 $2 *hfilll $10 $1 *vfil glue new 
           ^^ S[ current-widget @ opensched with graph endwith >r
 task get r@ task-graph name" $!
-year get drop &100 * month get drop + &100 * day get drop +
+year get drop #100 * month get drop + #100 * day get drop +
 r> task-graph date !
 close ]S ( MINOS ) X" OK" button new 
           $10 $1 *hfilll $10 $1 *vfil glue new 
@@ -164,7 +164,7 @@ project implements
   current-widget @ opensched with globals endwith >r
   r@ global prefix dup @ IF  $@ prefix assign  ELSE  drop  THEN
   r@ global start @
-  &100 /mod &100 /mod 0 year assign 0 month assign 0 day assign
+  #100 /mod #100 /mod 0 year assign 0 month assign 0 day assign
   r@ global reports @
   dup   1 and IF  text set     THEN
   dup   2 and IF  tex set      THEN
@@ -211,7 +211,7 @@ project implements
           $10 $2 *hfilll $10 $1 *vfil glue new 
           ^^ S[ current-widget @ opensched with globals endwith >r
 prefix get r@ global prefix $!
-year get drop &100 * month get drop + &100 * day get drop +
+year get drop #100 * month get drop + #100 * day get drop +
 r@ global start !
 text get 1 and  tex get 2 and or  html get 4 and or
 weekly get 8 and or  monthly get $10 and or

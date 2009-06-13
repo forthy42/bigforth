@@ -149,7 +149,7 @@ wave-form implements
   file-name @  IF  file-name HandleOff  THEN
   forget-waves  super dispose ;
 : step-act ( -- actor )
-  ^ 0 &30 :[ step-x ! !resized resized ]:
+  ^ 0 #30 :[ step-x ! !resized resized ]:
   scale-do new scale-do with  4 pos ! ^ endwith ;
 : show-waves ( -- )  ^>^^
   0 BEGIN  dup waves @ <  WHILE
@@ -185,7 +185,7 @@ wave-form implements
        file-name $@ create-waves dpy !resized
        s" Reload" #load assign ]S fsel-dialog ;
 : show ( -- )  super show
-  &800 &600 dpy geometry ;
+  #800 #600 dpy geometry ;
 : set-dist ( -- ) \ distance get d0= >r
   wave-y @ wave-x @ - time-x @ m* distance assign ;
 previous previous previous ( [methodend] ) 

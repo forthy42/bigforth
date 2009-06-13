@@ -37,8 +37,8 @@ xmas-tree implements
       s" Merry"     4 screen xrc font@ 3d-turtle text-texture F bind merry-text
 [THEN]
   THEN
-  glgear render &100 0 DO  pause  LOOP
-  glgear draw   &100 0 DO  pause  LOOP ;
+  glgear render #100 0 DO  pause  LOOP
+  glgear draw   #100 0 DO  pause  LOOP ;
 : draw-xmas
   gear-task @ 0= IF  make-gear-task  EXIT  THEN
   glgear self
@@ -50,13 +50,13 @@ xmas-tree implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
             GL[ outer with draw-xmas endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $100 $1 *hfil $100 $1 *vfil glcanvas new  ^^bind GLgear
-                    ^^ #0 #360 SC[ &360 mod alphax ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
-                    ^^ #0 #360 SC[ &360 mod alphay ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
-                    ^^ #0 #360 SC[ &360 mod alphaz ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
+                    ^^ #0 #360 SC[ #360 mod alphax ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
+                    ^^ #0 #360 SC[ #360 mod alphay ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
+                    ^^ #0 #360 SC[ #360 mod alphaz ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
                   #3 vabox new #2 borderbox
-                    ^^ #0 #360 SC[ &360 mod alphapitch ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Pitch" hscaler new 
-                    ^^ #25 #360 SC[ &360 mod alphabend ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Bend" hscaler new 
-                    ^^ #0 #360 SC[ &360 mod alpharoll ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Roll" hscaler new 
+                    ^^ #0 #360 SC[ #360 mod alphapitch ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Pitch" hscaler new 
+                    ^^ #25 #360 SC[ #360 mod alphabend ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Bend" hscaler new 
+                    ^^ #0 #360 SC[ #360 mod alpharoll ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Roll" hscaler new 
                   #3 vabox new #2 borderbox
                 #2 habox new
                     ^^ #4 #8 SC[ 2+ speed ! gear-task @ IF make-gear-task THEN ]SC ( MINOS )  TT" Height" hscaler new 

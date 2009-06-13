@@ -66,9 +66,9 @@ class;
 include dragon.fs
 dragon implements
  ( [methodstart] ) : make-dragon-task recursive
-  1 dragon-task !  !time &20 after >r
-  gldragon render &100 0 DO  pause  LOOP
-  gldragon draw   &100 0 DO  pause  LOOP
+  1 dragon-task !  !time #20 after >r
+  gldragon render #100 0 DO  pause  LOOP
+  gldragon draw   #100 0 DO  pause  LOOP
   1000000. timer@ time @ - >us drop ud/mod fps assign drop
   ['] make-dragon-task self r> screen schedule ;
 : draw-dragons
@@ -90,7 +90,7 @@ dragon implements
       texture ! back-texture ! head-texture ! wing-texture ! claw-texture !
       make-dragon-task  THEN
   timer@ dup last-time @ -
-  speed @ &20 */ tail-time +! last-time !
+  speed @ #20 */ tail-time +! last-time !
   gldragon self
   alphax @ alphay @ alphaz @
   alphapitch @ alphabend @ alpharoll @
@@ -103,13 +103,13 @@ dragon implements
   super dispose ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         GL[ outer with draw-dragons endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $190 $1 *hfil $C8 $1 *vfil glcanvas new  ^^bind GLdragon
-              ^^ #0 #360 SC[ &360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
-              ^^ #226 #360 SC[ &360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
-              ^^ #0 #360 SC[ &360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
+              ^^ #0 #360 SC[ #360 mod alphax ! ]SC ( MINOS )  TT" Rotate around X axis" hscaler new 
+              ^^ #226 #360 SC[ #360 mod alphay ! ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new 
+              ^^ #0 #360 SC[ #360 mod alphaz ! ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new 
             #3 vabox new #2 borderbox
-              ^^ #0 #360 SC[ &360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
-              ^^ #0 #360 SC[ &360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
-              ^^ #0 #360 SC[ &360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
+              ^^ #0 #360 SC[ #360 mod alphapitch ! ]SC ( MINOS )  TT" Pitch" hscaler new 
+              ^^ #0 #360 SC[ #360 mod alphabend ! ]SC ( MINOS )  TT" Bend" hscaler new 
+              ^^ #0 #360 SC[ #360 mod alpharoll ! ]SC ( MINOS )  TT" Roll" hscaler new 
             #3 vabox new #2 borderbox
           #2 habox new
               ^^ #20 #40 SC[ speed ! ]SC ( MINOS )  TT" Speed" hscaler new 

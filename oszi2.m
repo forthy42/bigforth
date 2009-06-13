@@ -31,11 +31,11 @@ osci implements
       cell +LOOP  stroke
   outer with samples @ endwith width 1+ cells bounds
   DO  I @ 1+ height mod I !  cell +LOOP
-  ['] draw ^ &40 after dpy schedule
+  ['] draw ^ #40 after dpy schedule
   endwith ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         doublebuffer new  D[ 
-          CV[ ^ draw-oszi dpy sync ['] draw ^ &40 after screen schedule ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $258 $1 *hfil $190 $1 *vfil canvas new 
+          CV[ ^ draw-oszi dpy sync ['] draw ^ #40 after screen schedule ]CV ( MINOS ) ^^ CK[ 2drop 2drop  ]CK ( MINOS ) $258 $1 *hfil $190 $1 *vfil canvas new 
         #1 habox new ]D ( MINOS ) 
         ^^ S[ close ]S ( MINOS ) X" Ende" button new  ^^bind ende
       #2 vabox new panel
