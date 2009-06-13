@@ -437,11 +437,7 @@ Variable icon-base
     s" .ppm" suffix? IF  read-ppm  EXIT  THEN
     true abort" Unknown icon file format" ;
 
-[defined] VFXFORTH [IF]
-    Defer read-icon
-[ELSE]
-    Patch read-icon
-[THEN]
+Defer read-icon
 ' (read-icon IS read-icon
 
 0 [IF]

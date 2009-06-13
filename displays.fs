@@ -843,13 +843,13 @@ class;
 displays ptr screen
 
 [defined]  x11 [IF]
-    : screen-event  ( -- )  0 screen get-event ;
-    : screen-sync  ( -- )   screen sync ;
-    : screen-ic!  ( ic -- ) screen xrc ic ! ;
+    :noname  ( -- )  0 screen get-event ; IS screen-event
+    :noname  ( -- )   screen sync ; IS screen-sync
+    :noname  ( ic -- ) screen xrc ic ! ; IS screen-ic!
 [THEN]
 
 [defined]  win32 [IF]
-: win>o ( win -- o )  screen win>o nip ;
+    :noname ( win -- o )  screen win>o nip ; IS win>o
 [THEN]
 
 \ font implementation                                  21aug99py

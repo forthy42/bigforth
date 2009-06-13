@@ -635,7 +635,6 @@ class;
     terminal ptr term
     hbox ptr term-menu
     rule ptr term-last
-    forward term-w
 
     : openw  screen self menu-window new
         menu-window with
@@ -741,8 +740,6 @@ Output: WINdisplay
 hbox uptr term-menu             rule uptr term-last
 Defer terminal-menu             ' noop IS terminal-menu
 
-forward term-w
-
 minos
 
 \ openw                                                21jun05py
@@ -792,13 +789,6 @@ class;
   ELSE  ^ '"' parse key-actor new  THEN ;        immediate
 
 \ : term-dpy  term dpy dpy self ;
-
-
-\ helper
-forward ficons
-forward dot-dir
-forward dotdot-dir
-forward diro-icon
 
 \ file widget                                          10apr04py
 DOS also

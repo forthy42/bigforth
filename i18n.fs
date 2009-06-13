@@ -132,7 +132,6 @@ also macros definitions
 : macro: ( addr u -- ) Create here 0 , $! DOES> $@ ;
 previous Forth definitions
 
-[defined] execute-parsing [IF]
 : replaces ( addr1 len1 addr2 len2 -- )
     2dup & macros search-wordlist IF  nip nip >body $!
     ELSE
@@ -140,7 +139,6 @@ previous Forth definitions
 	s" macro:" execute-parsing
 	r> set-current
     THEN ;
-[THEN]
 
 Variable macro$
 

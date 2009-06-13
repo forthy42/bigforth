@@ -156,30 +156,18 @@ class;
 
 \ actor simplification                                 05mar07py
 
-[defined] VFXFORTH [IF]
-    : noop-i ; immediate
-    synonym S[ :[
-    synonym DT[ :[
-    synonym T[ :[
-    synonym TS[ :[
-    synonym CK[ :[
-    synonym SC[ :[
-    synonym SL[ :[
-    synonym ]T[ :[
-    synonym CP[ noop-i
-    synonym ]CP noop-i
-[ELSE]
-    ' :[ alias S[                                immediate restrict
-    ' :[ alias DT[                               immediate restrict
-    ' :[ alias T[                                immediate restrict
-    ' :[ alias TS[                               immediate restrict
-    ' :[ alias CK[                               immediate restrict
-    ' :[ alias SC[                               immediate restrict
-    ' :[ alias SL[                               immediate restrict
-    ' :[ alias ]T[                               immediate restrict
-    ' noop Alias CP[ immediate
-    ' noop Alias ]CP immediate
-[THEN]
+: noop-i ; immediate
+synonym S[ :[
+synonym DT[ :[
+synonym T[ :[
+synonym TS[ :[
+synonym CK[ :[
+synonym SC[ :[
+synonym SL[ :[
+synonym ]T[ :[
+synonym CP[ noop-i
+synonym ]CP noop-i
+
 : ]S  postpone ]: simple postpone new ;      immediate restrict
 : ]DT postpone ]: data-act postpone new ;    immediate restrict
 : ]T  postpone ]: toggle postpone new ;      immediate restrict

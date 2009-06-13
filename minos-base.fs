@@ -132,18 +132,10 @@ $0000FF Value blue##
 #6 Value samepos
 #31 Value XA_STRING
 #31 Value XA_STRING8
-[defined] VFXFORTH [IF]
-extern: int gettimeofday ( void * , void * );
-Create timeval 0 , 0 ,
-Create timezone 0 , 0 ,
-: XTime ( -- time )  timeval timezone gettimeofday
-  timeval 2@ #1000 * swap #1000 /f + ;
-[ELSE]
 also dos
 : XTime ( -- time )  timeval timezone gettimeofday
   timeval 2@ #1000 * swap #1000 /f + ;
 previous
-[THEN]
 : get-td ( win dpy -- n ) { win dpy }
   dpy win #16 #31 8 0 S" round delay trip"
   XChangeProperty drop
@@ -258,12 +250,6 @@ Variable (poly#
 : poly> ( -- addr n )  (poly' @ (poly# @ 1+ ;
 
 \ bezier path                                          22jun02py
-
-[defined] VFXFORTH [IF]
-    include vfx-minos/splines.fs
-[ELSE]
-1 loadfrom splines.fb
-[THEN]
 
 Variable (bezier#
 
@@ -385,7 +371,12 @@ Variable event-time
 $20 Constant maxclicks
 
 \ Error handling                                       09jan00py
+
+Defer screen-sync
+Defer screen-ic!
+
 [defined] x11 [defined] VFXFORTH 0= and [IF]
+    \ !!!FIXME!!! Unimplemented feature: Catch X errors
 Create err-event here sizeof XEvent dup allot erase
 Variable err-dpy
 Code X-error  R:  4 SP D) AX mov  AX err-dpy A#) mov
@@ -398,9 +389,6 @@ Code X-error  R:  4 SP D) AX mov  AX err-dpy A#) mov
 
 \ Error handling                                       07jan07py
 
-Forward screen-sync
-Forward screen-ic!
-
 : .Xerror" ( -- )  output push display
   err-dpy @ err-event XErrorEvent error_code c@ strerrbuf $80
   XGetErrorText drop strerrbuf >len
@@ -409,8 +397,6 @@ Forward screen-ic!
 : .Xerror~~ screen-sync  err-dpy @ 0= IF  2drop 2drop EXIT  THEN
   (~~) .Xerror" ;
 : x~~  ~~, postpone .Xerror~~ ; immediate
-[ELSE]
-    Forward screen-ic!
 [THEN]
 
 \ Event data structure                                 29jul07py
@@ -443,7 +429,7 @@ WM_TIMER             WM_TIMER            Handler,
 \   ' Ime-Handler [I] Handler@ !  [LOOP]
 
 \ Callback                                             29jul07py
-Forward win>o
+Defer win>o
 Variable 'event-task
 
 : do-callback ( lparam wparam msg wnd -- result )
@@ -855,7 +841,7 @@ Variable own-selection
 
 \ selection                                            23apr06py
 Variable got-selection          Variable str-selection
-Forward screen-event
+Defer screen-event
 
 : wait-for-select ( -- flag )  got-selection off
   #5000 after  BEGIN  screen-event

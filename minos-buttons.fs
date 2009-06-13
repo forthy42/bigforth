@@ -119,11 +119,8 @@ how:    : hglue  xM 0 ;
         : vglue  xM 0 ;
 class;
 
-[defined] alias [IF]
-' noop alias TRI:                               immediate
-[ELSE]
-    synonym TRI: noop-i
-[THEN]
+synonym TRI: noop-i
+
 0 Constant :left
 1 Constant :up
 2 Constant :right
@@ -469,11 +466,7 @@ how:    0 key-methods !
         : fetch ( -- addr u ) edit get ;
 class;
 
-[defined] alias [IF]
-' :[ alias ST[                               immediate restrict
-[ELSE]
-    synonym ST[ :[
-[THEN]
+synonym ST[ :[
 : ]ST postpone ]: edit-action postpone new ; immediate restrict
 
 \ text input key binding                               15apr01py
@@ -513,11 +506,7 @@ how:    : update  edit get text @ $! ;
         : click ( x y b n -- )  super click  update ;
 class;
 
-[defined] alias [IF]
-' noop alias VT[                             immediate restrict
-[ELSE]
-    synonym VT[ noop-i
-[THEN]
+synonym VT[ noop-i
 : ]VT edit-var postpone new ;                immediate restrict
 
 \ number input field                                   27apr98py
@@ -552,11 +541,8 @@ class;
       fetch #10 nbase ! store endwith ]#
 '-' #[ callback self number-action with
       fetch dnegate store endwith ]#
-[defined] alias [IF]
-' :[ alias SN[                               immediate restrict
-[ELSE]
-    synonym SN[ :[
-[THEN]
+
+synonym SN[ :[
 : ]SN postpone ]: number-action postpone new ;
                                              immediate restrict
 
@@ -571,11 +557,7 @@ how:    : update  fetch drop int @ ! ;
         : click ( x y b n -- )  super click  update ;
 class;
 
-[defined] alias [IF]
-' noop alias IV[                             immediate restrict
-[ELSE]
-    synonym IV[ noop-i
-[THEN]
+synonym IV[ noop-i
 : ]IV edit-int postpone new ;                immediate restrict
 
 \ text field derivates                                 19dec99py

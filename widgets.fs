@@ -112,13 +112,8 @@ simple class drag
 how:    : click  toggle ;
 class;
 
-[defined] alias [IF]
-' :[ alias R[  immediate restrict
-' :[ alias M[  immediate restrict
-[ELSE]
-    synonym R[ :[
-    synonym M[ :[
-[THEN]
+synonym R[ :[
+synonym M[ :[
 : ]R  postpone ]: rep    postpone new ;      immediate restrict
 : ]M  postpone ]: drag   postpone new ;      immediate restrict
 

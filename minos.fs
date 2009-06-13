@@ -42,6 +42,11 @@ include sincos.fs
 \needs $!       include string.fs
 \needs xc@+     include utf-8.fs
 \needs l"       include i18n.fs
+
+    : Synonym  Header  -2 allot bl word find dup 0= IF no.extensions THEN
+	dup 0> IF  immediate  THEN
+	1 and 0= IF  restrict  THEN  A,
+	$20 last @ dup >r c@ or r> c!  reveal ;
 [THEN]
 [defined] >class" 0= [IF]
 \ useful utilities                                     09jan00py
@@ -63,10 +68,10 @@ include sincos.fs
         : 0min dup 0< and ;
         Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
 	Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
-	' */ alias */f
-	' /mod alias /modf
-	' / alias /f
-	' mod alias modf
+	Synonym */f */
+	Synonym /modf /mod
+	Synonym /f /
+	Synonym modf mod
     [THEN]      
 \ class utility                                        01jan00py
 | : cell-@  dup IF cell- @ THEN ;
@@ -97,6 +102,7 @@ Patch .class
 	include vfx-minos/opengl.fs
 	include x.fs
 	include glconst.fs
+	include vfx-minos/splines.fs
     [ELSE]
         \needs x11      include x11.fs
         \needs xrender  include xrender.fs
@@ -104,6 +110,7 @@ Patch .class
         \needs opengl   include opengl.fs
         \needs xconst   | import xconst
         \needs glconst  | import glconst
+	\needs >bezier  1 loadfrom splines.fb
     [THEN]
 Onlyforth
 Module MINOS
@@ -137,8 +144,8 @@ include minos-boxes.fs
 include minos-buttons.fs
 include minos-viewport.fs
 include minos-windows.fs
-include minos-complex.fs
 include resources.fs
+include minos-complex.fs
 \ win-init                                             07jan07py
 
 : clear-resources  ( -- )
@@ -226,16 +233,12 @@ ficon: minos-win icons/minos1+.icn"
   IF  map-pos  2!  ELSE  2drop  THEN  2 ;
 : -geometry ( -- )  bl word count "geometry drop ;
 
-[defined] VFXFORTH 0= [IF]
 also -options definitions
-' "geometry Alias -geometry
+synonym -geometry "geometry
 previous definitions
 
+[defined] VFXFORTH 0= [IF]
     export minos -geometry ;
-[ELSE]
-    also -options definitions
-    synonym -geometry "geometry
-    previous definitions
 [THEN]
 [THEN]
 

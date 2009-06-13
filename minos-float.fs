@@ -2,7 +2,7 @@
 
 [defined] VFXForth [IF]
     mpe-float
-    include /usr/share/doc/VfxForth/Lib/Ndp387.fth
+    include %LIB%/Ndp387.fth
     \ !!!FIXME!!! This should be a %macro%-related path
     ans-float
     : float ;
