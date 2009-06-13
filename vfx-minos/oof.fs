@@ -545,11 +545,15 @@ decimal
   >in @  parse-name type  >in !
 ;
 
+: standardi/o ( -- )
+    [ op-handle @ ] Literal op-handle ! ;
+
 : my.s ( ... -- ... )  base @ >r hex ." <" depth 0 .r ." > "
     depth 0 max $10 min
     dup 0  ?DO  dup i - pick .  LOOP  drop r> base ! ;
-: (~~) ( in line source -- )  cr
-    .SourceName  ." :" 0 .r ." :" 0 .r space my.s ;
+: (~~) ( in line source -- )  op-handle @ >r standardi/o  cr
+    .SourceName  ." :" 0 .r ." :" 0 .r space my.s
+    r> op-handle ! ;
 : ~~ ( -- )
     >in @ postpone Literal LINE# @ postpone Literal
     'SourceFile @ postpone Literal
@@ -868,6 +872,7 @@ Variable alloc
 #16 cells buffer: chunks	\ -- addr
 : init-oo-mem  ( -- ) chunks 16 cells erase ;
 init-oo-mem
+' init-oo-mem atcold
 
 [DEFINED] DelFix 0= [IF]
 : DelFix ( addr root -- ) dup @ 2 pick ! ! ;

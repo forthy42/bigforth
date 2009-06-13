@@ -55,6 +55,7 @@ Variable Masters
 : SetHandleSize ( addr size -- ) swap >r
     r@ @ cell- over cell+ resize throw !+ r> ! ;
 : GetHandleSize ( addr -- size ) cell- @ ;
+:noname Masters off ; atcold
 
 previous definitions
 

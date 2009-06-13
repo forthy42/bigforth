@@ -149,7 +149,8 @@ include minos-complex.fs
 \ win-init                                             07jan07py
 
 : clear-resources  ( -- )
-  clear-icons  clear-fonts [defined] term [IF] 0 bind term [THEN] ;
+    clear-icons  clear-fonts [defined] term [IF] 0 bind term [THEN]
+    0 to scratch ;
 
 [defined] x11 [IF]  also DOS
 : win-init ( -- )  !time clear-resources
