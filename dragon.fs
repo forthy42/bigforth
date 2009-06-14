@@ -13,10 +13,10 @@ Variable maxpoints
 pi f2/   FConstant pi/2
 pi/2 f2/ FConstant pi/4
 
-Create .white .7e  f>fs , .7e  f>fs , .7e  f>fs  , 1e  f>fs ,
-Create .green 0e  f>fs , .8e f>fs , .2e f>fs  , 1e  f>fs ,
-Create .brown .4e f>fs , .2e f>fs , .0e f>fs  , 1e  f>fs ,
-Create .sky   .3e f>fs , .6e f>fs , .8e f>fs  , 1e  f>fs ,
+Create .white .7e  sf, .7e  sf, .7e  sf, 1e  sf,
+Create .green 0e  sf, .8e sf, .2e sf, 1e  sf,
+Create .brown .4e sf, .2e sf, .0e sf, 1e  sf,
+Create .sky   .3e sf, .6e sf, .8e sf, 1e  sf,
 
 
 : .color ( addr -- )
@@ -31,7 +31,7 @@ Create .sky   .3e f>fs , .6e f>fs , .8e f>fs  , 1e  f>fs ,
 
 Variable tail-time
 : time' ( -- 0..2pi )
-  tail-time @ [ &24 &60 &30 * * ] Literal um* drop
+  tail-time @ [ #24 #60 #30 * * ] Literal um* drop
   0 d>f [ !$2'-8 pi f* ] FLiteral f* ;
 : tail-wag ( n -- f )
   >r pi r@ 1 + fm* .2e f* time' f+
@@ -53,10 +53,10 @@ Variable tail-time
       { f: ri f: r+ f: h n |
       [ 1.05e -20e f** ] Fliteral
       [ 1.1e  -20e f** ] Fliteral 1e scale-xyz
-      h -&15 fm* &20 tail-compensate h -&25 fm* forward-xyz
+      h -#15 fm* #20 tail-compensate h -#25 fm* forward-xyz
       n 1+ 0 DO  add  LOOP
       20 0 DO 0e  i 2+ tail-wag  h forward-xyz
-              [ pi &90 fm/ ] Fliteral up
+              [ pi #90 fm/ ] Fliteral up
               ri fdup I 1 and 0= IF  r+ f+ THEN n dragon-segment
               1.05e 1.1e 1e scale-xyz
               .025e ri f+ to ri
@@ -70,7 +70,7 @@ Variable tail-time
   F : dragon-neck-part ( ri r+ h factor angle n m -- ri' )
       swap { f: ri f: r+ f: h f: factor f: angle n |
       0 ?DO  h forward  angle left
-             [ pi &30 fm/ ] Fliteral
+             [ pi #30 fm/ ] Fliteral
              angle f0< IF    time' fsin .02e f* f+ down
                        ELSE  time' fsin -.02e f* f+ down
                        THEN
@@ -83,15 +83,15 @@ Variable tail-time
       r+ h .92e angle f2/ fnegate n 6 dragon-neck-part
       fdrop close-path } ;
     Create head-xy
-          0.28e f>fs , 0.0e f>fs ,
-          0.30e f>fs , 0.5e f>fs ,
-          0.25e f>fs , 0.6e f>fs ,
-          0.05e f>fs , 0.6e f>fs ,
-          0.00e f>fs , 0.5e f>fs ,
-          -.05e f>fs , 0.6e f>fs ,
-          -.10e f>fs , 0.6e f>fs ,
-          -.15e f>fs , 0.5e f>fs ,
-          -.05e f>fs , 0.0e f>fs ,
+          0.28e sf, 0.0e sf,
+          0.30e sf, 0.5e sf,
+          0.25e sf, 0.6e sf,
+          0.05e sf, 0.6e sf,
+          0.00e sf, 0.5e sf,
+          -.05e sf, 0.6e sf,
+          -.10e sf, 0.6e sf,
+          -.15e sf, 0.5e sf,
+          -.05e sf, 0.0e sf,
   F : dragon-head ( t1 shade -- )  !text zphi-texture .66e z-off sf!
       pi 6 fm/ down  1.2e .4e .4e scale-xyz  -.65e forward
       .5e x-text sf!
@@ -128,11 +128,11 @@ Variable tail-time
   F : wing ( -- )
       .9e scale 8 start-path
       .02e 1.2e wing-step .3e forward
-      pi &10 fm/ down  pi &8 fm/ roll-left
+      pi #10 fm/ down  pi #8 fm/ roll-left
       time' fsin 1.2e f* right
       .02e 1e wing-step
-      pi 5 fm/ up  pi &10 fm/ right  1e forward
-      pi 5 fm/ down  pi &20 fm/ left
+      pi 5 fm/ up  pi #10 fm/ right  1e forward
+      pi 5 fm/ down  pi #20 fm/ left
       time' fcos -.25e f* .5e f- roll-left
       time' fcos [ pi 6 fm/ ] FLiteral f* down
       [ pi 5 fm/ ] FLiteral up
@@ -140,12 +140,12 @@ Variable tail-time
       [ pi 5 fm/ ] FLiteral down
       time' 1e f- fcos 1e f+ [ pi 8 fm/ ] Fliteral f* right
       pi -.3333e f* -1.0e wing-fold
-      pi &10 fm/ left 1e forward
+      pi #10 fm/ left 1e forward
       pi .21e f* -.8e wing-fold  pi .2e f* up
       9 0 DO
-              I 4 mod 2 < IF  pi &60 fm/  ELSE  pi &30 fm/  THEN
+              I 4 mod 2 < IF  pi #60 fm/  ELSE  pi #30 fm/  THEN
               1.2e wing-fold
-              pi &30 fm/ right
+              pi #30 fm/ right
               .01e forward
               .2e z-off sf@ f+ z-off sf!
               .02e 1.8e .2e I fm* f+
@@ -231,7 +231,7 @@ Variable foo 4 foo !
 
 -1 Value test-list
 
-Create front_shininess  60.0e f>fs ,
+Create front_shininess  60.0e sf,
 Create front_specular   .7e   f>fs dup , dup , , #1 ,
 
 3d-turtle with
@@ -271,7 +271,7 @@ endwith
 
             zoom 0.02e fm* scale
 
-            pi &180 fm/
+            pi #180 fm/
             fdup alx fm* x-left
             fdup aly fm* y-left
             fdup alz fm* z-left

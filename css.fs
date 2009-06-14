@@ -51,7 +51,7 @@ Variable do-audio  do-audio on
 Variable do-video  do-video on
 
 : cssfill ( -- $800 )  sector_buf $800 fd read-file throw ;
-: pes ( -- addr )  sector_buf &13 + count 7 and + ;
+: pes ( -- addr )  sector_buf #13 + count 7 and + ;
 : peslen ( addr -- addr len ) 4+ c@+ c@+ -rot swap 8 << + ;
 : hdrlen ( addr -- len ) 2+ c@ 3 + ; macro
 : pestype ( addr -- type ) dup @ pes-mask and pes-mark =

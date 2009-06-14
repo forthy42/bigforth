@@ -119,8 +119,8 @@ how:
       ^ CK[ over 1 =  IF  nip wave-x move-bar  EXIT  THEN
             over 4 =  IF  nip wave-y move-bar  EXIT  THEN
             >released vbase @ $10 =
-            IF  &10  ELSE
-                vbase @ &10 =
+            IF  #10  ELSE
+                vbase @ #10 =
                 IF  2  ELSE
                     vbase @ 2 = IF  8  ELSE  $10  THEN  THEN
             THEN  vbase !

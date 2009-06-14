@@ -13,10 +13,10 @@ Variable maxpoints
 pi f2/   FConstant pi/2
 pi/2 f2/ FConstant pi/4
 
-Create .white !&.7  f>fs , !&.7  f>fs , !&.7  f>fs  , !1  f>fs ,
-Create .green !&0  f>fs , !&.8 f>fs , !&.2 f>fs  , !1  f>fs ,
-Create .brown !&.4 f>fs , !&.2 f>fs , !&.0 f>fs  , !1  f>fs ,
-Create .sky   !&.3 f>fs , !&.6 f>fs , !&.8 f>fs  , !1  f>fs ,
+Create .white .7e  sf, .7e  sf, .7e  sf, 1e  sf,
+Create .green 0e  sf, .8e sf, .2e sf, 1e  sf,
+Create .brown .4e sf, .2e sf, .0e sf, 1e  sf,
+Create .sky   .3e sf, .6e sf, .8e sf, 1e  sf,
 
 
 : .color ( addr -- )
@@ -31,139 +31,139 @@ Create .sky   !&.3 f>fs , !&.6 f>fs , !&.8 f>fs  , !1  f>fs ,
 
 Variable tail-time
 : time' ( -- 0..2pi )
-  tail-time @ [ &24 &60 &30 * * ] Literal um* drop
+  tail-time @ [ #24 #60 #30 * * ] Literal um* drop
   0 d>f [ !$2'-8 pi f* ] FLiteral f* ;
 : time-pos ( -- 0..2pi )
-  tail-time @ [ &24 &60 &5 * * ] Literal um* drop
+  tail-time @ [ #24 #60 #5 * * ] Literal um* drop
   0 d>f [ !$2'-8 pi f* ] FLiteral f* ;
 : tail-wag ( n -- f )
-  >r pi r@ 1 + fm* !.2 f* time' f+
-  fsin r> 2+ dup * 1+ fm/ !30 f* ;
+  >r pi r@ 1 + fm* .2e f* time' f+
+  fsin r> 2+ dup * 1+ fm/ 30e f* ;
 
 3d-turtle with
   F : dragon-segment ( ri ro n -- )
       { f: ri f: ro | next-round
         ro set-r
-        ri !.1 set-rp  dphi sf@ phi sf@ f+ phi sf!
+        ri .1e set-rp  dphi sf@ phi sf@ f+ phi sf!
         1 DO  ri set-r  LOOP
         2pi phi sf! ro set-r
-        !0 phi sf! } ;
-  F : tail-compensate ( n -- f )  !0
-      0 DO  I 2+ tail-wag f+ [ !1.1 1/f ] Fliteral f*  LOOP
-      [ !1.1 !20 f** ] Fliteral f* fnegate ;
+        0e phi sf! } ;
+  F : tail-compensate ( n -- f )  0e
+      0 DO  I 2+ tail-wag f+ [ 1.1e 1/f ] Fliteral f*  LOOP
+      [ 1.1e 20e f** ] Fliteral f* fnegate ;
   F : dragon-tail ( ri r+ h n -- ri h )
       zphi2-texture
       { f: ri f: r+ f: h n |
-      [ !1.05 !-20 f** ] Fliteral
-      [ !1.1  !-20 f** ] Fliteral !1 scale-xyz
-      h -&15 fm* &20 tail-compensate h -&25 fm* forward-xyz
+      [ 1.05e -20e f** ] Fliteral
+      [ 1.1e  -20e f** ] Fliteral 1e scale-xyz
+      h -#15 fm* #20 tail-compensate h -#25 fm* forward-xyz
       n 1+ 0 DO  add  LOOP
-      20 0 DO !0  i 2+ tail-wag  h forward-xyz
-              [ pi &90 fm/ ] Fliteral up
+      20 0 DO 0e  i 2+ tail-wag  h forward-xyz
+              [ pi #90 fm/ ] Fliteral up
               ri fdup I 1 and 0= IF  r+ f+ THEN n dragon-segment
-              !1.05 !1.1 !1 scale-xyz
-              !.025 ri f+ to ri
+              1.05e 1.1e 1e scale-xyz
+              .025e ri f+ to ri
       LOOP  ri r+ h } ;
   F : dragon-wamp ( ri r+ h ri+ n -- ri' )
       { f: ri f: r+ f: h f: ri+ n |
       8 0 DO  h forward
               ri fdup I 1 and 0= IF  r+ f+ THEN n dragon-segment
-              ri+ ri f+ to ri !-0.02 ri+ f+ to ri+
-      LOOP  ri ri+ !.02 f+ f- } ;
+              ri+ ri f+ to ri -0.02e ri+ f+ to ri+
+      LOOP  ri ri+ .02e f+ f- } ;
   F : dragon-neck-part ( ri r+ h factor angle n m -- ri' )
       swap { f: ri f: r+ f: h f: factor f: angle n |
       0 ?DO  h forward  angle left
-             [ pi &30 fm/ ] Fliteral
-             angle f0< IF    time' fsin !.02 f* f+ down
-                       ELSE  time' fsin !-.02 f* f+ down
+             [ pi #30 fm/ ] Fliteral
+             angle f0< IF    time' fsin .02e f* f+ down
+                       ELSE  time' fsin -.02e f* f+ down
                        THEN
              factor ri f* to ri
              ri fdup I 1 and 0= IF  r+ f+ THEN n dragon-segment
       LOOP ri } ;
   F : dragon-neck ( ri r+ h angle n -- )
       { f: r+ f: h f: angle n |
-      r+ h !.82 angle             n 4 dragon-neck-part
-      r+ h !.92 angle f2/ fnegate n 6 dragon-neck-part
+      r+ h .82e angle             n 4 dragon-neck-part
+      r+ h .92e angle f2/ fnegate n 6 dragon-neck-part
       fdrop close-path } ;
     Create head-xy
-          !0.28 f>fs , !0.0 f>fs ,
-          !0.30 f>fs , !0.5 f>fs ,
-          !0.25 f>fs , !0.6 f>fs ,
-          !0.05 f>fs , !0.6 f>fs ,
-          !0.00 f>fs , !0.5 f>fs ,
-          !-.05 f>fs , !0.6 f>fs ,
-          !-.10 f>fs , !0.6 f>fs ,
-          !-.15 f>fs , !0.5 f>fs ,
-          !-.05 f>fs , !0.0 f>fs ,
-  F : dragon-head ( t1 shade -- )  !text zphi-texture !.66 z-off sf!
-      pi 6 fm/ down  !1.2 !.4 !.4 scale-xyz  !-.65 forward
-      !.5 x-text sf!
+          0.28e sf, 0.0e sf,
+          0.30e sf, 0.5e sf,
+          0.25e sf, 0.6e sf,
+          0.05e sf, 0.6e sf,
+          0.00e sf, 0.5e sf,
+          -.05e sf, 0.6e sf,
+          -.10e sf, 0.6e sf,
+          -.15e sf, 0.5e sf,
+          -.05e sf, 0.0e sf,
+  F : dragon-head ( t1 shade -- )  !text zphi-texture .66e z-off sf!
+      pi 6 fm/ down  1.2e .4e .4e scale-xyz  -.65e forward
+      .5e x-text sf!
       18 start-path
       6 0 DO
-          I 5 = IF    !.25
-                ELSE  I 0= IF !0 ELSE !.35 THEN  THEN forward
+          I 5 = IF    .25e
+                ELSE  I 0= IF 0e ELSE .35e THEN  THEN forward
           >matrix
-          pi !0.1 f* I 2* 5 - fm* fcos
-          fdup !.5 f+ !1 scale-xyz
+          pi 0.1e f* I 2* 5 - fm* fcos
+          fdup .5e f+ 1e scale-xyz
           next-round
           head-xy 18 cells bounds DO
               I sf@ I cell+ sf@ set-xy
               2 cells +LOOP
           head-xy dup 16 cells + DO
-              I sf@ I cell+ sf@ !1'-6 f+ fnegate set-xy
+              I sf@ I cell+ sf@ 1e'-6 f+ fnegate set-xy
               -2 cells +LOOP
           matrix>
       LOOP
-      !1 x-text sf!
+      1e x-text sf!
       close-path zphi2-texture ;
   F : wing-step { f: f2 f: f3 |
       next-round
-      !0 f3 !.05 f* f2 f-              set-xy
-      f3 !.1 f* f2 fnegate             set-xy
+      0e f3 .05e f* f2 f-              set-xy
+      f3 .1e f* f2 fnegate             set-xy
       f3 f2/ f2 fnegate                set-xy
-      f3 f3 !.125 f*                   set-xy
-      f3 !.001 f- f3 !.125 f* !.001 f+ set-xy
-      f3 f2/ !0                        set-xy
-      f3 !.1 f* !0                     set-xy
-      !0 f3 !.05 f*                    set-xy } ;
+      f3 f3 .125e f*                   set-xy
+      f3 .001e f- f3 .125e f* .001e f+ set-xy
+      f3 f2/ 0e                        set-xy
+      f3 .1e f* 0e                     set-xy
+      0e f3 .05e f*                    set-xy } ;
   F : wing-fold ( f1 f2 -- )
       time' [ pi 5 fm/ ] FLiteral f- fcos f+ f* down ;
   F : wing ( -- )
-      !.9 scale 8 start-path
-      !.02 !1.2 wing-step !.3 forward
-      pi &10 fm/ down  pi &8 fm/ roll-left
-      time' fsin !1.2 f* right
-      !.02 !1 wing-step
-      pi 5 fm/ up  pi &10 fm/ right  !1 forward
-      pi 5 fm/ down  pi &20 fm/ left
-      time' fcos !-.25 f* !.5 f- roll-left
+      .9e scale 8 start-path
+      .02e 1.2e wing-step .3e forward
+      pi #10 fm/ down  pi #8 fm/ roll-left
+      time' fsin 1.2e f* right
+      .02e 1e wing-step
+      pi 5 fm/ up  pi #10 fm/ right  1e forward
+      pi 5 fm/ down  pi #20 fm/ left
+      time' fcos -.25e f* .5e f- roll-left
       time' fcos [ pi 6 fm/ ] FLiteral f* down
       [ pi 5 fm/ ] FLiteral up
-      !.02 !.8 wing-step
+      .02e .8e wing-step
       [ pi 5 fm/ ] FLiteral down
-      time' !1 f- fcos !1 f+ [ pi 8 fm/ ] Fliteral f* right
-      pi !-.3333 f* !-1.0 wing-fold
-      pi &10 fm/ left !1 forward
-      pi !.21 f* !-.8 wing-fold  pi !.2 f* up
+      time' 1e f- fcos 1e f+ [ pi 8 fm/ ] Fliteral f* right
+      pi -.3333e f* -1.0e wing-fold
+      pi #10 fm/ left 1e forward
+      pi .21e f* -.8e wing-fold  pi .2e f* up
       9 0 DO
-              I 4 mod 2 < IF  pi &60 fm/  ELSE  pi &30 fm/  THEN
-              !1.2 wing-fold
-              pi &30 fm/ right
-              !.01 forward
-              !.2 z-off sf@ f+ z-off sf!
-              !.02 !1.8 !.2 I fm* f+
-              I 4 mod 2 <> IF  !1.1 f*  THEN
-              I 4 mod 0= IF  !1.3 f*  ELSE
-                  time' fcos !.1 f* roll-right  THEN
+              I 4 mod 2 < IF  pi #60 fm/  ELSE  pi #30 fm/  THEN
+              1.2e wing-fold
+              pi #30 fm/ right
+              .01e forward
+              .2e z-off sf@ f+ z-off sf!
+              .02e 1.8e .2e I fm* f+
+              I 4 mod 2 <> IF  1.1e f*  THEN
+              I 4 mod 0= IF  1.3e f*  ELSE
+                  time' fcos .1e f* roll-right  THEN
               wing-step
-              I 4 mod    IF  time' fcos !.1 f* roll-left   THEN
+              I 4 mod    IF  time' fcos .1e f* roll-left   THEN
       LOOP
-      !0 [ !1.8 !.2 6 fm* f+ !1.5 f* ] FLiteral  wing-step
+      0e [ 1.8e .2e 6 fm* f+ 1.5e f* ] FLiteral  wing-step
       close-path ;
   F : right-wing ( h -- )
       pi/4 roll-right pi/2 right
-      !2 f*  forward pi !.3 f* roll-left
-      zp-texture !.1 y-text sf! wing ;
+      2e f*  forward pi .3e f* roll-left
+      zp-texture .1e y-text sf! wing ;
   F : leg ( -- )
       pi/4 set-dphi
       9 start-path
@@ -175,55 +175,55 @@ Variable tail-time
   F : claw ( fn -- )  scale  2over !text
       pi roll-left pi 3 fm/ set-dphi
       7 start-path
-      !.01 fdup !3 f* 6 dragon-segment
-      8 FOR  !.01 I fm* fdup !3 f* 6 dragon-segment
-             [ pi !.075 f* ] Fliteral up !.2 forward
-             [ pi !.075 f* ] Fliteral up  NEXT
+      .01e fdup 3e f* 6 dragon-segment
+      8 FOR  .01e I fm* fdup 3e f* 6 dragon-segment
+             [ pi .075e f* ] Fliteral up .2e forward
+             [ pi .075e f* ] Fliteral up  NEXT
       close-path  2dup !text ;
   F : right-leg ( text-claw flag text flag rel -- ) { f: rel |
       2dup !text
-      !-.25 !.45 !-1.2 forward-xyz pi !.05 f* right
-      time' rel f+ fsin !.033 f* down
-      !1.5 !1 !1 scale-xyz  leg !-.05 forward
-      pi/2 down !.05 forward pi !.45 f* down
-      time' rel f+ fsin !-.033 f* down
-      !.5 !.5 !1.33 scale-xyz leg
-      !-.15 forward pi !.7 f* up
-      time' rel f+ fsin !.1 f* down
-      !-.15 forward !.5 !1.5 !.5 scale-xyz leg
-      !-.3 forward pi !.3 f* up
+      -.25e .45e -1.2e forward-xyz pi .05e f* right
+      time' rel f+ fsin .033e f* down
+      1.5e 1e 1e scale-xyz  leg -.05e forward
+      pi/2 down .05e forward pi .45e f* down
+      time' rel f+ fsin -.033e f* down
+      .5e .5e 1.33e scale-xyz leg
+      -.15e forward pi .7e f* up
+      time' rel f+ fsin .1e f* down
+      -.15e forward .5e 1.5e .5e scale-xyz leg
+      -.3e forward pi .3e f* up
       >matrix
-      [ pi !.2 f* ] Fliteral roll-left >matrix
-      pi/2 down !.4 !.4 !.2 scale-xyz leg matrix>
-      !-.1 !0 !0 forward-xyz !.66 claw matrix@
-      >matrix pi/2 down !.6 !.6 !.3 scale-xyz leg matrix>
-      !-.2 !0 !0 forward-xyz !1 claw
-      matrix>  pi !.2 f* roll-right >matrix
-      pi/2 down !.4 !.4 !.2 scale-xyz leg matrix>
-      !-.1 !0 !0 forward-xyz !.66 claw } ;
+      [ pi .2e f* ] Fliteral roll-left >matrix
+      pi/2 down .4e .4e .2e scale-xyz leg matrix>
+      -.1e 0e 0e forward-xyz .66e claw matrix@
+      >matrix pi/2 down .6e .6e .3e scale-xyz leg matrix>
+      -.2e 0e 0e forward-xyz 1e claw
+      matrix>  pi .2e f* roll-right >matrix
+      pi/2 down .4e .4e .2e scale-xyz leg matrix>
+      -.1e 0e 0e forward-xyz .66e claw } ;
   F : dragon-body ( t0 s t3 s t1 s t3 s t2 s n -- ) >r
       2over !text
-      time' fsin !.1 f* !0 !0 forward-xyz
-      pi f2* !.2 f- r@ 1- fm/ set-dphi
+      time' fsin .1e f* 0e 0e forward-xyz
+      pi f2* .2e f- r@ 1- fm/ set-dphi
       r@ 4 + open-path
-      !.1 !.3 !.2 r@ dragon-tail
+      .1e .3e .2e r@ dragon-tail
       r> { f: ri f: r+ f: h n |
-      ri r+ h !.06 n dragon-wamp fdrop
+      ri r+ h .06e n dragon-wamp fdrop
       >turtle
-         ri r+ h [  !10 grad>rad ] Fliteral n dragon-neck
+         ri r+ h [  10e grad>rad ] Fliteral n dragon-neck
          2dup dragon-head  2swap !text
       turtle>  >matrix
-         ri r+ h [ !-10 grad>rad ] Fliteral n dragon-neck
+         ri r+ h [ -10e grad>rad ] Fliteral n dragon-neck
          dragon-head
       matrix>
-      h !2 f* forward
+      h 2e f* forward
       5 pick 5 pick !text
       >turtle  h right-wing   turtle>
-      >turtle  h !-6 f* forward  !0 right-leg   turtle>
-      !1 !-1 !1 scale-xyz  flip-clock
+      >turtle  h -6e f* forward  0e right-leg   turtle>
+      1e -1e 1e scale-xyz  flip-clock
       5 pick 5 pick !text
       >turtle  h right-wing   turtle>
-      >turtle  h !-6 f* forward  pi/4 right-leg  turtle>
+      >turtle  h -6e f* forward  pi/4 right-leg  turtle>
       flip-clock  2drop 2drop 2drop } ;
 endwith
 
@@ -235,8 +235,8 @@ Variable foo 4 foo !
 
 -1 Value test-list
 
-Create front_shininess  !&60.0 f>fs ,
-Create front_specular   !&.7   f>fs dup , dup , , #1 ,
+Create front_shininess  60.0e sf,
+Create front_specular   .7e   f>fs dup , dup , , #1 ,
 
 3d-turtle with
     F : no-smooth  smooth off ;
@@ -256,7 +256,7 @@ struct{
 .float v
 } .dragon
 
-Create dragon-struct  !0 f, !0 f, !0 f, pi &10 fm/ fnegate f, !3 f,
+Create dragon-struct  0e f, 0e f, 0e f, pi #10 fm/ fnegate f, 3e f,
 
 dragon-struct sizeof .dragon dragons $!
 
@@ -265,7 +265,7 @@ Variable last-time
 : update-dragons ( -- )  tail-time @
     last-time @ 0= IF  last-time !  EXIT  THEN
     dup last-time @ - swap last-time ! s>f
-    [ &24 &60 &60 * * s>f !$1'-8 f* ] FLiteral f*
+    [ #24 #60 #60 * * s>f !$1'-8 f* ] FLiteral f*
     dragons $@ bounds ?DO
 	fdup I .dragon v f@ f*
 	I .dragon phi f@ fsincos frot funder
@@ -282,7 +282,7 @@ Variable last-time
 { alx aly alz alp alb alr zoom speed shade sx sy sz t0 t1 t2 t3 |
     glcanvas with
         .sky sf@+ sf@+ sf@+ sf@ glClearColor
-        !2.8 !200 w @ h @ 3d-turtle new  3d-turtle with
+        2.8e 200e w @ h @ 3d-turtle new  3d-turtle with
 
             speed tail-time !
 
@@ -297,20 +297,20 @@ Variable last-time
             GL_TEXTURE_2D GL_TEXTURE_MIN_FILTER GL_NEAREST glTexParameteri
             GL_TEXTURE_2D GL_TEXTURE_MAG_FILTER GL_LINEAR glTexParameteri
 
-            shade $F0 and 4 >> !.01 fm* set-fog
+            shade $F0 and 4 >> .01e fm* set-fog
 
             smooth on  shade 7 and cells shades + perform
 
             shade 7 and 0<> IF    .green .color
                             ELSE  .white .color 1 foo +!  THEN
 
-            0 !5 !-5 !-10 get-xyz GL_POSITION 0 set-light
+            0 5e -5e -10e get-xyz GL_POSITION 0 set-light
 
-            !8 forward
+            8e forward
 
-            zoom !&0.02 fm* scale
+            zoom 0.02e fm* scale
 
-            pi &180 fm/
+            pi #180 fm/
             fdup alx fm* x-left
             fdup aly fm* y-left
             fdup alz fm* z-left
@@ -318,7 +318,7 @@ Variable last-time
             fdup alb fm* up
                  alr fm* roll-left
 
-            !.01 sx fm* !.01 sy fm* !.01 sz fm* scale-xyz
+            .01e sx fm* .01e sy fm* .01e sz fm* scale-xyz
 
             test-list 0< IF  1 glGenLists TO test-list  THEN
 
@@ -326,7 +326,7 @@ Variable last-time
 	    IF  test-list GL_COMPILE glNewList  THEN
 	    dragons $@ bounds ?DO
 		>matrix
-		!0 I .dragon x f@ I .dragon y f@ forward-xyz
+		0e I .dragon x f@ I .dragon y f@ forward-xyz
 		I .dragon phi f@ right
 		I .dragon dphi f@ I .dragon v f@ f2/ f**2 f* fatan roll-left
 		t0 t1 t2 t3 1 switch-text  shade 7 and 0=

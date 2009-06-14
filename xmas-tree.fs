@@ -6,13 +6,13 @@ float also glconst also opengl also
 
 #100 Value rd-val
 
-Create .white 1e  f>fs , 1e  f>fs , 1e  f>fs ,  1e  f>fs ,
-Create .brown .8e f>fs , .4e f>fs , .2e  f>fs , 1e  f>fs ,
-Create .green .4e f>fs , .9e f>fs , .5e  f>fs , 1e  f>fs ,
-Create .mix   0e f>fs ,   0e f>fs ,   0e f>fs ,    1e  f>fs ,
-Create .sky   .3e f>fs , .6e f>fs , .8e f>fs  , 1e  f>fs ,
-Create .rot   1e  f>fs , .2e f>fs , .2e  f>fs ,  1e  f>fs ,
-Create .straw .8e f>fs , .9e f>fs , .5e  f>fs , 1e  f>fs ,
+Create .white 1e  sf, 1e  sf, 1e  sf,  1e  sf,
+Create .brown .8e sf, .4e sf, .2e  sf, 1e  sf,
+Create .green .4e sf, .9e sf, .5e  sf, 1e  sf,
+Create .mix   0e sf,   0e sf,   0e sf,    1e  sf,
+Create .sky   .3e sf, .6e sf, .8e sf, 1e  sf,
+Create .rot   1e  sf, .2e sf, .2e  sf,  1e  sf,
+Create .straw .8e sf, .9e sf, .5e  sf, 1e  sf,
 
 : .color ( addr -- )
   GL_FRONT GL_AMBIENT_AND_DIFFUSE rot glMaterialfv ;
@@ -26,9 +26,9 @@ Create .straw .8e f>fs , .9e f>fs , .5e  f>fs , 1e  f>fs ,
 : set-color ( n -- )
     2* s>f .8e fswap f** mix-color ;
 
-Create front_shininess  20.0e f>fs ,
-Create front_specular   1e   f>fs dup , dup , , #1 ,
-Create no_specular      0e   f>fs dup , dup , , #1 ,
+Create front_shininess  20.0e sf,
+Create front_specular   1e   fdup sf, fdup sf, sf, 1e sf,
+Create no_specular      0e   fdup sf, fdup sf, sf, 1e sf,
 
 [defined] xft [IF]
 3d-text ptr merry-text

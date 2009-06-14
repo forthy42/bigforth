@@ -66,7 +66,7 @@ also memory
 : new-resource ( addr u -- addr' )
   resource-root sizeof resource $400 NewFix >r
   r@ resource id $!
-  &100 r@ resource efficiency !
+  #100 r@ resource efficiency !
   s" " r@ resource name" $!
   s" " r@ resource note $! r> ;
 
@@ -124,7 +124,7 @@ Variable list$
 : .resource ( addr -- )  base push decimal
   cr ." resource " dup resource id $@ type space
   '" emit dup resource name" $@ type '" emit
-  dup resource efficiency @ &100 <>
+  dup resource efficiency @ #100 <>
   IF  cr ." efficiency " dup .id
       dup resource efficiency @ d.2  THEN
   dup resource rate @

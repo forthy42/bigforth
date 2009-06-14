@@ -27,7 +27,7 @@
   bl word count s>number drop swap ! ;
 : add#2 ( addr -- )  base push decimal
   bl word count s>number drop
-  dpl @ 0 max 2 min 2 ?DO  &10 *  LOOP  swap ! ;
+  dpl @ 0 max 2 min 2 ?DO  #10 *  LOOP  swap ! ;
 : add-list ( addr -- )
   BEGIN  bl word count  dup WHILE
          new-list over append!  REPEAT  2drop drop ;
@@ -46,8 +46,8 @@ Variable dummy
 Vocabulary scanner  also scanner definitions
 
 : startdate ( -- )
-  dummy add#  dummy @ &100 *
-  dummy add#  dummy @ + &100 *
+  dummy add#  dummy @ #100 *
+  dummy add#  dummy @ + #100 *
   dummy add#  dummy @ + 
   globals global start ! ;
 
