@@ -1,6 +1,10 @@
 #! /usr/local/bin/bigforth
 \ four in a row game
 
+[defined] VFXForth [IF]
+    : random  random um* nip ;
+[THEN]
+
 6 Value #rows
 7 Value #cols
 4 Value #win
@@ -28,7 +32,7 @@ Variable cur-stone
 
 : seeker  DOES> @ ( addr index -- n )
     over #win 0 ?DO  over + dup cx@ cur-stone @ * 0<= ?LEAVE  LOOP
-    swap >r - negate r> / 1- ;
+    swap >r - negate r> /f 1- ;
 
 : seek ( n -- )  Create dup , seeker  Create negate , seeker ;
 
@@ -91,7 +95,7 @@ Create min-max# $20 cells allot
 	    r@ cx@ abs #win >= IF
 		r> <stone 2drop I <win> LEAVE  THEN
 	    2over 1- swap >r over negate swap recurse drop
-	    dup <half-best> / - negate r> r> <stone
+	    dup <half-best> /f - negate r> r> <stone
 	    \ beta n best alpha score beta
 	    \ if score better than beta, we are done
 	    2dup > IF  drop nip nip I swap LEAVE  THEN  drop
