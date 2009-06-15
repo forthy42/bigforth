@@ -460,6 +460,20 @@ Create 'round-flags
 	THEN
     LOOP 2drop ;
 
+0 [IF]
+    \ Naive implementation - for benchmarking only
+    [IFUNDEF] +entropy
+	: +entropy ( message -- message' )
+	    dup wurst-source state# xors  wurst-source over state# move
+	    state# + ;
+    [THEN]
+    : rounds ( n -- )  message swap  dup $F and 8 umin 0 ?DO
+	I round# round
+	dup 'round-flags I cells + @ and IF
+	    swap +entropy swap
+	THEN
+    LOOP 2drop ;
+[THEN]
 \ : rounds ( n -- )  8 umin 0 ?DO  I round# round  LOOP ;
 
 \ wurstkessel file functions
