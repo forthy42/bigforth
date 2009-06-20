@@ -451,9 +451,13 @@ also dos
         dup IF  title-field assign  ELSE  2drop  THEN
     endwith ;
 
-: set-title' ( o -- ) >r
+: set-title' ( o -- ) >r >in @ >r
     s'  s" ' parse-string? nip nip
-    IF  '"' parse  ELSE  s" "  THEN
+    IF  rdrop '"' parse
+    ELSE  r> >in !
+	s'  X" ' parse-string? nip nip
+	IF  '"' parse  ELSE  s" "  THEN
+    THEN
     r> resource:dialog with
         dup IF  title-field assign  ELSE  2drop  THEN
     endwith ;
