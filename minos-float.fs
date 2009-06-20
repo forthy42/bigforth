@@ -1,15 +1,7 @@
 \ floating point numbers
 
-[defined] VFXForth [IF]
-    mpe-float
-    include %LIB%/Ndp387.fth
-    \ !!!FIXME!!! This should be a %macro%-related path
-    ans-float
-    : float ;
-    : fx$  pad dup f>ascii ;
-[ELSE]
-    \needs float import float
-[THEN]
+\needs float import float
+
 also float also minos definitions
 
 6 Value fa-precision

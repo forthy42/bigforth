@@ -1,13 +1,7 @@
 \ 3D turtle graphics                                   27dec98py
 
-[defined] VFXForth [IF]
-    mpe-float
-    include %LIB%/Ndp387.fth
-    ans-float
-    : float ;
-[ELSE]
-    \needs float import float
-[THEN]
+\needs float import float
+
 \needs glconst | import glconst
 [defined] x11 [IF]
 \needs xconst  | import xconst
@@ -34,25 +28,7 @@ IS dummy-canvas
 [defined] fs>f  0= [IF]  : fs>f 'f>fs ! 'f>fs sf@ ;  [THEN]
 [defined] %pi [IF] %pi FConstant pi [THEN]
 [defined] f**2 0= [IF]  : f**2 fdup f* ;  [THEN]
-[defined] fm/ 0= [IF]  : fm/ s>f f/ ;  [THEN]
-[defined] fm* 0= [IF]  : fm* s>f f* ;  [THEN]
 [defined] fm*/ 0= [IF]  : fm*/ s>f f/ s>f f* ;  [THEN]
-[defined] f>r 0= [IF]
-    Code f>r
-	pop edx
-	add esp, #-12
-	fstp fword 0 [esp]
-	push edx
-	fnext,
-    end-code
-    Code fr>
-	pop edx
-	fld fword 0 [esp]
-	add esp, #12
-	push edx
-	fnext,
-    end-code
-    [THEN]
 
 [defined] r,phi>xy 0= [IF]
     : r,phi>xy ( r phi -- x y )
@@ -74,7 +50,7 @@ IS dummy-canvas
 \ doesn't work for -1
 : >2** ( a -- n )  1  BEGIN  2dup u>  WHILE  2*  REPEAT  nip ;
 
-[defined] VFXForth true or [IF]
+[defined] VFXForth [IF]
     : inner-get ( addr -- sf ) 3 swap dup sf@ sfloat+
           [ 3 sfloats ] Literal bounds
           DO   dup fpick I sf@ f* f+ 1-

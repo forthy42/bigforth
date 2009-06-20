@@ -133,7 +133,8 @@ $0000FF Value blue##
 #31 Value XA_STRING
 #31 Value XA_STRING8
 also dos
-: XTime ( -- time )  timeval timezone gettimeofday
+: XTime ( -- time )
+  timeval timezone gettimeofday
   timeval 2@ #1000 * swap #1000 /f + ;
 previous
 : get-td ( win dpy -- n ) { win dpy }

@@ -17,7 +17,7 @@
 \ *P The OOP package documented here here was written by Bernd
 \ ** Paysan for his *\i{bigFORTH} system. Since then it has been
 \ ** ported to other Forth systems. The package is now known as
-\ ** *\i{BOOF} for short. The source code is in the file
+\ ** *\i{BerndOOF} for short. The source code is in the file
 \ ** *\i{oof.fs}.
 
 
@@ -107,7 +107,7 @@
 \ **   : null ( -- addr ) new ;
 \ ** class;
 
-\ *P Here I must add that in *\i{BOOF} all classes are eventually
+\ *P Here I must add that in *\i{BerndOOF} all classes are eventually
 \ ** originated from the same parent class, the class object. Also,
 \ ** classes and objects aren’t only used for operating on data,
 \ ** but also for creating new subclasses and instantiation of
@@ -202,7 +202,7 @@
 \ ** a (possibly even sequential) search over a numerical key
 \ ** isn’t what I call run time efficiency.
 
-\ *P In *\i{BOOF} therefore, each object contains a pointer to a
+\ *P In *\i{BerndOOF} therefore, each object contains a pointer to a
 \ ** jump table as its first element. The jump table contains the
 \ ** addresses of all methods. This doesn’t only guarantee a
 \ ** response time independent of the number of methods (after all,
@@ -504,10 +504,10 @@
 \ ** test # . 3 ok
 
 
-\ ********************************
-\ *S The Complete BOOF Description
-\ =======*************************
-\ *P The interface to object oriented programming in *\i{BOOF}
+\ ************************************
+\ *S The Complete BerndOOF Description
+\ ************************************
+\ *P The interface to object oriented programming in *\i{BerndOOF}
 \ ** divides into three parts:
 \ *(
 \ *B Tools to manage objects, which are themselves not object
@@ -524,7 +524,7 @@
 \ ** class, and the words of the third item are not words in the
 \ ** traditional Forth sense, but are methods of objects.
 
-\ *P *\i{BOOF} uses a coherent way to manage classes: classes are
+\ *P *\i{BerndOOF} uses a coherent way to manage classes: classes are
 \ ** objects, although with class global instance variables, that
 \ ** are just used to create and manage new classes and objects.
 \ ** Classes are also used to send messages to objects whose
@@ -533,42 +533,6 @@
 \ ** object), thus are also used as a sort of type casting.
 
 decimal
-
-
-
-\ ***************
-\ debugging tools
-\ ***************
-
-: .NextToken	\ --
-\ *G Display the next token in the input stream.
-  >in @  parse-name type  >in !
-;
-
-: standardi/o ( -- )
-    [ op-handle @ ] Literal op-handle ! ;
-
-: my.s ( ... -- ... )  base @ >r hex ." <" depth 0 .r ." > "
-    depth 0 max $10 min
-    dup 0  ?DO  dup i - pick .  LOOP  drop r> base ! ;
-: (~~) ( in line source -- )  op-handle @ >r standardi/o  cr
-    .SourceName  ." :" 0 .r ." :" 0 .r space my.s
-    r> op-handle ! ;
-: ~~ ( -- )
-    >in @ postpone Literal LINE# @ postpone Literal
-    'SourceFile @ postpone Literal
-    postpone (~~) discard-sinline ; immediate
-: [~~]  >in @ LINE# @ 'SourceFile @ (~~) ; immediate
-
-: \G postpone \ ; immediate
-: ?EXIT  postpone IF  postpone EXIT postpone THEN ; immediate
-: 8aligned ( n1 -- n2 )  7 + -8 and ;
-: F  ( "<name>" -- )
-\ *G Compiles *\fo{name} with *\fo{FORTH} as the first vocabulary
-\ ** in the search path.
-    also Forth bl word find dup 0= abort" Not found!"
-    0< state @ and IF  compile,  ELSE  execute  THEN
-    previous ; immediate
 
 Vocabulary Objects
 also Objects also definitions
@@ -927,7 +891,7 @@ Forth definitions
 \ ** inside the class and subclasses, externally visible methods
 \ ** and variables have to be declared *\fo{public}.
 
-\ *P *\i{BOOF} separates declaration and implementation of classes.
+\ *P *\i{BerndOOF} separates declaration and implementation of classes.
 \ ** Both together form the definition of a class.
 
 Objects definitions

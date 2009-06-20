@@ -21,12 +21,10 @@
 \ generic loadscreen                                   21sep07py
 
 [defined] VFXFORTH [IF]
+    include vfx-minos/VFXharness.fth
     include vfx-minos/oof.fs
-    include vfx-minos/lambda.fs
-    include vfx-minos/helper.fs
     include sincos.fs
     include vfx-minos/points.fs
-\    include vfx-minos/qsort.fs
     include vfx-minos/string.fs
     include vfx-minos/xchar.fs
     include vfx-minos/accept.fs
@@ -51,16 +49,7 @@ include sincos.fs
 [defined] >class" 0= [IF]
 \ useful utilities                                     09jan00py
 
-    [defined] VFXFORTH [IF]
-        : pin 2+ cells sp@ + ! ;
-        $7FFFFFFF | Constant mi
-        : 0max dup 0< 0= and ;
-        : 0min dup 0< and ;
-        : 8*  ( n -- 8*n ) 3 lshift ;
-        : 3*  ( n -- 3*n ) dup 2* + ;
-	: */modf ( a b c -- n )  >r m* r> fm/mod ;
-	: */f ( a b c -- n )  */modf nip ;
-    [ELSE]
+    [defined] bigFORTH [IF]
         Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
             Next end-code macro :dx :ax T&P
         $7FFFFFFF | Constant mi
