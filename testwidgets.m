@@ -1,4 +1,4 @@
-#! xbigforth
+#! /usr/local/bin/xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -19,28 +19,28 @@ public:
   vabox ptr sub-topics
  ( [varstart] ) early draw-cv1 ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" bigFORTH" ;
+  : params   DF[ 0 ]DF X" FORTH" ;
 class;
 
 component class sub-menu1
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 component class menu1
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 component class color-menu1
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 component class calc
@@ -50,7 +50,7 @@ public:
   infotextfield ptr r#
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Calculator" ;
+  : params   DF[ 0 ]DF X" Calculator" ;
 class;
 
 calc implements
@@ -159,7 +159,7 @@ test-widgets implements
     ^ draw-cv1 drop dpy sync ['] start-cv1 ^ #30 after dpy schedule ;
  ( [methodend] ) 
   : widget  ( [dumpstart] )
-        M: menu1 menu X"  bigFORTH " menu-title new 
+        M: menu1 menu X" FORTH" menu-title new 
         M: sub-menu1 menu X"  File " menu-title new 
         M: color-menu1 menu X"  Options " menu-title new 
         $0 $1 *hfilll $0 $1 *vfil rule new 

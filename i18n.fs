@@ -48,14 +48,15 @@ AVariable lsids
 \ locale@ stuff
 
 $3 Constant locale-depth \ lang country variances
-Variable locale-stack  locale-depth cells allot
+Variable locale-stack  locale-depth 1+ cells allot
+here 0 , locale-stack cell+ !
 
 : >locale ( lsids -- )
     locale-stack @+ swap cells + !  1 locale-stack +!
     locale-stack @ locale-depth u>= abort" locale stack full" ;
 : locale-drop ( -- )  -1 locale-stack +!
     locale-stack @ locale-depth u>= abort" locale stack empty" ;
-: locale' ( -- addr )  locale-stack @+ swap 1- cells + @ ;
+: locale' ( -- addr )  locale-stack @+ swap cells + @ ;
 
 : Locale  Create 0 , DOES>  locale-stack off >locale ;
 : Country  Create 0 , , DOES>  locale-stack off dup cell+ @ >locale >locale ;
@@ -71,15 +72,14 @@ Variable locale-stack  locale-depth cells allot
 Variable last-namespace
 
 : locale@ ( lsid -- addr u )  last-namespace off
-    locale-stack @ IF
         dup >r id#@
-        locale-stack @+ swap cells bounds swap cell- DO
+        locale-stack @+ swap cells bounds swap DO
 	    dup I @ search-lsid# dup IF
 		I last-namespace !
 		nip native@ unloop rdrop EXIT  THEN
             drop
         -cell +LOOP  drop r>
-    THEN  native@ ;
+    native@ ;
 
 : lsid@ ( lsid -- addr u )  last-namespace @  IF
 	dup >r id#@
@@ -121,6 +121,10 @@ Variable last-namespace
 
 : x" state @ IF  postpone l" postpone locale@
     ELSE  ['] l" execute locale@  THEN ; immediate
+
+l" FORTH" Aconstant forth-lx
+[defined] bigforth [IF] s" bigFORTH" forth-lx locale! [THEN]
+[defined] VFXforth [IF] s" VFX FORTH" forth-lx locale! [THEN]
 
 \ substitute stuff
 

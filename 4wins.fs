@@ -1,10 +1,6 @@
 #! /usr/local/bin/bigforth
 \ four in a row game
 
-[defined] VFXForth [IF]
-    : random  random um* nip ;
-[THEN]
-
 6 Value #rows
 7 Value #cols
 4 Value #win

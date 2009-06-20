@@ -545,7 +545,7 @@ resource:dialog implements
             nvar off set-var off 6 indent !
             cr ." how:" cr
             .'   : params   DF[ '  .default
-                .'  ]DF s" ' title-field get type
+                .'  ]DF X" ' title-field get type
                 .' " ;' cr
             ." class;" cr
         THEN ;
