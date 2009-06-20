@@ -8,7 +8,7 @@ component class toggle-test
 public:
  ( [varstart] ) cell var xx ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Toggle Test" ;
+  : params   DF[ 0 ]DF X" Toggle Test" ;
 class;
 
 toggle-test implements

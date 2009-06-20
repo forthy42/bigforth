@@ -18,7 +18,7 @@ public:
 database ptr sql-db
 cell var db-name ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" SQL insert" ;
+  : params   DF[ 0 ]DF X" SQL insert" ;
 class;
 
 include sql.fs

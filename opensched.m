@@ -24,42 +24,42 @@ method list-jobs
 method print
 method load-sched ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Open Schedule GUI" ;
+  : params   DF[ 0 ]DF X" Open Schedule GUI" ;
 class;
 
 component class file-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" File Menu" ;
+  : params   DF[ 0 ]DF X" File Menu" ;
 class;
 
 component class help-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Help Menu" ;
+  : params   DF[ 0 ]DF X" Help Menu" ;
 class;
 
 component class resource-title
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Resource Title" ;
+  : params   DF[ 0 ]DF X" Resource Title" ;
 class;
 
 component class job-title
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Job Title" ;
+  : params   DF[ 0 ]DF X" Job Title" ;
 class;
 
 component class edit-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Edit Menu" ;
+  : params   DF[ 0 ]DF X" Edit Menu" ;
 class;
 
 component class project
@@ -82,14 +82,14 @@ public:
   tbutton ptr vacs
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Project Properties" ;
+  : params   DF[ 0 ]DF X" Project Properties" ;
 class;
 
 component class process-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Process Menu" ;
+  : params   DF[ 0 ]DF X" Process Menu" ;
 class;
 
 component class graphs
@@ -100,7 +100,7 @@ public:
   infotextfield ptr day
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Graph Properties" ;
+  : params   DF[ 0 ]DF X" Graph Properties" ;
 class;
 
 graphs implements

@@ -11,7 +11,7 @@ public:
   infotextfield ptr r#
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Calculator" ;
+  : params   DF[ 0 ]DF X" Calculator" ;
 class;
 
 component class thermometer
@@ -20,7 +20,7 @@ public:
   vscaler ptr pos
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Thermometer" ;
+  : params   DF[ 0 ]DF X" Thermometer" ;
 class;
 
 thermometer implements

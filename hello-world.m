@@ -15,7 +15,7 @@ public:
   | topindex ptr (topindex-06)
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Hello World" ;
+  : params   DF[ 0 ]DF X" Hello World" ;
 class;
 
 hello implements

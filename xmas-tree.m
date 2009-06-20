@@ -21,7 +21,7 @@ cell var rand
 cell var gear-task
 cell var shade ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Xmas-Tree" ;
+  : params   DF[ 0 ]DF X" Xmas-Tree" ;
 class;
 
 include xmas-tree.fs

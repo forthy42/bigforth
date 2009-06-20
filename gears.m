@@ -1,4 +1,4 @@
-#! /usr/local/bin/xbigforth
+#! xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -25,7 +25,7 @@ cell var scale-y
 cell var scale-z
 3 cells var textures ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Gears" ;
+  : params   DF[ 0 ]DF X" Gears" ;
 class;
 
 include gears.fs

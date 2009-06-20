@@ -1,4 +1,4 @@
-#! /usr/local/bin/xbigforth
+#! xbigforth
 \ automatic generated code
 \ do not edit
 

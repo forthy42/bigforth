@@ -8,7 +8,7 @@ component class brownean
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Brownean move" ;
+  : params   DF[ 0 ]DF X" Brownean move" ;
 class;
 
 brownean implements

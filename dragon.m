@@ -30,7 +30,7 @@ cell var head-texture
 cell var wing-texture
 cell var claw-texture ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Swap Dragon" ;
+  : params   DF[ 0 ]DF X" Swap Dragon" ;
 class;
 
 component class dragon-help
@@ -38,7 +38,7 @@ public:
   button ptr help-close
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Dragon Help" ;
+  : params   DF[ 0 ]DF X" Dragon Help" ;
 class;
 
 dragon-help implements

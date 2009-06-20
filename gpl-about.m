@@ -13,14 +13,14 @@ public:
   vabox ptr floater
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" About gpl program" ;
+  : params   DF[ 0 ]DF X" About gpl program" ;
 class;
 
 component class minos-splash
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Minos Splash Screen" ;
+  : params   DF[ 0 ]DF X" Minos Splash Screen" ;
 class;
 
 component class bigforth-about
@@ -28,7 +28,7 @@ public:
   button ptr gpl-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" About bigFORTH+MINOS" ;
+  : params   DF[ 0 ]DF X" About bigFORTH+MINOS" ;
 class;
 
 bigforth-about implements

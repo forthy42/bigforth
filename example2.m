@@ -12,7 +12,7 @@ public:
  ( [varstart] ) 0 var 'do-op
 defer do-op ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Calculator" ;
+  : params   DF[ 0 ]DF X" Calculator" ;
 class;
 
 component class thermometer
@@ -21,7 +21,7 @@ public:
   vscaler ptr pos
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Thermometer" ;
+  : params   DF[ 0 ]DF X" Thermometer" ;
 class;
 
 thermometer implements

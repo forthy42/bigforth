@@ -9,7 +9,7 @@ public:
   text-label ptr click#
  ( [varstart] ) cell var clicks ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Click counter" ;
+  : params   DF[ 0 ]DF X" Click counter" ;
 class;
 
 ccount implements

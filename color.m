@@ -9,7 +9,7 @@ public:
   button ptr color-ok
  ( [varstart] ) cell var color ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Color" ;
+  : params   DF[ 0 ]DF X" Color" ;
 class;
 
 component class result
@@ -18,7 +18,7 @@ public:
   button ptr choice-ok
  ( [varstart] ) cell var color ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Your Choice" ;
+  : params   DF[ 0 ]DF X" Your Choice" ;
 class;
 
 result implements

@@ -19,35 +19,35 @@ public:
   topindex ptr (topindex-0A)
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Theseus" ;
+  : params   DF[ 0 ]DF X" Theseus" ;
 class;
 
 component class file-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" File menu" ;
+  : params   DF[ 0 ]DF X" File menu" ;
 class;
 
 component class edit-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Edit menu" ;
+  : params   DF[ 0 ]DF X" Edit menu" ;
 class;
 
 component class help-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Help Menu" ;
+  : params   DF[ 0 ]DF X" Help Menu" ;
 class;
 
 component class minos-about
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" About Theseus" ;
+  : params   DF[ 0 ]DF X" About Theseus" ;
 class;
 
 minos-about implements

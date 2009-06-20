@@ -12,7 +12,7 @@ public:
   button ptr gl2
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 comp0000 implements

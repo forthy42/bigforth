@@ -1,4 +1,4 @@
-#! /usr/local/bin/xbigforth
+#! xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -12,7 +12,7 @@ public:
 1 var y#
 1 var o# ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Ampel Einstellung" ;
+  : params   DF[ 0 ]DF X" Ampel Einstellung" ;
 class;
 
 ampel implements

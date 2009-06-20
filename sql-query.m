@@ -25,7 +25,7 @@ public:
 database ptr sql-db
 cell var db-name ( [varend] ) 
 how:
-  : params   DF[ query self ]DF s" SQL query" ;
+  : params   DF[ query self ]DF X" SQL query" ;
 class;
 
 include sql.fs

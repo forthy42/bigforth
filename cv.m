@@ -9,7 +9,7 @@ public:
   canvas ptr cv
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Draw Mouse" ;
+  : params   DF[ 0 ]DF X" Draw Mouse" ;
 class;
 
 dxy implements

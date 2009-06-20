@@ -13,7 +13,7 @@ cell var green
 cell var blue
 64 var lamps ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Lamp Field" ;
+  : params   DF[ 0 ]DF X" Lamp Field" ;
 class;
 
 lamp-field implements

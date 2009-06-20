@@ -10,7 +10,7 @@ public:
   icon-but ptr play-it
  ( [varstart] ) cell var playing ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" DVD Player" ;
+  : params   DF[ 0 ]DF X" DVD Player" ;
 class;
 
 dvd-play implements

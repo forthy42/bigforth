@@ -1,4 +1,4 @@
-#! /usr/local/bin/xbigforth
+#! xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -11,7 +11,7 @@ public:
   tableinfotextfield ptr c#
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Calculator" ;
+  : params   DF[ 0 ]DF X" Calculator" ;
 class;
 
 calc implements

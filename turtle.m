@@ -10,7 +10,7 @@ public:
  ( [varstart] ) 2 cells var homepos
  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Turtle Graphics" ;
+  : params   DF[ 0 ]DF X" Turtle Graphics" ;
 class;
 
 turtle implements

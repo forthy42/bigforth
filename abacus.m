@@ -19,7 +19,7 @@ cell var v8    cell var i8
 cell var v9    cell var i9
 method re-calc ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Abacus" ;
+  : params   DF[ 0 ]DF X" Abacus" ;
 class;
 
 component class abacus-comp
@@ -28,7 +28,7 @@ public:
 cell var *i
 abacus ptr outer ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 abacus-comp implements

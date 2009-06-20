@@ -12,7 +12,7 @@ public:
   | topindex ptr (topindex-03)
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Toggle Actors" ;
+  : params   DF[ 0 ]DF X" Toggle Actors" ;
 class;
 
 toggle-actor implements

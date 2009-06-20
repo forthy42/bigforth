@@ -21,7 +21,7 @@ cell var gear-task
 cell var shade
 3 cells var textures ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Tree" ;
+  : params   DF[ 0 ]DF X" Tree" ;
 class;
 
 include tree.fs

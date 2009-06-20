@@ -8,7 +8,7 @@ component class set-colors
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Set Colors" ;
+  : params   DF[ 0 ]DF X" Set Colors" ;
 class;
 
 set-colors implements

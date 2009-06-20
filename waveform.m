@@ -29,7 +29,7 @@ method wave-file
 method step-act
 method set-dist ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Waveform Viewer" ;
+  : params   DF[ 0 ]DF X" Waveform Viewer" ;
 class;
 
 component class about-w
@@ -37,7 +37,7 @@ public:
   button ptr i-see
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ i-see self ]DF s" About Waveform Viewer" ;
+  : params   DF[ i-see self ]DF X" About Waveform Viewer" ;
 class;
 
 component class help-w
@@ -45,7 +45,7 @@ public:
   button ptr help-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ help-ok self ]DF s" Waveform Help" ;
+  : params   DF[ help-ok self ]DF X" Waveform Help" ;
 class;
 
 help-w implements

@@ -8,7 +8,7 @@ component class foo
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Table test" ;
+  : params   DF[ 0 ]DF X" Table test" ;
 class;
 
 foo implements

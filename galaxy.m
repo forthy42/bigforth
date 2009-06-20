@@ -36,7 +36,7 @@ cell var don't
 3 cells var galaxy-lock
 method redraw-galaxy ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Galaxy" ;
+  : params   DF[ 0 ]DF X" Galaxy" ;
 class;
 
 component class about
@@ -44,14 +44,14 @@ public:
   button ptr ok-button
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" About" ;
+  : params   DF[ 0 ]DF X" About" ;
 class;
 
 component class measure-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Measure" ;
+  : params   DF[ 0 ]DF X" Measure" ;
 class;
 
 measure-menu implements

@@ -16,7 +16,7 @@ public:
   text-label ptr game-state
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Four Wins" ;
+  : params   DF[ 0 ]DF X" Four Wins" ;
 class;
 
 include 4wins.fs

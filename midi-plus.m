@@ -32,7 +32,7 @@ public:
 cell var midi-path
 cell var scheduled ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Midi Player" ;
+  : params   DF[ 0 ]DF X" Midi Player" ;
 class;
 
 include midi.fs

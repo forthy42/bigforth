@@ -8,7 +8,7 @@ component class canvas1
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Canvas-Test" ;
+  : params   DF[ 0 ]DF X" Canvas-Test" ;
 class;
 
 canvas1 implements

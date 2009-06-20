@@ -10,7 +10,7 @@ public:
   button ptr i-know
  ( [varstart] ) cell var tip-file ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Tip 1" ;
+  : params   DF[ 0 ]DF X" Tip 1" ;
 class;
 
 tip1 implements

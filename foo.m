@@ -8,21 +8,21 @@ component class foo
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" hrtsizer" ;
+  : params   DF[ 0 ]DF X" hrtsizer" ;
 class;
 
 component class bar
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" hxrtsizer" ;
+  : params   DF[ 0 ]DF X" hxrtsizer" ;
 class;
 
 component class zap
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" hsizer" ;
+  : params   DF[ 0 ]DF X" hsizer" ;
 class;
 
 zap implements

@@ -12,14 +12,14 @@ public:
   button ptr cancel
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Einloggen" ;
+  : params   DF[ 0 ]DF X" Einloggen" ;
 class;
 
 component class main-1
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Main" ;
+  : params   DF[ 0 ]DF X" Main" ;
 class;
 
 main-1 implements

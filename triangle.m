@@ -9,7 +9,7 @@ component class triangle
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Triangle" ;
+  : params   DF[ 0 ]DF X" Triangle" ;
 class;
 
 triangle implements

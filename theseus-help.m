@@ -9,7 +9,7 @@ public:
   button ptr theseus-ok
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Minos Help" ;
+  : params   DF[ 0 ]DF X" Minos Help" ;
 class;
 
 minos-about implements

@@ -9,28 +9,28 @@ public:
   stredit ptr notes
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Notepad" ;
+  : params   DF[ 0 ]DF X" Notepad" ;
 class;
 
 component class file-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" File Menu" ;
+  : params   DF[ 0 ]DF X" File Menu" ;
 class;
 
 component class edit-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Edit Menu" ;
+  : params   DF[ 0 ]DF X" Edit Menu" ;
 class;
 
 component class help-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Help Menu" ;
+  : params   DF[ 0 ]DF X" Help Menu" ;
 class;
 
 help-menu implements

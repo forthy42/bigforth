@@ -9,7 +9,7 @@ public:
   glcanvas ptr glw
  ( [varstart] ) 2 cells var glxy ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" GL mouse" ;
+  : params   DF[ 0 ]DF X" GL mouse" ;
 class;
 
 glmouse implements

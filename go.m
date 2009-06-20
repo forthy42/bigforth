@@ -24,28 +24,28 @@ method new-game
 method close-game
 method go-write ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" Go" ;
+  : params   DF[ 0 ]DF X" Go" ;
 class;
 
 component class file-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 component class help-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 component class go-game-menu
 public:
  ( [varstart] )  ( [varend] ) 
 how:
-  : params   DF[ 0 ]DF s" No Title" ;
+  : params   DF[ 0 ]DF X" No Title" ;
 class;
 
 go-game-menu implements
