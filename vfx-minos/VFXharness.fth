@@ -698,7 +698,7 @@ Vocabulary DOS
 also DOS definitions
 
 Extern: char * setlocale ( int , char * ); ( locale addr -- addr )
-Extern: void gettimeofday ( int * , int * ); ( timeval timezone -- )
+Extern: int gettimeofday ( int * , int * ); ( timeval timezone -- r )
 
 synonym env$ readenv
 
@@ -804,7 +804,7 @@ $09 Constant #tab        $07 Constant #bell
 
 also DOS
 : timer@
-  timeval timezone gettimeofday
+  timeval timezone gettimeofday drop
   timeval 2@ swap $CB9CB68 um* nip swap
   $2000000 um* #675 ud/mod drop nip + ;
 previous

@@ -129,13 +129,19 @@ galaxy implements
                     ^^ #0 #360 SC[ #360 mod alphay ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new  #-180 SC# 
                     ^^ #0 #360 SC[ #360 mod alphaz ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new  #-180 SC# 
                   #4 vabox new vfixbox  #2 borderbox
-                    CV[ a-pos @ >r
+                    CV[ 0 0 0 rgb> backcolor clear a-pos @ >r
+decimal
+visualize-v  r@ vis@ 
+visualize-v+ r@ vis@ swap
+dup 0= IF  nip  ELSE  #1000 swap */  THEN
+0 <# # # # '. hold #s #>
+r@ 1+ $600 home! r@ 2* vismax > IF  2 ELSE  0  THEN  0 textpos text
 visualize-a  r@ vis@ 
 visualize-a+ r@ vis@ swap
-dup 0= IF  nip  ELSE  #1000 swap */  THEN decimal
+dup 0= IF  nip  ELSE  #1000 swap */  THEN
 0 <# # # # '. hold #s #>
-r@ 1+ 0 home! r> 2* vismax > IF  2 ELSE  0  THEN  0 textpos
-text  path 0 vismax -$100 * to stroke ]CV ( MINOS ) ^^ CK[ nip 1 and IF  DOPRESS  2swap 2drop  THEN
+r@ 1+ 0 home! r> 2* vismax > IF  2 ELSE  0  THEN  0 textpos text
+path 0 vismax -$100 * to stroke ]CV ( MINOS ) ^^ CK[ nip 1 and IF  DOPRESS  2swap 2drop  THEN
 drop
 a# xywh drop >r drop - r> vismax swap */
 0 max vismax 1- min a-pos !

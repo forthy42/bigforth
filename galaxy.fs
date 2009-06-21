@@ -79,7 +79,7 @@ FVariable oldgauss 0e oldgauss f!
 	    frnd f2* 1e f-
 	    fover2 f**2 fover2 f**2 f+ fover f**2 f+
 	    1e f> WHILE  fdrop fdrop fdrop  REPEAT
-	fover2 f**2 fover2 f**2 f+ fover f**2 f+ fsqrt fsqrt
+	fover2 f**2 fover2 f**2 f+ fover f**2 f+ fsqrt fsqrt fsqrt
 	I star
 	fdup d1 f* fswap d2 f* { f: x1 f: x2 |
 	x1 f* dup element x df!
@@ -138,7 +138,7 @@ Variable spiral-dist spiral-dist on
 
 : set-s0 ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
     swap ?DO  BEGIN  frnd f**2 ( t )
-            frnd f2* f2* fexp 16e f/ spiral-dist @ 0= WHILE
+            frnd f2* f2* fexp 12e f/ spiral-dist @ 0= WHILE
             fdrop fdrop  REPEAT ( ft fr )
         rnd >r
 	funder 1e f+ f/
@@ -265,9 +265,12 @@ Variable dirsens  dirsens on
           element ax+ approx
   pause LOOP ;
 
+0 value s0-galaxies
+
 : set-masses ( n dp sf -- )  >r >r init-stars
     star# swap #100 */ -4 and dup >r 1e .33e set-bulge
-    r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm* set-s0 ;
+    r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm*
+    s0-galaxies IF  set-s0  ELSE  set-spiral  THEN ;
 
 #30 #40 #100 set-masses
 
@@ -293,7 +296,8 @@ Variable a-pos $20 a-pos !
 
 $40 Value vismax
 : visminmax 0 max vismax 1- min ;
-: vis* vismax 4/ fm* .5e f+ ff>s visminmax ;
+: vis* vismax s0-galaxies IF 12 ELSE 4 THEN fm*/
+    .5e f+ ff>s visminmax ;
 : vis'* vismax $40 * fm* .5e f+ ff>s ;
 
 : fsqsum ( x y z -- d ) f**2 fswap f**2 f+ fswap f**2 f+ ;
@@ -331,16 +335,28 @@ $40 Value vismax
     dirsens @ IF  sv*  ELSE drop fsqsum fsqrt THEN ;
 : visualize-a#  vis-a !vis-array
     star# 0 ?DO
-	I star a@ I star >dir I star r#@ f* fsqrt
+	I star a@ I star >dir
         .5e f* vis'* I vis+  LOOP ;
 : visualize-a
     visualize-a#  $00 $00 $FF   draw-vis-array ;
 : visualize-a+#  vis-a+ !vis-array
     star# 0 ?DO
-	I star a+@ I star >dir I star r#@ f* fsqrt
+	I star a+@ I star >dir
         .5e f* vis'* I vis+  LOOP ;
 : visualize-a+
     visualize-a+#  $FF $00 $00  draw-vis-array ;
+: visualize-v#  vis-a !vis-array
+    star# 0 ?DO
+	I star a@ I star >dir I star r#@ f* fsqrt
+        .5e f* vis'* I vis+  LOOP ;
+: visualize-v
+    visualize-v#  $00 $FF $FF   draw-vis-array ;
+: visualize-v+#  vis-a+ !vis-array
+    star# 0 ?DO
+	I star a+@ I star >dir I star r#@ f* fsqrt
+        .5e f* vis'* I vis+  LOOP ;
+: visualize-v+
+    visualize-v+#  $FF $FF $00  draw-vis-array ;
 : write-csv ( -- ) 6 set-precision decimal
     s" stars.csv" r/w output-file +buffer
     star# 0 ?DO
