@@ -136,6 +136,22 @@ Variable spiral-dist spiral-dist on
         dz f*      element z df!
     LOOP ;
 
+: set-s0 ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
+    swap ?DO  BEGIN  frnd f**2 ( t )
+            frnd f2* f2* fexp 16e f/ spiral-dist @ 0= WHILE
+            fdrop fdrop  REPEAT ( ft fr )
+        rnd >r
+	funder 1e f+ f/
+        r@ $1 and IF fnegate THEN
+        fswap di f+ ds f*
+	frnd pi f*
+        r> $2 and IF pi f+ THEN
+        fsincos frot funder f* f-rot f*
+        I star dup element x df!
+               dup element y df!
+        dz f*      element z df!
+    LOOP ;
+
 : DFVariable  Create 1 dfloats allot ;
 
 DFVariable >x
@@ -251,7 +267,7 @@ Variable dirsens  dirsens on
 
 : set-masses ( n dp sf -- )  >r >r init-stars
     star# swap #100 */ -4 and dup >r 1e .33e set-bulge
-    r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm* set-spiral ;
+    r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm* set-s0 ;
 
 #30 #40 #100 set-masses
 
