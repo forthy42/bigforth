@@ -52,7 +52,7 @@ Variable locale-stack  locale-depth 1+ cells allot
 here 0 , locale-stack cell+ !
 
 : >locale ( lsids -- )
-    locale-stack @+ swap cells + !  1 locale-stack +!
+    locale-stack @+ swap 1+ cells + !  1 locale-stack +!
     locale-stack @ locale-depth u>= abort" locale stack full" ;
 : locale-drop ( -- )  -1 locale-stack +!
     locale-stack @ locale-depth u>= abort" locale stack empty" ;
