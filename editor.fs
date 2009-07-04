@@ -677,6 +677,17 @@ Variable nokey?    nokey? off
 : !nokey ;
 : edierror  jingle @  IF  alarm  THEN  scredit showerror ;
 
+[defined] VFXForth [IF]
+: (edicatch   r>  updated? not >r
+  scredit curoff  catch
+  updated? r> and IF  scredit slided  THEN
+  2 case? IF  scredit close  EXIT  THEN
+  IF [defined] "error [IF]
+	  "error @ dup IF edierror 0 THEN "error !
+      [THEN] THEN
+  scredit curon ; DoNotSin
+: edicatch  postpone (edicatch discard-sinline ; immediate
+[ELSE]
 : edicatch   r>  updated? not >r
   scredit curoff  catch
   updated? r> and IF  scredit slided  THEN
@@ -685,6 +696,7 @@ Variable nokey?    nokey? off
 	  "error @ dup IF edierror 0 THEN "error !
       [THEN] THEN
   scredit curon ;
+[THEN]
 
 \ Key event                                            14sep97py
 

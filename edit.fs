@@ -32,7 +32,11 @@ forward +lines
 forward saveText
 forward DelText
 forward line@
-forward (straction
+[defined] VFXForth [IF]
+    Defer (straction
+[ELSE]
+    forward (straction
+[THEN]
 forward ins+
 forward ?clearbuffer
 forward str:view
@@ -652,7 +656,7 @@ forward replace-it'
 ' (putchar A,
 
 [defined] VFXForth [IF]
-    : (straction (straction' ;
+' (straction' IS (straction
 [THEN]
 
 : setup-edit ( addr n -- ) swap
