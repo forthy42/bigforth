@@ -25,29 +25,15 @@ Zeile) aufzumachen.    */
 
 \ Stream editor widget                                 01sep97py
 
-[defined] VFXForth [IF]
-    Defer Line!
-    Defer NextLine
-    Defer Top
-    Defer +lines
-    Defer saveText
-    Defer DelText
-    Defer line@
-    Defer (straction
-    Defer ins+
-    Defer str:view
-[ELSE]
-    forward Line!
-    forward NextLine
-    forward Top
-    forward +lines
-    forward saveText
-    forward DelText
-    forward line@
-    forward (straction
-    forward ins+
-    forward str:view
-[THEN]
+Patch Line!
+Patch NextLine
+Patch Top
+Patch +lines
+Patch saveText
+Patch DelText
+Patch (straction
+Patch ins+
+Patch str:view
 forward ?clearbuffer
 
 Variable do!schib
@@ -238,11 +224,7 @@ Variable ?reformat
 Forward FormatPar
 
 : enough? ( len -- )  LineLen > ?reformat ! ;
-[defined] VFXForth [IF]
-    :noname  ( -- addr count )  thisline @ @ 8 + count ; IS Line@
-[ELSE]
-    : Line@  ( -- addr count )  thisline @ @ 8 + count ;
-[THEN]
+: Line@  ( -- addr count )  thisline @ @ 8 + count ;
 : SetLineLen  ( len -- )  dup enough?
     Lalign dup thisline @ @ 8 + c@ Lalign
     = 0= IF  thisline @ over SetHandleSize  THEN drop
@@ -283,39 +265,22 @@ Forward FormatPar
 : thisline! ( MP / 0 -- )
   dup  IF  thisline !  EXIT  THEN  drop rdrop ;
 
-[defined] VFXForth [IF]
-    :noname ( -- )  thisline @ @       @ thisline!  1 line#+! ; IS NextLine
-[ELSE]
-    : NextLine ( -- )  thisline @ @       @ thisline!  1 line#+! ;
-[THEN]
+:noname ( -- )  thisline @ @       @ thisline!  1 line#+! ; IS NextLine
 : PrevLine ( -- )  thisline @ @ cell+ @ thisline! -1 line#+! ;
 
-[defined] VFXForth [IF]
 :noname ( n -- lineMP )  dup 0= IF  drop thisline @ EXIT  THEN
   >r thisline @ dup  0= IF  rdrop EXIT  THEN
   r> dup thisline# @ 1- + over 0<
   IF    0 min - negate   0 ?DO  @ cell+ @  LOOP
   ELSE  stredit rows @ - 0 max - 0 ?DO  @ @  LOOP
   THEN ; IS +lines
-[ELSE]
-: +lines ( n -- lineMP )  dup 0= IF  drop thisline @ EXIT  THEN
-  >r thisline @ dup  0= IF  rdrop EXIT  THEN
-  r> dup thisline# @ 1- + over 0<
-  IF    0 min - negate   0 ?DO  @ cell+ @  LOOP
-  ELSE  stredit rows @ - 0 max - 0 ?DO  @ @  LOOP
-  THEN ;
-[THEN]
 
 \ Zeile setzen                                         29apr91py
 
 : (Line! ( addr len -- MP )
   pad place pad count  dup Lalign  NewHandle >r
   ( dup pos! ) r@ @ 8+ place  0. r@ @ 2!  r> ;
-[defined] VFXForth [IF]
-    :noname  ( addr len -- )  (Line! (InsLine ; IS Line!
-[ELSE]
-    : Line!  ( addr len -- )  (Line! (InsLine ;
-[THEN]
+:noname  ( addr len -- )  (Line! (InsLine ; IS Line!
 
 \ Line stack                                           11oct93py
 
@@ -333,31 +298,18 @@ Variable linebuffer
 
 \ Text löschen                                         29apr91py
 
-[defined] VFXForth [IF]
 :noname    ( -- ) \ 0 0 stredit at ;
   thisline @ 0= ?EXIT  thisline @
   BEGIN  dup @ cell+ @  dup  WHILE  nip  REPEAT  drop thisline!
   1 line#! 0 pos! do!schib on ; IS Top
-[ELSE]
-: Top    ( -- ) \ 0 0 stredit at ;
-  thisline @ 0= ?EXIT  thisline @
-  BEGIN  dup @ cell+ @  dup  WHILE  nip  REPEAT  drop thisline!
-  1 line#! 0 pos! do!schib on ;
-[THEN]
 : Bottom ( -- ) \ stredit rows @ 1- 0 stredit at
   thisline @ 0= ?EXIT  thisline @ 0
   BEGIN  >r dup @      @  dup  WHILE  nip r> 1+ REPEAT
   drop thisline!  r> line#+!
   thisline @ @ 8+ c@ pos!  do!schib on ;
-[defined] VFXForth [IF]
 :noname ( -- ) thisline @ 0= ?EXIT  Top  thisline @
   BEGIN  dup @ @ >r  DisposHandle r> dup 0= UNTIL
   drop  thisline off ; IS DelText
-[ELSE]
-: DelText ( -- ) thisline @ 0= ?EXIT  Top  thisline @
-  BEGIN  dup @ @ >r  DisposHandle r> dup 0= UNTIL
-  drop  thisline off ;
-[THEN]
 
 \ Streamfile sichern                                   06may91py
 
@@ -374,7 +326,6 @@ Variable epos
 
 \ Save Text                                            12may91py
 
-[defined] VFXForth [IF]
 :noname  ( -- )
   thisline push  loadfile push
   line#@ >r cur >r
@@ -391,24 +342,6 @@ Variable epos
   DisposHandle  r> r> flush-file
   r> pos! r> line#! throw throw
   stredit changed off  do!schib on ; IS saveText
-[ELSE]
-: saveText  ( -- )
-  thisline push  loadfile push
-  line#@ >r cur >r
-  stredit edifile @ >r epos off
-  [defined] filehandle [IF]
-      r@ filehandle @ 0< IF  r@ r/w (open throw  THEN
-  [THEN]
-  0. r@ resize-file throw
-  sbuf# NewHandle >r  Top thisline @
-  BEGIN  dup  WHILE  dup @ 8+ count r> r> 2dup >r >r
-         SaveLine  CRLF  count r> r> 2dup >r >r SaveLine
-         @ @  REPEAT  drop
-  r> dup @ epos @ r@ write-file >r  epos off
-  DisposHandle  r> r> flush-file
-  r> pos! r> line#! throw throw
-  stredit changed off  do!schib on ;
-[THEN]
 
 \ Mausknopfreaktion                                    10may91py
 
@@ -418,17 +351,10 @@ Variable epos
 : mark!       scredit 'r# ! scredit 'scr ! scredit 'edifile ! ;
 : (mark       isfile@  scr @  cur  mark! ;
 : (mark  line#@ scr !  cur r# !  (mark ;
-[defined] VFXForth [IF]
 :noname ( -- )  Line@ cur 2dup >
   IF    stredit curoff (mark word@ find! >view !view
         stredit curon
   ELSE  2drop drop  THEN ; IS str:view
-[ELSE]
-: str:view ( -- )  Line@ cur 2dup >
-  IF    stredit curoff (mark word@ find! >view !view
-        stredit curon
-  ELSE  2drop drop  THEN ;
-[THEN]
 
 \ Verlassen des Editors                                30apr91py
 
@@ -473,21 +399,12 @@ Variable epos
 
 \ Zeilen                                               07may91py
 
-[defined] VFXForth [IF]
 :noname ( n -- )
     stredit 'scr @ line#@ > IF  dup stredit 'scr +!  THEN
     stredit rows +!
 \  stredit child hmin +!
 \  stredit child hmin @  stredit sh @ max  stredit rows !
     stredit resized ; IS ins+
-[ELSE]
-: ins+ ( n -- )
-    stredit 'scr @ line#@ > IF  dup stredit 'scr +!  THEN
-    stredit rows +!
-\  stredit child hmin +!
-\  stredit child hmin @  stredit sh @ max  stredit rows !
-    stredit resized ;
-[THEN]
 : linemodified  stredit .line ;
 : cr  0 pos!  thisline @ @ @ 
   0= IF  pad 0 Line! 1 ins+ ( modified ) THEN

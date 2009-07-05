@@ -152,6 +152,31 @@ Variable spiral-dist spiral-dist on
         dz f*      element z df!
     LOOP ;
 
+\ example s0 galaxy:
+\ Bulge: 6e9 solar masses, non-rotating
+
+\ Disk surface density: Sigma(R)=Sigma_0 * exp(-R/R_e).
+\ with R=sqrt(x*x+y*y).
+
+\ thickness (z): 200 pc (1 pc = 3.086e16 m),
+\ R_e=3.5 kpc. Sigma_0: 6e10 solar masses within R=10kpc
+
+: set-s0' ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
+    swap ?DO  BEGIN  frnd ( t )
+            frnd f2* f2* fexp 12e f/ spiral-dist @ 0= WHILE
+            fdrop fdrop  REPEAT ( ft fr )
+        rnd >r
+	funder 1e f+ f/
+        r@ $1 and IF fnegate THEN
+        fswap di f+ ds f*
+	frnd pi f*
+        r> $2 and IF pi f+ THEN
+        fsincos frot funder f* f-rot f*
+        I star dup element x df!
+               dup element y df!
+        dz f*      element z df!
+    LOOP ;
+
 : DFVariable  Create 1 dfloats allot ;
 
 DFVariable >x
