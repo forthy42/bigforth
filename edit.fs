@@ -25,15 +25,6 @@ Zeile) aufzumachen.    */
 
 \ Stream editor widget                                 01sep97py
 
-Patch Line!
-Patch NextLine
-Patch Top
-Patch +lines
-Patch saveText
-Patch DelText
-Patch (straction
-Patch ins+
-Patch str:view
 forward ?clearbuffer
 
 Variable do!schib
@@ -62,20 +53,169 @@ class;
 
 stredit implements
     Variable drawbuf
-    : pos@     pos @ cols @ mod ;
+    : pos@     pos @ cols @ modf ;
     : pos!     pos @ cols @ /f cols @ * + pos ! ;
     : pos+!    pos +! pos @ 0 max pos ! ;
 
     : line#@   pos @ cols @ /f 1+ ;
-    : line#!   1- pos @ cols @ mod swap cols @ * + pos !
+    : line#!   1- pos @ cols @ modf swap cols @ * + pos !
                line#@ thisline# ! ;
-    : line#+!  cols @ * pos +! line#@ thisline# ! ;
+    : line#+!  cols @ * pos+! line#@ thisline# ! ;
+class;
 
+: cur       stredit postpone pos@ ; immediate
+: pos!      stredit postpone pos! ; immediate
+: pos+!     stredit postpone pos+! ; immediate
+: line#@    stredit postpone line#@ ; immediate
+: line#!    stredit line#!  do!schib on ;
+: line#+!   stredit line#+! do!schib on ;
+: thisline# stredit postpone thisline# ; immediate
+
+\ Zeile löschen, verschieben und einfügen              07may91py
+
+: (DelLine ( lineMP -- ) @
+  dup 2@  dup  IF  @ cell+ !  ELSE  2drop  THEN
+  2@ swap dup  IF  @       !  ELSE  2drop  THEN ;
+: MoveLine ( lineMP thisMP -- )  >r dup (DelLine
+  r@ @ @ ?dup  IF  over @ !  THEN  r@ over @ cell+ !
+  dup r> @ !
+  dup @ @ dup  IF  @ cell+ !  ELSE  2drop  THEN ;
+: AddLine  ( lineMP thisMP -- )  >r dup (DelLine
+  r@ @ cell+ @ ?dup  IF  over @ cell+ !  THEN
+  r@ over @ !  dup r> @ cell+ !
+  dup @ cell+ @ dup  IF  @ !  ELSE  2drop  THEN ;
+
+: thisline  stredit postpone thisline ; immediate
+: retscr    stredit postpone retscr   ; immediate
+: retbuf    stredit postpone start    ; immediate
+
+: MakeLine ( -- MP )  $18 NewHandle  dup @ $18 erase ;
+: (InsLine ( MP -- ) thisline @
+  dup 0=  IF    drop thisline !  ELSE  MoveLine  THEN ;
+: InsLine ( -- ) MakeLine  (InsLine ;
+
+\ Zeile setzen                                         29apr91py
+
+: Lalign  ( len -- alen ) $-4 cells and 6 cells + ;
+: (Line! ( addr len -- MP )
+  ( pad place pad count ) dup Lalign  NewHandle >r
+  ( dup pos! ) r@ @ cell+ cell+ place  0. r@ @ 2!  r> ;
+: Line!  ( addr len -- )  (Line! (InsLine ;
+
+\ Zeile löschen                                        27apr91py
+
+[defined] VFXForth [IF]
+    : (thisline! ( MP / 0 -- )
+	dup  IF  thisline !  EXIT  THEN  drop rdrop ;
+    : thisline! postpone (thisline! discard-sinline ; immediate
+[ELSE]
+    : thisline! ( MP / 0 -- )
+	dup  IF  thisline !  EXIT  THEN  drop rdrop ;
+[THEN]
+
+: NextLine ( -- )  thisline @ @       @ thisline!  1 line#+! ;
+: PrevLine ( -- )  thisline @ @ cell+ @ thisline! -1 line#+! ;
+
+: +lines ( n -- lineMP )  dup 0= IF  drop thisline @ EXIT  THEN
+  >r thisline @ dup  0= IF  rdrop EXIT  THEN
+  r> dup thisline# @ 1- + over 0<
+  IF    0 min - negate  0 ?DO  @ cell+ @  LOOP
+  ELSE  stredit rows @ - 0 max - 0 ?DO  @ @  LOOP
+  THEN ;
+
+\ Text löschen                                         29apr91py
+
+: Top    ( -- ) \ 0 0 stredit at ;
+  thisline @ 0= ?EXIT  thisline @
+  BEGIN  dup @ cell+ @  dup  WHILE  nip  REPEAT  drop thisline!
+  1 line#! 0 pos! do!schib on ;
+: Bottom ( -- ) \ stredit rows @ 1- 0 stredit at
+  thisline @ 0= ?EXIT  thisline @ 0
+  BEGIN  >r dup @      @  dup  WHILE  nip r> 1+ REPEAT
+  drop thisline!  r> line#+!
+  thisline @ @ 8+ c@ pos!  do!schib on ;
+: DelText ( -- ) thisline @ 0= ?EXIT  Top  thisline @
+  BEGIN  dup @ @ >r  DisposHandle r> dup 0= UNTIL
+  drop  thisline off ;
+
+\ Streamfile sichern                                   06may91py
+
+$2000 Constant sbuf#   \ A long buffer for fast saving
+Create CRLF  1 c, #lf c,
+Variable epos
+
+: SaveLine ( addr len MP handle -- )  >r >r
+  BEGIN  r@ @ sbuf# epos @ /string 2 pick over >  WHILE
+         3 pick rot 2 pick move  epos off
+         r> dup @ sbuf# r@ write-file throw
+         >r /string  REPEAT
+  drop swap dup epos +! move  rdrop rdrop ;
+
+\ Save Text                                            12may91py
+
+: saveText  ( -- )
+  thisline push  loadfile push
+  line#@ >r cur >r
+  stredit edifile @ >r epos off
+  [defined] filehandle [IF]
+      r@ filehandle @ 0< IF  r@ r/w (open throw  THEN
+  [THEN]
+  0. r@ resize-file throw
+  sbuf# NewHandle >r  Top thisline @
+  BEGIN  dup  WHILE  dup @ 8+ count r> r> 2dup >r >r
+         SaveLine  CRLF  count r> r> 2dup >r >r SaveLine
+         @ @  REPEAT  drop
+  r> dup @ epos @ r@ write-file >r  epos off
+  DisposHandle  r> r> flush-file
+  r> pos! r> line#! throw throw
+  stredit changed off  do!schib on ;
+
+\ Aktionen auf thisline                                27apr91py
+
+: LineLen ( -- len )  stredit cols @ 1- ;
+
+Variable ?reformat
+Forward FormatPar
+
+: enough? ( len -- )  LineLen > ?reformat ! ;
+: Line@  ( -- addr count )  thisline @ @ 8 + count ;
+: SetLineLen  ( len -- )  dup enough?
+    Lalign dup thisline @ @ 8 + c@ Lalign
+    = 0= IF  thisline @ over SetHandleSize  THEN drop
+    0 Line@ + c! ;
+: +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
+: Liner@ ( -- addr count )  Line@ cur /string ;
+: 'cursor ( -- addr ) Liner@ drop ;
+: LineLen+! ( n -- ) >r thisline @ @ 8+ dup c@ r> + swap c!
+  0 Line@ + c! ?reformat @ IF  FormatPar  THEN ;
+
+\ Mausknopfreaktion                                    10may91py
+
+: +#Line ( n -- )  line#@ + stredit rows @ min
+  dup line#@ - +lines thisline! line#! ;
+
+: mark!       scredit 'r# ! scredit 'scr ! scredit 'edifile ! ;
+: (mark       isfile@  scr @  cur  mark! ;
+: (mark  line#@ scr !  cur r# !  (mark ;
+: str:view ( -- )  Line@ cur 2dup >
+  IF    stredit curoff (mark word@ find! >view !view
+        stredit curon
+  ELSE  2drop drop  THEN ;
+: ins+ ( n -- )
+    stredit 'scr @ line#@ > IF  dup stredit 'scr +!  THEN
+    stredit rows +!
+\  stredit child hmin +!
+\  stredit child hmin @  stredit sh @ max  stredit rows !
+    stredit resized ;
+
+\ stredit implementation
+
+stredit implements
     : at ( r c -- )  curoff super at
       line#@ thisline# @ - +lines thisline !
       line#@ thisline# ! curon ;
 
-    : 'line ( n -- addr u )  cols @ /mod swap >r
+    : 'line ( n -- addr u )  cols @ /modf swap >r
       thisline# @ 1- - +lines @ 8+ count r> /string ;
 
     : .line ( -- )
@@ -111,7 +251,7 @@ stredit implements
       BEGIN  dup  WHILE
              dup @ 8+ count r@ execute @ @  REPEAT
       drop  rdrop  r> thisline ! r> pos! r> line#! ;
-    : add ( addr u -- )  Line! NextLine 1 rows +! ;
+    : add ( addr u -- ) Line! NextLine 1 rows +! ;
 
     | Create readbuf  $100 allot
     | Create readbuf' $200 allot
@@ -163,78 +303,6 @@ stredit implements
     : close  ( -- )  super close do!schib off ;
 class;
 
-\ open window                                          02jul94py
-
-[defined] ?head [IF] ?head @ ?head off [THEN]
-
-: opentwind ( -- )
-    screen self menu-window new menu-window with
-        stredi-menu
-        1 1 viewport new  viewport with
-            (straction stredit new  dup >r
-            0 1 *fil 2dup glue new
-            2 vbox new
-            assign ^ r> endwith
-        ^ swap stredit with
-            bind win-title
-            isfile@ assign title$ endwith assign
-        edit-o @ stredit with 0 ins+ show-you endwith
-        c/l 1+ l/s 2* geometry show
-    endwith ;
-
-[defined] ?head [IF] ?head ! [THEN]
-
-: cur       stredit postpone pos@ ; immediate
-: pos!      stredit postpone pos! ; immediate
-: pos+!     stredit postpone pos+! ; immediate
-: line#@    stredit postpone line#@ ; immediate
-: line#!    stredit line#!  do!schib on ;
-: line#+!   stredit line#+! do!schib on ;
-: thisline# stredit postpone thisline# ; immediate
-
-\ Zeile löschen, verschieben und einfügen              07may91py
-
-: (DelLine ( lineMP -- ) @
-  dup 2@  dup  IF  @ cell+ !  ELSE  2drop  THEN
-  2@ swap dup  IF  @       !  ELSE  2drop  THEN ;
-: MoveLine ( lineMP thisMP -- )  >r dup (DelLine
-  r@ @ @ ?dup  IF  over @ !  THEN  r@ over @ cell+ !
-  dup r> @ !
-  dup @ @ dup  IF  @ cell+ !  ELSE  2drop  THEN ;
-: AddLine  ( lineMP thisMP -- )  >r dup (DelLine
-  r@ @ cell+ @ ?dup  IF  over @ cell+ !  THEN
-  r@ over @ !  dup r> @ cell+ !
-  dup @ cell+ @ dup  IF  @ !  ELSE  2drop  THEN ;
-
-: thisline  stredit thisline ; macro
-: retscr    stredit retscr   ; macro
-: retbuf    stredit start    ; macro
-
-: MakeLine ( -- MP )  $18 NewHandle  dup @ $18 erase ;
-: (InsLine ( MP -- ) thisline @
-  dup 0=  IF    drop thisline !  ELSE  MoveLine  THEN ;
-: InsLine ( -- ) MakeLine  (InsLine ;
-
-\ Aktionen auf thisline                                27apr91py
-
-: Lalign  ( len -- alen ) $-10 and $18 + ;
-: LineLen ( -- len )  stredit cols @ 1- ;
-
-Variable ?reformat
-Forward FormatPar
-
-: enough? ( len -- )  LineLen > ?reformat ! ;
-: Line@  ( -- addr count )  thisline @ @ 8 + count ;
-: SetLineLen  ( len -- )  dup enough?
-    Lalign dup thisline @ @ 8 + c@ Lalign
-    = 0= IF  thisline @ over SetHandleSize  THEN drop
-    0 Line@ + c! ;
-: +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
-: Liner@ ( -- addr count )  Line@ cur /string ;
-: 'cursor ( -- addr ) Liner@ drop ;
-: LineLen+! ( n -- ) >r thisline @ @ 8+ dup c@ r> + swap c!
-  0 Line@ + c! ?reformat @ IF  FormatPar  THEN ;
-
 \ Einfügen                                             07may91py
 
 : InsChar  ( char -- )  dup xc-size >r
@@ -260,28 +328,6 @@ Forward FormatPar
   retscr !  Line@ >ret ;
 : lmodify ( -- )  modify  retscr @ negate retscr ! ;
 
-\ Zeile löschen                                        27apr91py
- 
-: thisline! ( MP / 0 -- )
-  dup  IF  thisline !  EXIT  THEN  drop rdrop ;
-
-:noname ( -- )  thisline @ @       @ thisline!  1 line#+! ; IS NextLine
-: PrevLine ( -- )  thisline @ @ cell+ @ thisline! -1 line#+! ;
-
-:noname ( n -- lineMP )  dup 0= IF  drop thisline @ EXIT  THEN
-  >r thisline @ dup  0= IF  rdrop EXIT  THEN
-  r> dup thisline# @ 1- + over 0<
-  IF    0 min - negate   0 ?DO  @ cell+ @  LOOP
-  ELSE  stredit rows @ - 0 max - 0 ?DO  @ @  LOOP
-  THEN ; IS +lines
-
-\ Zeile setzen                                         29apr91py
-
-: (Line! ( addr len -- MP )
-  pad place pad count  dup Lalign  NewHandle >r
-  ( dup pos! ) r@ @ 8+ place  0. r@ @ 2!  r> ;
-:noname  ( addr len -- )  (Line! (InsLine ; IS Line!
-
 \ Line stack                                           11oct93py
 
 Variable linebuffer
@@ -295,66 +341,6 @@ Variable linebuffer
                                                     
 \ Vorbereitung für Undo und Redo                       01aug92py
 
-
-\ Text löschen                                         29apr91py
-
-:noname    ( -- ) \ 0 0 stredit at ;
-  thisline @ 0= ?EXIT  thisline @
-  BEGIN  dup @ cell+ @  dup  WHILE  nip  REPEAT  drop thisline!
-  1 line#! 0 pos! do!schib on ; IS Top
-: Bottom ( -- ) \ stredit rows @ 1- 0 stredit at
-  thisline @ 0= ?EXIT  thisline @ 0
-  BEGIN  >r dup @      @  dup  WHILE  nip r> 1+ REPEAT
-  drop thisline!  r> line#+!
-  thisline @ @ 8+ c@ pos!  do!schib on ;
-:noname ( -- ) thisline @ 0= ?EXIT  Top  thisline @
-  BEGIN  dup @ @ >r  DisposHandle r> dup 0= UNTIL
-  drop  thisline off ; IS DelText
-
-\ Streamfile sichern                                   06may91py
-
-$2000 Constant sbuf#   \ A long buffer for fast saving
-Create CRLF  1 c, #lf c,
-Variable epos
-
-: SaveLine ( addr len MP handle -- )  >r >r
-  BEGIN  r@ @ sbuf# epos @ /string 2 pick over >  WHILE
-         3 pick rot 2 pick move  epos off
-         r> dup @ sbuf# r@ write-file throw
-         >r /string  REPEAT
-  drop swap dup epos +! move  rdrop rdrop ;
-
-\ Save Text                                            12may91py
-
-:noname  ( -- )
-  thisline push  loadfile push
-  line#@ >r cur >r
-  stredit edifile @ >r epos off
-  [defined] filehandle [IF]
-      r@ filehandle @ 0< IF  r@ r/w (open throw  THEN
-  [THEN]
-  0. r@ resize-file throw
-  sbuf# NewHandle >r  Top thisline @
-  BEGIN  dup  WHILE  dup @ 8+ count r> r> 2dup >r >r
-         SaveLine  CRLF  count r> r> 2dup >r >r SaveLine
-         @ @  REPEAT  drop
-  r> dup @ epos @ r@ write-file >r  epos off
-  DisposHandle  r> r> flush-file
-  r> pos! r> line#! throw throw
-  stredit changed off  do!schib on ; IS saveText
-
-\ Mausknopfreaktion                                    10may91py
-
-: +#Line ( n -- )  line#@ + stredit rows @ min
-  dup line#@ - +lines thisline! line#! ;
-
-: mark!       scredit 'r# ! scredit 'scr ! scredit 'edifile ! ;
-: (mark       isfile@  scr @  cur  mark! ;
-: (mark  line#@ scr !  cur r# !  (mark ;
-:noname ( -- )  Line@ cur 2dup >
-  IF    stredit curoff (mark word@ find! >view !view
-        stredit curon
-  ELSE  2drop drop  THEN ; IS str:view
 
 \ Verlassen des Editors                                30apr91py
 
@@ -383,8 +369,8 @@ Variable epos
   IF    line#@ 1 = ?EXIT  PrevLine  LineLen 1- pos!
   ELSE  -1 pos+!  THEN ;
 
-: +tab         ( -- ) $10 cur    $10  mod - 0 ?DO currite LOOP ;
-: -tab         ( -- ) cur  8 mod  negate  dup 0=  8 * + negate
+: +tab         ( -- ) $10 cur    $10  modf - 0 ?DO currite LOOP ;
+: -tab         ( -- ) cur  8 modf  negate  dup 0=  8 * + negate
   0 ?DO curleft+  LOOP ;
 
 : b  $F FOR  PrevLine  NEXT ;
@@ -399,12 +385,6 @@ Variable epos
 
 \ Zeilen                                               07may91py
 
-:noname ( n -- )
-    stredit 'scr @ line#@ > IF  dup stredit 'scr +!  THEN
-    stredit rows +!
-\  stredit child hmin +!
-\  stredit child hmin @  stredit sh @ max  stredit rows !
-    stredit resized ; IS ins+
 : linemodified  stredit .line ;
 : cr  0 pos!  thisline @ @ @ 
   0= IF  pad 0 Line! 1 ins+ ( modified ) THEN
@@ -612,12 +592,8 @@ forward replace-it'
 
 \ Table of actions                                     22apr91py
 
-[defined] ?head [IF] ?head @ 0 ?head ! [THEN]
-[defined] VFXForth [IF]
-    Create (straction'
-[ELSE]
-    Create (straction
-[THEN]
+[defined] ?head [IF] ?head @ ?head off [THEN]
+Create (straction
 \ File
 ' UseFile A,         ' MakeFile A,        ' KillFile A,        ' MakeDir A,
 ' saveText A,        ' edibye A,
@@ -650,9 +626,22 @@ forward replace-it'
 \ 8x8font         8x16font
 ' (putchar A,
 
-[defined] VFXForth [IF]
-' (straction' IS (straction
-[THEN]
+\ open window                                          02jul94py
+
+: opentwind ( -- )
+    screen self menu-window new menu-window with
+        stredi-menu
+        1 1 viewport new  viewport with
+            (straction stredit new  dup >r
+            0 1 *fil 2dup glue new
+            2 vbox new
+            assign ^ r> endwith
+        ^ swap stredit with
+            bind win-title
+            isfile@ assign title$ endwith assign
+        edit-o @ stredit with 0 ins+ show-you endwith
+        c/l 1+ l/s 2* geometry show
+    endwith ;
 
 : setup-edit ( addr n -- ) swap
     stredit with s" " add  1+ cols ! ^ endwith ;
