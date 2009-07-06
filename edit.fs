@@ -106,7 +106,7 @@ class;
 
 [defined] VFXForth [IF]
     : (thisline! ( MP / 0 -- )
-	dup  IF  thisline !  EXIT  THEN  drop rdrop ;
+	dup  IF  thisline !  EXIT  THEN  drop rdrop ; DoNotSin
     : thisline! postpone (thisline! discard-sinline ; immediate
 [ELSE]
     : thisline! ( MP / 0 -- )
