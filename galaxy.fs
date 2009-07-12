@@ -161,20 +161,26 @@ Variable spiral-dist spiral-dist on
 \ thickness (z): 200 pc (1 pc = 3.086e16 m),
 \ R_e=3.5 kpc. Sigma_0: 6e10 solar masses within R=10kpc
 
+-3.5e FConstant r_e
+
+: sdist ( r -- n ) fdup R_e f/ fexp f* ;
+: s0-check ( -- r f )  frnd fdup r_e f* -8e f* sdist frnd f2* f> ;
+: s0-rnd ( -- r ) BEGIN  s0-check 0= WHILE  fdrop  REPEAT  ;
+: s0-tr ( -- r t ) frnd ( t ) s0-rnd ( ft fr ) fswap ;
+
 : set-s0' ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
-    swap ?DO  BEGIN  frnd ( t )
-            frnd f2* f2* fexp 12e f/ spiral-dist @ 0= WHILE
-            fdrop fdrop  REPEAT ( ft fr )
+\    over 2 9 */ to central#
+    swap ?DO  s0-tr
         rnd >r
-	funder 1e f+ f/
+\	funder 1e f+ f/
         r@ $1 and IF fnegate THEN
-        fswap di f+ ds f*
+        fswap ( di f+ ) ds f* 1e di f+ f*
 	frnd pi f*
         r> $2 and IF pi f+ THEN
         fsincos frot funder f* f-rot f*
         I star dup element x df!
                dup element y df!
-        dz f*      element z df!
+        dz .05e f* f*      element z df!
     LOOP ;
 
 : DFVariable  Create 1 dfloats allot ;
@@ -273,7 +279,7 @@ Code v+ ( v1 v2 -- )
 Variable dirsens  dirsens on
 
 : approx ( f addr -- )
-    dup df@ fover f- f2/ f- df! ;
+    ( dup df@ fover f- f2/ f- ) f2/ dup df@ f2/ f+ df! ;
 
 : set-a+ ( -- )
   star# 0 ?DO  I star dup >xyz
@@ -293,9 +299,10 @@ Variable dirsens  dirsens on
 0 value s0-galaxies
 
 : set-masses ( n dp sf -- )  >r >r init-stars
-    star# swap #100 */ -4 and dup >r 1e .33e set-bulge
+    star# swap #100 */ -4 and dup >r
+    s0-galaxies IF  .25e .10e  ELSE  1e .33e  THEN  set-bulge
     r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm*
-    s0-galaxies IF  set-s0  ELSE  set-spiral  THEN ;
+    s0-galaxies IF  set-s0'  ELSE  set-spiral  THEN ;
 
 #30 #40 #100 set-masses
 
@@ -321,7 +328,7 @@ Variable a-pos $20 a-pos !
 
 $40 Value vismax
 : visminmax 0 max vismax 1- min ;
-: vis* vismax s0-galaxies IF 12 ELSE 4 THEN fm*/
+: vis* vismax s0-galaxies IF 4 ELSE 4 THEN fm*/
     .5e f+ ff>s visminmax ;
 : vis'* vismax $40 * fm* .5e f+ ff>s ;
 
