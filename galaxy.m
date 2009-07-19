@@ -1,4 +1,4 @@
-#! xbigforth
+#! /usr/local/bin/xbigforth
 \ automatic generated code
 \ do not edit
 
@@ -7,7 +7,6 @@ also editor also minos also forth
 component class galaxy
 public:
   glcanvas ptr GLgalaxy
-  canvas ptr mass#
   canvas ptr a#
   hscaler ptr bulge#
   hscaler ptr spread#
@@ -114,7 +113,7 @@ galaxy implements
   galaxy-draw ;
 : iterate-step  ^ 1 $10000 dup NewTask pass op!
   galaxy-lock lock
-  do-mass @ 1 = IF  set-msum mass# draw set-a a# draw  THEN
+  do-mass @ 1 = IF  set-msum ( mass# draw ) set-a a# draw  THEN
   do-mass off set-a+ a# draw redraw-galaxy dpy sync
   galaxy-lock unlock ;
 : iterate-disc  ^ 1 $10000 dup NewTask pass op!
@@ -124,12 +123,8 @@ galaxy implements
   : widget  ( [dumpstart] )
               GL[ outer with draw-galaxy endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $200 $1 *hfil $200 $1 *vfil glcanvas new  ^^bind GLgalaxy
             #1 habox new
-                    CV[ clear visualize-mass ]CV ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $20 $1 *hfil $80 $1 *vfil canvas new  ^^bind mass#
-                    ^^ #0 #360 SC[ #360 mod alphax ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around X axis" hscaler new  #-180 SC# 
-                    ^^ #0 #360 SC[ #360 mod alphay ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new  #-180 SC# 
-                    ^^ #0 #360 SC[ #360 mod alphaz ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new  #-180 SC# 
-                  #4 vabox new vfixbox  #2 borderbox
-                    CV[ 0 0 0 rgb> backcolor clear a-pos @ >r
+                    clipper new  D[ 
+                      CV[ draw-scala a-pos @ >r
 decimal
 visualize-v  r@ vis@ 
 visualize-v+ r@ vis@ swap
@@ -145,16 +140,23 @@ path 0 vismax -$100 * to stroke ]CV ( MINOS ) ^^ CK[ nip 1 and IF  DOPRESS  2swa
 drop
 a# xywh drop >r drop - r> vismax swap */
 0 max vismax 1- min a-pos !
-a# draw ]CK ( MINOS ) $20 $1 *hfil $80 $1 *vfil canvas new  ^^bind a#
-                    ^^ #0 #360 SC[ #360 mod alphapitch ! redraw-galaxy ]SC ( MINOS )  TT" Pitch" hscaler new  #-180 SC# 
-                    ^^ #0 #360 SC[ #360 mod alphabend ! redraw-galaxy ]SC ( MINOS )  TT" Bend" hscaler new  #-180 SC# 
-                    ^^ #0 #360 SC[ #360 mod alpharoll ! redraw-galaxy ]SC ( MINOS )  TT" Roll" hscaler new  #-180 SC# 
-                  #4 vabox new vfixbox  #2 borderbox
+a# draw ]CK ( MINOS ) $20 $1 *hfil $100 $1 *vfil canvas new  ^^bind a#
+                    #1 habox new ]D ( MINOS ) 
+                        ^^ #0 #360 SC[ #360 mod alphapitch ! redraw-galaxy ]SC ( MINOS )  TT" Pitch" hscaler new  #-180 SC# 
+                        ^^ #0 #360 SC[ #360 mod alphabend ! redraw-galaxy ]SC ( MINOS )  TT" Bend" hscaler new  #-180 SC# 
+                        ^^ #0 #360 SC[ #360 mod alpharoll ! redraw-galaxy ]SC ( MINOS )  TT" Roll" hscaler new  #-180 SC# 
+                      #3 vabox new vfixbox  #2 borderbox
+                        ^^ #0 #360 SC[ #360 mod alphax ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around X axis" hscaler new  #-180 SC# 
+                        ^^ #0 #360 SC[ #360 mod alphay ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Y axis" hscaler new  #-180 SC# 
+                        ^^ #0 #360 SC[ #360 mod alphaz ! redraw-galaxy ]SC ( MINOS )  TT" Rotate around Z axis" hscaler new  #-180 SC# 
+                      #3 vabox new vfixbox  #2 borderbox
+                    #2 habox new
+                  #2 vabox new vfixbox 
                     ^^ #1000 #1000 SC[ ( pos -- ) zoom ! redraw-galaxy ]SC ( MINOS )  TT" Zoom factor in %" vscaler new 
                     ^^ #5 #10 SC[ ( pos -- ) .1e fm* f>fs .black2 3 cells + !
 redraw-galaxy ]SC ( MINOS )  TT" Background intensity" hscaler new 
                   #2 vabox new #2 borderbox
-                #3 habox new
+                #2 habox new
                       ^^ #60 #500 SC[ .01e fm* 3.8e f* f**2 1/f msum+ f! ]SC ( MINOS )  TT" Background radius relative to galaxy radius in percent" hscaler new 
                       ^^ #33 #100 SC[ bulgep ! make-galaxy ]SC ( MINOS )  TT" Bulge in percent" hscaler new  ^^bind bulge#
                     #2 vabox new

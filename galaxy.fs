@@ -160,11 +160,13 @@ Variable spiral-dist spiral-dist on
 
 \ thickness (z): 200 pc (1 pc = 3.086e16 m),
 \ R_e=3.5 kpc. Sigma_0: 6e10 solar masses within R=10kpc
+\ total masses: 5.106*6e10
 
 -3.5e FConstant r_e
+-8e FConstant r_total
 
 : sdist ( r -- n ) fdup R_e f/ fexp f* ;
-: s0-check ( -- r f )  frnd fdup r_e f* -8e f* sdist frnd f2* f> ;
+: s0-check ( -- r f )  frnd fdup r_e f* r_total f* sdist frnd f2* f> ;
 : s0-rnd ( -- r ) BEGIN  s0-check 0= WHILE  fdrop  REPEAT  ;
 : s0-tr ( -- r t ) frnd ( t ) s0-rnd ( ft fr ) fswap ;
 
@@ -174,7 +176,7 @@ Variable spiral-dist spiral-dist on
         rnd >r
 \	funder 1e f+ f/
         r@ $1 and IF fnegate THEN
-        fswap ( di f+ ) ds f* 1e di f+ f*
+        fswap ( di f+ ) ds 1e di f+ f* f*
 	frnd pi f*
         r> $2 and IF pi f+ THEN
         fsincos frot funder f* f-rot f*
@@ -296,7 +298,7 @@ Variable dirsens  dirsens on
           element ax+ approx
   pause LOOP ;
 
-0 value s0-galaxies
+-1 value s0-galaxies
 
 : set-masses ( n dp sf -- )  >r >r init-stars
     star# swap #100 */ -4 and dup >r
@@ -319,6 +321,18 @@ Variable dirsens  dirsens on
 0 0 0 set-masses
 [THEN]
 
+\ Units
+
+30.856776e15 FConstant parsec
+parsec r_e f* 1000e f* 2.25e 1.3e f* f/ r_total f* FConstant u_galaxy \ unit to meter
+6.67428e-11 FConstant G
+1.9891e30 FConstant Msol
+Msol 6e10 f* 5.1e f* FConstant m_total
+G m_total f* u_galaxy f**2 f/ FConstant u_force
+G m_total f* u_galaxy f/ fsqrt FConstant u_speed
+
+\ Plot results
+
 Variable vis-mass
 Variable vis-a+
 Variable vis-a
@@ -326,11 +340,14 @@ Variable vis-a
 Variable vis-max
 Variable a-pos $20 a-pos !
 
-$40 Value vismax
+50 Value vismax
 : visminmax 0 max vismax 1- min ;
-: vis* vismax s0-galaxies IF 4 ELSE 4 THEN fm*/
+\ unit to length
+: u>len u_galaxy 1e20 f/ f* 5e f*
     .5e f+ ff>s visminmax ;
-: vis'* vismax $40 * fm* .5e f+ ff>s ;
+\ unit to accelleration/speed
+: u>accel u_force f* .05e9 f* vismax $100 * fm* .5e f+ ff>s ;
+: u>speed u_speed f* 5000e3 f/ vismax $100 * fm* .5e f+ ff>s ;
 
 : fsqsum ( x y z -- d ) f**2 fswap f**2 f+ fswap f**2 f+ ;
 : !vis-array ( addr -- )  to vis-array
@@ -338,7 +355,7 @@ $40 Value vismax
     vismax 2+ 2* cells vis-array $!len  vis-array $@ erase ;
 : r#@ ( addr -- r )  xyz@ fsqsum fsqrt ;
 : vis+ ( val i -- )
-    star r#@ vis* 1+ 2* cells
+    star r#@ u>len 1+ 2* cells
     vis-array $@ drop + >r 2 r@ +! dup 2* r@ cell+ +!
     r> 2 cells - >r  1 r@ +! dup r@ cell+ +!
     r> 4 cells + >r  1 r@ +!     r> cell+ +! ;
@@ -351,8 +368,14 @@ $40 Value vismax
     dup element x df@ f* f+
     xyz@ fsqsum fsqrt f/ fabs ;
 [IFDEF] canvas
+: draw-scala
+    ^ canvas with  0 0 0 rgb> backcolor clear
+    $40 dup dup rgb> drawcolor 10 10 steps
+    10 1 DO  I 0 home! path 0 -10 to stroke  LOOP
+    10 1 DO  0 I home! path 10 0 to stroke  LOOP
+    endwith ;
 : draw-vis-array
-  ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!
+  ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!  -1 0 to
       rgb> drawcolor  path
       0 vismax 0 ?DO  I vis@ 2*
                       dup >r - negate
@@ -361,32 +384,32 @@ $40 Value vismax
   endwith ( decimal vis-max ? ) ;
 : visualize-mass  vis-mass !vis-array
   star# 0 ?DO  I star element msum df@
-               1e f* vis'* I vis+  LOOP
+               1e f* u>accel I vis+  LOOP
   $00 $FF $00  draw-vis-array ;
 : >dir ( fx fy fz -- sum )
     dirsens @ IF  sv*  ELSE drop fsqsum fsqrt THEN ;
 : visualize-a#  vis-a !vis-array
     star# 0 ?DO
 	I star a@ I star >dir
-        .5e f* vis'* I vis+  LOOP ;
+        u>accel I vis+  LOOP ;
 : visualize-a
     visualize-a#  $00 $00 $FF   draw-vis-array ;
 : visualize-a+#  vis-a+ !vis-array
     star# 0 ?DO
 	I star a+@ I star >dir
-        .5e f* vis'* I vis+  LOOP ;
+        u>accel I vis+  LOOP ;
 : visualize-a+
     visualize-a+#  $FF $00 $00  draw-vis-array ;
 : visualize-v#  vis-a !vis-array
     star# 0 ?DO
 	I star a@ I star >dir I star r#@ f* fsqrt
-        .5e f* vis'* I vis+  LOOP ;
+        u>speed I vis+  LOOP ;
 : visualize-v
     visualize-v#  $00 $FF $FF   draw-vis-array ;
 : visualize-v+#  vis-a+ !vis-array
     star# 0 ?DO
 	I star a+@ I star >dir I star r#@ f* fsqrt
-        .5e f* vis'* I vis+  LOOP ;
+        u>speed I vis+  LOOP ;
 : visualize-v+
     visualize-v+#  $FF $FF $00  draw-vis-array ;
 : write-csv ( -- ) 6 set-precision decimal
