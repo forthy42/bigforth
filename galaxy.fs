@@ -328,8 +328,8 @@ parsec r_e f* 1000e f* 2.25e 1.3e f* f/ r_total f* FConstant u_galaxy \ unit to 
 6.67428e-11 FConstant G
 1.9891e30 FConstant Msol
 Msol 6e10 f* 5.1e f* FConstant m_total
-G m_total f* u_galaxy f**2 f/ FConstant u_force
-G m_total f* u_galaxy f/ fsqrt FConstant u_speed
+G m_total f* u_galaxy 2.25e 1.3e f* f* f**2 f/ FConstant u_force
+G m_total f* u_galaxy 2.25e 1.3e f* f**2 f* f/ fsqrt FConstant u_speed
 
 \ Plot results
 
@@ -346,8 +346,8 @@ Variable a-pos $20 a-pos !
 : u>len u_galaxy 1e20 f/ f* 5e f*
     .5e f+ ff>s visminmax ;
 \ unit to accelleration/speed
-: u>accel u_force f* .05e9 f* vismax $100 * fm* .5e f+ ff>s ;
-: u>speed u_speed f* 5000e3 f/ vismax $100 * fm* .5e f+ ff>s ;
+: u>accel u_force f* 1e9 f* vismax $100 * fm* .5e f+ ff>s ;
+: u>speed u_speed f* 1000e3 f/ vismax $100 * fm* .5e f+ ff>s ;
 
 : fsqsum ( x y z -- d ) f**2 fswap f**2 f+ fswap f**2 f+ ;
 : !vis-array ( addr -- )  to vis-array
