@@ -130,8 +130,8 @@ how:    : init ( file len -- ) super init  assign ;
  [THEN]   shape off image off ;
         : assign ( file len -- )  dispose-image
           read-icon  h ! w !
-[defined] win32 [IF]  2 0 DO  swap  screen xrc dc @
-          CreateCompatibleDC tuck SelectObject drop  LOOP
+[defined] win32 [IF]  2 0 DO  swap dup IF screen xrc dc @
+              CreateCompatibleDC tuck SelectObject drop THEN LOOP
 [THEN]    shape ! image ! ;
 
 \ Icon                                                 27jun02py

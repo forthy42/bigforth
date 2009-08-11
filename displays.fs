@@ -322,9 +322,9 @@ how:    : dispose  clicks HandleOff
 \        : ?gc ( win -- gc )  dup GetDC dup 0=
 \          IF  drop  ELSE  nip  THEN ;
         : mask { xs ys w h x y win1 win2 } ?clip
-          :srcand ys xs win1 \ ?gc
-          h w y x drawable BitBlt ?err
-          :srcor  ys xs win2 \ ?gc
+          win1 IF  :srcand ys xs win1 \ ?gc
+                   h w y x drawable BitBlt ?err
+                   :srcor  ELSE  $00CC0020  THEN  ys xs win2 \ ?gc
           h w y x drawable BitBlt ?err ;
         : image { xs ys w h x y win }      ?clip
           $00CC0020 ys xs win \ ?gc
