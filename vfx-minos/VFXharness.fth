@@ -278,10 +278,6 @@ Variable Masters	 \ -- addr
 : Hunlock ( addr -- )
 \ *G Unlock the pool. A dummy in most implementations.
   drop ;
-: SetHandleSize ( mp size -- )
-\ *G Resize the pool.
-  swap >r
-  r@ @ cell- over cell+ resize throw !+ r> ! ;
 : GetHandleSize ( mp -- size )
 \ *G Get the size of the pool.
   cell- @ ;
@@ -1050,3 +1046,7 @@ set-current
 \ ======
 \ *> ###
 \ ======
+: SetHandleSize ( mp size -- )
+\ *G Resize the pool.
+  swap >r
+  r@ @ cell- over cell+ resize throw !+ r> ! ;

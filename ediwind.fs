@@ -55,11 +55,12 @@ Variable closing closing off
     : (#load ( n >in -- )  2drop isfile@ include-file ;
     : (load  2drop true abort" VFX doesn't support blocks!" ;
     minos definitions previous
+    Defer edicatch
 [ELSE]
 : purgebuf prev @ emptybuf ;
-[THEN]
 forward edicatch
-forward (scraction
+[THEN]
+0 AValue (scraction
 forward ev-key
 forward done
 forward ?stamp

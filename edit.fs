@@ -181,7 +181,7 @@ Forward FormatPar
 : Line@  ( -- addr count )  thisline @ @ 8 + count ;
 : SetLineLen  ( len -- )  dup enough?
     Lalign dup thisline @ @ 8 + c@ Lalign
-    = 0= IF  thisline @ over SetHandleSize  THEN drop
+    <> IF  thisline @ over 1+ SetHandleSize  THEN drop
     0 Line@ + c! ;
 : +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
 : Liner@ ( -- addr count )  Line@ cur /string ;

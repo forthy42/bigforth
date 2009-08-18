@@ -626,7 +626,7 @@ here keytable - 4/  Constant #keys
 
 \ Key event                                            13nov05py
 
-: visible?  ( key -- f )   $FF and ;  hmacro
+: visible?  ( key -- f )  ( $FF and ) ;  hmacro
 : ?key  ( -- key )  (key @  dup visible? 0=  abort" What?" ;
 : (putchar   ( -- )  ?key dup xc-size >r
    imode @  IF  r@ instX  char>   THEN
@@ -639,7 +639,7 @@ here keytable - 4/  Constant #keys
              LOOP  drop ;
 
 \ Table of actions                                     09oct94py
-Create (scraction  \ File
+here to (scraction  \ File
 ' UseFile A,         ' MakeFile A,        ' KillFile A,        ' MakeDir A,
 ' save-file A,       ' edibye A,
 \ Exits
@@ -678,15 +678,14 @@ Variable nokey?    nokey? off
 : edierror  jingle @  IF  alarm  THEN  scredit showerror ;
 
 [defined] VFXForth [IF]
-: (edicatch   r>  updated? not >r
+:noname   r>  updated? not >r
   scredit curoff  catch
   updated? r> and IF  scredit slided  THEN
   2 case? IF  scredit close  EXIT  THEN
   IF [defined] "error [IF]
 	  "error @ dup IF edierror 0 THEN "error !
       [THEN] THEN
-  scredit curon ; DoNotSin
-: edicatch  postpone (edicatch discard-sinline ; immediate
+  scredit curon ; IS edicatch
 [ELSE]
 : edicatch   r>  updated? not >r
   scredit curoff  catch
