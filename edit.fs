@@ -96,10 +96,11 @@ class;
 
 \ Zeile setzen                                         29apr91py
 
-: Lalign  ( len -- alen ) $-4 cells and 6 cells + ;
+: Lalign  ( len -- alen ) $-4 cells and 8 cells + ;
 : (Line! ( addr len -- MP )
   ( pad place pad count ) dup Lalign  NewHandle >r
-  ( dup pos! ) r@ @ cell+ cell+ place  0. r@ @ 2!  r> ;
+  ( dup pos! ) r@ @ cell+ cell+ place  0. r@ @ 2!
+  0 r@ @ cell+ cell+ count + c! r> ;
 : Line!  ( addr len -- )  (Line! (InsLine ;
 
 \ Zeile löschen                                        27apr91py
@@ -181,7 +182,7 @@ Forward FormatPar
 : Line@  ( -- addr count )  thisline @ @ 8 + count ;
 : SetLineLen  ( len -- )  dup enough?
     Lalign dup thisline @ @ 8 + c@ Lalign
-    <> IF  thisline @ over 1+ SetHandleSize  THEN drop
+    <> IF  thisline @ over SetHandleSize  THEN drop
     0 Line@ + c! ;
 : +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
 : Liner@ ( -- addr count )  Line@ cur /string ;
