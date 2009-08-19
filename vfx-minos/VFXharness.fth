@@ -693,8 +693,9 @@ Vocabulary DOS
 
 also DOS definitions
 
-Extern: char * setlocale ( int , char * ); ( locale addr -- addr )
-Extern: int gettimeofday ( int * , int * ); ( timeval timezone -- r )
+LocalExtern: setlocale char * setlocale ( int , char * ); ( locale addr -- addr )
+LocalExtern: gettimeofday int gettimeofday ( int * , int * ); ( timeval timezone -- r )
+LocalExtern: system int system ( char * ); ( cmd -- r )
 
 synonym env$ readenv
 

@@ -1404,10 +1404,6 @@ do-edit do-it !
 
 also dos
 
-[defined] system 0= [IF]
-: system 2drop -1 ;
-[THEN]
-
 Variable $acc
 : +$ ( addr u -- ) $acc $+! ;
 
