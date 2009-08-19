@@ -50,7 +50,7 @@ descriptors implements
         0 scratch count bounds ?DO
             IF    I c@ dup tolower dup I c! <>
             ELSE  true  THEN
-        LOOP  drop scratch count ;
+        LOOP  drop scratch count 2dup + >r s"  name:" tuck r> swap move + ;
     : edit-field ( -- o )
 	name $@ 0 ST[ text@ >current-name ]ST
 	item self >class" rightcase
