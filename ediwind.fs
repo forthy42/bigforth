@@ -15,6 +15,7 @@ Variable do-done do-done off
 Variable closing closing off
 
 [defined] VFXforth [IF]
+    : /string  /string dup 0< IF + 0 THEN ;
     also Forth definitions
     defer (block
     defer block
@@ -54,7 +55,7 @@ Variable closing closing off
     : str? ( file -- flag )  drop true ;
     : (#load ( n >in -- )  2drop isfile@ include-file ;
     : (load  2drop true abort" VFX doesn't support blocks!" ;
-    minos definitions previous
+    editor definitions previous
     Defer edicatch
 [ELSE]
 : purgebuf prev @ emptybuf ;

@@ -806,5 +806,5 @@ export editor v l view ed ;
 
 Module;  Onlyforth
 [ELSE]
-    only forth
+    only forth definitions
 [THEN]
