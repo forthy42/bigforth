@@ -75,7 +75,7 @@ Defer do-bug
        r@ dump-bind
        r@ dump-vars
        r> dump-link ]: IS do-boxdump
-    :[ cr indent @ spaces ." ( bug at: " . ." ) " ]: IS do-bug
+    :[ cr indent @ spaces .' X" --Empty--" text-label new ( bug at: ' . .' ) ' ]: IS do-bug
     (dump-box ;
 
 : dispose-box ( o -- )
@@ -86,7 +86,7 @@ Defer do-bug
 
 : dump-name ( o -- )
     all-descs find-object
-    descriptors with  dump-ptr  endwith ;
+    ?dup IF  descriptors with  dump-ptr  endwith  THEN ;
 
 : ?dump-box-name ( o -- )
     names find-name ?dup IF
