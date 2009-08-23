@@ -494,6 +494,13 @@ synonym 0" z"	\ -- ; -- addr
   BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  1+  THEN
   rdrop ;
 
+: /string ( c-addr u n -- c-addr' u' )
+\ *G protect /string against overflows.
+    dup negate >r  dup 0> IF
+	/string dup r> u>= IF  + 0  THEN
+    ELSE
+	/string dup r> u< IF  + 1+ -1  THEN
+    THEN ;
 
 \ **************************
 \ *S Interpretive structures

@@ -15,7 +15,6 @@ Variable do-done do-done off
 Variable closing closing off
 
 [defined] VFXforth [IF]
-    : /string  /string dup 0< IF + 0 THEN ;
     also Forth definitions
     defer (block
     defer block

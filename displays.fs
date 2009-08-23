@@ -175,7 +175,7 @@ how:    : dispose  clicks HandleOff
               ( clip-should @ clip-is ! )  THEN ;
         : txy! ( x y -- )  txy 2@ p+ ty ! tx ! ;
         : geometry ( w h -- )
-          x @ y @ swap resize ;
+          x @ y @ 2swap resize ;
         : geometry? ( -- w h )  w @ h @ ;
         : transback ;    : trans ;   : trans' ;
         : set-rect ( o -- )  bind pointed ;
