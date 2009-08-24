@@ -494,8 +494,8 @@ synonym 0" z"	\ -- ; -- addr
   BEGIN  1- dup WHILE  2dup + c@ r@ = UNTIL  1+  THEN
   rdrop ;
 
-: /string ( c-addr u n -- c-addr' u' )
-\ *G protect /string against overflows.
+: safe/string ( c-addr u n -- c-addr' u' )
+\ *G protect safe/string against overflows.
     dup negate >r  dup 0> IF
 	/string dup r> u>= IF  + 0  THEN
     ELSE
@@ -730,7 +730,7 @@ $50 [defined] osx [IF] $100 + [THEN] Buffer: dta
 
 : >date ( date -- string len )  base push decimal  >ymd
   0 <#  # # 2drop  >r S" janfebmaraprmayjunjulaugsepoctnovdec"
-        r> 0 max #11 min dup dup + + /string 3 min
+        r> 0 max #11 min dup dup + + safe/string 3 min
         over + 1- DO  I c@ hold -1  +LOOP  0 # #  #> ;
 
 \ dictionary listing functions
@@ -883,8 +883,8 @@ Variable kbshift
 Create bases  #10 c,  $10 c, %10 c, #10 c, 0 c,
 \             10      16     2      10     char
 : getbase  ( addr u -- addr' u' )  over c@ '#' - dup 5 u<
-  IF  bases + c@ base ! 1 /string  ELSE  drop  THEN ;
-: getsign  over c@ '-' = dup >r negate /string r> ;
+  IF  bases + c@ base ! 1 safe/string  ELSE  drop  THEN ;
+: getsign  over c@ '-' = dup >r negate safe/string r> ;
 Defer char@ ' count IS char@
 : s>number  ( addr len -- d )  base push
   getsign >r  getbase  base @ 0=
@@ -894,7 +894,7 @@ Defer char@ ' count IS char@
   BEGIN  dup >r >number  dup r> =
          IF  rdrop 2drop dpl off  EXIT  THEN
          dup  WHILE  dup dpl ! over c@ -3 and ',' = 0=
-         IF  rdrop 2drop dpl off  EXIT  THEN  1 /string
+         IF  rdrop 2drop dpl off  EXIT  THEN  1 safe/string
      dup 0= UNTIL  THEN  2drop r> IF  dnegate  THEN ;
 
 \ case?

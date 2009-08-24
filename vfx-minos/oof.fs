@@ -1040,7 +1040,7 @@ oo-types definitions
     align  interface,
     lastob! thread, parent, var, 'link, 0 , cells, interfaces,
     dup
-    IF    dup :method# + @ >r :init + swap r> :init /string move
+    IF    dup :method# + @ >r :init + swap r> :init safe/string move
     ELSE  2drop  THEN ;
 
 : class; ( -- ) \ oof- oof end-class

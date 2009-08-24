@@ -17,12 +17,12 @@
     restore-cursor >r 2dup swap type 2dup swap cur-correct r> ;
 
 : (del   ( m s addr pos1 -- m s addr pos2 ) 2 pick 0= ?exit
-  at? >r >r  2dup 4 pick swap /string 1- 2dup
+  at? >r >r  2dup 4 pick swap safe/string 1- 2dup
              over 1+ -rot move type space rot 1- -rot
   r> r> at ;
 : cur+       >r at? r> + c/line @ /mod swap >r + r> at ;
 : >string  ( span addr pos1 -- span addr pos1 addr2 len )
-    over 3 pick 2 pick chars /string ;
+    over 3 pick 2 pick chars safe/string ;
 : <xcins>  ( max span addr pos1 xcchar -- max span addr pos2 )
     >r  2over r@ xc-size + u< IF  rdrop bell  EXIT  THEN
     >string over r@ xc-size + swap move 2dup chars + r@ swap xc!+ drop

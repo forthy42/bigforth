@@ -328,7 +328,7 @@ Forward date-id
   s" " date-id  0 >o  do_getid  o>  current-win stop ;
 [ELSE]
 : get-id  id c@  ?EXIT
-  FORTHstart 2+ count + count + count 6 /string -trailing
+  FORTHstart 2+ count + count + count 6 safe/string -trailing
   date-id  0 >o  do_getid  o>  current-win stop ;
 [THEN]
 
@@ -351,7 +351,7 @@ forward gotoline
 : voc-find ( true string -- f NFA / t string )
   voc-link LIST>  8 - >r over r> (find
   IF  swap  UNLIST  nip nip 0 swap  EXIT  THEN  drop ;
-: >view   ( -- )  'find count 1- 1 /string scratch place
+: >view   ( -- )  'find count 1- 1 safe/string scratch place
   scratch capitalize bl scratch count + c! find 0=
   IF    true swap  voc-find  swap abort" Huh?"
   ELSE  >name  THEN  ?dup 0= abort" no view-field"
@@ -359,7 +359,7 @@ forward gotoline
 [THEN]
 
 \ viewing words                                        12oct97py
-: fview  'find count tuck  scr @ block b/blk c/l /string
+: fview  'find count tuck  scr @ block b/blk c/l safe/string
   caps push caps on
   2swap search  IF nip b/blk swap - + 1- ELSE 2drop 0 THEN ;
 : !view ( -- ) isfile@ str?
@@ -787,7 +787,7 @@ bye:  r> id push ( linebuffer push )
 | : get# ( string -- string false / # true ) dup c@ dup 0= ?EXIT
     drop number?  dup 0= ?EXIT  0>  IF  drop  THEN  true ;
 | : (edfile ( addr count -- )
-    scratch place scratch count 2dup 2dup '/' -scan nip /string
+    scratch place scratch count 2dup 2dup '/' -scan nip safe/string
     \use isfile@ assign open 1 scr !  0 r# ! ;
 : ed ( {"name.suffix" [scr/line] [char]} -- ) true >r bl word count
   BEGIN  2dup '.' scan  nip WHILE

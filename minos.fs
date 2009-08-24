@@ -45,6 +45,7 @@ include sincos.fs
 	dup 0> IF  immediate  THEN
 	1 and 0= IF  restrict  THEN  A,
 	$20 last @ dup >r c@ or r> c!  reveal ;
+    ' /string Alias safe/string
 [THEN]
 [defined] >class" 0= [IF]
 \ useful utilities                                     09jan00py

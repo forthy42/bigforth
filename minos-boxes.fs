@@ -198,7 +198,7 @@ how:    : >box  'nil bind childs  'nil bind active
           tab-steps @ 0= IF  S" " tab-steps $!  THEN
           1+ 2* cells tab-steps $@len
           dup >r max tab-steps $!len
-          tab-steps $@ r> /string erase ;
+          tab-steps $@ r> safe/string erase ;
         : tab@ ( n -- glue )
           dup 0< IF  drop 0 0  EXIT  THEN
           dup tab-size! 2* cells tab-steps $@ drop + 2@ ;

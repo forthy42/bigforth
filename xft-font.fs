@@ -215,7 +215,7 @@ how:
             1 +  addr u  scan-within >r
             screen xrc dpy @ id @ addr r@ over - text_r XftTextExtents
             text_r XGlyphInfo xOff w@ w + to w
-            addr u r> addr - /string to u to addr  swap-id
+            addr u r> addr - safe/string to u to addr  swap-id
         u 0<= UNTIL
         1 and IF  swap-id  THEN
         w id @ dup XftFont ascent @ swap XftFont descent @ + ;
@@ -239,7 +239,7 @@ how:
             addr r@ over - XftDrawString
             screen xrc dpy @ id @ addr r@ over - text_r XftTextExtents
             text_r XGlyphInfo xOff w@ x + to x
-            addr u r> addr - /string to u to addr  swap-id
+            addr u r> addr - safe/string to u to addr  swap-id
         u 0<= UNTIL
         1 and IF  swap-id  THEN ;
 class;

@@ -357,7 +357,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
         : !curxw ( -- )
           text $@ 1+ 2dup curpos @ selw @ 0max + min
           textwh@ drop curx !
-          curpos @ selw @ 0min + /string
+          curpos @ selw @ 0min + safe/string
           selw @ abs min over dup xchar+ swap - max
           textwh@ drop dup curw !
           negate curx +! ;
@@ -387,7 +387,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
         : (dpy  [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN] ;
 
-        : 'text ( -- addr )  text $@ curpos @ /string
+        : 'text ( -- addr )  text $@ curpos @ safe/string
           0= IF  bl over c!  THEN ;
         : 'text+ ( -- len )  'text dup xchar+ swap - ;
         : 'text- ( -- len )  'text dup
@@ -412,14 +412,14 @@ how:    0 colors focuscol !     7 colors defocuscol !
           (dpy @select dup >r ins r> c drop ;
         : >select ( n -- )  selw @ >r
           dup selw ! text $@ rot dup >r
-          0min curpos @ + /string r> abs min
+          0min curpos @ + safe/string r> abs min
           -select +select
           [defined] x11 [IF]    dpy get-win  dpy xrc dpy @
           [ELSE] 0 0 [THEN]  !select !curxw
           selw @ r> <> IF  draw  THEN ;
         : sel-word ( -- )
-          text $@ 2dup curpos @ /string bl scan nip -
-          2dup -trailing nip /string >r
+          text $@ 2dup curpos @ safe/string bl scan nip -
+          2dup -trailing nip safe/string >r
           text $@ drop - curpos ! r> >select ;
         : sel-all ( -- ) curpos off text $@len >select ;
 

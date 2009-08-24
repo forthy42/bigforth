@@ -354,11 +354,11 @@ how:    6 colors focuscol !     1 colors defocuscol !
           fnt16 self 0= IF  fnt draw  EXIT  THEN  { x y dpy }
           BEGIN  dup  WHILE  2dup scan8 dup
                  IF    tuck x y dpy fnt draw
-                       dup textwh @ * x + to x /string
+                       dup textwh @ * x + to x safe/string
                  ELSE  2drop  THEN
                  2dup scan16 dup
                  IF    tuck x y dpy fnt16 draw
-                       dup textwh @ * x + to x /string
+                       dup textwh @ * x + to x safe/string
                  ELSE  2drop  THEN  REPEAT  2drop ;
 
 \ mixed font output                                    16jan05py
@@ -400,7 +400,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
                   w @ e I csize min swap - 1 max
                   texth @ color dpy box
                   I 'line e I - 0max min s I - 0max
-                  /string  2over swap s I csize +
+                  safe/string  2over swap s I csize +
                   swap color 8 >> .text
                THEN  texth @ + cols @ +LOOP
           2drop ;
@@ -931,7 +931,7 @@ how:    AVariable file<=
                 IF    2swap 2drop 2dup + >r 1- '/' -scan
                       over + r> over - r@ swap dup >r F delete
                       r> r> swap -
-                ELSE  2 pick 1+ r> + >r r@ swap /string
+                ELSE  2 pick 1+ r> + >r r@ swap safe/string
                       s" /" 2over insert insert scratch r> THEN
 [defined] x11 [IF]     over c@ '/' = IF  path assign  ELSE  2drop  THEN
 [ELSE]          path assign   [THEN]
@@ -1028,7 +1028,7 @@ minos
 
 : ?suffix ( path len suffix len -- path len' )
 \  2swap tuck scratch 2+ move scratch 2+ swap 2swap
-  dup >r 2over dup r> - 0max /string 2over compare
+  dup >r 2over dup r> - 0max safe/string 2over compare
   IF    >r >r tuck scratch 2+ swap move  scratch 2+ swap  r> r>
         2swap + swap 2dup + 0 swap c! move  scratch 2+ >len
   ELSE  2drop  THEN ;

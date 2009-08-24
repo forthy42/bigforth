@@ -50,9 +50,9 @@ base @ hex
     over + xchar- over - ;
 
 : +x/string ( xc-addr1 u1 -- xc-addr2 u2 )
-    over dup xchar+ swap - /string ;
+    over dup xchar+ swap - safe/string ;
 : x\string- ( xc-addr1 u1 -- xc-addr2 u2 )
-    over dup xchar- swap - /string ;
+    over dup xchar- swap - safe/string ;
 
 \ skip trailing garbage
 

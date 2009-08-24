@@ -269,7 +269,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     { addr }
     1- FOR
         over I * addr + over I * addr + 3 pick move
-        dup I * addr + over 3 pick /string erase
+        dup I * addr + over 3 pick safe/string erase
     NEXT 2drop ;
     
 : paligned ( -- )  3 + -4 and ;
@@ -317,7 +317,7 @@ BI_RGB bminfohead BITMAPINFOHEADER biCompression w!
     scratch $100
     BEGIN  drop dup $100 r@ read-line  throw drop  over c@ '#'
            <>  UNTIL
-    0. 2swap >number 1 /string 0. 2swap >number 2drop drop nip
+    0. 2swap >number 1 safe/string 0. 2swap >number 2drop drop nip
     rdrop ;
 : read-P6 ( fd -- pixmap w h ) >r
     r@ read-format
@@ -414,7 +414,7 @@ Create Xpmattribs sizeof XpmAttributes allot
 Variable icon-base
 
 : suffix? ( addr1 u1 addr2 u2 -- addr1 u1 false / fd true )
-    2over 2over 2swap dup 3 pick - 0max /string compare 0=
+    2over 2over 2swap dup 3 pick - 0max safe/string compare 0=
     IF  2drop r/o open-file throw  true  EXIT  THEN
     2over icon-base $! icon-base $+!
     icon-base $@ r/o open-file 0=

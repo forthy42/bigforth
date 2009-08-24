@@ -35,17 +35,17 @@
 : $@ ( addr1 -- addr2 u )  @ dup cell+ swap @ ;
 : $!len ( u addr -- )
   over $padding over @ swap resize throw over ! @ ! ;
-: $del ( addr off u -- )   >r >r dup $@ r> /string r@ delete
+: $del ( addr off u -- )   >r >r dup $@ r> safe/string r@ delete
   dup $@len r> - swap $!len ;
 : $ins ( addr1 u addr2 off -- ) >r
-  2dup dup $@len rot + swap $!len  $@ 1+ r> /string insert ;
+  2dup dup $@len rot + swap $!len  $@ 1+ r> safe/string insert ;
 : $+! ( addr1 u addr2 -- ) dup $@len $ins ;
 : $off ( addr -- )  dup @ free throw off ;
 
 \ dynamic string handling                              12dec99py
 
 : $split ( addr u char -- addr1 u1 addr2 u2 )
-  >r 2dup r> scan dup >r dup IF  1 /string  THEN
+  >r 2dup r> scan dup >r dup IF  1 safe/string  THEN
   2swap r> - 2swap ;
 
 : $iter ( .. $addr char xt -- .. ) { char xt }

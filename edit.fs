@@ -146,10 +146,10 @@ Create CRLF  1 c, #lf c,
 Variable epos
 
 : SaveLine ( addr len MP handle -- )  >r >r
-  BEGIN  r@ @ sbuf# epos @ /string 2 pick over >  WHILE
+  BEGIN  r@ @ sbuf# epos @ safe/string 2 pick over >  WHILE
          3 pick rot 2 pick move  epos off
          r> dup @ sbuf# r@ write-file throw
-         >r /string  REPEAT
+         >r safe/string  REPEAT
   drop swap dup epos +! move  rdrop rdrop ;
 
 \ Save Text                                            12may91py
@@ -185,7 +185,7 @@ Forward FormatPar
     <> IF  thisline @ over SetHandleSize  THEN drop
     0 Line@ + c! ;
 : +LineLen  ( addlen -- )  thisline @ @ 8 + c@ + SetLineLen ;
-: Liner@ ( -- addr count )  Line@ cur /string ;
+: Liner@ ( -- addr count )  Line@ cur safe/string ;
 : 'cursor ( -- addr ) Liner@ drop ;
 : LineLen+! ( n -- ) >r thisline @ @ 8+ dup c@ r> + swap c!
   0 Line@ + c! ?reformat @ IF  FormatPar  THEN ;
@@ -217,7 +217,7 @@ stredit implements
       line#@ thisline# ! curon ;
 
     : 'line ( n -- addr u )  cols @ /modf swap >r
-      thisline# @ 1- - +lines @ 8+ count r> /string ;
+      thisline# @ 1- - +lines @ 8+ count r> safe/string ;
 
     : .line ( -- )
         pos@ >r 0 pos!
@@ -269,7 +269,7 @@ stredit implements
             dup $3F and $3F = IF  pause  THEN
             readbuf dup $100 ReadLine dup $100 =
             IF    3 FOR  over c/l -trailing add
-                         c/l /string  NEXT  2drop 4+
+                         c/l safe/string  NEXT  2drop 4+
             ELSE  un-tab
                   dup >r add  1+ swap r> max swap  THEN
         REPEAT
@@ -315,7 +315,7 @@ class;
          ELSE  drop  THEN ;
 : DelString  ( count -- )  >r
   Liner@ dup 0=  IF  rdrop 2drop EXIT  THEN
-  >r dup r> r@ /string >r swap r> move
+  >r dup r> r@ safe/string >r swap r> move
   r> negate dup +LineLen LineLen+! ;
 
 \ Zeile einfügen                                       09may91py
@@ -576,7 +576,7 @@ forward replace-it'
   BEGIN  dup r@ >  WHILE
          over r@ bl -scan dup 0= IF  drop LineLen  THEN
          tuck (Line! thisline @ AddLine
-         1 line#+! /string
+         1 line#+! safe/string
          tuck pad 1+ swap move  pad 1+ swap
   REPEAT  rdrop ;
 : reformat ( -- -deleted )  pad 1+ 0  0 >r
