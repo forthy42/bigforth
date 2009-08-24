@@ -495,7 +495,7 @@ synonym 0" z"	\ -- ; -- addr
   rdrop ;
 
 : safe/string ( c-addr u n -- c-addr' u' )
-\ *G protect safe/string against overflows.
+\ *G protect /string against overflows.
     dup negate >r  dup 0> IF
 	/string dup r> u>= IF  + 0  THEN
     ELSE
