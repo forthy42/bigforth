@@ -554,7 +554,7 @@ previous theseus definitions
     [ also float [defined] f-init [IF] ] f-init [ [THEN] previous ]
     2dup cur file-name $!
     Onlyforth minos also minos-load also
-    ['] included catch dup open-failed# <> IF  throw  THEN
+    ['] included catch dup open-failed# <> IF  throw 0  THEN
     drop strip-names Onlyforth cur save-state off
     cur with
         s" Theseus: " window title! file-name $@ window title+!

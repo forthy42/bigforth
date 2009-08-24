@@ -384,13 +384,14 @@ designerbox implements
               ELSE  drop 2drop  THEN
         ELSE  2drop  THEN ;
     : draw ( -- )  super draw  draw-decor ;
-    : <box> ( -- )  childs self cur bind box
-        n @ 1 = IF
-            childs self         cur bind topbox
+    : <box> ( -- )
+	& resource:menu-window @ cur resources class? IF
+            childs with childs self         endwith cur bind menubox
+	    childs with childs widgets self endwith
         ELSE
-            childs self         cur bind menubox
-            childs widgets self cur bind topbox
-        THEN ;
+	    childs self
+	THEN
+	dup  cur bind topbox  cur bind box  ;
     : clicked ( x y b n -- ) <box> do-click <rebox> <redpy>
         ['] draw-decor ^ #50 after screen schedule ;
     : keyed ( key sh -- )  <box> do-key
@@ -714,6 +715,15 @@ Variable reenter
 	    r@ cur resources with
 	    BEGIN
 		cur box self topbox self = IF  dup bind topbox  THEN
+		next-resource self  WHILE
+		    next-resource self op!
+	    REPEAT  endwith drop
+        THEN
+        cur box self cur menubox self = IF
+	    r@ cur bind menubox
+	    r@ cur resources self resource:menu-window with
+	    BEGIN
+		cur box self menubox self = IF  dup bind menubox  THEN
 		next-resource self  WHILE
 		    next-resource self op!
 	    REPEAT  endwith drop
@@ -1183,6 +1193,7 @@ include theseus-load.fs
 
 : go-up ( -- )
     cur box self cur topbox self = ?EXIT
+    cur box self cur menubox self = ?EXIT
     cur box parent self up-box
     cur bind box <rebox> redraw ;
 : go-down ( -- )
@@ -1328,6 +1339,8 @@ widget ptr cut-stack
     ELSE  dup widget with & cross @ class? endwith
         IF  widget with parent self up-cut endwith  THEN
     THEN
+    dup cur topbox self  = IF  drop 2drop  EXIT  THEN
+    dup cur menubox self = IF  drop 2drop  EXIT  THEN
     dup cur box self is-parent?
     IF  cur topbox self cur bind box  THEN
     dup cur widget self is-parent? IF
