@@ -17,15 +17,9 @@ Variable closing closing off
 [defined] VFXforth [IF]
     also Forth definitions
     defer (block
-    defer block
-    defer buffer
-    defer update
     defer convey
     :noname true abort" VFX doesn't support blocks!" ;
     dup is (block
-    dup is block
-    dup is update
-    dup is buffer
     dup is convey
     drop
     $10 Value l/s
