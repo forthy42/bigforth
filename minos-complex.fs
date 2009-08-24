@@ -47,6 +47,14 @@ class;
 : open-application  ( o od addr u -- )
   new-component  window with  show up@ app ! 1 apprefcnt +!  endwith ;
 
+component class <menu>
+how:
+  : params   DF[ 0 ]DF s" No Title" ;
+  : widget
+        ^^ S[  ]S ( MINOS ) s" --Stub--" menu-entry new 
+      #1 vabox new #2 borderbox ;
+class;
+
 menu-window class menu-component
     early open immediate
     early dialog immediate

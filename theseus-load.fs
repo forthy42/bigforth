@@ -547,11 +547,15 @@ also minos-load definitions
 [THEN]
 previous theseus definitions
 
+[defined] VFXForth [IF] -258 Constant open-failed# [THEN]
+[defined] bigForth [IF] -1026 Constant open-failed# [THEN]
+
 : included-minos ( addr u -- )  loading on
-[ also float [defined] f-init [IF] ] f-init [ [THEN] previous ]
+    [ also float [defined] f-init [IF] ] f-init [ [THEN] previous ]
     2dup cur file-name $!
-    Onlyforth minos also minos-load also included
-    strip-names Onlyforth cur save-state off
+    Onlyforth minos also minos-load also
+    ['] included catch dup open-failed# <> IF  throw  THEN
+    drop strip-names Onlyforth cur save-state off
     cur with
         s" Theseus: " window title! file-name $@ window title+!
     endwith
