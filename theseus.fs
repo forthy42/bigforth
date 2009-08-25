@@ -1436,7 +1436,9 @@ Variable $acc
 
 : run-minos
     cur save-state @  IF  auto-save-minos  THEN
-    s" xbigforth '" $acc $!
+    [defined] bigForth [IF] s" xbigforth '" [THEN]
+    [defined] VFXForth [IF] s" xvfxlin '" [THEN]
+    $acc $!
     cur save-state @  cur file-name @ 0= or
     IF    auto-save-add
     ELSE  cur file-name $@ +$  THEN  s" '" +$

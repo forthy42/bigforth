@@ -534,6 +534,11 @@
 
 decimal
 
+Variable ?debugHeaders
+: +debugHeaders ?debugHeaders on ;
+: -debugHeaders ?debugHeaders off ;
++debugHeaders
+
 Vocabulary Objects
 also Objects also definitions
 
@@ -1068,6 +1073,18 @@ oo-types definitions
     cell+ @ Create immediate
     lastob @ here lastob ! , ,  instptr> ;
 
+\ Create a meaningful header for debugging purposes
+
+: :mangled-noname
+    ?debugHeaders @ IF
+	^ >name count pad place  s" :" pad append bl word count pad append
+	pad count header code-align hide :noname
+    ELSE
+	bl word drop :noname
+    THEN ;
+
+\ Object definitions
+
 synonym Fpostpone postpone
 
 : : ( "<name>" -- ) \ oof- oof colon
@@ -1076,10 +1093,10 @@ synonym Fpostpone postpone
     decl @ abort" HOW: missing! "  class-o @ op!
     >in @ >r bl word (findo 0=		\ )
     IF  r> >in ! m-name off :
-    ELSE  r> drop
+    ELSE  r> >in !
 	dup exec?  over early? or  over ifm? or
         0= abort" OO-TYPES: not a method"
-	m-name ! :noname
+	m-name ! :mangled-noname
     THEN ;
 
 Forth

@@ -47,23 +47,23 @@ include sincos.fs
 	$20 last @ dup >r c@ or r> c!  reveal ;
     ' /string Alias safe/string
 [THEN]
-[defined] >class" 0= [IF]
 \ useful utilities                                     09jan00py
 
-    [defined] bigFORTH [IF]
-        Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
-            Next end-code macro :dx :ax T&P
-        $7FFFFFFF | Constant mi
-        : 0max dup 0>= and ;
-        : 0min dup 0< and ;
-        Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
-	Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
-	Synonym */f */
-	Synonym /modf /mod
-	Synonym /f /
-	Synonym modf mod
-    [THEN]      
+[defined] bigFORTH [IF]
+    Code pin ( x n -- )  DX pop  DX SP AX *4 I) mov  AX pop
+	Next end-code macro :dx :ax T&P
+    $7FFFFFFF | Constant mi
+    : 0max dup 0>= and ;
+    : 0min dup 0< and ;
+    Code 8*  ( n -- 8*n ) 3 # AX sal  Next end-code macro
+    Code 3*  ( n -- 3*n ) AX AX *2 I) AX lea  Next end-code macro
+    Synonym */f */
+    Synonym /modf /mod
+    Synonym /f /
+    Synonym modf mod
+[THEN]      
 \ class utility                                        01jan00py
+[defined] >class" 0= [IF]
 | : cell-@  dup IF cell- @ THEN ;
 : parent@ ( object -- parent )  >o object parento @ cell-@ o> ;
 : child@  ( object -- child  )  >o object childo  @ cell-@ o> ;
