@@ -325,7 +325,7 @@ codeedit implements
         BEGIN
             2dup #lf scan dup >r 2swap r> -
             dup 1+ cols @ max cols ! add  dup  WHILE
-            1 /string  REPEAT
+            1 safe/string  REPEAT
         2drop
         thisline @ 0= ?EXIT  thisline @
         BEGIN  dup @ cell+ @  dup  WHILE  nip  REPEAT  drop thisline !
@@ -870,7 +870,7 @@ Variable entities
 
 : entity, ( -- estart )
     here entities @ A, entities ! here
-    BEGIN  source >in @ /string -trailing nip  WHILE
+    BEGIN  source >in @ safe/string -trailing nip  WHILE
         ' >body A,
     REPEAT  0 A, ;
 
@@ -1423,7 +1423,7 @@ Variable $acc
 : auto-save-add ( --- )
     cur file-name @  IF  cur file-name $@ '/' -scan +$  THEN
     s" .#" +$
-    cur file-name @  IF  cur file-name $@ 2dup '/' -scan nip /string +$  THEN
+    cur file-name @  IF  cur file-name $@ 2dup '/' -scan nip safe/string +$  THEN
     base push hex cur self dup $10 >> + $FFFF and dup $8 >> + $FF and
     0 <# '#' hold #S '-' hold #> +$ ;
 : auto-save-name ( -- addr u )
@@ -1450,7 +1450,7 @@ Create quote 1 c, '"' c,
 : mod-minos
     s" Create Module:" s" " s" *.fm"
     0 S[ path+file
-         '.' -scan 1-  2dup 2dup '/' -scan nip /string
+         '.' -scan 1-  2dup 2dup '/' -scan nip safe/string
          s" theseus-test" dump-file
          s" " $acc $!
          s' xbigforth -e "' +$ quote count +$ S" minos openw forth " +$
@@ -1674,7 +1674,7 @@ previous previous previous previous previous previous
 also -options definitions
 
 : --theseus ( addr u -- )
-    2dup dup 2- /string s" .m" str=  IF  included-minos 2
+    2dup dup 2- safe/string s" .m" str=  IF  included-minos 2
     ELSE  [defined] defers [IF] defers -i [ELSE] --include [THEN] THEN ;
 ' --theseus IS -i
 

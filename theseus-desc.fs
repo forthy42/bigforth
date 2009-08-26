@@ -245,7 +245,7 @@ how:
         ELSE  1 umin  content move  THEN ;
     : get ( -- addr u ) content 1 ;
     : edit-field ( -- o )  ^ F cur bind string
-        get 0 ST[ text@ dup 1- 0 max /string
+        get 0 ST[ text@ dup 1- 0 max safe/string
               cur string assign ]ST
         s" Text:" infotextfield new ;
     : null ( -- char ) bl ;

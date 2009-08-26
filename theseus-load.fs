@@ -5,14 +5,14 @@ Vocabulary minos-load
 Variable last-file
 
 : parse-string ( addr1 u1 -- addr2 u2 )  dup >r
-    source >in @ /string 2swap search 0= abort" not found" nip
-    source >in @ /string rot - dup r> + >in +! ;
+    source >in @ safe/string 2swap search 0= abort" not found" nip
+    source >in @ safe/string rot - dup r> + >in +! ;
 
 : parse-string? ( addr1 u1 -- addr2 u2 flag ) dup >r
-    source >in @ /string 2swap search 0=
-    IF  2drop source >in @ /string dup >in +! false
+    source >in @ safe/string 2swap search 0=
+    IF  2drop source >in @ safe/string dup >in +! false
         rdrop EXIT  THEN
-    nip source >in @ /string rot - dup r> + >in +! true ;
+    nip source >in @ safe/string rot - dup r> + >in +! true ;
 
 : scan-strings { addr u string }
     BEGIN  addr u parse-string? 0= WHILE
@@ -396,7 +396,7 @@ also dos
     tuck >r >r min r> r> compare 0= ;
 
 : postfix? ( addr1 u1 addr2 u2 -- flag )
-    tuck >r >r over swap - 0 max /string r> r> compare 0= ;
+    tuck >r >r over swap - 0 max safe/string r> r> compare 0= ;
 
 : new:dialog ( -- )
     cur pane with minos:dialog endwith
