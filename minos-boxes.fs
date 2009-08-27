@@ -48,13 +48,13 @@ how:    : >box  'nil bind childs  'nil bind active
 \ combined widgets                                     28mar99py
 
         : remove  ( o -- )
-          link childs childs delete -1 n +! resized ;
+          link childs childs delete -1 n +! resized  first-active ;
         : add ( o before -- )
           over dpy self swap >o dpy! o>
           dup childs self =
           IF    swap bind childs  childs bind widgets
                 self childs bind parent
-          ELSE  childs append  THEN  1 n +! resized ;
+          ELSE  childs append  THEN  1 n +! resized  first-active ;
 
         : ?nodraw ( -- flag )  attribs c@ :flip and 0<>
           flags #hidden bit@ or ;
@@ -119,7 +119,7 @@ how:    : >box  'nil bind childs  'nil bind active
           ?nodraw IF  ALLCHILDS hide  EXIT  THEN  ALLCHILDS  show ;
         : hide     super hide ALLCHILDS  hide ;
         : keyed    ( key sh -- )  active keyed ;
-        : handle-key? active handle-key? ;
+        : handle-key? ( -- flag ) active handle-key? ;
         : !resized  0. hglues 2!  0. vglues 2!  tab-step-off
           ALLCHILDS !resized ;
 
