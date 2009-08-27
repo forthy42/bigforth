@@ -59,7 +59,7 @@ stroke-des ptr last-stroke
 
 : tentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
-    @ >r  2 pick stroke-des with & nstroke-des @ class? 0= endwith
+    @ >r  over stroke-des with & nstroke-des @ class? 0= endwith
     IF
         r> cell- @ @ @ cell+ >r
     THEN
