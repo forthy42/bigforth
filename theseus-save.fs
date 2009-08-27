@@ -68,6 +68,8 @@ Defer do-bug
     -2 indent +!
     r> r> do-boxdump ;
 
+Variable stubs
+
 : dump-box ( o -- )
     :[ descriptors with dump endwith ]: IS do-dump
     :[ >r cr indent @ spaces
@@ -75,7 +77,8 @@ Defer do-bug
        r@ dump-bind
        r@ dump-vars
        r> dump-link ]: IS do-boxdump
-    :[ cr indent @ spaces .' X" --Empty--" text-label new ( bug at: ' . .' ) ' ]: IS do-bug
+    :[ cr indent @ spaces drop .' cross new ( this is a stub )'
+       1 stubs +! ]: IS do-bug
     (dump-box ;
 
 : dispose-box ( o -- )
@@ -133,7 +136,7 @@ Defer do-bug
 also dos also float
 
 : dump-file ( addr u -- )
-    6 set-precision
+    6 set-precision  stubs off
     r/w exe output-file
     ." #! " 0 arg type cr
     ." \ automatic generated code" cr
@@ -141,6 +144,7 @@ also dos also float
     cr
     ." also editor also minos also forth" cr
     dump-all
-    cr ." previous previous previous" cr eot ;
+    cr ." previous previous previous" cr eot
+    stubs @ IF  ." There have been " stubs ? ." empty stubs." cr  THEN ;
 
 previous previous

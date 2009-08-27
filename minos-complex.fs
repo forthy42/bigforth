@@ -46,6 +46,8 @@ class;
   swap window with  set-parent show  endwith ;
 : open-application  ( o od addr u -- )
   new-component  window with  show up@ app ! 1 apprefcnt +!  endwith ;
+
+\ empty menu stub
 
 component class <menu>
 how:
@@ -54,7 +56,21 @@ how:
         ^^ S[  ]S ( MINOS ) s" --Stub--" menu-entry new 
       #1 vabox new #2 borderbox ;
 class;
+
+\ empty box stub
 
+widget class cross
+how:
+    : hglue  parent self combined with n @ endwith 1 <= IF
+        xM 1 *fill  ELSE  0 0  THEN ;
+    : vglue  parent self combined with n @ endwith 1 <= IF
+        xM 1 *fill  ELSE  0 0  THEN ;
+    : draw  parent self combined with n @ endwith 1 > ?EXIT
+        xywh defocuscol @ @ dpy box
+        xywh 2over p+ 0 dpy line
+        x @ y @ h @ + x @ w @ + y @ 0 dpy line ;
+class;
+
 menu-window class menu-component
     early open immediate
     early dialog immediate

@@ -55,20 +55,6 @@ Variable comp#
                  S" pmoc" bounds ?DO  I c@ hold  LOOP #>
     1 comp# +! ;
 
-\ empty box display
-
-widget class cross
-how:
-    : hglue  parent self combined with n @ endwith 1 <= IF
-        xM 1 *fill  ELSE  0 0  THEN ;
-    : vglue  parent self combined with n @ endwith 1 <= IF
-        xM 1 *fill  ELSE  0 0  THEN ;
-    : draw  parent self combined with n @ endwith 1 > ?EXIT
-        xywh defocuscol @ @ dpy box
-        xywh 2over p+ 0 dpy line
-        x @ y @ h @ + x @ w @ + y @ 0 dpy line ;
-class;
-
 : new-code ( addr u content -- o )
     codeedit new
     codeedit with c/l cols ! add-lines

@@ -97,6 +97,7 @@ also minos-load definitions
 : endwith ;
 : ( ')' parse 2drop ; immediate
 : dup dup ;
+: cross  postpone cross ; immediate
 
 : M:
     S" " menu-des new menu-des with assign
