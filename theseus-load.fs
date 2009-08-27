@@ -59,11 +59,7 @@ stroke-des ptr last-stroke
 
 : tentity: ( "name" -- ) 'entity,
 DOES> ( class1 .. classn -- o )
-    @ >r  over stroke-des with & nstroke-des @ class? 0= endwith
-    IF
-        r> cell- @ @ @ cell+ >r
-    THEN
-    r@ cell+ #classes
+    @ >r  r@ cell+ #classes
     font-descriptors new
     r> @ @ new-desc ;
 
