@@ -208,6 +208,7 @@ ficon: minos-win icons/minos1+.icn"
     : minos-idle screen handle-events ;
     :noname ( fid ms -- )
 	unix-wait minos-idle ; IS idle
+    [defined] busy-idle [IF] ' minos-idle IS busy-idle [THEN]
     : event-loop ( -- ) BEGIN  screen with
 	    handle-event invoke do-idle endwith
 	apprefcnt @ 0=  UNTIL ;
