@@ -528,7 +528,7 @@ resource:dialog implements
             nvar off set-var on 2 indent !
             dump-names'  var-edit backup
             cr ."  ( [varstart] ) " var-content $@ type
-            ."  ( [varend] ) "
+            ."  ( [varend] )"
             nvar off set-var off 6 indent !
             cr ." how:" cr
             .'   : params   DF[ '  .default
@@ -542,7 +542,7 @@ resource:dialog implements
             IF  cr ." include " implementation-file $@ type  THEN
             cr name-field get type ."  implements"  methods-edit backup
             cr ."  ( [methodstart] ) " methods-content $@ type
-            ."  ( [methodend] ) "
+            ."  ( [methodend] )"
             cr ."   : widget  ( [dumpstart] )"
             dump-contents
             cr .'     ( [dumpend] ) ;'

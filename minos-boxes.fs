@@ -435,8 +435,7 @@ how:    Create minmax 0 , 0 ,
           0 0  ALLCHILDS  & glue @ class?
             IF  hglue@  ELSE  minmax 2@  THEN  p+ ;
         : hglue  attribs c@ :flip and  IF  0 0
-          ELSE  >hglue+  swap  n @ vskip@ IF  1+  ELSE  1-  THEN
-                0max  hskip@ * +  borderw cx@ abs xS * +  swap
+          ELSE  >hglue+  swap  hskips+  swap
           THEN  2dup hglues 2! ?hfix ;
 
 \ tabulator box                                        28mar99py
@@ -469,8 +468,7 @@ how:    Create minmax 0 , 0 ,
           0 0  ALLCHILDS  & glue @ class?
             IF  vglue  ELSE  minmax 2@  THEN  p+ ;
         : vglue  attribs c@ :flip and  IF  0 0
-          ELSE  >vglue+  swap  n @ hskip@ IF  1+  ELSE  1-  THEN
-                0max  vskip@ * +  borderw cx@ abs xS * + swap
+          ELSE  >vglue+  swap  vskips+ swap
           THEN  2dup vglues 2! ?vfix ;
 
 \ tabulator box                                        28mar99py

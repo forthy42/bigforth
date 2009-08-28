@@ -77,8 +77,12 @@ Variable stubs
        r@ dump-bind
        r@ dump-vars
        r> dump-link ]: IS do-boxdump
-    :[ cr indent @ spaces drop .' cross new ( this is a stub )'
-       1 stubs +! ]: IS do-bug
+    :[ cr indent @ spaces widget with
+       & hrule @ class? IF  .' hline'
+       ELSE    & vrule @ class? IF  .' vline'
+	   ELSE  .' cross new ( this is a stub )' 1 stubs +!  THEN
+       THEN
+       endwith ]: IS do-bug
     (dump-box ;
 
 : dispose-box ( o -- )

@@ -101,83 +101,83 @@ also minos-load definitions
         self endwith ;
 : S[  drop
     S" " simple-des new simple-des with assign
-        s"  ]S ( MINOS ) " content scan-strings
+        s"  ]S ( MINOS )" content scan-strings
         0 typ !
         self endwith ;
 : R[  drop
     S" " simple-des new simple-des with assign
-        s"  ]R ( MINOS ) " content scan-strings
+        s"  ]R ( MINOS )" content scan-strings
         1 typ !
         self endwith ;
 : M[  drop
     S" " simple-des new simple-des with assign
-        s"  ]M ( MINOS ) " content scan-strings
+        s"  ]M ( MINOS )" content scan-strings
         2 typ !
         self endwith ;
 : T[   nip S" " S" "
     toggle-des new toggle-des with assign
         s"  ][ ( MINOS ) " content  scan-strings
-        s"  ]T ( MINOS ) " content2 scan-strings
+        s"  ]T ( MINOS )" content2 scan-strings
         flag !  0 typ ! self
     endwith ;
 : TV[   drop S" " S" "
     toggle-des new toggle-des with assign
         s"  ]T[ ( MINOS ) " content  scan-strings
-        s"  ]TV ( MINOS ) " content2 scan-strings
+        s"  ]TV ( MINOS )" content2 scan-strings
         1 typ ! self
     endwith ;
 : TN[   drop S" " S" "
     toggle-des new toggle-des with assign
         s"  ]T[ ( MINOS ) " content  scan-strings
-        s"  ]TN ( MINOS ) " content2 scan-strings
+        s"  ]TN ( MINOS )" content2 scan-strings
         2 typ ! self
     endwith ;
 : TS[   drop S" " S" "
     toggle-des new toggle-des with assign
         s"  ][ ( MINOS ) "  content  scan-strings
-        s"  ]TS ( MINOS ) " content2 scan-strings
+        s"  ]TS ( MINOS )" content2 scan-strings
         3 typ ! self
     endwith ;
 : TB[   drop S" " S" "
     toggle-des new toggle-des with assign
         s"  ]T[ ( MINOS ) " content  scan-strings
-        s"  ]TB ( MINOS ) " content2 scan-strings
+        s"  ]TB ( MINOS )" content2 scan-strings
         4 typ ! self
     endwith ;
 : CK[  drop
     S" " click-des new click-des with assign
-        s"  ]CK ( MINOS ) " content scan-strings
+        s"  ]CK ( MINOS )" content scan-strings
         self endwith ;
 
 : ST[   drop S" "
     stroke-des new stroke-des with assign
-        s"  ]ST ( MINOS ) " content scan-strings self
+        s"  ]ST ( MINOS )" content scan-strings self
     endwith ;
 
 : SN[   drop S" "
     nstroke-des new nstroke-des with assign
-        s"  ]SN ( MINOS ) " content scan-strings self
+        s"  ]SN ( MINOS )" content scan-strings self
     endwith ;
 
 : SF[   drop S" "
     fstroke-des new fstroke-des with assign
-        s"  ]SF ( MINOS ) " content scan-strings self
+        s"  ]SF ( MINOS )" content scan-strings self
     endwith ;
 
 : CV[
     canvas-des new canvas-des with s" " assign
-        s"  ]CV ( MINOS ) " content scan-strings
+        s"  ]CV ( MINOS )" content scan-strings
         self endwith ;
 
 : GL[
     glcanvas-des new glcanvas-des with s" " assign
-        s"  ]GL ( MINOS ) " content scan-strings
+        s"  ]GL ( MINOS )" content scan-strings
         self endwith ;
 
 : CP[ ( o -- o )
     drop component-des new component-des with
-        s"  ]CP ( MINOS ) " parse-string cparam $!
-        s"  new"            parse-string cname  $!
+        s"  ]CP ( MINOS )" parse-string cparam $!
+        parse-name   cname  $!  parse-name 2drop
         null endwith ;
 
 : ]N ( d -- o ) number-des new number-des with assign self endwith ;
@@ -188,7 +188,7 @@ previous
 : SC[ ( o 0 n -- o o )
     scaler-des new scaler-des with assign pos ! drop self endwith
     scaler-code new scaler-code with s" " assign
-        s"  ]SC ( MINOS ) " content scan-strings
+        s"  ]SC ( MINOS )" content scan-strings
         self endwith ;
 : SC# ( o n -- o )
     over hscaler with offset ! endwith ;
@@ -196,7 +196,7 @@ previous
 : SL[ ( o p n s -- o o ) 2swap 2drop
     slider-des new slider-des with assign self endwith
     slider-code new slider-code with s" " assign
-        s"  ]SL ( MINOS ) " content scan-strings
+        s"  ]SL ( MINOS )" content scan-strings
         self endwith ;
 
 : icon" ( -- o )  '"' parse
@@ -237,7 +237,7 @@ previous
     index-des with  fstate !  drop self endwith ;
 
 : C[ ( o -- )  base push hex
-    s"  ]C ( MINOS ) " parse-string all-descs find-name
+    s"  ]C ( MINOS )" parse-string all-descs find-name
     descriptors with item self endwith
     2dup new-link
     topindex with callback bind called endwith ;
@@ -368,11 +368,11 @@ also dos
 
 : search-dumpstart ( resources -- ) >r
     BEGIN  refill  WHILE
-        source s" ( [methodstart] ) " search nip nip
+        source s" ( [methodstart] )" search nip nip
         IF
             ')' parse 2drop 1 >in +!
             s" " cur resources methods-content $!
-            s"  ( [methodend] ) "
+            s"  ( [methodend] )"
             r@ resource:dialog with methods-content endwith
             dup >r scan-strings r>
             r@ resource:dialog with methods-edit self endwith
@@ -436,7 +436,7 @@ also dos
 : add-vars ( -- )
     ')' parse 2drop 1 >in +!
     s" " cur resources var-content $!
-    s"  ( [varend] ) "
+    s"  ( [varend] )"
     cur resources var-content dup >r scan-strings
     r> cur resources var-edit self add-stream ;
 
