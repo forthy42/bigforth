@@ -1099,6 +1099,10 @@ s" Menu-Title"  font-entity menu-title       menu-des string-des
 s" Info-Menu"   font-entity info-menu        menu-des string-des
 s" Sub-Menu"    font-entity sub-menu         menu-des string-des
 s" Menu-Entry"  font-entity menu-entry       action-des string-des
+0 :[ & hbox @ cur box class?
+     cur pane with IF vline ELSE hline THEN endwith
+     +object ]: simple new s" Line"
+     button new [ 1 #entities +! ]
 endgroup
 
 group displays:
