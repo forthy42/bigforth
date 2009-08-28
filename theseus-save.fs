@@ -52,12 +52,12 @@ Defer do-bug
         IF
             (dump-box
         ELSE
-            all-descs find-object
+            dup >r all-descs find-object
             dup IF
                 do-dump
             ELSE
-                do-bug
-            THEN
+                r@ do-bug
+            THEN  rdrop
         THEN
     LOOP drop ;
 
@@ -77,7 +77,7 @@ Variable stubs
        r@ dump-bind
        r@ dump-vars
        r> dump-link ]: IS do-boxdump
-    :[ cr indent @ spaces widget with
+    :[ cr indent @ spaces nip widget with
        & hrule @ class? IF  .' hline'
        ELSE    & vrule @ class? IF  .' vline'
 	   ELSE  .' cross new ( this is a stub )' 1 stubs +!  THEN
@@ -88,7 +88,7 @@ Variable stubs
 : dispose-box ( o -- )
     :[ descriptors with dispose endwith ]: IS do-dump
     ['] 2drop IS do-boxdump
-    ['] drop  IS do-bug
+    ['] 2drop IS do-bug
     (dump-box ;
 
 : dump-name ( o -- )
