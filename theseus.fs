@@ -1073,9 +1073,7 @@ s" Vscaler"         font-entity vscaler     scaler-des scaler-code
 endgroup
 
 group labels:
-0 :[ & hbox @ cur box class?
-     cur pane with IF vline ELSE hline THEN endwith
-     +object ]: simple new s" Line"
+0 :[ hvline dup *hvglue with 4 hmin ! endwith +object ]: simple new s" Line"
      button new [ 1 #entities +! ]
 s" Label"
   font-entity text-label       string-des
@@ -1099,9 +1097,7 @@ s" Menu-Title"  font-entity menu-title       menu-des string-des
 s" Info-Menu"   font-entity info-menu        menu-des string-des
 s" Sub-Menu"    font-entity sub-menu         menu-des string-des
 s" Menu-Entry"  font-entity menu-entry       action-des string-des
-0 :[ & hbox @ cur box class?
-     cur pane with IF vline ELSE hline THEN endwith
-     +object ]: simple new s" Line"
+0 :[ hvline dup *hvglue with 4 hmin ! endwith +object ]: simple new s" Line"
      button new [ 1 #entities +! ]
 endgroup
 
@@ -1119,9 +1115,11 @@ group glues: ( -- o )
 s" Glue"     entity glue             hglue-des vglue-des
 s" HGlue"    entity *hglue           hglue-des
 s" VGlue"    entity *vglue           vglue-des
+s" HVGlue"   entity *hvglue          hglue-des
 s" Rule"     entity rule             hglue-des vglue-des
 s" HRule"    entity hrule            hglue-des
 s" VRule"    entity vrule            vglue-des
+s" HVRule"   entity hvrule           hglue-des
 s" Topglue"  entity topglue          topglue-des
 endgroup
 
@@ -1543,9 +1541,9 @@ Variable auto-save-file
         hline
     [THEN]
     append-modes
-    hline
+    hvline
     navigation
-    hline
+    hvline
     file-io
     [defined] edit-modes [IF]  7  [ELSE]  5  [THEN]
     vabox new 2 borderbox ]D

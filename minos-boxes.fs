@@ -581,6 +581,48 @@ how:    vabox :: (clicked       vabox :: show-you
         vabox :: keyed          vabox :: handle-key?
 class;
 
+\ hglue vglue                                          10aug05py
+
+glue class *hglue
+how:    : init ( w w+ -- )  1 1 *hfil       super init ;
+class;
+
+glue class *vglue
+how:    : init ( h h+ -- )  1 1 *hfil 2swap super init ;
+class;
+
+glue class *hvglue
+how:    : init ( w w+ -- )  1 1 *hfil super init ;
+        : hglue  & vbox @ parent class?
+          IF  super vglue  ELSE  super hglue  THEN ;
+        : vglue  & vbox @ parent class?
+          IF  super hglue  ELSE  super vglue  THEN ;
+class;
+
+rule class hvrule
+how:    : init ( w w+ -- )  2 0 super init ;
+        : hglue  & vbox @ parent class?
+          IF  super hglue  ELSE  super vglue  THEN ;
+        : vglue  & vbox @ parent class?
+          IF  super vglue  ELSE  super hglue  THEN ;
+class;
+
+rule class hrule
+how:    : init ( w w+ -- )  2 0 super init ;
+class;
+
+rule class vrule
+how:    : init ( h h+ -- )  2 0 2swap super init ;
+class;
+
+: linepar  $1000000 0 colors @ or 0 1 *fill ;
+: hvline linepar hvrule new widget with  assign ^  endwith ;
+
+\ backward compatibility
+
+Synonym hline hvline
+Synonym vline hvline
+
 \ parbox                                               10aug05py
 
 : indent-glue  widget xM 0      *hglue new ;

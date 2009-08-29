@@ -78,10 +78,8 @@ Variable stubs
        r@ dump-vars
        r> dump-link ]: IS do-boxdump
     :[ cr indent @ spaces nip widget with
-       & hrule @ class? IF  .' hline'
-       ELSE    & vrule @ class? IF  .' vline'
-	   ELSE  .' cross new ( this is a stub )' 1 stubs +!  THEN
-       THEN
+       & hvrule @ class? IF  .' hvline'
+       ELSE  .' cross new ( this is a stub )' 1 stubs +!  THEN
        endwith ]: IS do-bug
     (dump-box ;
 

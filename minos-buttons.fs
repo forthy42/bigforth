@@ -242,8 +242,8 @@ tbutton class rbutton                           class;
 tbutton class flipbutton                        class;
 tbutton class topindex                          class;
 
-*hglue class topglue
-how:    : init ( -- )  0 1 *filll super init ;
+glue class topglue
+how:    : init ( -- )  0 1 *filll 0 1 *fil super init ;
 class;
 
 : flipper  combined ' +flip
@@ -1011,3 +1011,4 @@ class;
 : SC# ( o offset -- o )  over hscaler with  offset !  endwith ;
 : SC*/ ( o * / -- o )  over2 hscaler with text*/ 2! endwith ;
 
+

@@ -250,19 +250,13 @@ nilscreen self to 'nilscreen
 : +fill  ( -- ) 0 1 *fill  2dup glue new ;
 : +filll ( -- ) 0 1 *filll 2dup glue new ;
 
-\ hglue vglue                                          10aug05py
+\ color manipulation
+
 : chcol ( addr col-addr -- )
   @ @ over @ $FFFF0000 and or swap ! ;
 : tocol ( addr col-addr -- )
   @ @ over @ $FF000000 and or swap ! ;
 
-glue class *hglue
-how:    : init ( w w+ -- )  1 1 *hfil       super init ;
-class;
-
-glue class *vglue
-how:    : init ( h h+ -- )  1 1 *hfil 2swap super init ;
-class;
 
 \ hrule vrule                                          05jan07py
 glue class rule                 cell var color
@@ -274,17 +268,8 @@ how:    : init ( w w+ h h+ -- ) \ dup dup drop drop
         : defocus  color defocuscol tocol draw ;
         : focus    color focuscol   tocol draw ;
 class;
-rule class hrule
-how:    : init ( w w+ -- )  2 0 ( rot) super init ;
-class;
-rule class vrule
-how: : init ( h h+ -- ) ( >r) 2 0 2swap ( r>)super init ;
-class;
-
-\ lines                                                28mar99py
-: linepar  $1000000 0 colors @ or 0 1 *fill ;
-: vline linepar vrule new widget with  assign ^  endwith ;
-: hline linepar hrule new widget with  assign ^  endwith ;
+\ skips                                                28mar99py
+
 rule class Mskip
 how:    : init  ( -- )
           0 0 0 1 *fill super init ;
