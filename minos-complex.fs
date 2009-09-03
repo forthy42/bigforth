@@ -399,9 +399,10 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ mixed font output                                    05may07py
 
         : expand16 ( -- )  maxascii $80 = IF
-             selw @ pos @ 'line drop
+             pos @ 'line drop
              dup 1+ xchar- tuck - negate pos +!
-             dup xchar+ swap - max 1 max selw !  EXIT
+             dup selw @ + xchar- xchar+ swap - selw !
+             EXIT
           THEN  fnt16 self 0= ?EXIT
           pos @ 1- 0max 'line drop c@ $80 and
           IF  -1 pos +!  1 selw +!  THEN

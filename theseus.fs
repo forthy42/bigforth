@@ -102,7 +102,7 @@ links ptr first-link
 : new-link ( linked linker -- )
     links new links with
         first-link self bind next
-        ^ 
+        ^
     endwith bind first-link ;
 [defined] DoNotSin [IF] DoNotSin [THEN]
 
@@ -189,7 +189,7 @@ widget ptr code2-string
 widget ptr code-label
 widget ptr code2-label
 widget ptr name-string
-    
+
 infotextfield class infocodefield
     codeedit ptr code-lines
     cell var ^content
@@ -271,7 +271,7 @@ Variable loading  loading off
         cur +radio    @ 0<> 2 and or
         cur +tabbing  @ 0<> 1 and or
     THEN
-    (makebox dup box-name
+    (makebox dup box-name		\ )
     cur +hfixbox @  IF hfixbox  THEN
     cur +vfixbox @  IF vfixbox  THEN
     cur +flipbox @  IF flipbox  THEN
@@ -634,7 +634,7 @@ Variable reenter
     cross new 1 $C (makebox dup box-name
     2 borderbox :notshadow noborderbox
     2 $4 (makebox dup box-name +object r> cur bind box ;
-            
+
 : addfirst  ?emptybox
     cur box childs self
     cur box with add resized endwith ;
@@ -1272,7 +1272,7 @@ forward find-object
     code-string self 0= ?EXIT
     code-string xywh p+ 1 1 p- code-string dpy transback
     1 2 code-string dpy dpy clicked
-    $FF57 0 code-string keyed ;    
+    $FF57 0 code-string keyed ;
 : click-name ( x y b n -- )
     name-string self 0= ?EXIT
     name-string xywh p+ 1 1 p- name-string dpy transback
@@ -1451,7 +1451,7 @@ Create quote 1 c, '"' c,
 
 Variable ren-files
 Variable auto-save-file
-         
+
 : rename-old ( addr u -- )
     ren-files $! s" ~" ren-files $+!
     ren-files $@ 1- ren-files $@ rename-file drop ;
@@ -1575,7 +1575,13 @@ Variable auto-save-file
     ^ S[ new:menu-window cur pane !resized ]S s" New Menu Window" menu-entry new
     2 vabox new 2 borderbox ;
 
-[defined] gpl-about 0= [IF] include gpl-about.m [THEN]
+[defined] gpl-about 0= [IF]
+  [defined] VFXforth [if]
+    include vfx-lgpl-about.m
+  [else]
+    include gpl-about.m
+  [then]
+[THEN]
 include theseus-help.m
 
 also dos
@@ -1670,7 +1676,7 @@ previous theseus definitions
 
 [defined] VFXForth [IF]
     Module;
-    
+
     also theseus synonym designer designer previous
 [ELSE]
     export theseus designer ;

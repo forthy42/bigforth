@@ -516,7 +516,7 @@ forward replace-it'
   <some> @ 0= ?show_replace !
   last-scr get drop  1st-scr get drop  <scrs> 2!
   <scrs> >last?  IF  cell+  THEN  @ fscreen !
-  cancel  <caps> @ caps !  repfind ;
+  cancel  caps push  <caps> @ caps !  repfind ;
 : >repl ( -- )  ?replace on  >find ;
 
 : button-field ( -- o w )

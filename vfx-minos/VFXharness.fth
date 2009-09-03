@@ -5,7 +5,7 @@
 \ *T Portability layer for VFX Forth
 \ =============
 \ *P The code in *\i{Minos/vfx-minos/VFXharness,fth} contains
-\ ** the main Forth host dependncies required to port Minos
+\ ** the main Forth host dependencies required to port Minos
 \ ** and Theseus to VFX Forth for Linux.
 
 \ *P In order to allow some redefinitions to be sensitive
@@ -113,7 +113,7 @@ Variable 'f>fs
 \ *P Many graphics operations in Minos require floored division.
 \ ** Because ANS Forth permits Forth systems to default to either
 \ ** symmetric or floored division, a set of operations that
-\ ** always use floored division are defined.
+\ ** always use floored division is defined.
 
 : /modf ( n1 n2 -- rem quot )
 \ *G Floored version of *\fo{/MOD}.
@@ -278,6 +278,10 @@ Variable Masters	 \ -- addr
 : Hunlock ( addr -- )
 \ *G Unlock the pool. A dummy in most implementations.
   drop ;
+: SetHandleSize ( mp size -- )
+\ *G Resize the pool.
+  swap >r
+  r@ @ cell- over cell+ resize throw !+ r> ! ;
 : GetHandleSize ( mp -- size )
 \ *G Get the size of the pool.
   cell- @ ;
@@ -314,9 +318,17 @@ variable Seed	\ -- addr
 : ?EXIT		\ --
 \ *G Equivalent to *\fo{IF  EXIT  THEN}.
   postpone IF  postpone EXIT postpone THEN ; immediate
+
 : 8aligned ( n1 -- n2 )
 \ *G Align *\i{n1} to a boundary of eight.
   7 + -8 and ;
+
+: F  ( "<name>" -- )
+\ *G Compiles *\fo{name} with *\fo{FORTH} as the first vocabulary
+\ ** in the search path.
+    also Forth bl word find dup 0= abort" Not found!"
+    0< state @ and IF  compile,  ELSE  execute  THEN
+    previous ; immediate
 
 synonym AVariable Variable
 \ *G A variable holding an address which may need relocation.
@@ -631,7 +643,7 @@ variable pMC	\ -- addr
 ;
 
 : findExport	\ caddr len -- xt
-\ *G Find the given word in the module, i.e. in the *\fo{CURRENT)
+\ *G Find the given word in the module, i.e. in the *\fo{CURRENT}
 \ ** wordlist.
   current @ search-wordlist 0= abort" Can't word to export"
 ;
@@ -654,7 +666,7 @@ variable pMC	\ -- addr
 : MakeExport	\ caddr len --
 \ *G Create a new definition iwhich behaves like an existing one.
 \ ** The new definition is in the owning vocabulary and is searched
-\ ** for in the *\fo{CURRENT) wordlist.
+\ ** for in the *\fo{CURRENT} wordlist.
   2dup createExport
     findExport dup , immediate?
     if  immediate  endif
@@ -693,7 +705,7 @@ previous
 
 
 \ ********************************
-\ *G Operating system dependencies
+\ *S Operating system dependencies
 \ ********************************
 
 Vocabulary DOS
@@ -710,6 +722,15 @@ Create timeval   0 , 0 ,
 Create timezone  0 , 0 ,
 
 previous definitions
+
+[defined] Target_386_Windows [if]
+char ; constant pathsep	\ -- char
+[else]
+char : constant pathsep	\ -- char
+\ *G The separator between items in a list of paths. This is a
+\ ** colon for Unix-based operating systems, but varies for
+\ ** others, e.g. a semi-colon is used in Windows.
+[then]
 
 \ date & time conversion in files
 
@@ -1017,6 +1038,7 @@ set-current
 0 test cr \ writes "false"
 [THEN]
 
+
 \ ***************
 \ debugging tools
 \ ***************
@@ -1027,34 +1049,34 @@ set-current
 ;
 
 : terminali/o ( -- )
+\ *G Use the same output device as when the code was compiled.
+\ ** Be careful!
     [ op-handle @ ] Literal op-handle ! ;
 
-: my.s ( ... -- ... )  base @ >r hex ." <" depth 0 .r ." > "
+: my.s ( ... -- ... )
+\ *G A horizontal display version of *\fo{.s}.
+    base @ >r hex ." <" depth 0 .r ." > "
     depth 0 max $10 min
     dup 0  ?DO  dup i - pick .  LOOP  drop r> base ! ;
-: (~~) ( in line source -- )  [io terminali/o  cr
+
+: (~~) ( in line source -- )
+\ *G Display the source location using *\fo{terminali/o}.
+    [io terminali/o  cr
     .SourceName  ." :" 0 .r ." :" 0 .r space my.s
     io] ;
+
 : ~~ ( -- )
+\ *G Compile code so that the source location is displayed at
+\ ** run time.
     >in @ postpone Literal LINE# @ postpone Literal
     'SourceFile @ postpone Literal
     postpone (~~) discard-sinline ; immediate
-: [~~]  >in @ LINE# @ 'SourceFile @ (~~) ; immediate
 
-: \G postpone \ ; immediate
-: ?EXIT  postpone IF  postpone EXIT postpone THEN ; immediate
-: 8aligned ( n1 -- n2 )  7 + -8 and ;
-: F  ( "<name>" -- )
-\ *G Compiles *\fo{name} with *\fo{FORTH} as the first vocabulary
-\ ** in the search path.
-    also Forth bl word find dup 0= abort" Not found!"
-    0< state @ and IF  compile,  ELSE  execute  THEN
-    previous ; immediate
+: [~~]		\ --
+\ *G Display the current source location.
+    >in @ LINE# @ 'SourceFile @ (~~) ; immediate
+
 
 \ ======
 \ *> ###
 \ ======
-: SetHandleSize ( mp size -- )
-\ *G Resize the pool.
-  swap >r
-  r@ @ cell- over cell+ resize throw !+ r> ! ;

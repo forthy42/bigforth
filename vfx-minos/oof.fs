@@ -8,40 +8,40 @@
 \		Thank you.
 \
 
-\ This is the version for MPE's VFX
+\ This is the version for MPE's VFX Forths
 
 \ =======
 \ *! boof
-\ *T Objekt Oriented Forth
+\ *T BerndOOF Object Oriented Forth
 \ =======
 \ *P The OOP package documented here here was written by Bernd
-\ ** Paysan for his *\i{bigFORTH} system. Since then it has been
+\ ** Paysan for his *\i{bigforth} system. Since then it has been
 \ ** ported to other Forth systems. The package is now known as
 \ ** *\i{BerndOOF} for short. The source code is in the file
-\ ** *\i{oof.fs}.
+\ ** *\i{oof.fs}. Minos and Theseus rely on *\i{BerndOOF}.
 
 
 \ ***************************************
 \ *S What is Object Oriented Programming?
 \ ***************************************
 \ *P The buzzword of the late 80s and 90s in the IT industry was
-\ ** without doubt “object oriented”. No operating system, no
-\ ** application, and certainly no programming language, that isn’t
-\ ** object oriented. Forth isn’t excluded as publications like Dick
-\ ** Pountain’s *\i{Object–Oriented FORTH} show clearly.
+\ ** without doubt "object oriented". No operating system, no
+\ ** application, and certainly no programming language, that isn't
+\ ** object oriented. Forth isn't excluded as publications like Dick
+\ ** Pountain's *\i{Object-Oriented FORTH} show clearly.
 
-\ *P Ewald Rieger had ported Pountain’s OOF to bigFORTH and gave it to
-\ ** me on the Forth–Tagung ’91 to look at it. Since this OOF lacked
+\ *P Ewald Rieger had ported Pountain's OOF to bigFORTH and gave it to
+\ ** me on the Forth-Tagung in 1991 to look at it. Since this OOF lacked
 \ ** several features, I completely rewrote it, to make this
 \ ** interesting programming paradigma available for bigFORTH. This
 \ ** system is in use since 1992, and has proved to be useful even in
-\ ** the rough world of real–time programming. Ewald Rieger uses it to
+\ ** the rough world of real-time programming. Ewald Rieger uses it to
 \ ** control an automatic chromatography system.
 
 \ *P The encapsulation of data and algorithm to form an object has
-\ ** shown its usefulness — or more proven essential — especially
+\ ** proven useful, more proven essential, especially
 \ ** for changing hardware configurations, as they are typical for
-\ ** many tasks in practice.
+\ ** many tasks in practise.
 
 \ *P To give you an impression of what is possible with object
 \ ** oriented programming, and how to do it, the following is an
@@ -64,7 +64,7 @@
 \ ** the methods (*\b{messages}) and the parameters that are sent with
 \ ** the message. Since many objects return results, the stack is
 \ ** used conventionally for the *\b{message passing} and the
-\ ** method is called like a Forth word — with a detour over the
+\ ** method is called like a Forth word - with a detour over the
 \ ** object, that manages the encapsulation.
 
 \ *P It would be a waste to program each method for each single
@@ -78,7 +78,7 @@
 
 \ *P Often you need only minor modifications to a class to obtain
 \ ** a new one, and therefore you use *\b{inheritance} to create
-\ ** a *\b{sublcass} — a derivative. Additional variables and
+\ ** a *\b{sublcass} - a derivative. Additional variables and
 \ ** modified or new methods are just appended to the class.
 
 \ *P All objects of a class and its subclasses have a common
@@ -109,7 +109,7 @@
 
 \ *P Here I must add that in *\i{BerndOOF} all classes are eventually
 \ ** originated from the same parent class, the class object. Also,
-\ ** classes and objects aren’t only used for operating on data,
+\ ** classes and objects aren't only used for operating on data,
 \ ** but also for creating new subclasses and instantiation of
 \ ** objects. Therefore a class is just an object without a data
 \ ** area. A class can create new subclasses using the method
@@ -124,7 +124,7 @@
 \ ** (private).
 
 \ *P The example creates a cell sized variable called *\fo{ref},
-\ ** in the private area of the class that isn’t visible from the
+\ ** in the private area of the class that isn't visible from the
 \ ** outside, but can be inherited (thus corresponds to *\b{protected:}
 \ ** in C++). *\fo{public:}, thus publically available are the
 \ ** six methods *\fo{!}, *\fo{@}, *\fo{.}, *\fo{null},
@@ -139,7 +139,7 @@
 \ ** *\fo{abort"}. They must be implemented in real data types,
 \ ** like in the following data type *\fo{integer:}.
 
-\ ** data class int
+\ *E data class int
 \ **   cell var value
 \ ** how:
 \ **   : ! value F ! ;
@@ -185,33 +185,33 @@
 \ ==========================
 \ *N Binding: Late or Early?
 \ ==========================
-\ *P Let’s take a step back and look at how methods are called.
+\ *P Let's take a step back and look at how methods are called.
 \ ** How much must be defined at compile time, and what has to
 \ ** be resolved at runtime, and then should not produce an error?
 
 \ *P As long as it is clear which method of which class is executed,
 \ ** as with *\fo{super dispose}, it will be resolved at compile
 \ ** time and create a direct call to the specified method. This
-\ ** is called *\b{early binding}. It’s for sure the fastest
-\ ** method, but unfortunately it doesn’t allow for polymorphism.
+\ ** is called *\b{early binding}. It's for sure the fastest
+\ ** method, but unfortunately it doesn't allow for polymorphism.
 
 \ *P Often it is not clear in advance which subclass the object
 \ ** belongs to when you want to send a method to it. You have to
 \ ** find the address of the method at runtime, then. A search
 \ ** in the dictionary is prohibitively inefficient, as well as
 \ ** a (possibly even sequential) search over a numerical key
-\ ** isn’t what I call run time efficiency.
+\ ** isn't what I call run time efficiency.
 
 \ *P In *\i{BerndOOF} therefore, each object contains a pointer to a
 \ ** jump table as its first element. The jump table contains the
-\ ** addresses of all methods. This doesn’t only guarantee a
+\ ** addresses of all methods. This doesn't only guarantee a
 \ ** response time independent of the number of methods (after all,
 \ ** Forth should still remain a real time language), it is also
 \ ** quite fast. Especially, since this approach is so easy to
-\ ** code, a simple macro can be directly inserted in the caller’s
+\ ** code, a simple macro can be directly inserted in the caller's
 \ ** code.
 
-\ *P What’s prevented, or at least made much more difficult, with
+\ *P What's prevented, or at least made much more difficult, with
 \ ** this approach is *\b{multiple inheritance}. Crossing a new
 \ ** child class from several parent classes is problematic anyway.
 \ ** Methods and variables with the same names must be renamed if
@@ -220,7 +220,7 @@
 \ ** also be determined at runtime). Alternatively, the compiler
 \ ** must ensure in advance that the necessary space for the mixed
 \ ** class is already reserved in the parent classes. This is a
-\ ** space/speed tradeoff that cannot be done with a one-pass
+\ ** space versus speed tradeoff that cannot be done with a one-pass
 \ ** compiler, and creates difficulties even in complex systems.
 
 \ *P A very important aspect is the real time properties of the
@@ -272,10 +272,10 @@
 \ ** needs as both pointer to first and rest of the list as data.
 \ ** Since both may normal data, also *\b{dot pairs} are allowed
 \ ** as in Lisp. Would the rest of the list have been a list again,
-\ ** the type isn’t necessary; that creates a pointer to the
+\ ** the type isn't necessary; that creates a pointer to the
 \ ** object of the current declared class. The phrase
-\ ** *\fo{lists ptr next} won’t work, since the class *\fo{lists}
-\ ** isn’t completely defined at this point and therefore can’t be
+\ ** *\fo{lists ptr next} won't work, since the class *\fo{lists}
+\ ** isn't completely defined at this point and therefore can't be
 \ ** executed.
 
 \ *P Additionally to these pointers you also need a few methods:
@@ -283,13 +283,13 @@
 \ ** Also, it would be quite useful to display the first element
 \ ** (with *\fo{?}).
 
-\ *P A null–list is the empty list, also called *\fo{nil}. Since
+\ *P A null-list is the empty list, also called *\fo{nil}. Since
 \ ** this is a list, it must be declared later, therefore I
 \ ** create a forward reference, which is resolved with the later
 \ ** definition of *\fo{nil}.
 
 \ *P Empty lists differ from ordinary lists quite significantly.
-\ ** They always return true to *\fo{empty?}, there’s only one of
+\ ** They always return true to *\fo{empty?}, there's only one of
 \ ** them, and this one certainly may not deleted. It displays a
 \ ** pair of parentheses.
 
@@ -315,7 +315,7 @@
 \ **   : ? first . ;
 \ **   : @ first @ ;
 \ **   : ! first ! ;
-\ **   : . self >o ’(
+\ **   : . self >o '(
 \ **     BEGIN
 \ **       emit ? next atom? next self o> >o
 \ **       IF ." . " data . o> ." )" EXIT THEN
@@ -329,14 +329,14 @@
 \ **     THEN ;
 \ ** class;
 
-\ *P A linked list certainly isn’t empty. On creation, I bind
+\ *P A linked list certainly isn't empty. On creation, I bind
 \ ** the references *\fo{first} and *\fo{next}; appropriate object
 \ ** addresses must have been put on the stack. At binding, I
-\ ** increment the reference counters of the objects — now
+\ ** increment the reference counters of the objects - now
 \ ** another pointer points to them. To make them the current
 \ ** object, I push them on the object stack, thereby with
 \ ** *\fo{ref} their reference counter is addressed, and not the
-\ ** one of the list. The object stack isn’t a real stack; only
+\ ** one of the list. The object stack isn't a real stack; only
 \ ** the topmost element is put into a register, the rest is on
 \ ** the return stack.
 
@@ -366,7 +366,7 @@
 \ *P At deletion of a list, both parts of the list and the node
 \ ** itself have to be deleted. Here also no case decision is
 \ ** necessary, and the termination question, which is often
-\ ** forgotten in recursive programs, isn’t asked here.
+\ ** forgotten in recursive programs, isn't asked here.
 
 \ *P Now we just need element objects for the list. We already
 \ ** have numbers, but strings would be nice, too. Here they are:
@@ -395,7 +395,7 @@
 \ ** freed at deletion. All the rest is self-explaining, I hope.
 
 \ *P Very useful is the pointer class. You can directly create
-\ ** pointer variables, but you can’t insert them into e.g. a
+\ ** pointer variables, but you can't insert them into e.g. a
 \ ** list.
 
 \ *E data class pointer
@@ -416,7 +416,7 @@
 \ ** class;
 
 \ *P Analoguous to the list I create a pointer instance variable
-\ ** *\fo{(pointer)}; then there’s the method *\fo{ptr!}, which
+\ ** *\fo{(pointer)}; then there's the method *\fo{ptr!}, which
 \ ** is used to assign a new object. The methods *\fo{@}, *\fo{!},
 \ ** *\fo{.} and *\fo{#} are fed through to the container. The
 \ ** *\fo{init} method binds a passed object to the pointer. The
@@ -462,8 +462,8 @@
 \ =================================
 \ *N Tools and Application Examples
 \ =================================
-\ *P The list packet still isn’t very easy to use. I’ve written a
-\ ** few small tools that eases the use — but certainly won’t
+\ *P The list packet still isn't very easy to use. I've written a
+\ ** few small tools that eases the use - but certainly won't
 \ ** make up a complete Lisp or something like that out of it:
 
 \ *E : cons         linked new ;
@@ -476,7 +476,7 @@
 \ ** : $"           state @ IF
 \ **                  compile S" compile make-string exit
 \ **                THEN
-\ **                ’" parse make-string ; immediate
+\ **                '"' parse make-string ; immediate
 
 \ *P The words *\fo{cons} and *\fo{list} help to create a list.
 \ ** *\fo{Cons} concatenates two objects on the stack to a
@@ -529,7 +529,7 @@
 \ ** are just used to create and manage new classes and objects.
 \ ** Classes are also used to send messages to objects whose
 \ ** address is stored in an object pointer, and that need
-\ ** explicit context (because it’s not the current defined
+\ ** explicit context (because it's not the current defined
 \ ** object), thus are also used as a sort of type casting.
 
 decimal
@@ -668,12 +668,12 @@ oo-types definitions
 
 : method   ( "<name>" -- ) \ oof- oof
 \ *G Declares a method. Methods declared like this are late
-\ ** bound, if it’s not specified in the context which class
+\ ** bound, if it's not specified in the context which class
 \ ** is used.
     mallot (method,  ;
 
 : early    ( "<name>" -- ) \ oof- oof
-\ *G Declares an early bound method. You can’t change such a
+\ *G Declares an early bound method. You can't change such a
 \ ** method in a subclass, if you want to use the same name
 \ ** again, you have to declare the early method again.
     : postpone ahead postpone then s" dummy string" postpone SLiteral
@@ -886,7 +886,7 @@ Forth definitions
 \ *G Static object creation in the dictionary on *\fo{NEW}. You
 \ ** can compile object structures, preserve them with *\fo{SAVE}
 \ ** and reuse them after program load, as long as the objects
-\ ** themselves don’t use other functions to allocate dynamic
+\ ** themselves don't use other functions to allocate dynamic
 \ ** memory.
 
 \ *P Each object consists of variables and methods that have to
@@ -1147,7 +1147,7 @@ Create object  ( ... "<method>" -- ... )  immediate  0 (class
 \ ** variables, in the order of declaration, but first for the
 \ ** main object. *\fo{INIT} is a polymorphic method.
          method    dispose ( -- ) \ object- oof
-\ *G Frees the object’s memory space. *\fo{DISPOSE} is a
+\ *G Frees the object's memory space. *\fo{DISPOSE} is a
 \ ** polymorphic method.
          early     class ( "name" -- ) \ object- oof
 \ *G Starts declaration of a subclass called *\fo{name}.
@@ -1195,7 +1195,7 @@ Create object  ( ... "<method>" -- ... )  immediate  0 (class
 \ *G Returns the address of the object.
 	 early     bind ( o "name" -- )  immediate \ object- oof
 \ *G Stores the address object in the pointer variable *\i{name}
-\ ** The object must belong to the pointer’s class or a subclass
+\ ** The object must belong to the pointer's class or a subclass
 \ ** thereof.
          early     bound ( class addr "name" -- ) \ object- oof
 	 early     link ( "name" -- addr )  immediate \ object- oof
@@ -1388,6 +1388,16 @@ class;
 \ ** <coding> ::=
 \ **   <word> <coding> |
 \ **   { <instance> } <selector> <coding>
+
+
+\ ***************************
+\ *S Porting the OOP packages
+\ ***************************
+\ *P All the host dependencies are isolated in separate directories
+\ ** for each host system other than *\i{bigForth}, e.g. the
+\ ** VFX Forth code is in *\i{Minos/vfx-minos}. Use one of the
+\ ** port folders as the basis for yours if you need to port
+\ ** Minos to another host.
 
 
 \ ======

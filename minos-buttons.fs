@@ -374,7 +374,7 @@ how:    0 colors focuscol !     7 colors defocuscol !
         : get ( -- addr len )  text $@ ;
         : >pos ( x -- n )
           text $@ 0
-          ?DO  2dup I 1+ textwh@ drop <=
+          ?DO  2dup dup I + 1+ xchar- xchar+ over - textwh@ drop <=
                IF  2drop I unloop EXIT  THEN
           LOOP  2drop text $@len ;
         : !resized ( -- )  text $@ 1+ !textwh !curxw ;
@@ -418,9 +418,8 @@ how:    0 colors focuscol !     7 colors defocuscol !
           [ELSE] 0 0 [THEN]  !select !curxw
           selw @ r> <> IF  draw  THEN ;
         : sel-word ( -- )
-          text $@ 2dup curpos @ safe/string bl scan nip -
-          2dup -trailing nip safe/string >r
-          text $@ drop - curpos ! r> >select ;
+          text $@ 2dup curpos @ umin bl -scan curpos ! drop
+          curpos @ safe/string 2dup bl scan drop nip swap - >select ;
         : sel-all ( -- ) curpos off text $@len >select ;
 
 \ simple text input field                              14apr01py
