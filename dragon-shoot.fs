@@ -110,7 +110,7 @@ Variable tail-time
               I sf@ I cell+ sf@ set-xy
               2 cells +LOOP
           head-xy dup 16 cells + DO
-              I sf@ I cell+ sf@ 1e'-6 f+ fnegate set-xy
+              I sf@ I cell+ sf@ 1e-6 f+ fnegate set-xy
               -2 cells +LOOP
           matrix>
       LOOP
@@ -201,8 +201,7 @@ Variable tail-time
       matrix>  pi .2e f* roll-right >matrix
       pi/2 down .4e .4e .2e scale-xyz leg matrix>
       -.1e 0e 0e forward-xyz .66e claw } ;
-  F : dragon-body ( t0 s t3 s t1 s t3 s t2 s n -- ) >r
-      2over !text
+  F : dragon-body ( t0 s t3 s t1 s t3 s t2 s n -- ) >r !text
       time' fsin .1e f* 0e 0e forward-xyz
       pi f2* .2e f- r@ 1- fm/ set-dphi
       r@ 4 + open-path
@@ -279,7 +278,7 @@ Variable last-time
 
 : draw-dragon ( o alx aly alz pitch bend roll zoom
                shade sx sy sz t0 t1 t2 t3 -- )
-{ alx aly alz alp alb alr zoom speed shade sx sy sz t0 t1 t2 t3 |
+{ alx aly alz alp alb alr zoom speed shade sx sy sz t0 t1 t2 t3 t4 |
     glcanvas with
         .sky sf@+ sf@+ sf@+ sf@ glClearColor
         2.8e 200e w @ h @ 3d-turtle new  3d-turtle with
@@ -329,11 +328,13 @@ Variable last-time
 		0e I .dragon x f@ I .dragon y f@ forward-xyz
 		I .dragon phi f@ right
 		I .dragon dphi f@ I .dragon v f@ f2/ f**2 f* fatan roll-left
-		t0 t1 t2 t3 1 switch-text  shade 7 and 0=
-		t0 t1 t2 t3 0 switch-text  over
-		t0 t1 t2 t3 3 switch-text  over
-		t0 t1 t2 t3 3 switch-text  over
-		t0 t1 t2 t3 2 switch-text  over
+
+		t3  shade 7 and 0=
+                t4  over
+                t0  over
+                t1  over
+                t2  over
+                t1  over
 		
 		shade 8 >> dragon-body
 		matrix>
