@@ -11,6 +11,6 @@
     does? IF
 	$68 c, here relon here 14 + ,
 	$68 c, here relon dup >body , cfa@ compile, here 5 - dup c@ 1+ swap c!
-	rdrop  EXIT  THEN ;
+	rdrop drop EXIT  THEN ;
 
 ' does, is 'cfa,
