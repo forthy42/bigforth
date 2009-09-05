@@ -59,12 +59,12 @@
 
 also dos
 : (file-error ( string -- )
-    loaderr @ IF
+    loaderr @ isfile@ and IF
 	isfile@ filename >len type
 	':' emit scr @ 0 .r ':' emit r# @ 0 .r ':' emit
-	loaderr off
     THEN
-    (error cr .back ;
+    loaderr off
+    (error cr .back .except dumped $B cells + on ;
 previous
 
 ' (file-error errorhandler !
