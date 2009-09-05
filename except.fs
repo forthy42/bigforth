@@ -38,8 +38,8 @@
 : in_which? ( addr -- len nfa count/false ) cell swap dup @
   [ ' push 5 + @ ] ALiteral =
   IF  swap 3 * swap cell+ 2@ swap
-      0 <# #S drop bl hold #S s"  HSUP" bounds
-           DO  I c@ hold  LOOP #>  EXIT THEN
+      0 <# #S drop bl hold  #S
+      s" push " 1-  FOR  dup I + c@ hold  NEXT  drop  #>  EXIT THEN
   @ context @ over noop in_voc?
   dup IF nip count $1F and  EXIT  THEN  drop voc-link
   BEGIN  @ dup  WHILE  2dup 8 - swap in_voc? dup
@@ -56,3 +56,15 @@
 
 : .back relinfo $100 - "back type
     backtrace $18 cells + off ;
+
+also dos
+: (file-error ( string -- )
+    loaderr @ IF
+	isfile@ filename >len type
+	':' emit scr @ 0 .r ':' emit r# @ 0 .r ':' emit
+	loaderr off
+    THEN
+    (error cr .back ;
+previous
+
+' (file-error errorhandler !
