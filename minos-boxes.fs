@@ -198,11 +198,13 @@ how:    : >box  'nil bind childs  'nil bind active
           tab-steps @ 0= IF  S" " tab-steps $!  THEN
           1+ 2* cells tab-steps $@len
           dup >r max tab-steps $!len
-          tab-steps $@ r> safe/string erase ;
+	  tab-steps $@ r> safe/string bounds ?DO
+	      0 7 *filll I 2!
+	  2 cells +LOOP ;
         : tab@ ( n -- glue )
           dup 0< IF  drop 0 0  EXIT  THEN
           dup tab-size! 2* cells tab-steps $@ drop + 2@ ;
-        : tab! ( glue n -- ) dup >r tab@ rot max -rot max swap
+        : tab! ( glue n -- ) dup >r tab@ maxglue
           r> 2* cells tab-steps $@ drop + 2! ;
 class;
 
@@ -462,11 +464,11 @@ vbox class vtbox
 how:    Create minmax 0 , 0 ,
         : >vglues ( -- min max )  0 n @ 0<>
           ALLCHILDS   & glue @ class? 0=
-             IF  >r vglue over + >r umax r> r> umin  THEN ;
+             IF  >r vglue@ over + >r umax r> r> umin  THEN ;
         : >vglue+ ( -- min glue )
           >vglues over - minmax 2!
           0 0  ALLCHILDS  & glue @ class?
-            IF  vglue  ELSE  minmax 2@  THEN  p+ ;
+            IF  vglue@  ELSE  minmax 2@  THEN  p+ ;
         : vglue  attribs c@ :flip and  IF  0 0
           ELSE  >vglue+  swap  vskips+ swap
           THEN  2dup vglues 2! ?vfix ;
