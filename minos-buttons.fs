@@ -527,6 +527,8 @@ class;
 
 \ number input field                                   28aug99py
 
+: sn-base# ( obj n -- )
+    swap number-action with  nbase ! self  endwith ;
 : #[ ( key -- )  (textfield postpone with postpone :[ ;
 : ]# ( key sys ) postpone ]: >r (textfield postpone endwith r>
   & number-action >o number-action bind-key o> ;      immediate

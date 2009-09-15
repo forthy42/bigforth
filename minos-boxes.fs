@@ -96,7 +96,8 @@ how:    : >box  'nil bind childs  'nil bind active
         Variable sclip          Variable eclip
         : x+ ( dx -- )  xy cell+ +! ;
         : y+ ( dy -- )  xy +! ;
-        : maxglue ( g1 g2 -- g )  rot min -rot max swap ;
+	: maxglue ( g1 g2 -- g ) over + 2swap over +
+          rot min -rot max tuck - ;
         : gsize   ( g1 g2 -- g n )  swap
           2over 2over >r 2* rot ?dup  IF  */f  ELSE  min  THEN
           1+ 2/ >r drop negate r@ negate p+ r> r> + ;
