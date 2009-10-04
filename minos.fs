@@ -116,6 +116,7 @@ Memory also x11 also xrender also xconst also Forth also MINOS
 \needs win32api include win32.fs
 \needs opengl   include opengl.fs
 \needs glconst  include glconst.fs
+\needs >bezier  1 loadfrom splines.fb
 include win32ex.fs
 
 Onlyforth
