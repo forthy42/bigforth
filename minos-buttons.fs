@@ -315,16 +315,22 @@ how:    : inside? ( x y -- ) 2dup super inside?
           2dup x @ w @ icon w @ - 2/ + y @ p-
           over icon w @ u< over icon h @ u< and
           IF
-[defined] x11 [IF]   icon shape @ -1 = IF
-                    dpy xrc dpy @ icon image @ 1- 2swap 1 1 -1 ZPixmap
-                    XGetImage >r
-                    r@ IF  0 0 r@ XGetPixel r> XDestroyImage
-                           0< >r  THEN
-              ELSE  dpy xrc dpy @ icon shape @ 2swap 1 1 1 ZPixmap
-                    XGetImage >r
-                    r@ IF  0 0 r@ XGetPixel r> XDestroyImage
-                           0<> >r  THEN  THEN            [THEN]
-
+	      [defined] x11 [IF]
+		  icon shape @ 0= IF
+		      2drop true >r
+		  ELSE
+		      icon shape @ -1 = IF
+			  dpy xrc dpy @ icon image @ 1-
+			  2swap 1 1 -1 ZPixmap
+			  XGetImage >r
+			  r@ IF  0 0 r@ XGetPixel r> XDestroyImage
+			      0< >r  THEN
+		      ELSE  dpy xrc dpy @ icon shape @ 2swap 1 1 1 ZPixmap
+			  XGetImage >r
+			  r@ IF  0 0 r@ XGetPixel r> XDestroyImage
+			      0<> >r  THEN  THEN  THEN
+	      [THEN]
+	      
 \ icon with small text                                 21mar04py
 
 [defined] win32 [IF] swap icon shape @ GetDC GetPixel 0<> >r    [THEN]

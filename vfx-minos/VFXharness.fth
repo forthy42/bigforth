@@ -373,10 +373,6 @@ synonym extend s>d
 \ *G Equivakent to *\fo{0 >=} or *\fo{0< 0=}.
 : 0<= 0> 0= ;
 \ *G Equivakent to *\fo{0 <=} or *\fo{0> 0=}.
-: u>= u< 0= ;
-\ *G Equivakent to *\fo{u< 0=}.
-: u<= u> 0= ;
-\ *G Equivakent to *\fo{u> 0=}.
 
 : rdrop  postpone r>  postpone drop ; immediate
 \ *G Equivakent to *\fo{R> DROP}.
