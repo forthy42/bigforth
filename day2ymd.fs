@@ -29,11 +29,11 @@
 1582 10 5 j-ymd2day Constant gregorian
 
 : day2ymd ( day -- y m d ) dup gregorian >= IF
-	2 - 146097 /mod 400 * swap
+	1 - 146097 /mod 400 * swap
 	36524 /mod3 100 * rot + swap
 	j-day2ymd 2>r + 2r>
     ELSE
-	j-day2ymd
+	1 + j-day2ymd
     THEN ;
 
 : ymd2day ( y m d -- day )  (ymd2day)
