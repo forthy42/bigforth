@@ -702,7 +702,7 @@ how:    : assign ( addr u -- ) text assign ;
           :down tri assign tri draw ;
         : clicked  ( x y b n -- ) \ first-active
           dup 0= IF  2drop 2drop  EXIT  THEN
-          >released  menu-action ;
+          :: >released  menu-action ;
         : dispose  callw dispose  super dispose ;
         boxchar :: handle-key?
 class;
