@@ -696,13 +696,12 @@ how:    : assign ( addr u -- ) text assign ;
 
         : >released ( x y b n -- ) 2drop 2drop
           :up tri assign tri draw  0 >menu-call
-          dpy get-win
           callw self text with menu-frame popup endwith
           0=   IF callback self >menu-call THEN
           :down tri assign tri draw ;
         : clicked  ( x y b n -- ) \ first-active
           dup 0= IF  2drop 2drop  EXIT  THEN
-          :: >released  menu-action ;
+          >released  menu-action ;
         : dispose  callw dispose  super dispose ;
         boxchar :: handle-key?
 class;

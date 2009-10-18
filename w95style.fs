@@ -216,12 +216,6 @@ info-menu implements
         1 vbox new
         ^ S[ ]S :[ callw hglue ]: :[ 0 0 ]: arule new
         2 vbox new  +fill 3 super init drop ;
-    : >released ( x y b n -- ) 2drop 2drop
-        1 tri assign tri draw  0 F bind menu-call
-        callw self text parent parent parent with
-            menu-frame popup endwith
-        0=   IF callback self F bind menu-call THEN
-        3 tri assign tri draw ;
 class;
 
 previous forth
