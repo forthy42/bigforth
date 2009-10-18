@@ -696,6 +696,7 @@ how:    : assign ( addr u -- ) text assign ;
 
         : >released ( x y b n -- ) 2drop 2drop
           :up tri assign tri draw  0 >menu-call
+          dpy get-win
           callw self text with menu-frame popup endwith
           0=   IF callback self >menu-call THEN
           :down tri assign tri draw ;
