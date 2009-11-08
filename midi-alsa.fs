@@ -25,18 +25,18 @@ short dest         /* destination address: client, port */
 struct{
         cell client                     /* client number to inquire */
         cell type                       /* client type */
-        1 name 63 \                     /* client name */
+        64 string name                  /* client name */
         cell filter                     /* filter flags */
-        1 multicast_filter 7 \          /* multicast filter bitmap */
-        1 event_filter 31 \             /* event filter bitmap */
+        8 string multicast_filter       /* multicast filter bitmap */
+        32 string event_filter          /* event filter bitmap */
         cell num_ports                  /* RO: number of ports */
         cell event_lost                 /* number of lost events */
-        64 \                            /* for future use */
+        64 string \                     /* for future use */
 } snd_seq_client_info
 
 struct{
         1 client   1 port               /* client/port numbers */
-        1 name 63 \                     /* port name */
+        64 string name                  /* port name */
         cell capability                 /* port capability bits */
         cell type                       /* port type bits */
         cell midi_channels              /* channels per MIDI port */
@@ -51,8 +51,7 @@ ort) */
         cell kernel                     /* reserved for kernel use (must be NULL
 ) */
         cell flags                      /* misc. conditioning */
-        1 time_queue                    /* queue # for timestamping */
-        59 \                            /* for future use */
+        60 string time_queue            /* queue # for timestamping */
 } snd_seq_port_info
 
 Create cinfo  sizeof snd_seq_client_info allot
@@ -128,8 +127,8 @@ midi-player implements
 	      pinfo snd_seq_port_info name >len type ." ' "
 	      pinfo snd_seq_port_info capability @ hex.
 	      pinfo snd_seq_port_info type @ hex.
-	      pinfo snd_seq_port_info capability @ $42 = \ player
-	      wavetable 0= waveport 0= and and IF
+	      pinfo snd_seq_port_info type @ $42 = \ player
+	      wavetable 0= waveport 0= and and  IF
 		  pinfo snd_seq_port_info client c@ to wavetable
 		  pinfo snd_seq_port_info port c@ to waveport
 		  '* emit
@@ -144,8 +143,8 @@ midi-player implements
       REPEAT ;
   : search-ports ( -- )  cinfo @ pinfo c! -1 pinfo 1+ c!
       BEGIN  seq @ pinfo query_next_port  0= WHILE
-	      pinfo snd_seq_port_info capability @ $42 = \ player
-	      wavetable 0= waveport 0= and and IF
+	      pinfo snd_seq_port_info type @ $42 = \ player
+	      wavetable 0= waveport 0= and and  IF
 		  pinfo snd_seq_port_info client c@ to wavetable
 		  pinfo snd_seq_port_info port c@ to waveport
 	      THEN

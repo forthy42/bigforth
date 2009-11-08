@@ -40,6 +40,7 @@ include sincos.fs
 \needs $!       include string.fs
 \needs xc@+     include utf-8.fs
 \needs l"       include i18n.fs
+\needs substitute include substitute.fs
 
     : Synonym  Header  -2 allot bl word find dup 0= IF no.extensions THEN
 	dup 0> IF  immediate  THEN
