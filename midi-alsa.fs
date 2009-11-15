@@ -35,7 +35,7 @@ struct{
 } snd_seq_client_info
 
 struct{
-        1 client   1 port               /* client/port numbers */
+        byte client   byte port               /* client/port numbers */
         64 string name                  /* port name */
         cell capability                 /* port capability bits */
         cell type                       /* port type bits */
