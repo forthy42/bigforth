@@ -194,7 +194,7 @@ ficon: minos-win icons/minos1+.icn"
     Defer font-init ' noop IS font-init
     :noname font-init win-init ; atcold
     : minos-entry
-	2drop 2drop drop
+	2drop 2drop
 	true to script? interpret-args false to script?
 	WinI/O .cold quit ;
     ASSIGN minos-entry TO-DO entrypoint
