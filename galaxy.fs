@@ -24,6 +24,7 @@ struct{
   dfloat ax+
   dfloat ay+
   dfloat az+
+  dfloat mass
 } element
 
 : elements  sizeof element * ; macro
@@ -85,6 +86,7 @@ FVariable oldgauss 0e oldgauss f!
 	x1 f* dup element x df!
 	x1 f* dup element y df!
 	( f**2 ) x2 f*     element z df! }
+	1e I star element mass df!
     LOOP } ;
 
 \ units: kg, meters, seconds
@@ -133,7 +135,8 @@ Variable spiral-dist spiral-dist on
         fsincos frot funder f* f-rot f*
         I star dup element x df!
                dup element y df!
-        dz f*      element z df!
+	dz f*      element z df!
+	1e I star element mass df!
     LOOP ;
 
 : set-s0 ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
@@ -150,6 +153,7 @@ Variable spiral-dist spiral-dist on
         I star dup element x df!
                dup element y df!
         dz f*      element z df!
+	1e I star element mass df!
     LOOP ;
 
 \ example s0 galaxy:
@@ -166,8 +170,8 @@ Variable spiral-dist spiral-dist on
 -8e FConstant r_total
 
 : sdist ( r -- n ) fdup R_e f/ fexp f* ;
-: s0-check ( -- r f )  frnd fdup r_e f* r_total f* sdist frnd f2* f> ;
-: s0-rnd ( -- r ) BEGIN  s0-check 0= WHILE  fdrop  REPEAT  ;
+: s0-check ( -- r dens )  frnd fdup r_e f* r_total f* sdist ;
+: s0-rnd ( -- r ) BEGIN  s0-check frnd f2* f< WHILE  fdrop  REPEAT  ;
 : s0-tr ( -- r t ) frnd ( t ) s0-rnd ( ft fr ) fswap ;
 
 : set-s0' ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
@@ -183,7 +187,26 @@ Variable spiral-dist spiral-dist on
         I star dup element x df!
                dup element y df!
         dz .05e f* f*      element z df!
+	1e I star element mass df!
     LOOP ;
+
+: set-s0'' ( n1 n2 di ds dz dp sf -- ) { f: di f: ds f: dz f: dp f: sf }
+\    over 2 9 */ to central#
+    swap 2dup ?DO  s0-check I star element mass df! frnd
+        rnd >r
+\	funder 1e f+ f/
+        r@ $1 and IF fnegate THEN
+        fswap ( di f+ ) ds 1e di f+ f* f*
+	frnd pi f*
+        r> $2 and IF pi f+ THEN
+        fsincos frot funder f* f-rot f*
+        I star dup element x df!
+               dup element y df!
+        dz .05e f* f*      element z df!
+    LOOP
+    2dup 0e ?DO  I star element mass df@ f+  LOOP
+    2dup - abs fm/ 1/f
+    ?DO  fdup I star element mass dup df@ f* df!  LOOP  fdrop ;
 
 : DFVariable  Create 1 dfloats allot ;
 
@@ -220,6 +243,9 @@ Code -dxyz@abs ( addr -- fr² )
      .fl 0 element y AX D) fld  .fl >y #) fadd  0 ST fmul  1 STP fadd
      .fl 0 element z AX D) fld  .fl >z #) fadd  0 ST fmul  1 STP fadd
      AX pop  next end-code macro
+Code mass@* ( f addr -- f*mass )
+     .fl 0 element mass AX D) fld  1 STP fmul
+     AX pop  next end-code macro
 : a@ ( n -- x y z )
   dup element ax df@
   dup element ay df@
@@ -254,8 +280,8 @@ Code v+ ( v1 v2 -- )
   star# 0 ?DO  I star dup >xyz
       >x df@ >y df@ >z df@ vabs 1/f central# fm*
       0 star star# elements bounds ?DO  dup I <>
-          IF  I  dxyz@abs 1/f f+  THEN
-              I -dxyz@abs 1/f f+
+          IF  I  dxyz@abs 1/f I mass@* f+  THEN
+              I -dxyz@abs 1/f I mass@* f+
       sizeof element +LOOP  drop
       star# 2* 1- central# + fm/ I star element msum df!
   pause LOOP ;
@@ -268,9 +294,9 @@ Code v+ ( v1 v2 -- )
       central# fm* fnegate vscale
       0 star star# elements bounds ?DO  dup I <>
           IF   I dxyz@ vdup-abs
-               fdup fsqrt f* 1/f vscale v+  THEN
+               fdup fsqrt f* 1/f I mass@* vscale v+  THEN
           I -dxyz@ vdup-abs
-          fdup fsqrt f* 1/f vscale v+
+          fdup fsqrt f* 1/f I mass@* vscale v+
       sizeof element +LOOP drop
       I star 1e star# 2* 1- central# + fm/ vscale
       dup element az df!
@@ -288,8 +314,8 @@ Variable dirsens  dirsens on
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
       0 star star# elements bounds ?DO  dup I <>
-          IF  I dup  a+@  dxyz@abs 1/f vscale v+  THEN
-              I dup -a+@ -dxyz@abs 1/f vscale v+
+          IF  I dup  a+@  dxyz@abs 1/f I mass@* vscale v+  THEN
+              I dup -a+@ -dxyz@abs 1/f I mass@* vscale v+
       sizeof element +LOOP drop
       I star 1e star# 2* 1- central# + fm/
       dup element msum df@ msum+ f@ f+ f/ vscale
@@ -304,7 +330,7 @@ Variable dirsens  dirsens on
     star# swap #100 */ -4 and dup >r
     s0-galaxies IF  .25e .10e  ELSE  1e .33e  THEN  set-bulge
     r> star# .3e 2.25e .2e r> .01e fm* r> .01e fm*
-    s0-galaxies IF  set-s0'  ELSE  set-spiral  THEN ;
+    s0-galaxies IF  set-s0''  ELSE  set-spiral  THEN ;
 
 #30 #40 #100 set-masses
 
@@ -448,8 +474,8 @@ FVariable step# 0.003e step# f!
   disc# 0 ?DO  I disc >xyz
       >x df@ >y df@ >z df@ vabs 1/f central# fm*
       0 star star# elements bounds ?DO
-          I  dxyz@abs 1/f f+
-          I -dxyz@abs 1/f f+
+          I  dxyz@abs 1/f I mass@* f+
+          I -dxyz@abs 1/f I mass@* f+
       sizeof element +LOOP
       star# 2* central# + fm/ I disc element msum df!
   pause LOOP ;
@@ -459,8 +485,8 @@ FVariable step# 0.003e step# f!
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
       0 star star# elements bounds ?DO
-          I  dxyz@ vdup-abs fdup fsqrt f* 1/f vscale v+
-          I -dxyz@ vdup-abs fdup fsqrt f* 1/f vscale v+
+          I  dxyz@ vdup-abs fdup fsqrt f* 1/f I mass@* vscale v+
+          I -dxyz@ vdup-abs fdup fsqrt f* 1/f I mass@* vscale v+
       sizeof element +LOOP
       I disc 1e star# 2* central# + fm/ vscale
       dup element az df!
@@ -473,8 +499,8 @@ FVariable step# 0.003e step# f!
       >x df@ >y df@ >z df@ vdup-abs fdup fsqrt f* 1/f
       central# fm* vscale
       0 star star# elements bounds ?DO
-          I dup  a+@  dxyz@abs 1/f vscale v+
-          I dup -a+@ -dxyz@abs 1/f vscale v+
+          I dup  a+@  dxyz@abs 1/f I mass@* vscale v+
+          I dup -a+@ -dxyz@abs 1/f I mass@* vscale v+
       sizeof element +LOOP
       I disc 1e star# 2* central# + fm/
       dup element msum df@ msum+ f@ f+ f/ vscale
@@ -534,7 +560,7 @@ Defer disc-text
 
 \ main galaxy drawing program
 
-: draw-star  ( -- ) ^ 3d-turtle with
+: draw-star  ( -- ) ^ 3d-turtle with  6 set-precision decimal
     star# 2* open-path next-round
     star# 0 ?DO
 	I star a@ dirsens @ IF
@@ -545,7 +571,8 @@ Defer disc-text
 	ELSE fsqsum fsqrt THEN
 	fdup f0= IF  fnip
 	ELSE  f/ fln [ 64e fln 1/f ] Fliteral f*  THEN
-	1e f+ 0.002e fmax .998e fmin fdup 0e xy-text
+	1e f+ 0.002e fmax .998e fmin fdup
+	I star element mass df@ f2/ 0.998e fmin xy-text
 	I star xyz@ add-xyz 0e xy-text
 	I star -xyz@ add-xyz
     LOOP next-round close-path
