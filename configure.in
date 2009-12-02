@@ -32,7 +32,7 @@ case "$host_os" in
 	darwin*)
 		EXTFLAGS="-DDARWIN"
 		WINDOWS=""
-		ARCHFLAGS=""
+		ARCHFLAGS="-m32"
 		INI=".bigforthrc"
 		XINI=".xbigforthrc"
 		ARCH="osx"
