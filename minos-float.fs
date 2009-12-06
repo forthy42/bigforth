@@ -7,13 +7,21 @@ also float also minos definitions
 6 Value fa-precision
 
 number-action class float-action
+    cell var precision
   how:
+    : init  fa-precision precision ! super init ;
     : >#f ( f -- addr u ) base push nbase @ base !
-	fa-precision set-precision fx$ ;
+	precision @ set-precision fx$ ;
     : store ( f -- ) >#f edit assign ;
     : fetch ( -- f ) base push nbase @ base ! edit get >float
 	0= IF  0e  THEN ;
 class;
+
+: #pre ( n o -- ) textfield with
+        edit callback self float-action with
+            precision !
+        endwith
+    endwith ;
 
 : ]#f ( key sys ) postpone ]: (textfield postpone endwith
   & float-action >o float-action bind-key o> ;      immediate
