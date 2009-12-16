@@ -22,6 +22,11 @@ adjust implements
   dpy self window with  xywh resize
       xywh  2swap 2drop p2/ p-
       repos endwith
+  argc @ 3 = IF  2 arg id# assign
+    id# get path# get s" xbigforth.ini" adjust-path-id
+    id# get path# get  s" bigforth.ini" adjust-path-id
+    close bye
+  THEN
   super show ; ( [methodend] ) 
   : widget  ( [dumpstart] )
         T" " ^^ ST[  ]ST ( MINOS ) X" Pathes" infotextfield new  ^^bind path#

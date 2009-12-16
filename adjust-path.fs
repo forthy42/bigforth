@@ -11,7 +11,7 @@ DOS also fileop also minos also
          scratch over 5 min s" Path " compare 0=
          IF    drop .' Path "'
                pathsep emit 2over type  '" emit
-         ELSE  scratch over dup 7 - /string s" date-id" compare
+         ELSE  scratch over 10 /string 7 min s" date-id" compare
                0= IF  drop >r >r
                       .'   s" ' 2over type .' " date-id'
                       r> r>
