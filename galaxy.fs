@@ -573,8 +573,9 @@ Defer disc-text
 	fdup f0= IF  fnip
 	ELSE  f/ fln [ 64e fln 1/f ] Fliteral f*  THEN
 	1e f+ 0.002e fmax .998e fmin fdup
-	I star element mass df@ f2/ .45e f** 0.998e fmin xy-text
-	I star xyz@ add-xyz 0e xy-text
+	I star element mass df@ f2/ .45e f**
+	0.998e fmin 1e fswap f- ftuck xy-text
+	I star xyz@ add-xyz xy-text
 	I star -xyz@ add-xyz
     LOOP next-round close-path
     endwith ;
