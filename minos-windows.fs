@@ -171,9 +171,9 @@ how:    : xinc  child xinc ;
 
 \ window                                               01nov06py
 
-        : hide ( -- )  flags #hidden +bit  child hide \ ?app
+        : hide ( -- ) flags #hidden +bit  child hide \ ?app
 [defined] x11 [IF]
-          xrc dpy @ xwin @ XUnmapWindow  [THEN]
+          sync  xrc dpy @ xwin @ XUnmapWindow  sync  [THEN]
 [defined] win32 [IF]
           SW_HIDE xwin @ ShowWindow drop  [THEN] ;
         : stop ( -- )  up@ app !  1 apprefcnt +!

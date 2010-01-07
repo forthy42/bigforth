@@ -167,10 +167,11 @@ Variable spiral-dist spiral-dist on
 \ total masses: 5.106*6e10
 
 -3.5e FConstant r_e
--8e FConstant r_total
+-8e  FConstant r_total
+1.5e  FConstant r_scale
 
 : sdist ( r -- n ) fdup R_e f/ fexp f* ;
-: s0-check ( -- r dens )  frnd fdup r_e f* r_total f* sdist ;
+: s0-check ( -- r dens )  frnd fdup r_scale f* fswap r_e f* r_total f* sdist ;
 : s0-rnd ( -- r ) BEGIN  s0-check frnd f2* f< WHILE  fdrop  REPEAT  ;
 : s0-tr ( -- r t ) frnd ( t ) s0-rnd ( ft fr ) fswap ;
 
@@ -367,7 +368,7 @@ Variable vis-max
 Variable a-pos $20 a-pos !
 
 50 Value vismax
-: visminmax 0 max vismax 1- min ;
+: visminmax 0 max vismax 3+ min ;
 \ unit to length
 : u>len u_galaxy 1e20 f/ f* 5e f*
     .5e f+ ff>s visminmax ;
@@ -378,7 +379,7 @@ Variable a-pos $20 a-pos !
 : fsqsum ( x y z -- d ) f**2 fswap f**2 f+ fswap f**2 f+ ;
 : !vis-array ( addr -- )  to vis-array
     s" " vis-array $!
-    vismax 2+ 2* cells vis-array $!len  vis-array $@ erase ;
+    vismax 6+ 2* cells vis-array $!len  vis-array $@ erase ;
 : r#@ ( addr -- r )  xyz@ fsqsum fsqrt ;
 : vis+ ( val i -- )
     star r#@ u>len 1+ 2* cells
@@ -403,9 +404,9 @@ Variable a-pos $20 a-pos !
 : draw-vis-array
   ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!  -1 0 to
       rgb> drawcolor  path
-      0 vismax 0 ?DO  I vis@ 2*
-                      dup >r - negate
-                      1 swap to r>  LOOP
+      0 vismax 1+ 0 ?DO  I vis@ 2*
+	  dup >r - negate
+	  1 swap to r>  LOOP
       drop stroke
   endwith ( decimal vis-max ? ) ;
 : visualize-mass  vis-mass !vis-array
@@ -572,7 +573,7 @@ Defer disc-text
 	fdup f0= IF  fnip
 	ELSE  f/ fln [ 64e fln 1/f ] Fliteral f*  THEN
 	1e f+ 0.002e fmax .998e fmin fdup
-	I star element mass df@ f2/ 0.998e fmin xy-text
+	I star element mass df@ f2/ .45e f** 0.998e fmin xy-text
 	I star xyz@ add-xyz 0e xy-text
 	I star -xyz@ add-xyz
     LOOP next-round close-path

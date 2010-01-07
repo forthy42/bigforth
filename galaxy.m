@@ -33,7 +33,7 @@ cell var filename
 cell var do-mass
 cell var don't
 3 cells var galaxy-lock
-method redraw-galaxy ( [varend] ) 
+method redraw-galaxy ( [varend] )
 how:
   : params   DF[ 0 ]DF X" Galaxy" ;
 class;
@@ -41,20 +41,20 @@ class;
 component class about
 public:
   button ptr ok-button
- ( [varstart] )  ( [varend] ) 
+ ( [varstart] )  ( [varend] )
 how:
   : params   DF[ 0 ]DF X" About" ;
 class;
 
 component class measure-menu
 public:
- ( [varstart] )  ( [varend] ) 
+ ( [varstart] )  ( [varend] )
 how:
   : params   DF[ 0 ]DF X" Measure" ;
 class;
 
 measure-menu implements
- ( [methodstart] )  ( [methodend] ) 
+ ( [methodstart] )  ( [methodend] )
   : widget  ( [dumpstart] )
         ^^ S[ ^ galaxy with
     0 disc# ! redraw-galaxy s" None" meas-string assign
@@ -73,7 +73,7 @@ endwith ]S ( MINOS ) X" New" menu-entry new
 class;
 
 about implements
- ( [methodstart] )  ( [methodend] ) 
+ ( [methodstart] )  ( [methodend] )
   : widget  ( [dumpstart] )
           X" This program simulates 'dark masses' in a galaxy." text-label new 
           X" However, it doesn't assume real dark masses, but" text-label new 
@@ -119,7 +119,7 @@ galaxy implements
 : iterate-disc  ^ 1 $10000 dup NewTask pass op!
   galaxy-lock lock
   disc-msum disc-a disc-a+ redraw-galaxy dpy sync
-  galaxy-lock unlock ; ( [methodend] ) 
+  galaxy-lock unlock ; ( [methodend] )
   : widget  ( [dumpstart] )
               GL[ outer with draw-galaxy endwith ]GL ( MINOS ) ^^ CK[ 2drop 2drop ]CK ( MINOS ) $200 $1 *hfil $200 $1 *vfil glcanvas new  ^^bind GLgalaxy
             #1 habox new
@@ -169,7 +169,7 @@ redraw-galaxy ]SC ( MINOS )  TT" Background intensity" hscaler new
                         M: measure-menu menu X" " info-menu new  ^^bind meas-string
                       #3 habox new hfixbox  vfixbox  #2 borderbox
                       $0 $1 *hfil $0 $1 *vfil glue new 
-                        ^^ #3 #7 SC[ $100 swap << to star# make-galaxy ]SC ( MINOS )  TT" 2^(9+n) stars" hscaler new 
+                        ^^ #5 #10 SC[ $100 swap << to star# make-galaxy ]SC ( MINOS )  TT" 2^(9+n) stars" hscaler new 
                           $0 $1 *hfil $0 $1 *vfil glue new 
                           #10. ]N ( MINOS ) ^^ SN[  ]SN ( MINOS ) textfield new  ^^bind iterations
                           $0 $1 *hfil $0 $1 *vfil glue new 
@@ -189,7 +189,7 @@ IF  star-path $@  ELSE  s" *.star"  THEN
      bulgep @ 0 bulge# assign
      spreadp @ 0 spread# assign  don't off
      stars $@ r@ read-file throw drop r> close-file throw
-     a# draw redraw-galaxy ]S
+     a# draw redraw-galaxy 2drop ]S
 fsel-action ]S ( MINOS )  icon" icons/load" icon-but new 
                 ^^ S[ s" Save Stars" s" " star-path @
 IF  star-path $@  ELSE  s" *.star"  THEN
