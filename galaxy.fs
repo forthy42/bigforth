@@ -167,8 +167,8 @@ Variable spiral-dist spiral-dist on
 \ total masses: 5.106*6e10
 
 -3.5e FConstant r_e
--8e  FConstant r_total
-1.5e  FConstant r_scale
+-12e   FConstant r_total
+1.5e    FConstant r_scale
 
 : sdist ( r -- n ) fdup R_e f/ fexp f* ;
 : s0-check ( -- r dens )  frnd fdup r_scale f* fswap r_e f* r_total f* sdist ;
@@ -351,7 +351,7 @@ Variable dirsens  dirsens on
 \ Units
 
 30.856776e15 FConstant parsec
-parsec r_e f* 1000e f* 2.25e 1.3e f* f/ r_total f* FConstant u_galaxy \ unit to meter
+parsec r_e f* 1000e f* 2.25e 1.3e f* f/ r_total r_scale f/ f* FConstant u_galaxy \ unit to meter
 6.67428e-11 FConstant G
 1.9891e30 FConstant Msol
 Msol 6e10 f* 5.1e f* FConstant m_total
