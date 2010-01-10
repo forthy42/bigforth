@@ -408,7 +408,24 @@ Variable a-pos $20 a-pos !
 	  dup >r - negate
 	  1 swap to r>  LOOP
       drop stroke
-  endwith ( decimal vis-max ? ) ;
+      endwith ( decimal vis-max ? ) ;
+.4e FConstant visscale
+: draw-vis-array' ( -- )
+   ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!  -1 0 to
+      rgb> drawcolor  path
+      0 vismax 1+ 0 ?DO  I vis@ 2* visscale fm* f>s
+	  dup >r - negate
+	  1 swap to r>  LOOP
+      drop stroke
+      endwith ( decimal vis-max ? ) ;
+: draw-vis-array'' ( -- )
+   ^ canvas with  vismax dup $100 * steps 0 vismax $100 * home!  -1 0 to
+      rgb> drawcolor  path
+      0 vismax 1+ 0 ?DO  I vis@ 2* visscale f**2 fm* f>s
+	  dup >r - negate
+	  1 swap to r>  LOOP
+      drop stroke
+      endwith ( decimal vis-max ? ) ;
 : visualize-mass  vis-mass !vis-array
   star# 0 ?DO  I star element msum df@
                1e f* u>accel I vis+  LOOP
@@ -426,7 +443,9 @@ Variable a-pos $20 a-pos !
 	I star a+@ I star >dir
         u>accel I vis+  LOOP ;
 : visualize-a+
-    visualize-a+#  $FF $00 $00  draw-vis-array ;
+    visualize-a+#
+    $FF $00 $FF  draw-vis-array''
+    $FF $00 $00  draw-vis-array ;
 : visualize-v#  vis-a !vis-array
     star# 0 ?DO
 	I star a@ I star >dir I star r#@ f* fsqrt
@@ -438,7 +457,9 @@ Variable a-pos $20 a-pos !
 	I star a+@ I star >dir I star r#@ f* fsqrt
         u>speed I vis+  LOOP ;
 : visualize-v+
-    visualize-v+#  $FF $FF $00  draw-vis-array ;
+    visualize-v+#
+    $00 $FF $00  draw-vis-array'
+    $FF $FF $00  draw-vis-array ;
 : write-csv ( -- ) 6 set-precision decimal
     s" stars.csv" r/w output-file +buffer
     star# 0 ?DO
