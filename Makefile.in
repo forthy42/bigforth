@@ -32,7 +32,7 @@ EXE = @EXEEXT@
 CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' @EXTFLAGS@
 LDLIBS = @LIBS@
 ARCH = @ARCH@
-SHELL = /bin/bash
+SHELL = @BASH@
 
 WARNING	= 
 #WARNING = warning on

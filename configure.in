@@ -3,6 +3,13 @@ dln this is a really minimal autoconf file
 AC_INIT([bigforth],[2.3.1],[http://sourceforge.net/tracker/?atid=101028&group_id=1028&func=browse])
 AC_CANONICAL_HOST
 AC_PROG_CC
+AC_PATH_PROG(BASH, bash)
+
+WINDOWS=""
+ARCHFLAGS=""
+INI=".bigforthrc"
+XINI=".xbigforthrc"
+EXTFLAGS=""
 
 case "$host_os" in
 	*win32|cygwin)
@@ -15,35 +22,18 @@ case "$host_os" in
 		;;
 	*bsd*|*dragonfly*)
 		EXTFLAGS="-DBSD"
-		WINDOWS=""
-		ARCHFLAGS=""
-		INI=".bigforthrc"
-		XINI=".xbigforthrc"
 		ARCH="bsd"
 		;;
 	linux)
-		EXTFLAGS=""
-		WINDOWS=""
-		ARCHFLAGS=""
-		INI=".bigforthrc"
-		XINI=".xbigforthrc"
 		ARCH="linux"
 		;;
 	darwin*)
 		EXTFLAGS="-DDARWIN"
-		WINDOWS=""
 		ARCHFLAGS="-m32"
-		INI=".bigforthrc"
-		XINI=".xbigforthrc"
 		ARCH="osx"
 		;;
 	*)
-		EXTFLAGS=""
-		WINDOWS=""
-		ARCHFLAGS=""
-		INI=".bigforthrc"
-		XINI=".xbigforthrc"
-		ARCH="linux"
+		ARCH="linux" # default to Linux
 		;;
 esac
 
