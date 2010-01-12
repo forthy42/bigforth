@@ -13,7 +13,7 @@ case "$host_os" in
 		XINI="xbigforth.ini"
 		ARCH="win32"
 		;;
-	*bsd)
+	*bsd*|*dragonfly*)
 		EXTFLAGS="-DBSD"
 		WINDOWS=""
 		ARCHFLAGS=""

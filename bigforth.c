@@ -919,6 +919,74 @@ graceful_exit (int sig, siginfo_t *info, void *_)
   exit (0x80|sig);
 }
 
+#ifdef __FreeBSD__
+#include <ucontext.h>
+
+static void 
+signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
+{
+  int code;
+  mcontext_t sigc = uap->uc_mcontext;
+  long *dump1, *dump2, *dump3;
+
+  struct {
+    int signal;
+    int throwcode;
+  } *p, throwtable[] = {
+    { SIGINT, -28 },
+/*    { SIGFPE, -55 }, */
+    { SIGBUS, -23 },
+    { SIGSEGV, -9 },
+  };
+
+/*  dump1 = (long*)&(sigc->edi);
+  dump2 = ((long*)(recovery))+1;
+  dump3 = (long*)(sigc->fpstate);
+
+  memcpy(dump2, dump1, 8*sizeof(long));
+  dump2[3] = sigc->esp_at_signal;
+  dump2 += 8;
+
+  *dump2++ = sigc->eip;
+  *dump2++ = sigc->cs;
+  *dump2++ = sigc->eflags;
+  *dump2++ = sigc->trapno;
+  if(dump3) {
+    memcpy(fpdump, (char*)(dump3), 108);
+    *dump2-- = (long)fpdump;
+  } else {
+    *dump2-- = (long)0;
+  }
+*/
+  for (code=-256-sig, p=throwtable; p<throwtable+(sizeof(throwtable)/sizeof(*p)); p++)
+    if (sig == p->signal) {
+      code = p->throwcode;
+      break;
+    }
+#if 1
+  if(sig == SIGFPE) {
+    switch(info->si_code) {
+#ifdef FPE_INTDIV
+    case FPE_INTDIV: code=-10; break; /* integer divide by zero */
+#endif
+#ifdef FPE_INTOVF
+    case FPE_INTOVF: code=-11; break; /* integer overflow */
+#endif
+    case FPE_FLTDIV: code=-42; break; /* floating point divide by zero */
+    case FPE_FLTOVF: code=-43; break; /* floating point overflow  */
+    case FPE_FLTUND: code=-54; break; /* floating point underflow  */
+    case FPE_FLTRES: code=-41; break; /* floating point inexact result  */
+#if 0 /* defined by Unix95, but unnecessary */
+    case FPE_FLTINV: /* invalid floating point operation  */
+    case FPE_FLTSUB: /* subscript out of range  */
+#endif
+    default: code=-55; break;
+    }
+  }
+#endif
+  longjmp(throw_jmp_buf,code); /* or use siglongjmp ? */
+}
+#endif
 #ifdef linux
 static void 
 signal_throw(int sig, siginfo_t *info, void *_)
