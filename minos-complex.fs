@@ -15,25 +15,25 @@ modal class component
     : widget s" Nothing" text-label new ;
     : params   DF[ 0 ]DF s" No Title" ;
     : init ( -- ) ^>^^ assign
-	widget 1 ^ params 2drop nip super init ;
+        widget 1 ^ params 2drop nip super init ;
     : open-win ( -- )  self params rot drop
-	screen self window new  window with  assign show  endwith ;
+        screen self window new  window with  assign show  endwith ;
     : make     ( o -- win )
-	new, dup >o params o> rot drop
-	screen self window new  window with  assign ^  endwith ;
+        new, dup >o params o> rot drop
+        screen self window new  window with  assign ^  endwith ;
     : open,     make  window with  show  endwith ;
     : dialog,   make  get-win
-	swap window with  set-parent show  endwith ;
+        swap window with  set-parent show  endwith ;
     : open-app, make  window with  show up@ app ! 1 apprefcnt +! endwith ;
     : menu,     ( o -- o ) >o widget o> ;
     : open     ( -- )     o@ state @
-	IF postpone ALiteral postpone open, ELSE open, THEN ;
+        IF postpone ALiteral postpone open, ELSE open, THEN ;
     : dialog     ( -- )     o@ state @
-	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
+        IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
     : open-app     ( -- )     o@ state @
-	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
+        IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
     : menu     ( -- )     ^ state @
-	IF postpone ALiteral postpone menu, ELSE menu, THEN ;
+        IF postpone ALiteral postpone menu, ELSE menu, THEN ;
 class;
 
 : new-component ( o od addr u -- o )
@@ -81,17 +81,17 @@ menu-window class menu-component
     : widget s" Nothing" text-label new ;
     : params   DF[ 0 ]DF s" No Title" ;
     : init ( -- )  screen self super init ^>^^
-	widget 1 ^ params 2>r nip modal new 2r> assign ;
+        widget 1 ^ params 2>r nip modal new 2r> assign ;
     : open,     new,  window with  show  endwith ;
     : dialog,   new,  get-win
-	swap window with  set-parent show  endwith ;
+        swap window with  set-parent show  endwith ;
     : open-app, new,  window with  show up@ app ! 1 apprefcnt +!  endwith ;
     : open     ( -- )     o@ state @
-	IF postpone ALiteral postpone open, ELSE open, THEN ;
+        IF postpone ALiteral postpone open, ELSE open, THEN ;
     : dialog     ( -- )     o@ state @
-	IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
+        IF postpone ALiteral postpone dialog, ELSE dialog, THEN ;
     : open-app     ( -- )     o@ state @
-	IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
+        IF postpone ALiteral postpone open-app, ELSE open-app, THEN ;
 class;
 
 \ OpenGL canvas                                        22jun02py
@@ -172,13 +172,13 @@ how:
               xswa XSetWindowAttributes border_pixel !
               xswa XSetWindowAttributes background_pixel !
 
-	  event-mask  xswa XSetWindowAttributes event_mask !
+          event-mask  xswa XSetWindowAttributes event_mask !
 
-	  dpy xrc dpy @ dpy get-win
-	  x @ y @ w @ 1 max h @ 1 max
-	  0           visinfo @ XVisualInfo depth  @
-	  InputOutput visinfo @ XVisualInfo visual @
-	  glxvals xswa XCreateWindow
+          dpy xrc dpy @ dpy get-win
+          x @ y @ w @ 1 max h @ 1 max
+          0           visinfo @ XVisualInfo depth  @
+          InputOutput visinfo @ XVisualInfo visual @
+          glxvals xswa XCreateWindow
           self over window-stub new bind stub ;
 
 \ OpenGL canvas                                        09dec07py
@@ -186,10 +186,10 @@ how:
         : new-pixmap ( -- )  glxwin @ ?EXIT  glxpm @ ?EXIT
           dpy xwin @ dpy get-win = canvas-mode 2 and 0= and  IF
               new-window glxwin ! rendered off  EXIT THEN
-	  dpy xrc dpy @ dpy get-win
+          dpy xrc dpy @ dpy get-win
           w @ 4 max 3 + -4 and h @ 4 max
           visinfo @ XVisualInfo depth @
-	  XCreatePixmap dup pixmap !
+          XCreatePixmap dup pixmap !
           dpy xrc dpy @ visinfo @ rot glxCreateGLXPixmap
           glxpm ! rendered off ;
         : show ( -- )  shown @ shown on ?EXIT
@@ -615,8 +615,8 @@ how:    6 colors focuscol !     1 colors defocuscol !
           ELSE  0  THEN ;
         : key   ( -- key )  flush  1 cursor# ! curon
           BEGIN  key?  0= WHILE
-		  dpy xrc fid [defined] VFXFORTH [IF] #1 [ELSE] #50 [THEN] idle
-	  REPEAT
+                  dpy xrc fid [defined] VFXFORTH [IF] #1 [ELSE] #50 [THEN] idle
+          REPEAT
           getkey curoff ;
 
 \ IO-Window                                            06jan05py
@@ -663,8 +663,8 @@ class;
 
     : openw  screen self menu-window new
         menu-window with
-	  term-w set-icon
-	  0 1 *fill 0 1 *fil rule new dup F bind term-last
+          term-w set-icon
+          0 1 *fill 0 1 *fil rule new dup F bind term-last
         1 hbox new vfixbox dup F bind term-menu 1 vbox new
           1 1 viewport new
               D[ map-size 2@ terminal new dup F bind term ]D
@@ -780,7 +780,7 @@ minos
       terminal-menu
       map-size 2@ geometry
       map-pos 2@ d0= 0= IF  map-pos 2@ repos  THEN
-      show endwith
+      sync show endwith
   MaxScroll term scrollback
   event-task' task's term dup @
   0= IF  term self swap !  ELSE  drop  THEN
@@ -918,7 +918,7 @@ how:    : read-files ( addr attr -- w1 .. wn n )
 \ file listbox                                         10apr04py
 
         : widget ( addr len -- object )
-	  scratch 0place
+          scratch 0place
           file<= @ F IS lex
           scratch $1C0 read-dir   >r  sp@ r@ sort
           scratch $0C0 read-files >r  sp@ r@ sort
