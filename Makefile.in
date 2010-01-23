@@ -29,7 +29,7 @@ CC = @CC@ @ARCHFLAGS@
 CP = cp
 MV = mv
 EXE = @EXEEXT@
-CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' @EXTFLAGS@
+CFLAGS = -g -O2 -Wall -DVERSION_DATE='"'"$(DATE)"'"' -DINSTDIR='"'"$(INSTDIR)"'"' -fno-strict-aliasing @EXTFLAGS@
 LDLIBS = @LIBS@
 ARCH = @ARCH@
 SHELL = @BASH@
