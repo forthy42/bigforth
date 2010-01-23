@@ -926,7 +926,7 @@ static void
 signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
 {
   int code;
-  mcontext_t sigc = uap->uc_mcontext;
+  mcontext_t *sigc = &(uap->uc_mcontext);
   long *dump1, *dump2, *dump3;
 
   struct {
@@ -939,25 +939,25 @@ signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
     { SIGSEGV, -9 },
   };
 
-/*  dump1 = (long*)&(sigc->edi);
+  dump1 = (long*)&(sigc->mc_edi);
   dump2 = ((long*)(recovery))+1;
-  dump3 = (long*)(sigc->fpstate);
+  dump3 = (long*)(sigc->mc_fpstate);
 
   memcpy(dump2, dump1, 8*sizeof(long));
-  dump2[3] = sigc->esp_at_signal;
+  dump2[3] = sigc->mc_esp;
   dump2 += 8;
 
-  *dump2++ = sigc->eip;
-  *dump2++ = sigc->cs;
-  *dump2++ = sigc->eflags;
-  *dump2++ = sigc->trapno;
+  *dump2++ = sigc->mc_eip;
+  *dump2++ = sigc->mc_cs;
+  *dump2++ = sigc->mc_eflags;
+  *dump2++ = sigc->mc_trapno;
   if(dump3) {
     memcpy(fpdump, (char*)(dump3), 108);
     *dump2-- = (long)fpdump;
   } else {
     *dump2-- = (long)0;
   }
-*/
+
   for (code=-256-sig, p=throwtable; p<throwtable+(sizeof(throwtable)/sizeof(*p)); p++)
     if (sig == p->signal) {
       code = p->throwcode;
@@ -1054,11 +1054,12 @@ signal_throw(int sig, siginfo_t *info, void *_)
 }
 #endif
 #ifdef DARWIN
+#include <mach/thread_status.h>
+
 static void 
 signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
 {
   int code;
-  struct sigcontext * sigc = (struct sigcontext *)(uap->uc_mcontext);
   long *dump1, *dump2, *dump3;
 
   struct {
@@ -1071,25 +1072,25 @@ signal_throw(int sig, siginfo_t *info, ucontext_t *uap)
     { SIGSEGV, -9 },
   };
 
-/*  dump1 = (long*)&(sigc->edi);
+  dump1 = (long*)&(uap->uc_mcontext->__ss.__edi);
   dump2 = ((long*)(recovery))+1;
-  dump3 = (long*)(sigc->fpstate);
+  dump3 = (long*)&(uap->uc_mcontext->__fs);
 
   memcpy(dump2, dump1, 8*sizeof(long));
-  dump2[3] = sigc->esp_at_signal;
+  dump2[3] = uap->uc_mcontext->__ss.__esp;
   dump2 += 8;
 
-  *dump2++ = sigc->eip;
-  *dump2++ = sigc->cs;
-  *dump2++ = sigc->eflags;
-  *dump2++ = sigc->trapno;
+  *dump2++ = uap->uc_mcontext->__ss.__eip;
+  *dump2++ = uap->uc_mcontext->__ss.__cs;
+  *dump2++ = uap->uc_mcontext->__ss.__eflags;
+  *dump2++ = uap->uc_mcontext->__es.__trapno;
   if(dump3) {
     memcpy(fpdump, (char*)(dump3), 108);
     *dump2-- = (long)fpdump;
   } else {
     *dump2-- = (long)0;
   }
-*/
+
   for (code=-256-sig, p=throwtable; p<throwtable+(sizeof(throwtable)/sizeof(*p)); p++)
     if (sig == p->signal) {
       code = p->throwcode;
