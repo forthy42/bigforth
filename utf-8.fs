@@ -72,8 +72,16 @@ $80 Value maxascii
 
 : +x/string ( xcaddr u -- xcaddr' u' )
     over + >r xchar+ r> over - ;
-: x/string- ( xcaddr u -- xcaddr' u' )
+: x\string- ( xcaddr u -- xcaddr' u' )
     over + xchar- over - ;
+
+: -trailing-garbage ( xc-addr u1 -- xc-addr u2 )
+    2dup + dup xchar- ( addr u1 end1 end2 )
+    2dup dup over over - x-size + = IF \ last xchar ok
+        2drop
+    ELSE
+        nip nip over -
+    THEN ;
 
 \ utf key and emit
 
@@ -242,17 +250,19 @@ base !
 
 \ inefficient table walk:
 
-: wcwidth ( xc -- n )
+: xc-width ( xc -- n )
     wc-table #wc-table over + swap ?DO
         dup I 2@ within IF drop  I 2 cells + @  UNLOOP EXIT  THEN
     3 cells +LOOP  drop 1 ;
+[ELSE]
+    ' wcwidth Alias xc-width
 [THEN]
 
 also dos
 
 : x-width ( addr u -- n )
     0 -rot bounds ?DO
-        I xc@+ swap >r wcwidth +
+        I xc@+ swap >r xc-width +
         r> I - +LOOP ;
 
 previous
@@ -369,8 +379,8 @@ User curpos
 ' emit alias xemit
 
 export utf-8 maxascii xc-size xc@+ xc!+ xc!+? xchar+ xchar-
-  +x/string x/string- save-cursor restore-cursor
-  xkey xemit x-size x-width xdecode xaccept xhold holds ;
+  +x/string x\string- -trailing-garbage save-cursor restore-cursor
+  xkey xemit xc-width x-size x-width xdecode xaccept xhold holds ;
 
 also DOS
 : utf-8-coding  $80 to maxascii
