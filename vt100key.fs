@@ -19,7 +19,7 @@ Variable fcode
     ELSE 'O' = IF
 	    key 'P' - &11 +
 	    transcode over fcode ! + c@ dup IF  decode  THEN
-	ELSE  drop 0  THEN  THEN ;
+	ELSE  false  THEN  THEN ;
 
 ctrl B 'D trans
 ctrl F 'C trans
