@@ -16,12 +16,6 @@
   dup 0= IF nip THEN ;
 \ Simpler: : key ekey $FF and ;
 
-\ defer@/defer!/action-of
-
-: defer@ ( xt -- xt )  >body @ ;
-: defer! ( xt1 xt2 -- )  >body ! ;
-' what's Alias action-of
-
 \ obsolescent
 User span
 : expect  accept span ! ;
