@@ -554,7 +554,7 @@ previous theseus definitions
     ['] included catch dup open-failed# <> IF  throw 0  THEN
     drop strip-names Onlyforth cur save-state off
     cur with
-        s" Theseus: " window title! file-name $@ window title+!
+        s" Θησεύς: " window title! file-name $@ window title+!
     endwith
     loading off ;
 

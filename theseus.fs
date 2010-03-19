@@ -1462,7 +1462,7 @@ Variable auto-save-file
 
 : set-title ( -- )
     cur with
-        s" Theseus: " window title!  file-name $@ title+!
+        s" Θησεύς: " window title!  file-name $@ title+!
     endwith ;
 
 : try-save ( -- )
