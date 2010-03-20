@@ -76,7 +76,7 @@ last @ to keycode-end
 
 \ structures
 
-: begin-structure ( -- here )  $AAAAAAAA Constant lastcfa @ 4 + ;
+: begin-structure ( -- here )  $AAAAAAAA Constant lastcfa @ 4 + 0 ;
 : end-structure ( here size -- )  swap ! ;
 : +field ( n1 n2 "name" -- n3 )
     >r >r : r@ postpone Literal postpone + postpone ; macro r> r> + ;
