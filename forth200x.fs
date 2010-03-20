@@ -53,9 +53,9 @@ $80000000 Constant k-fn-mask
     \ Print an fkey as string
     dup $FFFFFF and
     simple-fkey-string type
-    dup k-shift-mask and if ."  k-shift-mask or" then
-    dup k-ctrl-mask  and if ."  k-ctrl-mask or"  then
-        k-alt-mask   and if ."  k-alt-mask or"   then ;
+    dup k-shift-mask and IF ."  k-shift-mask or" THEN
+    dup k-ctrl-mask  and IF ."  k-ctrl-mask or"  THEN
+    k-alt-mask       and IF ."  k-alt-mask or"   THEN ;
 
 last @ to keycode-start
     
@@ -73,3 +73,34 @@ $FF63 Constant k-insert
 $FFBE 12 k-fns: k-f1 k-f2 k-f3 k-f4 k-f5 k-f6 k-f7 k-f8 k-f9 k-f10 k-f11 k-f12
 
 last @ to keycode-end
+
+\ structures
+
+: begin-structure ( -- here )  $AAAAAAAA Constant lastcfa @ 4 + ;
+: end-structure ( here size -- )  swap ! ;
+: +field ( n1 n2 "name" -- n3 )
+    >r >r : r@ postpone Literal postpone + postpone ; macro r> r> + ;
+
+: cfield:       \ n1 <"name"> -- n2 ; Exec: addr -- 'addr
+\ *G Create a new field within a structure definition of size 1 CHARS.
+  1 +field ;
+
+: field:        \ n1 <"name"> -- n2 ; Exec: addr -- 'addr
+\ *G Create a new field within a structure definition of size 1 CELLS.
+\ ** The field is ALIGNED.
+  cell +field ;
+
+: ffield:       \ n1 <"name"> -- n2 ; Exec: addr -- 'addr
+\ *G Create a new field within a structure definition of size 1 FLOATS.
+\ ** The field is FALIGNED.
+  10 +field ;
+
+: sffield:      \ n1 <"name"> -- n2 ; Exec: addr -- 'addr
+\ *G Create a new field within a structure definition of size 1 SFLOATS.
+\ ** The field is SFALIGNED.
+  4 +field ;
+
+: dffield:      \ n1 <"name"> -- n2 ; Exec: addr -- 'addr
+\ *G Create a new field within a structure definition of size 1 DFLOATS.
+\ ** The field is DFALIGNED.
+  8 +field ;
