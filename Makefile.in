@@ -47,7 +47,8 @@ KERNSRC	= forth.fb target.fb
 SYSSRC	= assem486.fb stream.fb errore.fs hash.fs fileint.fb output.fb \
 	  strings.fs savemod.fb tasker.fb vt100key.fs disass.fb \
 	  tools.fb except.fs sedit.fb struct.fs lambda.fs idle.fs callback.fs \
-	  startup.fb ftast.fb environ.fs random.fs version.h minos-version.h
+	  startup.fb ftast.fb environ.fs random.fs version.h minos-version.h \
+	  forth200x.fs
 XCSRC	= x.fs glconst.fs
 XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \

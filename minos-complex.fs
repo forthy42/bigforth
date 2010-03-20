@@ -604,14 +604,14 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ IO-Window                                            07jun03py
         : keyed ( key state -- )
           over shift-keys?  IF  2drop  EXIT  THEN
-          BEGIN  keys @ @ $1F >=  WHILE  pause  REPEAT $10 << or
+          BEGIN  keys @ @ $1F >=  WHILE  pause  REPEAT $18 lshift or
           keys @ dup @ 1+ $1F min dup keys @ ! cells + ! ;
         boxchar :: handle-key?
         : key?  ( -- flag )
           keys @ @ 0= IF  pause  THEN  keys @ @ 0> ;
         : getkey ( -- key )  keys @ @
           IF    keys @ cell+ @  keys @ 8 + dup cell- $78 move
-                -1 keys @ +! dup $10 rshift kbshift ! $FFFF and
+                -1 keys @ +! dup $18 rshift kbshift ! $FFFFFF and
           ELSE  0  THEN ;
         : key   ( -- key )  flush  1 cursor# ! curon
           BEGIN  key?  0= WHILE
@@ -622,7 +622,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
 \ IO-Window                                            06jan05py
 
         : decode ( m s addr pos char -- m s addr pos flag )
-          kbshift @ $100 and  IF  drop 0 EXIT  THEN
+          kbshift @ $40 and  IF  drop 0 EXIT  THEN
 [defined] (Ftast [IF]  dup $FFBE $FFCA within
           IF  $FFBE - cells (Ftast + -rot >r >r -rot >r >r
               perform r> r> r> r> prompt cr save-cursor
@@ -644,7 +644,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
               1 and  IF  drop mark-selection  EXIT  THEN
               1 and 0=  IF  2drop (dpy @select paste-selection
                             EXIT  THEN
-              8 << or kbshift @ $100 or keyed ]CK >callback
+              8 << or kbshift @ $40 or keyed ]CK >callback
           assign  defocuscol @ @ color ! ;
         : close  #cr 0 keyed S" bye"  bounds ?DO  i c@ 0 keyed  LOOP ;
         : dispose start HandleOff  keys HandleOff

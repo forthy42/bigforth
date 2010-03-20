@@ -473,9 +473,9 @@ how:    : dispose  clicks HandleOff
           ELSE  XLookupString  THEN
 [ELSE]    XLookupString  [THEN]
           ?dup IF  look_chars swap bounds ?DO
-                   I xc@+ swap >r event XKeyEvent state @ keyed
+                   I xc@+ swap >r event XKeyEvent state @ $3F and keyed
                r> I - +LOOP  EXIT  THEN
-          look_key @ event XKeyEvent state @ keyed ]:
+          look_key @ event XKeyEvent state @ $3F and $80 or keyed ]:
         KeyPress cells Handlers + !
 
 \ Display                                              11sep05py
