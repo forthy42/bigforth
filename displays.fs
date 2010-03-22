@@ -424,10 +424,14 @@ how:    : dispose  clicks HandleOff
 \ Display                                              18oct98py
 
 [defined]  win32 [IF]
-        : check-events ( event -- event )
-          ALLCHILDS  dup get-event ;
-        : get-event ( event -- )
-          check-events drop ;
+        : dispatch-event ( -- )
+	  event TranslateMessage drop  maxascii $80 =
+	  IF    event DispatchMessageW drop
+	  ELSE  event DispatchMessage drop  THEN ;
+        : get-event ( event -- )  drop
+	  BEGIN  PM_REMOVE 0 0  0 event PeekMessageW  WHILE
+		  dispatch-event pause  REPEAT
+	  size-event ;
         : sync ( -- ) ;
         : mouse ( -- x y b )  QS_MOUSEMOVE  get-event
           mx @ my @ mb @ ;
