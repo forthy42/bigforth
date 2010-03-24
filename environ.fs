@@ -81,7 +81,17 @@ $10 Constant wordlists
 true Value string
 true Value string-ext
 
-' noop Alias x:deferred
+' noop alias X:deferred
+' noop alias X:defined
+' noop alias X:ekeys
+' noop alias X:extension-query
+' noop alias X:fp-stack
+' noop alias X:ftrunc
+' noop alias X:number-prefixes
+' noop alias X:parse-name
+\ ' noop alias X:required
+' noop alias X:structures
+' noop alias X:xchar
 
 Forth definitions
 
