@@ -183,7 +183,7 @@ how:    : >box  'nil bind childs  'nil bind active
                 IF  xywh 2dup 2>r resize xywh 2swap 2drop
                     >range 2r> d=  IF  draw  EXIT  THEN  THEN
           ELSE  hglue 2drop vglue 2drop  THEN
-          parent resized ;
+          parent self IF  parent resized  THEN ;
         : flip  attribs c@ :flip and IF +flip ELSE -flip THEN ;
         : -flip  attribs c@ :flip or         attribs c!
           hide parent !resized parent resized ;
