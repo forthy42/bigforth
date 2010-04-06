@@ -97,11 +97,15 @@ how:    : init ( -- ) ;
 	  IF  create-pixmap flags #draw 2dup bit@ >r -bit
 	      child draw r> IF flags #draw +bit THEN THEN ;
         : draw ( -- )  flags #hidden bit@ ?EXIT
+	  flags #draw bit@ 0= ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
-          IF    0 0 w @ h @ x @ y @
-                [defined] win32 [IF]  xrc dc @ dpy image
-                [ELSE]  xpict @  IF  -1 xpict @ dpy mask
-                        ELSE  xwin @ dpy image  THEN  [THEN]
+	    IF  x @ y @ or \ ugly workaround
+		IF  0 0 w @ h @ x @ y @
+		  [defined] win32 [IF]  xrc dc @ dpy image
+		  [ELSE]  xpict @  IF  -1 xpict @ dpy mask
+		      ELSE  xwin @ dpy image  THEN  [THEN]  ELSE
+		  \ rp@ backtrace 8 cells move pushi/o display .back cr
+	      THEN
           ELSE  child draw  THEN ;
         : moved? ( -- flag )  dpy moved?  ;
         : moved! ( -- )  dpy moved!  ;
@@ -208,7 +212,7 @@ how:    displays :: line ( x y x y color -- )
         : keyed  super keyed draw ;
         : clicked  super clicked draw ;
         : resize  super resize
-          flags #draw bit@ IF  child draw draw  THEN ;   class;
+          flags #draw bit@ IF  child draw  THEN ;   class;
 
 \ pixmap                                               28oct06py
 
