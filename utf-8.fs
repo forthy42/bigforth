@@ -307,6 +307,7 @@ User curpos
 : ?xcdel ( max span addr pos1 -- max span addr pos2 0 )
   dup  IF  over2 >r (xcdel) .all over2 r> swap - spaces .rest  THEN  0 ;
 : <xcdel> ( max span addr pos1 -- max span addr pos2 0 )
+  dup 3 pick d0= IF  bye  THEN
   2 pick over <>
     IF  xcforw drop ?xcdel EXIT  THEN 0 ;
 \ : xceof  2 pick over or 0=  IF  bye  ELSE  <xcdel>  THEN ;
