@@ -153,7 +153,7 @@ scredit implements
     : .line ( y -- )  >r at? r> 0 at
         pos @ 'line c/l showtext  at ;
     : keyed ( key sh -- )
-        dup $100 and IF  drop $100 /mod swap at  EXIT  THEN
+        dup $40 and IF  drop $100 /mod swap at  EXIT  THEN
         $-13 and over shift-keys?  IF  2drop  EXIT  THEN
         dup 2 and IF  swap tolower swap  THEN
         !scr $D and ev-key ;
