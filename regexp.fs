@@ -192,5 +192,5 @@ Variable >>string
 : >>next ( -- addr u ) <<ptr end$ over - ;
 : >>rest ( -- ) >>next >>string $+! ;
 : s// ( addr u -- ptr ) ]] (( // >> [[ ; immediate
-: // ( ptr addr u -- addr' u' ) ]] << )) drop >>rest >>string@ [[ ; immediate
+: //o ( ptr addr u -- addr' u' ) ]] << )) drop >>rest >>string@ [[ ; immediate
 : //g ( ptr addr u -- addr' u' ) ]] << LEAVE )) drop >>string@ [[ ; immediate
