@@ -698,7 +698,7 @@ how:    : dispose  clicks HandleOff
           dup 1 <> IF  2*  THEN ;
         : shift@ ( -- kbshift )  0
           VK_MENU 1+ VK_SHIFT ?DO
-              I GetKeyState wextend 0< IF  I >kshift or  THEN
+              I GetKeyState $8000 and IF  I >kshift or  THEN
           LOOP ;
 public: displays ptr grab-key
 private:
