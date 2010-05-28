@@ -453,7 +453,7 @@ Code WinProc ( R: lparam wparam msg wnd ret -- result ) R:
                     2drop 0  THEN  r> s0 ! ( u o si ret res )
      >c: R:  sys-sp A#) pop  OP pop  UP pop  SI pop
      $10 # ret  end-code
-: >lohi ( lparam -- lo hi ) dup $FFFF and wextend swap $10 >> ;
+: >lohi ( lparam -- lo hi ) dup wextend swap $10 >> ;
 : hilo> ( lo hi -- lparam ) $10 << swap $FFFF and or ;
 
 Create Xform0  $3F800000 , 0 , 0 , $3F800000 , 0 , 0 , 0 , 0 ,
