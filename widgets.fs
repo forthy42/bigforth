@@ -314,7 +314,7 @@ public: defer drawer            defer pixel
 \ canvas                                               22jun02py
 how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
          >callback IS drawer down #360 coord ! $0D030C color ! ;
-       : pixel, xp 2@ p+ 2dup xp 2! wextend swap wextend pixel ;
+        : pixel, xp 2@ p+ 2dup xp 2! swap pixel ;
         : dx+ ( d -- n )  dx @ extend d+ swap dup dx ! 0< - ;
         : dy+ ( d -- n )  dy @ extend d+ swap dup dy ! 0< - ;
         : draw  flags #hidden bit@ ?EXIT  clear  ^ drawer ;

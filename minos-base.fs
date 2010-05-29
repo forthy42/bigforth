@@ -240,13 +240,14 @@ Variable (poly#
 [defined] win32 [IF]   Variable (poly''  [THEN]
 2Variable (lastp
 
+: wsat ( n -- w )  $7FFF min -$8000 max ;
 : <poly ( x y -- x y )  (poly# off (poly' @ 0=
   IF  $1000 NewPtr (poly' !
       [defined] win32 [IF]  $2008 NewPtr (poly'' !  (poly' @ off [THEN]
   THEN   2dup (lastp 2! ;
 : poly' ( -- addr )  (poly' @ (poly# @ cells + ;
 : poly, ( dx dy -- )  2dup (lastp 2@ p+ (lastp 2!
-  1 (poly# +!   swap poly' w!+ w! ;
+  1 (poly# +!   wsat swap wsat poly' w!+ w! ;
 : poly# ( x y -- )  (lastp 2@ p- poly, ;
 : poly> ( -- addr n )  (poly' @ (poly# @ 1+ ;
 
@@ -454,6 +455,7 @@ Code WinProc ( R: lparam wparam msg wnd ret -- result ) R:
      >c: R:  sys-sp A#) pop  OP pop  UP pop  SI pop
      $10 # ret  end-code
 : >lohi ( lparam -- lo hi ) dup wextend swap $10 >> ;
+: lohi@ ( addr -- lo hi ) wx@+ wx@ ;
 : hilo> ( lo hi -- lparam ) $10 << swap $FFFF and or ;
 
 Create Xform0  $3F800000 , 0 , 0 , $3F800000 , 0 , 0 , 0 , 0 ,

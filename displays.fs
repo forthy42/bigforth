@@ -734,18 +734,18 @@ private:
           dup $500 = emulate-3button @ and IF  $700 xor  THEN
           nip shift@ or ;
         : !xyclick ( event -- )  click^ >r
-          MSG lparam @ >lohi swap r> w!+ w! ;
+          MSG lparam lohi@ swap r> w!+ w! ;
         : sendclick ( count event -- )
           flags #pending +bit  click^ >r
           dup MSG wparam @ >mshift swap
-              MSG lparam @ >lohi swap r> w!+ w!+ w!+ w! ;
+              MSG lparam lohi@ swap r> w!+ w!+ w!+ w! ;
 
 \ Display                                              19jan00py
         : in-time? ( time flag -- flag )
           lasttime @ rot swap - lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
         : samepos? ( event -- flag )  flags #pending bit@
-          IF    MSG lparam @ >lohi ( swap ) click^ w@+ w@ p-
+          IF    MSG lparam lohi@ ( swap ) click^ w@+ w@ p-
                 dup * swap dup * + samepos <
           ELSE  drop false  THEN ;
         : moreclicks ( -- )
@@ -799,7 +799,7 @@ private:
         : sendwheel ( event -- )  flags #pending +bit
           dup MSG wparam @ >wshift drop 0 ?DO
              dup   MSG wparam @ >wshift nip I 2+ swap
-             over2 MSG lparam @ >lohi y @ - swap x @ -
+             over2 MSG lparam lohi@ y @ - swap x @ -
              click^ w!+ w!+ w!+ w!
              moreclicks
           2 +LOOP drop ;

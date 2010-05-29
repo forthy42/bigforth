@@ -99,7 +99,7 @@ how:    : init ( -- ) ;
         : draw ( -- )  flags #hidden bit@ ?EXIT
 	  flags #draw bit@ 0= ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
-	    IF  x @ y @ or \ ugly workaround
+	    IF  true \ x @ y @ or \ ugly workaround
 		IF  0 0 w @ h @ x @ y @
 		  [defined] win32 [IF]  xrc dc @ dpy image
 		  [ELSE]  xpict @  IF  -1 xpict @ dpy mask
