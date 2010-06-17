@@ -2,7 +2,7 @@
 
 \needs float import float
 
-also float also minos definitions
+also minos definitions
 
 6 Value fa-precision
 
@@ -41,4 +41,4 @@ class;
     synonym ]F noop
 [THEN]
 
-previous previous definitions
+previous definitions
