@@ -357,7 +357,7 @@ class;
 
 \ Event data structure                                 09mar99py
 [defined] x11 [IF]
-Create Handlers  MappingNotify [FOR] ' noop A, [NEXT]
+Create Handlers  LASTEvent [FOR] ' noop A, [NEXT]
         KeyPressMask  KeyReleaseMask or \ KeymapStateMask or
         ButtonPressMask or ButtonReleaseMask or
         EnterWindowMask or LeaveWindowMask or

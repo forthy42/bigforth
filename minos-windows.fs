@@ -216,7 +216,7 @@ how:    : xinc  child xinc ;
           THEN
           IF \ cr ." sending event " event @ . ." to win "
              \ base @ event XAnyEvent window @ hex . base !
-             event @ cells Handlers + perform
+             event @ LASTEvent umin cells Handlers + perform
              ( ."  done " ) EXIT  THEN
           nextwin goto handle-event ;
 [THEN]

@@ -171,8 +171,8 @@ are reserved in the protocol for errors and replies. */
 32 Constant ColormapNotify 
 33 Constant ClientMessage 
 34 Constant MappingNotify 
-35 Constant LASTEvent /* must be bigger than any event # */
-
+35 Constant GenericEvent
+36 Constant LASTEvent /* must be bigger than any event # */
 
 /* Key masks. Used as modifiers to GrabButton and GrabKey, results of QueryPointer,
    state in various key-, mouse-, and button-related events. */
