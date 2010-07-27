@@ -1316,7 +1316,7 @@ widget ptr cut-stack
 
 : is-parent? ( o1 o2 -- flag )
     dup 0= IF  2drop false  EXIT  THEN
-    BEGIN  2dup <>  WHILE
+    BEGIN  2dup <>  over cur topbox self <> and  WHILE
         widget with parent self endwith
         dup 0= UNTIL  2drop false  EXIT  THEN
     2drop true ;
