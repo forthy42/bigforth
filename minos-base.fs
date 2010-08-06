@@ -163,8 +163,7 @@ NotUseful ( WhenMapped ) Value backing-mode
 [defined] win32 [IF]
 
 Create sys-colors
-       COLOR_WINDOWTEXT dup , ,
-                       COLOR_WINDOW , COLOR_3DFACE ,
+       COLOR_WINDOWTEXT dup , ,       COLOR_WINDOW , COLOR_3DFACE ,
        COLOR_WINDOWTEXT dup , ,       COLOR_3DFACE dup , ,
        COLOR_HIGHLIGHTTEXT dup , ,    COLOR_HIGHLIGHT dup , ,
        COLOR_MENUTEXT dup , ,         COLOR_3DFACE dup , ,
@@ -819,7 +818,8 @@ Variable selection
 : nextpow2 ( n -- x^2 )  1  BEGIN  2* 2dup <  UNTIL  nip ;
 
 : (@select  ( -- addr n )  selection @ dup 0=
-  IF  drop S" "  ELSE  @+ swap  THEN ;
+    IF  drop cell selection Handle!  selection @ off
+        selection @  THEN  @+ swap ;
 
 : +select ( addr n -- )  selection @ 0=
   IF    dup cell+ nextpow2 selection Handle!
@@ -867,7 +867,7 @@ Defer screen-event
 : @select ( win dpy -- addr n )
   own-selection @
   IF    2drop
-  ELSE  >r  selection HandleOff
+  ELSE  >r  selection @ IF  selection HandleOff  THEN
         r@ 1 XGetSelectionOwner 0=
         IF    0 sp@ r> swap XFetchBytes tuck swap +select XFree 2drop
 	ELSE  r> swap >r
