@@ -552,7 +552,7 @@ previous theseus definitions
     2dup cur file-name $!
     Onlyforth minos also minos-load also
     ['] included catch dup open-failed# <> IF  throw 0  THEN
-    drop strip-names Onlyforth cur save-state off
+    IF  2drop  THEN  strip-names Onlyforth cur save-state off
     cur with
         s" Θησεύς: " window title! file-name $@ window title+!
     endwith

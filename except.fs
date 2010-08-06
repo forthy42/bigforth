@@ -54,7 +54,7 @@
   ?DO  I in_which? dup 0= IF  I @ swap  THEN  "name
   +LOOP  $sum @ count ;
 
-: .back relinfo $100 - "back type
+: .back relinfo $100 - ['] "back catch 0= IF type ELSE drop THEN
     backtrace $18 cells + off ;
 
 also dos
