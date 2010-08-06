@@ -113,7 +113,8 @@ hint-name ptr names
 hint-name implements
     : find-name ( o -- o / 0 )
         dup hint self = IF  drop self  EXIT  THEN
-        next self 0= IF  drop 0 EXIT  THEN
+	next self 0= IF  drop 0 EXIT  THEN
+	next self @ 0= IF  ." broken name object!" cr drop 0 EXIT  THEN
         next goto find-name ;
     : update-hint ( newo oldo -- )
         dup hint self = IF  drop bind hint  EXIT  THEN
