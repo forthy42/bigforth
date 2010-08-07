@@ -88,7 +88,7 @@ database implements
       swap dup +in +! move ;
     : >$ ( addr u -- )  +in off $+ ;
     : >0" ( addr u -- addr ) >$ tmpbuf @ ;
-    : #+ ( n -- ) extend under dabs <# #S rot sign #> $+ ;
+    : #+ ( n -- ) extend under dabs <<# #S rot sign #> $+ #>> ;
     : ,+ ( -- )  state @ IF  s" , " $+  THEN  state on ;
 
 \ basic operations                                     01apr98py

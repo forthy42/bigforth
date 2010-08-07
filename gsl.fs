@@ -464,7 +464,7 @@ struct{
     cell hc_wavetable
 } gsl_fft_precomputes
 | create $buf 255 allot
-| : 2str dup >r abs s>d <# #s r> sign #> $buf 0place ;
+| : 2str dup >r abs s>d <<# #s r> sign #> $buf 0place #>> ;
 | : s>hash ( n -- key ) 2str $buf hash ;
 | : (cache-fft) ( n -- addr )
     sizeof gsl_fft_precomputes allocate throw >r

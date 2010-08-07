@@ -69,7 +69,7 @@ how:
       base @ 8 =
       IF    8 umin S" 01ZXLHWU-----D" rot /string 1 min
       ELSE  base @ 2 = IF  0 tuck  ELSE  extend tuck dabs  THEN
-          <# bl hold #S rot sign bl hold #>  THEN text ;
+          <<# bl hold #S rot sign bl hold #> #>>  THEN text ;
     : draw-normal ( path xi addr' addr -- )
       ?DO  0. rot I @ extend rot extend d- dto
           1 0 to

@@ -81,7 +81,7 @@ descriptors implements
         ELSE
             set-var @ IF  nvar @ number !  1 nvar +!  THEN
             ." (" item self >class" lctype ." -" number @ 0
-            <# # # #> type  ." )"
+            <<# # # #> type #>> ." )"
         THEN ;
     : dump-class ( -- )
         item self >class" lctype ;

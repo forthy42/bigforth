@@ -21,7 +21,7 @@ screen self menu-window : win0
 0 ' noop edit-action new s" " s" Text:" infotextfield : tfield0
 \ 0 edit-action new s" " (textfield : tfield0
 : .button  button text @ @+ swap tfield0 assign ;
-: .pos base push decimal dup 0 <# #s #> tfield0 assign ;
+: .pos base push decimal dup 0 <<# #s #> tfield0 assign #>> ;
 
 0 :noname  s" Test 0" tfield0 assign ; simple new s" Menu 0" menu-entry : menu0
 0 :noname  s" Test 1" tfield0 assign ; simple new s" Menu 1" menu-entry : menu1

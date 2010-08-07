@@ -119,7 +119,7 @@ Variable list$
   IF  cr ." depends " over .id .list  ELSE  drop  THEN
   cr drop ;
 
-: d.2 ( n -- ) base push decimal  0 <# # # '. hold #s #> type ;
+: d.2 ( n -- ) base push decimal  0 <<# # # '. hold #s #> type #>> ;
 
 : .resource ( addr -- )  base push decimal
   cr ." resource " dup resource id $@ type space
@@ -138,7 +138,7 @@ Variable list$
 \ print globals                                        21apr01py
 
 : .iso-date ( n char -- ) base push decimal >r
-  0 <# # # r@ hold # # r> hold #s #> type ;
+  0 <<# # # r@ hold # # r> hold #s #> type #>> ;
 
 : .prefix ( addr -- ) global prefix $@ type ;
 : .files ( addr n suffix n type n -- ) { suffix n1 typ n2 }

@@ -107,7 +107,7 @@ s" foofoofoo" ?foos1
   s// \( \d \d \) ` : \( \d \d \) ` : \( \d \d \)
   \1 s>number drop 60 *
   \2 s>number drop + 60 *
-  \3 s>number drop + 0 <# 's' hold #s #> //g ;
+  \3 s>number drop + 0 <<# 's' hold #s #> #>> //g ;
 
 s" bla 12:34:56 fasel 00:01:57 blubber" hms>s
 s" bla 45296s fasel 117s" str= 0= [IF] .( failed) [THEN]

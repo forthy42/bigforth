@@ -108,7 +108,7 @@ scredit implements
 	: title$ ( -- addr u )
 	    base push decimal
 	    S"   Scr # " scratch$ $!
-	    scr# @ 0 <# bl hold # # #S #> scratch$ $+!
+	    scr# @ 0 <<# bl hold # # #S #> scratch$ $+! #>>
 	    scratch$ $@ ;
     [ELSE]
 	: updated?  ( -- f ) 'start 4- @ $14 + wx@ 0< ;
@@ -117,7 +117,7 @@ scredit implements
 	: title$ ( -- addr u )
 	    base push decimal
 	    edifile @ filename >len scratch$ $!
-	    S"   Scr # " scratch$ $+! scr# @ 0 <# bl hold # # #S #> scratch$ $+!
+	    S"   Scr # " scratch$ $+! scr# @ 0 <<# bl hold # # #S #> scratch$ $+! #>>
 	    update$ scratch$ $+!
 	    scratch$ $@ ;
     [THEN]

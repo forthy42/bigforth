@@ -35,7 +35,7 @@ Constant message
 
 : .16 ( u[d] -- )
     [ cell 8 = ] [IF] 0 [THEN]
-    base @ >r hex <# 16 0 DO # LOOP #> type r> base ! ;
+    base @ >r hex <<# 16 0 DO # LOOP #> type #>> r> base ! ;
 
 : .state  ( -- ) 8 0 DO  wurst-state  I 64s + 64@ .16  LOOP ;
 : .source ( -- ) 8 0 DO  wurst-source I 64s + 64@ .16  LOOP ;
@@ -270,45 +270,45 @@ s" gforth" environment? [IF] 2drop
     \       %> a<% r@ 7 and 0 .r %> ^=ROL(rnds[states[<% 0 .r %> ]^(0xff&(t>><% $7 and 8 * 0 .r %> ))],<% r> 7 r@ - 0 .r %> );<% \c, ;
     : mix2bytes_ind, ( index n k i -- index n ) >r
 	    >r over r@ 64 +
-	    <#
+	    <<#
 	    s" );" holds r> 7 r@ - 0 #s 2drop >r
 	    s" ))]," holds $7 and 8 * 0 #s 2drop
 	    s" ]^(0xff&(t>>" holds 0 #s 2drop
 	    s" ^=ROL(rnds[states[" holds r@ 7 and 0 #s 2drop
-	    s" a" holds 0. #> \c,
+	    s" a" holds 0. #> \c, #>>
 	rdrop rdrop ;
     : round_ind, ( n -- )
-	<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c,
+	<<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c, #>>
 	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7, t;" \c,
 	round# dup 1- swap 8 0 DO
-	    <#
+	    <<#
 	    s" )),8);" holds I permut# 8 + 64s 0 #S 2drop
 	    s" =ROL(*((uint64_t*)(states+" holds I 0 #S
-	    s" a" holds #> \c,
+	    s" a" holds #> \c, #>
 	LOOP
 	8 0 DO
 	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
-	    <#
+	    <<#
 	    s" ));" holds I 8 * 64 + 0 #s
-	    s" t=*((uint64_t*)(states+" holds #> \c,
+	    s" t=*((uint64_t*)(states+" holds #> \c, #>>
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
 	LOOP
 	2drop
 	8 0 DO
-	    <#
+	    <<#
 	    s" ;" holds I 0 #s 2drop
 	    s" )) = a" holds I 16 + 64s 0 #s
 	    s" *((uint64_t *)(states+" holds
-	    #> \c,
+	    #> \c, #>>
 	LOOP
 	8 0 DO
-	    <#
+	    <<#
 	    s" ));" holds I 8 + 64s 0 #s 2drop
 	    s" )) ^= *((uint64_t *)(states+" holds I 64s 0 #s
 	    s" *((uint64_t *)(states+" holds
-	    #> \c,
+	    #> \c, #>>
 	LOOP
 	s" memcpy(states+64, states+128, 64); }" \c, ;
 	
@@ -533,7 +533,7 @@ Create 'round-flags
 : read-first32 ( flags -- n )  wurst-size32  >reads >r
     message state#32 r> * 2 2* /string wurst-in read-file throw  2 2* + ;
 : .4h ( u -- )
-    0 base @ >r hex <# # # # # #> type r> base ! ;
+    0 base @ >r hex <<# # # # # #> type #>> r> base ! ;
 
 : .source32 ( -- ) 2 0 DO  wurst-source I 2* + w@ .4h  LOOP ;
 : .state32  ( -- ) 2 0 DO  wurst-state I 2* + w@ .4h  LOOP ;

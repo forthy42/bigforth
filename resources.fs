@@ -460,7 +460,7 @@ minos
 Variable ?showpath  ?showpath on
 
 | : scr# ( -- addr len ) scr @ abs extend
-    <# #S s"  klB" bounds  DO  I c@ hold  LOOP  #> ;
+    <<# #s s"  klB" bounds  DO  I c@ hold  LOOP  #> #>> ;
 
 : boxhandler  ( addr -- )  tflush
   dup count here count  ?showpath @

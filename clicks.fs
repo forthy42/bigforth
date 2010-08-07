@@ -5,7 +5,7 @@ Variable click#  click# off
     X" There have been no clicks yet" text-label new
       dup F bind click-label
     ^ S[ 1 click# +!
-         click# @ 0 <# #S s" Number of clicks: " holds #>
-         click-label assign ]S X" Click me" button new       
+         click# @ 0 <<# #s s" Number of clicks: " holds #>
+         click-label assign #>> ]S X" Click me" button new       
     &2 vabox new panel s" Clicks" assign show endwith ;
 click-win

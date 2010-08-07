@@ -239,7 +239,7 @@ stredit implements
 	IF  [defined] filename [IF] filename >len scratch$ $+!
 	    [ELSE] drop [THEN] THEN
         S"   Line # " scratch$ $+!  base push decimal
-        line#@ 0 <# bl hold # # # #S #> scratch$ $+!
+        line#@ 0 <<# bl hold # # # #S #> scratch$ $+! #>>
         update$ scratch$ $+!  scratch$ $@ ;
     : maketitle  edifile @ 0= ?EXIT
         title$ dpy get-dpy window with title! endwith

@@ -2,7 +2,7 @@
 
 : dumped  ftab 8 cells + @ cell+ ;
 
-| : 0.r  0 swap  <#  0 ?DO  #  LOOP  #> type ;
+| : 0.r  0 swap  <<#  0 ?DO  #  LOOP  #> type #>> ;
 | : .header  ( -- )  3 S" AXCXDXBXSPBPSIDI"  bounds
     DO  spaces I 2 type  7  2 +LOOP  drop ;
 | : .regs    ( -- )  dumped 8 cells +
@@ -38,8 +38,8 @@
 : in_which? ( addr -- len nfa count/false ) cell swap dup @
   [ ' push 5 + @ ] ALiteral =
   IF  swap 3 * swap cell+ 2@ swap
-      0 <# #S drop bl hold  #S
-      s" push " 1-  FOR  dup I + c@ hold  NEXT  drop  #>  EXIT THEN
+      0 <<# #S drop bl hold  #s
+      s" push " 1-  FOR  dup I + c@ hold  NEXT  drop  #> #>>  EXIT THEN
   @ context @ over noop in_voc?
   dup IF nip count $1F and  EXIT  THEN  drop voc-link
   BEGIN  @ dup  WHILE  2dup 8 - swap in_voc? dup
@@ -48,7 +48,7 @@
 
 | : "name ( nfa count / 0 -- )  ?dup
     IF    $add  S"  " $add
-    ELSE  0 <# bl hold #S '$ hold #> $add  THEN ;
+    ELSE  0 <<# bl hold #S '$ hold #> $add #>>  THEN ;
 : "back ( addr -- addr len )  base push hex  dup off $sum !
   S" Level: " $add  backtrace 8 cells bounds
   ?DO  I in_which? dup 0= IF  I @ swap  THEN  "name

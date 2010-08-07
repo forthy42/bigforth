@@ -517,16 +517,16 @@ synonym VT[ noop-i
 \ number input field                                   27apr98py
 edit-action class number-action
 public: cell var nbase
-how:    : ># ( d -- addr u )  base push nbase @ base ! tuck dabs
-          <# #S  nbase @ $10 = IF  '$' hold  THEN
-                 nbase @ %10 = IF  '%' hold  THEN  rot sign  #> ;
+how:    : #>text ( d -- addr u )  base push nbase @ base ! tuck dabs
+          <<# #s  nbase @ $10 = IF  '$' hold  THEN
+                  nbase @ %10 = IF  '%' hold  THEN  rot sign #> #>> ;
         : key ( key sh -- ) drop base push nbase @ base !
           dup shift-keys? IF  drop  EXIT  THEN  dup find-key dup
           IF    cell+ @ caller send drop
           ELSE  drop dup digit? nip 0= ?EXIT
                 sp@ 1 edit with ins drop 1 c drop endwith
           THEN  stroke @ called send ;
-        : store ( d -- ) ># edit assign ;
+        : store ( d -- ) #>text edit assign ;
         : fetch ( -- d ) edit get base push decimal s>number ;
         : init  ( o addr -- ) #10 nbase ! super init ;
 class;
@@ -852,9 +852,9 @@ public: method #>text           \ early scalekey
 \ new scaler                                           03dec06py
 
 how:    : #>text ( n -- addr u )  base push decimal
-          text/ @ m* tuck dabs  <#
+          text/ @ m* tuck dabs  <<#
           text*/ @ 1 ?DO  # I 9 * +LOOP
-          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> ;
+          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> #>> ;
         : .text ( addr u x y c -- )  >r 2swap r>
           fnt select  fnt self fnt ' display dpy drawer ;
         : get  ( -- steps step pos )  super get 0 swap ;
@@ -938,9 +938,9 @@ public: method #>text           \ early scalekey
 
 \ new scaler                                           08mar07py
 how:    : #>text ( n -- addr u )  base push decimal
-          text/ @ m* tuck dabs  <#
+          text/ @ m* tuck dabs  <<#
           text*/ @ 1 ?DO  # I 9 * +LOOP
-          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> ;
+          text*/ @ 1 > IF  '.' hold  THEN  #S rot sign #> #>> ;
         : .text ( addr u x y c -- )  >r 2swap r>
           fnt select  fnt self fnt ' display dpy drawer ;
         : get  ( -- steps step pos )  super get 0 swap ;

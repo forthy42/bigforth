@@ -51,8 +51,7 @@ ficon: minos-win icons/minos1+"
 Variable comp#
 
 : anonymous-component ( -- addr u )  base push hex
-    comp# @ 0 <# 3 0 ?DO  #  LOOP  #S
-                 S" pmoc" bounds ?DO  I c@ hold  LOOP #>
+    comp# @ 0 <<# 3 0 ?DO  #  LOOP  #s s" comp" holds #> #>>
     1 comp# +! ;
 
 : new-code ( addr u content -- o )
@@ -1414,7 +1413,7 @@ Variable $acc
     s" .#" +$
     cur file-name @  IF  cur file-name $@ 2dup '/' -scan nip safe/string +$  THEN
     base push hex cur self dup $10 >> + $FFFF and dup $8 >> + $FF and
-    0 <# '#' hold #S '-' hold #> +$ ;
+    0 <<# '#' hold #S '-' hold #> +$ #>> ;
 : auto-save-name ( -- addr u )
     s" " $acc $!  auto-save-add
     $acc $@ ;

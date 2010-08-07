@@ -826,7 +826,7 @@ how:    \ 6 colors defocuscol !
         : assign ( size time attr addr len -- )  base push
           super assign attr ! time ! size ! ;
         : !resized super !resized  decimal
-          size @ 0 <# #S #> 0 textsize drop wsize !
+          size @ 0 <<# #s #> 0 textsize drop wsize ! #>>
           S" 00may99"       0 textsize drop wdate !
           S" 00:00:00"      0 textsize drop wtime ! ;
 [defined] x11 [IF]   : dir@ attr @ $C >> ;             [THEN]
@@ -846,8 +846,8 @@ how:    \ 6 colors defocuscol !
           w @ wdate @ - 6 - 0 p+
           time @ >date 2over  cc .text
           m wtime @ + 0 p-   time @ >time 2over cc .text
-          m wsize @ + 0 p- size @ 0 <# #S #>
-          2swap cc .text ;
+          m wsize @ + 0 p- size @ 0 <<# #s #>
+          2swap cc .text #>> ;
 
 \ file widget                                          10apr04py
         : hglue ( -- glue )  super hglue xM 3 *
