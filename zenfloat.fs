@@ -1,4 +1,4 @@
-( Very compressed one-screen floating-point          2116may98py
+\ Very compressed one-screen floating-point            16may98py
 : D10*  D2* 2DUP D2* D2* D+ ; : D+-  0< IF DNEGATE THEN ;
 : TRIM  >R TUCK DABS BEGIN OVER 0< OVER OR WHILE 0 10 UM/MOD >R
   10 UM/MOD NIP R> R> 1+ >R REPEAT ROT D+- DROP R> ;
