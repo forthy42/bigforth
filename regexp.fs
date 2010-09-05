@@ -51,6 +51,8 @@ charclass any    0 $FF ..char #lf -char
 : -\s ( addr -- addr' )  ]] blanks -c?      [[ ; immediate
 : ` ( -- )
     ]] count [[  char ]] Literal <> ?LEAVE [[ ;  immediate
+: -` ( -- )
+    ]] count [[  char ]] Literal = ?LEAVE [[ ;  immediate
 
 \ A word for string comparison
 
@@ -150,15 +152,15 @@ Variable varsmax
 \ idea: try to match one alternative and then the rest of regexp.
 \ if that fails, jump back to second alternative
 
-: THENs ( sys -- )  BEGIN  dup  WHILE  ]] THEN [[  REPEAT  drop ;
+: JOINs ( sys -- )  BEGIN  dup  WHILE  ]] JOIN [[  REPEAT  drop ;
 
 : {{ ( addr -- addr addr )  0 ]] dup BEGIN [[  vars @ ; immediate
 : || ( addr addr -- addr addr ) vars @ varsmax @ max varsmax !
-    ]] nip AHEAD [[ >r vars !
+    ]] dup FORK  IF  2drop true  EXIT THEN  drop dup [[ >r vars !
     ]] DONE drop dup [[ r> ]] BEGIN [[ vars @ ; immediate
 : }} ( addr addr -- addr addr ) vars @ varsmax @ max vars !
-    ]] nip AHEAD [[ >r drop
-    ]] DONE drop LEAVE [[ r> THENs ; immediate
+    ]] dup FORK  IF  2drop true  EXIT THEN  drop dup [[ >r drop
+    ]] DONE drop LEAVE noop [[ r> JOINs ; immediate
 
 \ match variables
 
