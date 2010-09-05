@@ -178,19 +178,19 @@ Variable varsmax
 0 Value >>ptr
 0 Value <<ptr
 Variable >>string
-: >>  ( addr -- addr )  dup to >>ptr ;
+: s>>  ( addr -- addr )  dup to >>ptr ;
 : << ( run-addr addr u -- run-addr )
-    <<ptr 0= IF  start$ to <<ptr  THEN
-    >>string @ 0= IF  s" " >>string $!  THEN
     <<ptr >>ptr over - >>string $+!
     >>string $+! dup to <<ptr ;
 : <<"  '" parse postpone SLiteral postpone << ; immediate
 : >>string@ ( -- addr u )
-    >>string $@len dup allocate throw
-    swap 2dup >>string $@ drop -rot move
-    >>string $off  0 to >>ptr  0 to <<ptr ;
+    >>string $@ ;
+: >>string0 ( addr u -- addr u )  s" " >>string $!
+    0 to >>ptr  over to <<ptr ;
 : >>next ( -- addr u ) <<ptr end$ over - ;
 : >>rest ( -- ) >>next >>string $+! ;
-: s// ( addr u -- ptr ) ]] (( // >> [[ ; immediate
-: //o ( ptr addr u -- addr' u' ) ]] << )) drop >>rest >>string@ [[ ; immediate
-: //g ( ptr addr u -- addr' u' ) ]] << LEAVE )) drop >>string@ [[ ; immediate
+: >> ( addr -- addr ) ]] <<ptr >>ptr u> ?LEAVE ?end [[ ; immediate
+: s// ( addr u -- ptr ) ]] >>string0 (( // s>> [[ ; immediate
+: //s ( ptr -- ) ]] )) drop >>rest >>string@ [[ ; immediate
+: //o ( ptr addr u -- addr' u' ) ]] << //s [[ ; immediate
+: //g ( ptr addr u -- addr' u' ) ]] << LEAVE //s [[ ; immediate

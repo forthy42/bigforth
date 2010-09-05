@@ -101,15 +101,54 @@ s" fofoofoofofooofoobarbar" ?foos1
 s" bla baz bar" ?foos1
 s" foofoofoo" ?foos1
 
+\ simple replacement test
+ 
+." --- simple replacement test ---" cr
+
+: delnum  ( addr u -- addr' u' )   s// \d >> s" " //g ;
+: test-delnum  ( addr u addr' u' -- )
+   2swap delnum 2over 2over str= 0= IF
+      ." test-delnum: got '" type ." ', expected '" type ." '"
+   ELSE  2drop 2drop ." passed" cr  THEN ;
+s" 0"  s" " test-delnum
+s" 00"  s" " test-delnum
+s" 0a"  s" a" test-delnum
+s" a0"  s" a" test-delnum
+s" aa"  s" aa" test-delnum
+
+: delcomment  ( addr u -- addr' u' )  s// ` # {** .? **} >> s" " //g ;
+s" hello # test " delcomment type cr
+: delparents  ( addr u -- addr' u' )  s// ` ( {* .? *} ` ) >> s" ()" //g ;
+s" delete (test) and (another test) " delparents type cr
+
 \ replacement tests
 
+." --- replacement tests ---" cr
+
 : hms>s ( addr u -- addr' u' )
-  s// \( \d \d \) ` : \( \d \d \) ` : \( \d \d \)
+  s// \( \d \d \) ` : \( \d \d \) ` : \( \d \d \) >>
   \1 s>number drop 60 *
   \2 s>number drop + 60 *
   \3 s>number drop + 0 <<# 's' hold #s #> #>> //g ;
 
-s" bla 12:34:56 fasel 00:01:57 blubber" hms>s
-s" bla 45296s fasel 117s" str= 0= [IF] .( failed) [THEN]
+s" bla 12:34:56 fasel 00:01:57 blubber" 2dup type hms>s
+."  replaced by " 2dup type
+s" bla 45296s fasel 117s blubber" str= [IF] .(  ok) [ELSE] .(  failed) [THEN] cr
+
+: delnum  ( addr u -- addr' u' )   s// \d >> s" " //g ;
+
+s" 0a" delnum type cr
+s" a" delnum type cr
+
+: hms>s,del() ( addr u -- addr' u' )
+  s// {{ \( \d \d \) ` : \( \d \d \) ` : \( \d \d \)
+         >> \1 s>number drop 60 *
+            \2 s>number drop + 60 *
+            \3 s>number drop + 0 <# 's' hold #s #> <<
+         || ` ( {* .? *} ` ) >> <<" "
+      }} LEAVE //s ;
+
+\ doesn't work yet
+\ s" (bla) 12:34:56 (fasel) 00:01:57 (blubber)" 2dup type hms>s,del() space type cr
 
 script? [IF] bye [THEN]

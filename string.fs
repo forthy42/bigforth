@@ -32,7 +32,7 @@ also Memory
   2dup dup $@len rot + swap $!len  $@ 1+ r> /string insert ;
 : $+! ( addr1 u addr2 -- )
   >r dup r@ $@len + r@ $!len r> $@ + over - swap move ;
-: $off ( addr -- ) HandleOff ;
+: $off ( addr -- ) dup @ IF  HandleOff  ELSE  drop  THEN ;
 toss
 
 \ dynamic string handling                              12dec99py
