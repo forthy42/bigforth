@@ -161,7 +161,7 @@ previous                                        [THEN]
 
 [defined] win32 [IF]
 ficon: minos-win icons/minos1+.icn"
-: win-init ( -- ) clear-resources
+: win-init ( -- ) !time clear-resources
   xresource new xresource with
       IDI_APPLICATION 0 LoadIcon register
 \      minos-win icon-pixmap with

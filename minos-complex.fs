@@ -494,7 +494,7 @@ how:    6 colors focuscol !     1 colors defocuscol !
           !tile drop cols @ >r  x @ y @
           at? drop 0 swap texth @ * p+
           2dup textwh 2@ r> * swap 6 colors @ dpy box
-     pos @ at? nip - 'line 2swap 6 colors @ 8 >> .text 2drop ;
+          pos @ at? nip - 'line 2swap 6 colors @ 8 >> .text 2drop ;
         : linetype ( addr u -- )
           tuck pos @ 'line drop swap 2dup -trailing >r drop move
           >r pos @ r@ + cols @ rows @ * >=

@@ -160,7 +160,7 @@ also dos
 : history-file ( -- addr u )
     s" BIGFORTHHIST" env$ 2dup d0= IF  2drop
         up@ udp @ + >r
-        s" TEMP" env$ ?dup 0= IF  s" C:" THEN  r@ place
+        s" TEMP" env$ ?dup 0= IF  drop s" C:" THEN  r@ place
         s" \bigforth.his" r@ +place
         r> count
     THEN ;
