@@ -81,6 +81,72 @@
     : reset-baud ( fd -- )
         t_old SetCommState drop ;
 [ELSE]
+    also DOS also
+    legacy on
+    2 libc tcgetattr tcgetattr
+    3 libc tcsetattr tcsetattr
+    2 libc tcflow tcflow
+    3 libc ioctl ioctl
+    legacy off
+    
+    [IFDEF] linux
+    struct{
+    cell c_iflag           /* input mode flags */
+    cell c_oflag           /* output mode flags */
+    cell c_cflag           /* control mode flags */
+    cell c_lflag           /* local mode flags */
+    32 string c_cc         /* line discipline */
+    cell c_ispeed          /* input speed */
+    cell c_ospeed          /* output speed */
+    } termios
+    [ELSE]
+    struct{
+    cell c_iflag           /* input mode flags */
+    cell c_oflag           /* output mode flags */
+    cell c_cflag           /* control mode flags */
+    cell c_lflag           /* local mode flags */
+    20 string c_cc         /* line discipline */
+    cell c_ispeed          /* input speed */
+    cell c_ospeed          /* output speed */
+    } termios
+    [THEN]
+
+    Create t_old  sizeof termios allot
+    Create t_buf  sizeof termios allot
+    
+    [IFDEF] osx
+        0 Constant B0
+        50 Constant B50
+        75 Constant B75
+        110 Constant B110
+        134 Constant B134
+        150 Constant B150
+        200 Constant B200
+        300 Constant B300
+        600 Constant B600
+        1200 Constant B1200
+        1800 Constant B1800
+        2400 Constant B2400
+        4800 Constant B4800
+        9600 Constant B9600
+        19200 Constant B19200
+	38400 Constant B38400
+	57600 Constant B57600
+	115200 Constant B115200
+	$00060000 Constant CRTSCTS
+	$300 Constant CS8
+        $400 Constant CSTOPB
+	$800 Constant CREAD
+	$8000 Constant CLOCAL
+	0 Constant CBAUD
+	1 Constant IGNBRK
+	4 Constant IGNPAR
+	
+	17 Constant VTIME
+	16 Constant VMIN
+	
+	$4004667F Constant FIONREAD
+    [ELSE]
     base @ 8 base !
     0000001 Constant B50   
     0000002 Constant B75   
@@ -126,27 +192,10 @@
     5 Constant VTIME
     6 Constant VMIN
     
-    also DOS also
-    legacy on
-    2 libc tcgetattr tcgetattr
-    3 libc tcsetattr tcsetattr
-    2 libc tcflow tcflow
-    3 libc ioctl ioctl
-    legacy off
-    
-    struct{
-    cell c_iflag           /* input mode flags */
-    cell c_oflag           /* output mode flags */
-    cell c_cflag           /* control mode flags */
-    cell c_lflag           /* local mode flags */
-    byte c_line            /* line discipline */
-    32 string c_cc
-    cell c_ispeed          /* input speed */
-    cell c_ospeed          /* output speed */
-    } termios
-    
-    Create t_old  sizeof termios allot
-    Create t_buf  sizeof termios allot
+    $5409 Constant TCSBRK
+    $540B Constant TCFLSH
+    $541B Constant FIONREAD
+    [THEN]
     
     : set-baud ( baud fd -- )  >r
         t_old r@ tcgetattr drop
@@ -154,22 +203,20 @@
         \  t_buf sizeof termios erase
         [ IGNPAR                   ] Literal    t_buf termios c_iflag !
         0                                       t_buf termios c_oflag !
-        [ 0 CS8 or CSTOPB or CREAD or CLOCAL or ] Literal or
+        [ 0 CS8 or CSTOPB or CREAD or CLOCAL or ] Literal [IFDEF] linux or [THEN]
         t_buf termios c_cflag !
         0                                       t_buf termios c_lflag !
         1 t_buf termios c_cc VMIN + c!
         0 t_buf termios c_cc VTIME + c!
+    [IFDEF] linux
         28800 t_buf termios c_cflag @ $F and <<
+    [THEN]
         dup t_buf termios c_ispeed ! t_buf termios c_ospeed !
         t_buf 1 r> tcsetattr drop ;
     
     : reset-baud ( fd -- )
         t_old 1 rot tcsetattr drop ;
 
-    $5409 Constant TCSBRK
-    $540B Constant TCFLSH
-    $541B Constant FIONREAD
-    
     : check-read ( fd -- n )  >r
         0 sp@ FIONREAD r> filehandle @ ioctl drop ;
     
