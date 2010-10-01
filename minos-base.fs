@@ -241,7 +241,7 @@ Variable (poly#
 
 : wsat ( n -- w )  $7FFF min -$8000 max ;
 : <poly ( x y -- x y )  (poly# off (poly' @ 0=
-  IF  $1000 NewPtr (poly' !
+  IF  $1010 NewPtr (poly' !
       [defined] win32 [IF]  $2008 NewPtr (poly'' !  (poly' @ off [THEN]
   THEN   2dup (lastp 2! ;
 : poly' ( -- addr )  (poly' @ (poly# @ cells + ;
