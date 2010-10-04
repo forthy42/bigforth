@@ -111,8 +111,8 @@
     } termios
     [THEN]
 
-    Create t_old  sizeof termios allot
-    Create t_buf  sizeof termios allot
+    Create t_old  sizeof termios cell+ allot
+    Create t_buf  sizeof termios cell+ allot
     
     [IFDEF] osx
         0 Constant B0
