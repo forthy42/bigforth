@@ -62,21 +62,22 @@ base @ hex
 
 \ skip trailing garbage
 
-: x-size ( xcaddr -- u )
+: x-size ( xcaddr u -- u )
+    0=        IF drop 0 exit  THEN
     \ length of UTF-8 char starting at u8-addr (accesses only u8-addr)
     c@
     dup $80 u< IF drop 1 exit THEN
-    dup $c0 u< IF drop 1 EXIT THEN \ really is a malformed character
+    dup $c0 u< IF mal-xchar throw THEN \ really is a malformed character
     dup $e0 u< IF drop 2 exit THEN
     dup $f0 u< IF drop 3 exit THEN
     dup $f8 u< IF drop 4 exit THEN
     dup $fc u< IF drop 5 exit THEN
     dup $fe u< IF drop 6 exit THEN
-    drop 1 ; \ also malformed character
+    mal-xchar throw ; \ also malformed character
 
 : -trailing-garbage ( xcaddr u1 -- xcaddr u2 )
     2dup + dup xchar- ( addr u1 end1 end2 )
-    2dup dup x-size + = IF \ last character ok
+    2dup dup over over - x-size + = IF \ last character ok
 	2drop
     ELSE
 	nip nip over -
