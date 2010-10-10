@@ -3,6 +3,10 @@
 \ environmental dependency: characters are stored as bytes
 \ environmental dependency: lower case words accepted
 
+\ doesn't implement set-source-encoding and set-file-encoding
+
+-77 Constant mal-xchar
+
 base @ hex
 
 80 Value maxascii
@@ -18,9 +22,11 @@ base @ hex
     7F and  40 >r
     BEGIN   dup r@ and  WHILE  r@ xor
 	    6 lshift r> 5 lshift >r >r count
-\	    dup C0 and 80 <> abort" malformed character"
+\	    dup C0 and 80 <> mal-xchar and throw
 	    3F and r> or
     REPEAT  r> drop ;
+
+: xc, ( xchar -- ) here xc!+ dp ! ;
 
 : xc!+ ( xc xcaddr -- xcaddr' )
     over maxascii u< IF  tuck c! char+  EXIT  THEN \ special case ASCII
@@ -83,7 +89,7 @@ base @ hex
     7F and  40 >r
     BEGIN  dup r@ and  WHILE  r@ xor
 	    6 lshift r> 5 lshift >r >r key
-\	    dup C0 and 80 <> abort" malformed character"
+\	    dup C0 and 80 <> mal-xchar and throw
 	    3F and r> or
     REPEAT  r> drop ;
 
@@ -94,6 +100,13 @@ base @ hex
 	    2/ >r  dup 3F and 80 or swap 6 rshift r>
     REPEAT  7F xor 2* or
     BEGIN   dup 80 u< 0= WHILE emit  REPEAT  drop ;
+
+: holds ( addr u -- )
+    BEGIN  dup  WHILE  1- 2dup + c@ hold  REPEAT  2drop ;
+
+Create xholdbuf 8 allot
+
+: xhold ( xchar -- )  xholdbuf tuck xc!+ over - holds ;
 
 \ utf size
 
@@ -260,8 +273,8 @@ here wc-table - Constant #wc-table
 80 Constant utf-8
 100 Constant iso-latin-1
 
-: set-encoding  to maxascii ;
-: get-encoding  maxascii ;
+: set-internal-encoding  to maxascii ;
+: get-internal-encoding  maxascii ;
 
 base !
 
