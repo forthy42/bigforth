@@ -239,7 +239,7 @@ Variable (poly#
 [defined] win32 [IF]   Variable (poly''  [THEN]
 2Variable (lastp
 
-: wsat ( n -- w )  $7FFF min -$8000 max ;
+: wsat ( n -- w )  $7FFF min $-8000 max ;
 : <poly ( x y -- x y )  (poly# off (poly' @ 0=
   IF  $1010 NewPtr (poly' !
       [defined] win32 [IF]  $2008 NewPtr (poly'' !  (poly' @ off [THEN]

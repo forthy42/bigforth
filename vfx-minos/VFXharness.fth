@@ -1034,6 +1034,12 @@ set-current
 0 test cr \ writes "false"
 [THEN]
 
+\ ******************************************
+\ nested picture number output buffer (stub)
+\ ******************************************
+
+: <<#  <# ;
+: #>>  ;
 
 \ ***************
 \ debugging tools

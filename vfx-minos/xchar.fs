@@ -26,8 +26,6 @@ base @ hex
 	    3F and r> or
     REPEAT  r> drop ;
 
-: xc, ( xchar -- ) here xc!+ dp ! ;
-
 : xc!+ ( xc xcaddr -- xcaddr' )
     over maxascii u< IF  tuck c! char+  EXIT  THEN \ special case ASCII
     >r 0 swap  3F
@@ -35,6 +33,8 @@ base @ hex
 	    2/ >r  dup 3F and 80 or swap 6 rshift r>
     REPEAT  7F xor 2* or  r>
     BEGIN   over 80 u< 0= WHILE  tuck c! char+  REPEAT  nip ;
+
+: xc, ( xchar -- ) here xc!+ dp ! ;
 
 : xc!+? ( xc xcaddr u -- xcaddr' u' flag )
     >r over xc-size r@ over u< IF ( xc xc-addr1 len r: u1 )

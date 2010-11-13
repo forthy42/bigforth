@@ -8,7 +8,7 @@ public: gadget ptr child        method create-pixmap
 
 \ backing                                              28aug99py
 
-how:    : init ( -- ) -$80000000 dup x ! y ! ;
+how:    : init ( -- ) $-80000000 dup x ! y ! ;
         : schedule ( xt o time -- )  dpy schedule ;
         : invoke ( -- time )  dpy invoke ;
         : cleanup ( o -- )  dpy cleanup ;
@@ -99,7 +99,7 @@ how:    : init ( -- ) -$80000000 dup x ! y ! ;
         : draw ( -- )  flags #hidden bit@ ?EXIT
 	  flags #draw bit@ 0= ?EXIT
 	  xwin @ noback @ 0= and redraw-all @ 0= and
-	    IF  -$80000000 dup x @ y @ d= 0= \ ugly workaround
+	    IF  $-80000000 dup x @ y @ d= 0= \ ugly workaround
 		IF  0 0 w @ h @ x @ y @
 		  [defined] win32 [IF]  xrc dc @ dpy image
 		  [ELSE]  xpict @  IF  -1 xpict @ dpy mask
