@@ -220,28 +220,31 @@ how:
         1 and IF  swap-id  THEN
         w id @ dup XftFont ascent @ swap XftFont descent @ + ;
     : draw ( addr u x y dpy -- ) { addr u x y dpy }
-        color @ $FF and dpy set-color
-        dpy displays with
-            xft-draw @ 0= IF
-                & pixmap @ class? IF
-                    drawable drop xrc depth @
-                    XftDrawCreateAlpha
-                ELSE
-                    drawable drop xrc vis @
-                    xrc cmap @ XftDrawCreate
-                THEN  xft-draw !
-            THEN
-            xft-draw @ dup clip-r @ XftDrawSetClip drop
-        endwith xft-draw' ! 0
-        BEGIN
-            1+  addr u  scan-within >r
-            xft-draw' @ xft-color id @ x y ascent @ +
-            addr r@ over - XftDrawString
-            screen xrc dpy @ id @ addr r@ over - text_r XftTextExtents
-            text_r XGlyphInfo xOff w@ x + to x
-            addr u r> addr - safe/string to u to addr  swap-id
-        u 0<= UNTIL
-        1 and IF  swap-id  THEN ;
+	x -$8000 $7FFF within
+	y -$8000 $7FFF within and IF
+	    color @ $FF and dpy set-color
+	    dpy displays with
+	    xft-draw @ 0= IF
+		& pixmap @ class? IF
+		    drawable drop xrc depth @
+		    XftDrawCreateAlpha
+		ELSE
+		    drawable drop xrc vis @
+		    xrc cmap @ XftDrawCreate
+		THEN  xft-draw !
+	    THEN
+	    xft-draw @ dup clip-r @ XftDrawSetClip drop
+	    endwith xft-draw' ! 0
+	    BEGIN
+		1+  addr u  scan-within >r
+		xft-draw' @ xft-color id @ x y ascent @ +
+		addr r@ over - XftDrawString
+		screen xrc dpy @ id @ addr r@ over - text_r XftTextExtents
+		text_r XGlyphInfo xOff w@ x + to x
+		addr u r> addr - safe/string to u to addr  swap-id
+	    u 0<= UNTIL
+	    1 and IF  swap-id  THEN
+	THEN ;
 class;
 
 : xft-new-font  Xft-font new ;
