@@ -51,7 +51,7 @@ Variable wait'
   F : init-texture ( -- t1 )
 ?texture [IF]
       1 textures dup set-texture
-      S" pattern/bark.ppm" load-texture ;
+      S" pattern/bark.png" load-texture ;
 [ELSE]  0 ;  [THEN]
 endwith
 

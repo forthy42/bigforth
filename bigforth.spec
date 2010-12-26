@@ -15,16 +15,29 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-Release:      62.1
+Release:      70.1
+%ifarch x86_64
+%if 0%{?suse_version}
+BuildRequires: glibc-devel-32bit gcc-32bit glibc-32bit
+%endif
+%if 0%{?redhat_version}
+BuildRequires: /usr/include/gnu/stubs-32.h
+%endif
+%if 0%{?fedora_version}
+BuildRequires: /usr/include/gnu/stubs-32.h
+%endif
+%define _lib lib
+%define _libdir /usr/lib
+%endif
 Group:        Development/Other
-Version:      2.4.0
-Name:         bigforth-%{version}
+Version:      2.5.0
+Name:         bigforth
 License:      GPL v3 or later
 Group:        Development/Languages/Other
 AutoReqProv:  on
 Summary:      bigForth language
 Url:          http://bigforth.sourceforge.net/
-Source:       bigforth.tar.gz
+Source:       bigforth-%{version}.tar.bz2
 
 %description
 bigforth is a portable implementation of the ANS Forth language.
@@ -37,14 +50,16 @@ rm -rf $RPM_BUILD_ROOT
 %setup -n %name
 
 %build
+echo %_target
+echo %_lib
+echo %_libdir
 
 %configure
 
 make
 
 %install
-
-%makeinstall
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %post
 
@@ -56,6 +71,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc BUGS COPYING CREDITS README ToDo
+/usr/bin/*
+/usr/lib/bigforth
 
 %changelog
 * Mon Sep 04 2006 Nicolas Lécureuil <neoclust@mandriva.org> 2.1.1-2mdv2007.0

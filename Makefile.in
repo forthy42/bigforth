@@ -2,7 +2,7 @@
 
 DATE= $$(LC_ALL=C date '+%d%b%Y' | tr '[A-Z]' '[a-z]')
 SRCREV=@PACKAGE_VERSION@
-MINOSREV=1.4.0
+MINOSREV=1.5.0
 BINREV=$(SRCREV)
 PATREV=1.0.1
 EWOODREV=1.0.2
@@ -67,7 +67,7 @@ all:	build ok
 build:	bigforth$(EXE) forthker-$(ARCH)$(EXE) xbigforth$(EXE) xbigforth.fi theseus
 
 ok:	xbigforth.fi xbigforth$(EXE)
-	@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
+	-@./xbigforth -e '." *** bigFORTH build successful ***" cr bye'
 
 theseus:	theseus.fs
 	sed -e "s,^#! xbigforth,#! $(BININSTDIR)/xbigforth$(EXE)," <theseus.fs >theseus
@@ -136,7 +136,7 @@ EXAMPLEDIST = bigforth/3dskull/{*.fs,*.m,*.dat} $(DRAGONDIST)
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,*.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn,convert-m.sh} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,bigforth.c,scr2str.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn,convert-m.sh} $(ICONDIST)
 
 MINISRCDIST = $(SRC:%=bigforth/%)
 
@@ -185,22 +185,22 @@ minidist-files:
 INSTDIRS = pattern icons help src Estyle Estyle/wood Estyle/ShinyMetal
 
 install:	build
-	@install -d $(BININSTDIR)
-	@install -d $(INSTDIR)
-	@for i in $(INSTDIRS); do install -d $(INSTDIR)/$$i; done
-	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(INSTDIR)
-	@install -m 644 $(INI) $(INSTDIR)
-	@install -m 644 $(XINI) $(INSTDIR)
-	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(BININSTDIR)
-	@install -m 755 theseus $(BININSTDIR)/theseus
+	@install -d $(DESTDIR)$(BININSTDIR)
+	@install -d $(DESTDIR)$(INSTDIR)
+	@for i in $(INSTDIRS); do install -d $(DESTDIR)$(INSTDIR)/$$i; done
+	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(DESTDIR)$(INSTDIR)
+	@install -m 644 $(INI) $(DESTDIR)$(INSTDIR)
+	@install -m 644 $(XINI) $(DESTDIR)$(INSTDIR)
+	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(DESTDIR)$(BININSTDIR)
+	@install -m 755 theseus $(DESTDIR)$(BININSTDIR)/theseus
 	@$(RM) theseus
-	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(INSTDIR)/src
-	@install -m 644 icons/*.png $(INSTDIR)/icons
-	@install -m 644 pattern/dragon{,-back,-claw,-head,-wing}.png pattern/bark.ppm $(INSTDIR)/pattern
-	@if [ -d help ]; then install -m 644 help/{*.html,[a-z]*.gif,*.jpg,*.sh} $(INSTDIR)/help; fi
-	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm pattern/dragon.ppm $(INSTDIR)/pattern; fi
-	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(INSTDIR)/Estyle/wood; fi
-	@if [ -d Estyle/ShinyMetal ]; then install -m 644 Estyle/ShinyMetal/* $(INSTDIR)/Estyle/ShinyMetal; fi
+	@install -m 644 {BUGS,ToDo,README,COPYING,LGPLv3,CREDITS,Makefile,*.f[sb],*.m,*.c,*.S,iss.sh,tips.txt} $(DESTDIR)$(INSTDIR)/src
+	@install -m 644 icons/*.png $(DESTDIR)$(INSTDIR)/icons
+	@install -m 644 pattern/dragon{,-back,-claw,-head,-wing}.png pattern/bark.png $(DESTDIR)$(INSTDIR)/pattern
+	@if [ -d help ]; then install -m 644 help/{*.html,[a-z]*.gif,*.jpg,*.sh} $(DESTDIR)$(INSTDIR)/help; fi
+	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm pattern/dragon.ppm $(DESTDIR)$(INSTDIR)/pattern; fi
+	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(DESTDIR)$(INSTDIR)/Estyle/wood; fi
+	@if [ -d Estyle/ShinyMetal ]; then install -m 644 Estyle/ShinyMetal/* $(DESTDIR)$(INSTDIR)/Estyle/ShinyMetal; fi
 
 configure:	configure.in
 		autoconf
@@ -245,22 +245,25 @@ html:		doc/bigforth.texi
 doc:		doc/bigforth.ps html doc/bigforth.txt
 
 # make debian
-bigforth.deb:	all
+bigforth.control:
+	echo "Package: bigforth" >$@
+	echo "Version: $(SRCREV)" >>$@
+	echo "Section: programming" >>$@
+	echo "Priority: optional" >>$@
+	echo "Architecture: i386" >>$@
+	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>$@
+	echo "Description: bigFORTH+MINOS" >>$@
+	echo " bigFORTH is a native code Forth. It is available for Linux and" >>$@
+	echo " Windows 2000/XP under GPL. The most striking feature is the" >>$@
+	echo " graphical user interface MINOS (GUI in Forth) and the form editor" >>$@
+	echo " Theseus (Theseus is still beta)." >>$@
+
+bigforth.deb:	all bigforth.control
 	-rm -rf debian
 	mkdir debian
 	make package=debian install
-	(cd debian; find * -name '*' -exec md5sum '{}' ';') >md5sums
-	echo "Package: bigforth" >control
-	echo "Version: $(SRCREV)" >>control
-	echo "Section: programming" >>control
-	echo "Priority: optional" >>control
-	echo "Architecture: i386" >>control
-	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>control
-	echo "Description: bigFORTH+MINOS" >>control
-	echo " bigFORTH is a native code Forth. It is available for Linux and" >>control
-	echo " Windows 2000/XP under GPL. The most striking feature is the" >>control
-	echo " graphical user interface MINOS (GUI in Forth) and the form editor" >>control
-	echo " Theseus (Theseus is still beta)." >>control
+	(cd debian; find . -name '*' -exec md5sum '{}' ';') >md5sums
+	cp bigforth.control control
 	mkdir debian/DEBIAN
 	cp control debian/DEBIAN
 	cp md5sums debian/DEBIAN
