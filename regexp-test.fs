@@ -151,4 +151,37 @@ s" bla 45296s fasel 117s blubber" str= [IF] .(  ok) [ELSE] .(  failed) [THEN] cr
 
 s" (bla) 12:34:56 (fasel) 00:01:57 (blubber)" 2dup type hms>s,del() ."  -> " type cr
 
+\ more tests from David Kühling
+
+: underflow1  ( c-addr u -- flag )
+   (( {{
+         {{ ` - || }} \d
+         || \d
+      }} )) ;
+s" -1dummy" underflow1 0= [IF] ." failed" cr [THEN]
+
+: underflow2  ( -- )
+   (( \( {{ \s {** \s **} 
+	 || =" /*" // =" */"
+	 || =" //" {** \d **} }} \) )) ;
+s" /*10203030203030404*/   " underflow2 0= [IF] ." failed" cr [THEN]
+pad 0 underflow2 [IF] ." failed" cr [THEN]
+
+charclass [*] '* +char
+charclass [*/] '* +char '/ +char
+
+: underflow3  ( -- )
+   ((
+      =" /*"
+      \( {** {{ [*] -c? || ` * [*/] -c? }}  **} \)
+      {++ ` * ++} ` /
+   )) ;
+
+s" /*10203030203030404*/   " underflow3 0= [IF] ." failed" cr [THEN] \1 type cr
+
+: underflow4  ( -- )
+   (( \( {{ {** \d **} || {** \d **} }} \d \) )) ;
+
+s" 0  " underflow4 0= [IF] ." failed" cr [THEN]
+
 script? [IF] bye [THEN]

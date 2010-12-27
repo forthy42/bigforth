@@ -82,6 +82,8 @@ Variable varsmax
 : var> ( -- addr ) -1 varstack +!
     varstack @+ swap cells + @
     1+ 2* cells vars + ;
+Variable greed-counts  9 cells allot \ no more than 9 nested greedy loops
+: greed' ( -- addr )  greed-counts dup @ + ;
 
 \ start end
 
@@ -105,7 +107,7 @@ Variable varsmax
 \ instead of a jump.
 
 : (( ( addr u -- )
-    vars off varsmax off loops off
+    vars off varsmax off loops off greed-counts off
     ]] FORK  AHEAD BUT JOIN !end [[ BEGIN, ; immediate
 : )) ( -- addr f )
     ]] ?end drop true UNNEST [[
@@ -119,14 +121,16 @@ Variable varsmax
 : drops ( n -- ) 1+ cells sp@ + sp! ;
 
 : {** ( addr -- addr addr )
-    0 ]] Literal >r BEGIN dup [[ BEGIN, ; immediate
+    cell greed-counts +!
+    greed' ]] Literal off BEGIN dup [[ BEGIN, ; immediate
 ' {** Alias {++ ( addr -- addr addr ) immediate
 : n*} ( sys n -- )
-    >r ]] r> 1+ >r $? 0= UNTIL dup [[ DONE, ]] drop [[
-    r@ ]] r> 1+ Literal U+DO FORK BUT [[
+    >r greed' ]] 1 Literal +! $? 0= UNTIL dup [[ DONE, ]] drop [[
+    r@ greed' ]] Literal @ 1+ Literal U+DO FORK BUT [[
     ]] IF  I' I - [[ r@ 1- ]] Literal + drops true UNLOOP UNNEST  THEN  LOOP [[
     r@ IF  r@ ]] Literal drops [[ THEN
-    rdrop ]]  dup LEAVE JOIN [[ ; immediate
+    rdrop ]]  dup LEAVE JOIN [[
+    -cell greed-counts +! ; immediate
 : **}  0 postpone n*} ; immediate
 : ++}  1 postpone n*} ; immediate
 
