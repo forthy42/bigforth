@@ -37,7 +37,7 @@ Group:        Development/Languages/Other
 AutoReqProv:  on
 Summary:      bigForth language
 Url:          http://bigforth.sourceforge.net/
-Source:       bigforth-%{version}.tar.bz2
+Source:       bigforth-%{version}.tar.gz
 
 %description
 bigforth is a portable implementation of the ANS Forth language.

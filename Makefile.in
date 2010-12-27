@@ -245,29 +245,31 @@ html:		doc/bigforth.texi
 doc:		doc/bigforth.ps html doc/bigforth.txt
 
 # make debian
-bigforth.control:
-	echo "Package: bigforth" >$@
-	echo "Version: $(SRCREV)" >>$@
+debian.control:	Makefile
+	echo "Source: bigforth" >$@
 	echo "Section: programming" >>$@
 	echo "Priority: optional" >>$@
-	echo "Architecture: i386" >>$@
 	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>$@
+	echo "Build-Depends: debhelper (>= 4.1.16), build-essential, gcc" >>$@
+	echo "" >>$@
+	echo "Package: bigforth" >>$@
+	echo "Architecture: i386" >>$@
+	echo 'Depends: $${shlibs:Depends}' >>$@
 	echo "Description: bigFORTH+MINOS" >>$@
 	echo " bigFORTH is a native code Forth. It is available for Linux and" >>$@
 	echo " Windows 2000/XP under GPL. The most striking feature is the" >>$@
 	echo " graphical user interface MINOS (GUI in Forth) and the form editor" >>$@
 	echo " Theseus (Theseus is still beta)." >>$@
 
-bigforth.deb:	all bigforth.control
+bigforth.deb:	all debian.control
 	-rm -rf debian
 	mkdir debian
 	make package=debian install
 	(cd debian; find . -name '*' -exec md5sum '{}' ';') >md5sums
-	cp bigforth.control control
 	mkdir debian/DEBIAN
-	cp control debian/DEBIAN
+	cp debian.control debian/DEBIAN/control
 	cp md5sums debian/DEBIAN
 	dpkg-deb --build debian
 	mv debian.deb bigforth_$(SRCREV)_i386.deb
-	rm -rf control md5sums debian
+	rm -rf debian.control md5sums debian
 
