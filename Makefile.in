@@ -251,10 +251,9 @@ debian.control:	Makefile
 	echo "Priority: optional" >>$@
 	echo "Maintainer: Bernd Paysan <bernd.paysan@gmx.de>" >>$@
 	echo "Build-Depends: debhelper (>= 4.1.16), build-essential, gcc" >>$@
-	echo "" >>$@
 	echo "Package: bigforth" >>$@
+	echo "Version: $(SRCREV)" >>$@
 	echo "Architecture: i386" >>$@
-	echo 'Depends: $${shlibs:Depends}' >>$@
 	echo "Description: bigFORTH+MINOS" >>$@
 	echo " bigFORTH is a native code Forth. It is available for Linux and" >>$@
 	echo " Windows 2000/XP under GPL. The most striking feature is the" >>$@
