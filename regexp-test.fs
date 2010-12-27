@@ -138,7 +138,7 @@ s" delete (test) and (another test) " delparents type cr
   \3 s>number drop + 0 <<# 's' hold #s #> #>> //g ;
 
 s" bla 12:34:56 fasel 00:01:57 blubber" 2dup type hms>s
-.( ->) 2dup type
+."  -> " 2dup type
 s" bla 45296s fasel 117s blubber" str= [IF] .(  ok) [ELSE] .(  failed) [THEN] cr
 
 : hms>s,del() ( addr u -- addr' u' )
@@ -146,10 +146,9 @@ s" bla 45296s fasel 117s blubber" str= [IF] .(  ok) [ELSE] .(  failed) [THEN] cr
          >> \1 s>number drop 60 *
             \2 s>number drop + 60 *
             \3 s>number drop + 0 <# 's' hold #s #> <<
-         || ` ( // ` ) >> <<" "
+         || ` ( // ` ) >> <<" ()"
       }} LEAVE //s ;
 
-\ doesn't work yet
-\ s" (bla) 12:34:56 (fasel) 00:01:57 (blubber)" 2dup type hms>s,del() ." ->" type cr
+s" (bla) 12:34:56 (fasel) 00:01:57 (blubber)" 2dup type hms>s,del() ."  -> " type cr
 
 script? [IF] bye [THEN]

@@ -104,11 +104,12 @@ Variable varsmax
 \ FORK/JOIN are like AHEAD THEN, but producing a call on AHEAD
 \ instead of a jump.
 
-: (( ( addr u -- )  vars off varsmax off loops off
+: (( ( addr u -- )
+    vars off varsmax off loops off
     ]] FORK  AHEAD BUT JOIN !end [[ BEGIN, ; immediate
 : )) ( -- addr f )
-    ]] ?end drop true EXIT [[
-    DONE, ]] drop false EXIT THEN [[ ; immediate
+    ]] ?end drop true UNNEST [[
+    DONE, ]] drop false UNNEST THEN [[ ; immediate
 
 \ greedy loops
 
@@ -120,12 +121,12 @@ Variable varsmax
 : {** ( addr -- addr addr )
     0 ]] Literal >r BEGIN dup [[ BEGIN, ; immediate
 ' {** Alias {++ ( addr -- addr addr ) immediate
-: n*} ( sys n -- )  >r ]] r> 1+ >r $? 0= UNTIL dup [[ DONE, ]] drop [[
-    r@ IF r@ ]] r@ Literal u< IF  r> 1+ drops false  EXIT  THEN [[ THEN
+: n*} ( sys n -- )
+    >r ]] r> 1+ >r $? 0= UNTIL dup [[ DONE, ]] drop [[
     r@ ]] r> 1+ Literal U+DO FORK BUT [[
-    ]] IF  I' I - [[ r@ 1- ]] Literal + drops true UNLOOP EXIT  THEN  LOOP [[
+    ]] IF  I' I - [[ r@ 1- ]] Literal + drops true UNLOOP UNNEST  THEN  LOOP [[
     r@ IF  r@ ]] Literal drops [[ THEN
-    rdrop ]] false  EXIT  JOIN [[ ; immediate
+    rdrop ]]  dup LEAVE JOIN [[ ; immediate
 : **}  0 postpone n*} ; immediate
 : ++}  1 postpone n*} ; immediate
 
@@ -137,13 +138,13 @@ Variable varsmax
 : {+ ( addr -- addr addr )
     ]] BEGIN  [[ BEGIN, ; immediate
 : {* ( addr -- addr addr )
-    ]] {+ dup FORK BUT  IF  drop true  EXIT THEN [[ ; immediate
+    ]] {+ dup FORK BUT  IF  drop true  UNNEST THEN [[ ; immediate
 : *} ( addr addr' -- addr' )
     ]] dup end$ u>  UNTIL [[
-    DONE, ]] drop false  EXIT  JOIN [[ ; immediate
+    DONE, ]] drop false  UNNEST  JOIN [[ ; immediate
 : +} ( addr addr' -- addr' )
-    ]] dup FORK BUT  IF  drop true  EXIT [[
-    DONE, ]] drop false  EXIT  THEN *} [[ ; immediate
+    ]] dup FORK BUT  IF  drop true  UNNEST [[
+    DONE, ]] drop dup  LEAVE [[ BEGIN, ]] THEN *} [[ ; immediate
 
 : // ( -- ) ]] {* 1+ *} [[ ; immediate
 
@@ -152,15 +153,17 @@ Variable varsmax
 \ idea: try to match one alternative and then the rest of regexp.
 \ if that fails, jump back to second alternative
 
-: JOINs ( sys -- )  BEGIN  dup  WHILE  ]] JOIN [[  REPEAT  drop ;
+: THENs ( sys -- )  BEGIN  dup  WHILE  ]] THEN [[  REPEAT  drop ;
 
-: {{ ( addr -- addr addr )  0 ]] dup BEGIN [[  vars @ ; immediate
-: || ( addr addr -- addr addr ) vars @ varsmax @ max varsmax !
-    ]] dup FORK  IF  2drop true  EXIT THEN  drop dup [[ >r vars !
-    ]] DONE drop dup [[ r> ]] BEGIN [[ vars @ ; immediate
-: }} ( addr addr -- addr addr ) vars @ varsmax @ max vars !
-    ]] dup FORK  IF  2drop true  EXIT THEN  drop dup [[ >r drop
-    ]] DONE drop LEAVE noop [[ r> JOINs ; immediate
+: {{ ( addr -- addr addr ) \ regexp-pattern
+    0 ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+: || ( addr addr -- addr addr ) \ regexp-pattern
+    vars @ varsmax @ max varsmax !  vars !
+    ]] AHEAD  BUT  THEN  drop [[
+    ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+: }} ( addr addr -- addr ) \ regexp-pattern
+    vars @ varsmax @ max vars !  drop
+    ]] AHEAD  BUT  THEN  drop LEAVE [[  THENs ; immediate
 
 \ match variables
 
