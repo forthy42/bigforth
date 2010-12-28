@@ -163,14 +163,14 @@ Variable varsmax
 : THENs ( sys -- )  BEGIN  dup  WHILE  ]] THEN [[  REPEAT  drop ;
 
 : {{ ( addr -- addr addr ) \ regexp-pattern
-    0 ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    0 ]] dup FORK  IF  drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : || ( addr addr -- addr addr ) \ regexp-pattern
     vars @ varsmax @ max varsmax !  vars !
-    ]] AHEAD  BUT  THEN  drop [[
-    ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    ]] AHEAD  BUT  THEN  [[
+    ]] dup FORK  IF  drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : }} ( addr addr -- addr ) \ regexp-pattern
     vars @ varsmax @ max vars !  drop
-    ]] AHEAD  BUT  THEN  2drop false UNNEST [[  THENs ; immediate
+    ]] AHEAD  BUT  THEN  drop false UNNEST [[  THENs ; immediate
 
 \ match variables
 
