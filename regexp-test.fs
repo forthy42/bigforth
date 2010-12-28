@@ -158,13 +158,13 @@ s" (bla) 12:34:56 (fasel) 00:01:57 (blubber)" 2dup type hms>s,del() ."  -> " typ
          {{ ` - || }} \d
          || \d
       }} )) ;
-s" -1dummy" underflow1 0= [IF] ." failed" cr [THEN]
+s" -1dummy" underflow1 0= [IF] ." failed" cr [ELSE] ." underflow1 passed" cr [THEN]
 
 : underflow2  ( -- )
    (( \( {{ \s {** \s **} 
 	 || =" /*" // =" */"
 	 || =" //" {** \d **} }} \) )) ;
-s" /*10203030203030404*/   " underflow2 0= [IF] ." failed" cr [THEN]
+s" /*10203030203030404*/   " underflow2 0= [IF] ." failed" cr [ELSE] ." underflow2 passed: " \1 type cr [THEN]
 pad 0 underflow2 [IF] ." failed" cr [THEN]
 
 charclass [*] '* +char
@@ -173,15 +173,15 @@ charclass [*/] '* +char '/ +char
 : underflow3  ( -- )
    ((
       =" /*"
-      \( {** {{ [*] -c? || ` * [*/] -c? }}  **} \)
+      \( {** {{ [*] -c? || ` * [*/] -c? }} **} \)
       {++ ` * ++} ` /
    )) ;
 
-s" /*10203030203030404*/   " underflow3 0= [IF] ." failed" cr [THEN] \1 type cr
+s" /*10203030203030404*/   " underflow3 0= [IF] ." failed" cr [ELSE] ." underflow3 passed: " \1 type cr [THEN]
 
 : underflow4  ( -- )
    (( \( {{ {** \d **} || {** \d **} }} \d \) )) ;
 
-s" 0  " underflow4 0= [IF] ." failed" cr [THEN]
+s" 0  " underflow4 0= [IF] ." failed" cr [ELSE] ." underflow4 passed: " \1 type cr [THEN]
 
 script? [IF] bye [THEN]

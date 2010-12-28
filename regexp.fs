@@ -82,8 +82,6 @@ Variable varsmax
 : var> ( -- addr ) -1 varstack +!
     varstack @+ swap cells + @
     1+ 2* cells vars + ;
-Variable greed-counts  9 cells allot \ no more than 9 nested greedy loops
-: greed' ( -- addr )  greed-counts dup @ + ;
 
 \ start end
 
@@ -107,7 +105,7 @@ Variable greed-counts  9 cells allot \ no more than 9 nested greedy loops
 \ instead of a jump.
 
 : (( ( addr u -- )
-    vars off varsmax off loops off greed-counts off
+    vars off varsmax off loops off
     ]] FORK  AHEAD BUT JOIN !end [[ BEGIN, ; immediate
 : )) ( -- addr f )
     ]] ?end drop true UNNEST [[
@@ -121,18 +119,20 @@ Variable greed-counts  9 cells allot \ no more than 9 nested greedy loops
 : drops ( n -- ) 1+ cells sp@ + sp! ;
 
 : {** ( addr -- addr addr )
-    cell greed-counts +!
-    greed' ]] Literal off BEGIN dup [[ BEGIN, ; immediate
-' {** Alias {++ ( addr -- addr addr ) immediate
-: n*} ( sys n -- )
-    >r greed' ]] 1 Literal +! $? 0= UNTIL dup [[ DONE, ]] drop [[
-    r@ greed' ]] Literal @ 1+ Literal U+DO FORK BUT [[
-    ]] IF  I' I - [[ r@ 1- ]] Literal + drops true UNLOOP UNNEST  THEN  LOOP [[
-    r@ IF  r@ ]] Literal drops [[ THEN
-    rdrop ]]  dup LEAVE JOIN [[
-    -cell greed-counts +! ; immediate
-: **}  0 postpone n*} ; immediate
-: ++}  1 postpone n*} ; immediate
+    ]] false >r BEGIN  dup  FORK  BUT  WHILE  r> 1+ >r  REPEAT [[
+    ]] r>  AHEAD  BUT  JOIN [[
+    BEGIN, ; immediate
+: **} ( sys -- )
+    ]] dup end$ u<=  UNNEST [[ DONE, ]] false UNNEST  THEN [[
+    ]] nip 1+ false  U+DO  FORK BUT [[
+    ]] IF  I' I - 1- drops true UNLOOP UNNEST  THEN  LOOP [[
+    ]] dup LEAVE JOIN [[ ; immediate
+' {** Alias {++ immediate
+: ++} ( sys -- )
+    ]] dup end$ u<=  UNNEST [[ DONE, ]] false UNNEST  THEN [[
+    ]] nip false  U+DO  FORK BUT [[
+    ]] IF  I' I - drops true UNLOOP UNNEST  THEN  LOOP [[
+    ]] drop dup LEAVE JOIN [[ ; immediate
 
 \ non-greedy loops
 
@@ -160,11 +160,11 @@ Variable greed-counts  9 cells allot \ no more than 9 nested greedy loops
 : THENs ( sys -- )  BEGIN  dup  WHILE  ]] THEN [[  REPEAT  drop ;
 
 : {{ ( addr -- addr addr ) \ regexp-pattern
-    0 ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    0 ]] dup dup FORK  IF  nip nip true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : || ( addr addr -- addr addr ) \ regexp-pattern
     vars @ varsmax @ max varsmax !  vars !
     ]] AHEAD  BUT  THEN  drop [[
-    ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    ]] dup dup FORK  IF  nip nip true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : }} ( addr addr -- addr ) \ regexp-pattern
     vars @ varsmax @ max vars !  drop
     ]] AHEAD  BUT  THEN  drop LEAVE [[  THENs ; immediate
