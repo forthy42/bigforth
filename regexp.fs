@@ -122,18 +122,18 @@ Variable varsmax
 : drops ( n -- ) 1+ cells sp@ + sp! ;
 
 : {** ( addr -- addr addr )
-    ]] false >r BEGIN  dup  FORK  BUT  WHILE  drop last$ r> 1+ >r  REPEAT [[
+    ]] false >r BEGIN  dup  FORK  BUT  WHILE  last$ r> 1+ >r  REPEAT [[
     ]] r>  AHEAD  BUT  JOIN [[
     BEGIN, ; immediate
 ' {** Alias {++ immediate
 : **} ( sys -- )
-    ]] dup >last  UNNEST [[ DONE, ]] false UNNEST  THEN [[
-    ]] nip 1+ false  U+DO  FORK BUT [[
+    ]] >last  UNNEST [[ DONE, ]] drop false UNNEST  THEN [[
+    ]] 1+ false  U+DO  FORK BUT [[
     ]] IF  I' I - 1- drops true UNLOOP UNNEST  THEN  LOOP [[
     ]] dup LEAVE JOIN [[ ; immediate
 : ++} ( sys -- )
-    ]] dup >last  UNNEST [[ DONE, ]] false UNNEST  THEN [[
-    ]] nip false  U+DO  FORK BUT [[
+    ]] >last  UNNEST [[ DONE, ]] drop false UNNEST  THEN [[
+    ]] false  U+DO  FORK BUT [[
     ]] IF  I' I - drops true UNLOOP UNNEST  THEN  LOOP [[
     ]] LEAVE JOIN [[ ; immediate
 
