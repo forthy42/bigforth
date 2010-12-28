@@ -1,4 +1,4 @@
-\ Regexp compile
+\ Regexp compiler
 
 \ The idea of the parser is the following:
 \ As long as there's a match, continue
