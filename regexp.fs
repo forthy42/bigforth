@@ -86,11 +86,14 @@ Variable varsmax
 \ start end
 
 0 Value end$
+0 Value last$
 0 Value start$
 : !end ( addr u -- addr )  over + to end$ dup to start$ ;
 : $? ( addr -- addr flag ) dup end$ u< ; macro
 : ^? ( addr -- addr flag ) dup start$ u> ; macro
 : ?end ( addr -- addr ) ]] dup end$ u> ?LEAVE [[ ; immediate
+: rest$ ( addr -- addr addr u ) dup end$ over - ;
+: >last ( addr -- flag )  dup to last$ end$ u<= ;
 
 \ start and end
 
@@ -108,7 +111,7 @@ Variable varsmax
     vars off varsmax off loops off
     ]] FORK  AHEAD BUT JOIN !end [[ BEGIN, ; immediate
 : )) ( -- addr f )
-    ]] ?end drop true UNNEST [[
+    ]] >last  UNNEST [[
     DONE, ]] drop false UNNEST THEN [[ ; immediate
 
 \ greedy loops
@@ -119,20 +122,20 @@ Variable varsmax
 : drops ( n -- ) 1+ cells sp@ + sp! ;
 
 : {** ( addr -- addr addr )
-    ]] false >r BEGIN  dup  FORK  BUT  WHILE  r> 1+ >r  REPEAT [[
+    ]] false >r BEGIN  dup  FORK  BUT  WHILE  drop last$ r> 1+ >r  REPEAT [[
     ]] r>  AHEAD  BUT  JOIN [[
     BEGIN, ; immediate
+' {** Alias {++ immediate
 : **} ( sys -- )
-    ]] dup end$ u<=  UNNEST [[ DONE, ]] false UNNEST  THEN [[
+    ]] dup >last  UNNEST [[ DONE, ]] false UNNEST  THEN [[
     ]] nip 1+ false  U+DO  FORK BUT [[
     ]] IF  I' I - 1- drops true UNLOOP UNNEST  THEN  LOOP [[
     ]] dup LEAVE JOIN [[ ; immediate
-' {** Alias {++ immediate
 : ++} ( sys -- )
-    ]] dup end$ u<=  UNNEST [[ DONE, ]] false UNNEST  THEN [[
+    ]] dup >last  UNNEST [[ DONE, ]] false UNNEST  THEN [[
     ]] nip false  U+DO  FORK BUT [[
     ]] IF  I' I - drops true UNLOOP UNNEST  THEN  LOOP [[
-    ]] drop dup LEAVE JOIN [[ ; immediate
+    ]] LEAVE JOIN [[ ; immediate
 
 \ non-greedy loops
 
@@ -160,14 +163,14 @@ Variable varsmax
 : THENs ( sys -- )  BEGIN  dup  WHILE  ]] THEN [[  REPEAT  drop ;
 
 : {{ ( addr -- addr addr ) \ regexp-pattern
-    0 ]] dup dup FORK  IF  nip nip true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    0 ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : || ( addr addr -- addr addr ) \ regexp-pattern
     vars @ varsmax @ max varsmax !  vars !
     ]] AHEAD  BUT  THEN  drop [[
-    ]] dup dup FORK  IF  nip nip true UNNEST  BUT  JOIN [[ vars @ ; immediate
+    ]] dup dup FORK  IF  2drop true UNNEST  BUT  JOIN [[ vars @ ; immediate
 : }} ( addr addr -- addr ) \ regexp-pattern
     vars @ varsmax @ max vars !  drop
-    ]] AHEAD  BUT  THEN  drop LEAVE [[  THENs ; immediate
+    ]] AHEAD  BUT  THEN  2drop false UNNEST [[  THENs ; immediate
 
 \ match variables
 
