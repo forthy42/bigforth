@@ -336,7 +336,7 @@ how:    : dispose  clicks HandleOff
         : rect>reg ( rect -- r )  XCreateRegion
           dup >r dup XUnionRectWithRegion r> ;
         : clip-r? ( -- )  clipregion @ clip-r @ <>
-          clip-r @ and  IF  clip-r @ XDestroyRegion drop  THEN ;
+          clip-r @ and  IF  clip-r @ XDestroyRegion drop  clip-r off  THEN ;
 
         : clip-rect ( rect -- )  clip-r? clipregion @
           IF    dup IF    rect>reg >r r@ clipregion @ r@
@@ -379,18 +379,21 @@ how:    : dispose  clicks HandleOff
 
 \ Display                                              12may02py
 
-        : size-event ( -- )
-          rw @ -1 <> rh @ -1 <> or
-          IF  clipregion @ ?dup IF XDestroyRegion drop THEN
-              clip-r? clipregion off  clip-r off  0 clip-rect
-              w @ rw @ <>  h @ rh @ <> or
-              IF  xywh 2drop rw @ rh @ resize  THEN  draw
-              -1 rw !  -1 rh !  THEN
+        : do-exposed ( -- )
           clipregion @
           IF  clipregion @ >r
               drawable nip r@ XSetRegion   draw
               clip-r? clipregion off  clip-r off
-              r> XDestroyRegion drop  0 clip-rect  THEN
+	      r> XDestroyRegion drop  0 clip-rect  THEN ;
+      : do-resize ( -- )
+          rw @ -1 <> rh @ -1 <> or
+          IF  clipregion @ ?dup IF XDestroyRegion drop  THEN
+              clip-r? clipregion off  clip-r off  0 clip-rect
+              w @ rw @ <>  h @ rh @ <> or
+              IF  xywh 2drop rw @ rh @ resize  THEN  draw
+              -1 rw !  -1 rh !  THEN ;
+      : size-event ( -- )
+	  do-resize  do-exposed
           nextwin goto size-event ;
 [THEN]
 
@@ -569,10 +572,10 @@ how:    : dispose  clicks HandleOff
           flags #exposed +bit ]:
         dup Expose         cells Handlers + !
             GraphicsExpose cells Handlers + !
-\        :[  pointed self
-\          IF  mx @ my @ pointed moved  THEN ]:
-\        EnterNotify    cells Handlers + !
-        :[   pointed self
+        :[ pointed self
+          IF  mx @ my @ pointed moved  THEN ]:
+        EnterNotify    cells Handlers + !
+        :[ pointed self
           IF  pointed leave  0 bind pointed  moved? drop  THEN ]:
         LeaveNotify    cells Handlers + !
 
@@ -646,7 +649,7 @@ how:    : dispose  clicks HandleOff
            event XConfigureEvent width  @ rw !
            event XConfigureEvent height @ rh ! ]:
         ConfigureNotify cells Handlers + !
-        ' focus    FocusIn  cells Handlers + !
+        :[ flags #exposed bit@ IF do-exposed THEN focus ]:    FocusIn  cells Handlers + !
         ' defocus  FocusOut cells Handlers + !
         : >exposed ( -- )  sync  flags #exposed -bit
           BEGIN  ( ExposureMask ) 0 get-event
