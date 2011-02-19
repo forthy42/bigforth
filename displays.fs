@@ -454,7 +454,7 @@ how:    : dispose  clicks HandleOff
         : moved!  !moved on ;
         : moved?  ( -- flag )  !moved @ !moved off ;
         : get-dpy ( -- addr )  ^ ;
-        : mxy! ( mx my -- ) my ! mx ! ;
+        : mxy! ( mx my -- )  my ! mx ! ;
 
 \ Display                                              04aug05py
 [defined]  x11 [IF]
@@ -829,7 +829,7 @@ private:
         :[ ( lparam wparam msg win -- ) ?grab moved!
           2drop >mshift $FF and mb ! >lohi mxy! 0 ]:
                                          WM_MOUSEMOVE Handler@ !
-        :[  pointed self
+        :[  opointed self
           IF  pointed leave 0 bind pointed  THEN
           DefWindowProc ]:              WM_NCMOUSEMOVE Handler@ !
 

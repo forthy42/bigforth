@@ -338,7 +338,7 @@ how:    : xinc  child xinc ;
           >r >r 0 h @ w @ r> r> swap
           xwin @ MoveWindow drop ;  [THEN]
         : resized  ( -- )  (resized counter @ ?EXIT  draw ;
-        : child-moved ( -- )  pointed self
+	: child-moved ( -- )  pointed self
           IF  mx @ my @ pointed xywh >r >r
               p- r> r> rot swap u< -rot u< and
               IF  & backing @ pointed class?
@@ -429,8 +429,8 @@ how:    : init ( widget win -- )  xwin !  title off
 
 \ event handler for sub-window                         30aug05py
 
-        : moved!  dpy moved! ;
-        : moved?  dpy moved? ;
+\        : moved!  dpy moved! ;
+\        : moved?  dpy moved? ;
         : click^  dpy click^ ;
         : moreclicks dpy moreclicks ;
         : mxy!    transclick dpy mxy! ;
