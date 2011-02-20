@@ -429,7 +429,7 @@ how:    : init ( widget win -- )  xwin !  title off
 
 \ event handler for sub-window                         30aug05py
 
-\        : moved!  dpy moved! ;
+        : moved!  dpy moved! ;
 \        : moved?  dpy moved? ;
         : click^  dpy click^ ;
         : moreclicks dpy moreclicks ;
@@ -535,6 +535,7 @@ class;
 minos
 
 #1000 Value tooltip-delay
+#8000 Value tooltip-hide-delay
 
 actor class tooltip
 public: widget ptr tip          actor ptr feed
@@ -560,7 +561,8 @@ how:    : init ( actor tip -- )  bind tip  bind feed
           screen self frame-tip new dup bind tip-frame
           frame-tip with s" tooltip" assign
               [defined] x11 [IF]  set-parent  [THEN]  show focus
-          endwith ;
+	  endwith
+	  ['] leave ^ tooltip-hide-delay after screen schedule ;
 
 \ tool tips                                            21sep07py
 
