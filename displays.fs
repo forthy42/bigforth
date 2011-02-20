@@ -380,19 +380,19 @@ how:    : dispose  clicks HandleOff
 \ Display                                              12may02py
 
         : do-exposed ( -- )
-          clipregion @
-          IF  clipregion @ >r
-              drawable nip r@ XSetRegion   draw
-              clip-r? clipregion off  clip-r off
-	      r> XDestroyRegion drop  0 clip-rect  THEN ;
-      : do-resize ( -- )
+          flags #exposed bit@ IF  clipregion @
+	      IF  clipregion @ >r
+		  drawable nip r@ XSetRegion   draw
+		  clip-r? clipregion off  clip-r off
+		  r> XDestroyRegion drop  0 clip-rect  THEN  THEN ;
+        : do-resize ( -- )
           rw @ -1 <> rh @ -1 <> or
           IF  clipregion @ ?dup IF XDestroyRegion drop  THEN
               clip-r? clipregion off  clip-r off  0 clip-rect
               w @ rw @ <>  h @ rh @ <> or
               IF  xywh 2drop rw @ rh @ resize  THEN  draw
               -1 rw !  -1 rh !  THEN ;
-      : size-event ( -- )
+        : size-event ( -- )
 	  do-resize  do-exposed
           nextwin goto size-event ;
 [THEN]
@@ -472,6 +472,7 @@ how:    : dispose  clicks HandleOff
 \ Display                                              04jan07py
 
         :[ ( -- ) \ cr 'd emit 'o emit
+          do-exposed
           event XKeyEvent time @ event-time !
 [defined]  has-utf8 [IF]  xrc ic @ ?dup >r [THEN]
           event look_chars $FF look_key comp_stat
@@ -523,7 +524,9 @@ how:    : dispose  clicks HandleOff
         : .button cr base push hex event XButtonEvent window
           @+ @+ @ swap rot xwin @ 9 .r 9 .r 9 .r 9 .r
           space event XButtonEvent x @+ swap . @ . ;
-        :[ ( -- )  event XButtonEvent time @ event-time !
+        :[ ( -- )
+          do-exposed
+          event XButtonEvent time @ event-time !
           event XButtonEvent time @ dup true in-time?
           swap lasttime !  IF   event samepos?
                IF  lastclick @
@@ -537,7 +540,9 @@ how:    : dispose  clicks HandleOff
           ButtonPress cells Handlers + !
 
 \ Display                                              09mar99py
-        :[ ( -- )  event XButtonEvent time @ event-time !
+	:[ ( -- )
+          do-exposed
+	  event XButtonEvent time @ event-time !
           event XButtonEvent time @ dup 0 in-time?
           swap lasttime !
           IF  event samepos?  IF  lastclick @
@@ -572,10 +577,10 @@ how:    : dispose  clicks HandleOff
           flags #exposed +bit ]:
         dup Expose         cells Handlers + !
             GraphicsExpose cells Handlers + !
-        :[ pointed self
+        :[ do-exposed pointed self
           IF  mx @ my @ pointed moved  THEN ]:
         EnterNotify    cells Handlers + !
-        :[ pointed self
+        :[ do-exposed pointed self
           IF  pointed leave  0 bind pointed  moved? drop  THEN ]:
         LeaveNotify    cells Handlers + !
 
@@ -649,8 +654,10 @@ how:    : dispose  clicks HandleOff
            event XConfigureEvent width  @ rw !
            event XConfigureEvent height @ rh ! ]:
         ConfigureNotify cells Handlers + !
-        :[ flags #exposed bit@ IF do-exposed THEN focus ]:    FocusIn  cells Handlers + !
-        ' defocus  FocusOut cells Handlers + !
+	:[ do-exposed  focus ]:
+	  FocusIn  cells Handlers + !
+	:[ do-exposed  defocus ]:
+	  FocusOut cells Handlers + !
         : >exposed ( -- )  sync  flags #exposed -bit
           BEGIN  ( ExposureMask ) 0 get-event
                  pause  flags #exposed bit@  UNTIL ;
