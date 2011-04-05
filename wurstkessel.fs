@@ -262,53 +262,46 @@ s" bigFORTH" environment? [IF] 2drop
 
 s" gforth" environment? [IF] 2drop
     require libcc.fs
+    require string.fs
     : \c, ( addr u -- ) save-c-prefix-line ;
-    \ : mix2bytes_ind, ( index n k i -- index n ) >r
-    \	    >r over r@ 64 + swap
-    \       %> a<% r@ 7 and 0 .r %> ^=ROL(rnds[states[<% 0 .r %> ]^(0xff&(t>><% $7 and 8 * 0 .r %> ))],<% r> 7 r@ - 0 .r %> );<% \c, ;
+    Variable %string  s" " %string $!
+    : %> ( -- )
+	BEGIN  source >in @ /string s" <%" search  0= WHILE
+		postpone sliteral postpone %string postpone $+!
+	    refill  0= UNTIL  EXIT  THEN
+	nip source >in @ /string rot - dup 2 + >in +!
+	postpone sliteral postpone %string postpone $+! ;  immediate
+    : %c, ( -- )  %string $@ \c,  s" " %string $! ;
+    : #$ ( n -- )  0 <<# #S #> %string $+! #>> ;
     : mix2bytes_ind, ( index n k i -- index n ) >r
-	    >r over r@ 64 +
-	    <<#
-	    s" );" holds r> 7 r@ - 0 #s 2drop >r
-	    s" ))]," holds $7 and 8 * 0 #s 2drop
-	    s" ]^(0xff&(t>>" holds 0 #s 2drop
-	    s" ^=ROL(rnds[states[" holds r@ 7 and 0 #s 2drop
-	    s" a" holds 0. #> \c, #>>
+	>r over r@ 64 +
+	%> a<% r@ 7 and #$ %> ^=ROL(rnds[states[<% swap #$ %> ]^(0xff&(t>><%
+	$7 and 8 * #$ %> ))],<% r> 7 r@ - #$ >r %> );<%	%c,
 	rdrop rdrop ;
     : round_ind, ( n -- )
-	<<# s" _ind(unsigned char * states, uint64_t * rnds) {" holds dup 0 # s" static inline void round" holds #> \c, #>>
-	s"   uint64_t a0, a1, a2, a3, a4, a5, a6, a7, t;" \c,
+	%> static inline void round<% dup #$
+	%> _ind(unsigned char * states, uint64_t * rnds) {<% %c,
+	%>   uint64_t a0, a1, a2, a3, a4, a5, a6, a7, t;<% %c,
 	round# dup 1- swap 8 0 DO
-	    <<#
-	    s" )),8);" holds I permut# 8 + 64s 0 #S 2drop
-	    s" =ROL(*((uint64_t*)(states+" holds I 0 #S
-	    s" a" holds #> \c, #>>
+	    %> a<% I #$ %> =ROL(*((uint64_t*)(states+<%
+	    I permut# 8 + 64s #$ %> )),8);<% %c,
 	LOOP
 	8 0 DO
-	    s\" asm volatile(\"# line break\" : : \"g\" (a0), \"g\" (a1), \"g\" (a2), \"g\" (a3), \"g\" (a4), \"g\" (a5), \"g\" (a6), \"g\" (a7));" \c,
-	    <<#
-	    s" ));" holds I 8 * 64 + 0 #s
-	    s" t=*((uint64_t*)(states+" holds #> \c, #>>
+	    %> asm volatile("# line break" : : "g" (a0), "g" (a1), "g" (a2), "g" (a3), "g" (a4), "g" (a5), "g" (a6), "g" (a7));<% %c,
+	    %> t=*((uint64_t*)(states+<% I 8 * 64 + #$ %> ));<% %c,
 	    8 0 DO  I J 8 * + J mix2bytes_ind,
 		dup >r 8 * + $3F and r>
 	    LOOP  dup >r + $3F and r>
 	LOOP
 	2drop
 	8 0 DO
-	    <<#
-	    s" ;" holds I 0 #s 2drop
-	    s" )) = a" holds I 16 + 64s 0 #s
-	    s" *((uint64_t *)(states+" holds
-	    #> \c, #>>
+	    %> *((uint64_t *)(states+<% I 16 + 64s #$ %> )) = a<% I #$ %> ;<% %c,
 	LOOP
 	8 0 DO
-	    <<#
-	    s" ));" holds I 8 + 64s 0 #s 2drop
-	    s" )) ^= *((uint64_t *)(states+" holds I 64s 0 #s
-	    s" *((uint64_t *)(states+" holds
-	    #> \c, #>>
+	    %> *((uint64_t *)(states+<% I 64s #$ %> )) ^= *((uint64_t *)(states+<% I 8 + 64s #$ %> ));<%
+	    %c,
 	LOOP
-	s" memcpy(states+64, states+128, 64); }" \c, ;
+	%> memcpy(states+64, states+128, 64); }<% %c, ;
 	
     c-library libwurst
     \c #include <stdint.h>
