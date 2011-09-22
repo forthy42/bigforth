@@ -59,3 +59,8 @@ default-delimiter
 : substitute ( addr1 len1 addr2 len2 -- addr2 len3 n )
     2swap $substitute >r
     2swap rot umin 2dup >r >r move r> r> r> ;
+
+: unescapes ( addr1 u1 dest -- dest u2 )  dp push dup >r dp !
+    bounds ?DO
+	I c@ dup '%' = IF  dup c,  THEN  c,
+    LOOP  r> here over - ;
