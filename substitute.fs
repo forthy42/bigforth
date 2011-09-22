@@ -4,15 +4,15 @@ Vocabulary macros
 
 L" <>" AConstant delimiters
 
-also macros definitions
+\ also macros definitions
 : macro: ( addr u -- ) Create here 0 , $! DOES> $@ ;
-previous Forth definitions
+\ previous Forth definitions
 
 : replaces ( addr1 len1 addr2 len2 -- )
     2dup & macros search-wordlist IF  nip nip >body $!
     ELSE
 	get-current >r & macros set-current
-	s" macro:" execute-parsing
+	['] macro: execute-parsing
 	r> set-current
     THEN ;
 

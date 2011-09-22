@@ -54,7 +54,7 @@ XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
-	  $(XINI) xft-font.fs imlib.fs Estyle.fs i18n.fs i18n-months.fs \
+	  $(XINI) xft-font.fs imlib.fs Estyle.fs substitute.fs i18n.fs i18n-months.fs \
 	  minos-base.fs displays.fs minos-fonts.fs vdisplays.fs \
 	  actors.fs widgets.fs minos-boxes.fs minos-buttons.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
