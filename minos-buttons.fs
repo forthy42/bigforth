@@ -247,7 +247,7 @@ how:    : init ( -- )  0 1 *filll 0 1 *fil super init ;
 class;
 
 : flipper  combined ' +flip
-    :[ combined attribs c@ :flip or combined attribs c! combined hide ]:
+    [: combined attribs c@ :flip or combined attribs c! combined hide ;]
     toggle new ;
 
 \ Topindex, topglue                                    11apr99py
@@ -471,13 +471,13 @@ how:    0 key-methods !
         : fetch ( -- addr u ) edit get ;
 class;
 
-synonym ST[ :[
-: ]ST postpone ]: edit-action postpone new ; immediate restrict
+synonym ST[ [:
+: ]ST postpone ;] edit-action postpone new ; immediate restrict
 
 \ text input key binding                               15apr01py
 
-: K[ ( key -- )  (textfield postpone with postpone :[ ;
-: ]K ( key sys ) postpone ]: >r (textfield postpone endwith r>
+: K[ ( key -- )  (textfield postpone with postpone [: ;
+: ]K ( key sys ) postpone ;] >r (textfield postpone endwith r>
   & edit-action >o edit-action bind-key o> ;          immediate
 : K-alias ( key1 key2 -- ) swap edit-action find-key
   ?dup IF  cell+ @
@@ -535,8 +535,8 @@ class;
 
 : sn-base# ( obj n -- )
     swap number-action with  nbase ! self  endwith ;
-: #[ ( key -- )  (textfield postpone with postpone :[ ;
-: ]# ( key sys ) postpone ]: >r (textfield postpone endwith r>
+: #[ ( key -- )  (textfield postpone with postpone [: ;
+: ]# ( key sys ) postpone ;] >r (textfield postpone endwith r>
   & number-action >o number-action bind-key o> ;      immediate
 '$' #[ callback self number-action with
       fetch $10 nbase ! store endwith ]#
@@ -549,8 +549,8 @@ class;
 '-' #[ callback self number-action with
       fetch dnegate store endwith ]#
 
-synonym SN[ :[
-: ]SN postpone ]: number-action postpone new ;
+synonym SN[ [:
+: ]SN postpone ;] number-action postpone new ;
                                              immediate restrict
 
 \ number edit variables                                15apr01py
@@ -669,12 +669,12 @@ parbox class text-parbox
 how:    Variable text-string
         : init ( addr u format -- )  >r
           text-string $! 0 text-string bl
-          :[ -trailing bl skip text-word new swap 1+ ]: $iter
+          [: -trailing bl skip text-word new swap 1+ ;] $iter
           r> super init  text-string $off ;
         : assign ( addr u -- ) text-string $!  dispose-childs
           unhbox 2drop dispose[] items 'nil bind childs
           0 text-string bl
-          :[ -trailing bl skip text-word new swap 1+ ]: $iter
+          [: -trailing bl skip text-word new swap 1+ ;] $iter
           dup n' !  text-string $off  [],  over bind[] items
           ?DO  I !  -cell +LOOP  0 hboxing dup n ! >box
           dpy self dpy! ;

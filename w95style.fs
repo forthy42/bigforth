@@ -177,9 +177,9 @@ menu-entry implements
         xywh color @ dpy box
         text $@ menu-sep scan nip
         IF  xM r> 2 = 1 and -1 text menu-sep
-            :[ rot >r 2over
+            [: rot >r 2over
                r@ parent with combined tab@ endwith drop 0 p+
-               textleft r> 1+ ]: $iter  drop 2drop  EXIT  THEN
+               textleft r> 1+ ;] $iter  drop 2drop  EXIT  THEN
         text $@ xM r> 2 = 1 and textleft ;
     : vglue  super vglue swap xS - swap ;
 class;
@@ -214,7 +214,7 @@ info-menu implements
         tri self
         1 vbox new hfixbox 2 hbox new  -2 borderbox
         1 vbox new
-        ^ S[ ]S :[ callw hglue ]: :[ 0 0 ]: arule new
+        ^ S[ ]S [: callw hglue ;] [: 0 0 ;] arule new
         2 vbox new  +fill 3 super init drop ;
 class;
 

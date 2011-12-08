@@ -157,37 +157,37 @@ class;
 \ actor simplification                                 05mar07py
 
 : noop-i ; immediate
-synonym S[ :[
-synonym DT[ :[
-synonym T[ :[
-synonym TS[ :[
-synonym CK[ :[
-synonym SC[ :[
-synonym SL[ :[
-synonym ]T[ :[
+synonym S[ [:
+synonym DT[ [:
+synonym T[ [:
+synonym TS[ [:
+synonym CK[ [:
+synonym SC[ [:
+synonym SL[ [:
+synonym ]T[ [:
 synonym CP[ noop-i
 synonym ]CP noop-i
 
-: ]S  postpone ]: simple postpone new ;      immediate restrict
-: ]DT postpone ]: data-act postpone new ;    immediate restrict
-: ]T  postpone ]: toggle postpone new ;      immediate restrict
-: ]CK postpone ]: click  postpone new ;      immediate restrict
-: ][  postpone ]: postpone :[ ;              immediate restrict
-: ]TS  postpone ]: toggle-state postpone new ;
+: ]S  postpone ;] simple postpone new ;      immediate restrict
+: ]DT postpone ;] data-act postpone new ;    immediate restrict
+: ]T  postpone ;] toggle postpone new ;      immediate restrict
+: ]CK postpone ;] click  postpone new ;      immediate restrict
+: ][  postpone ;] postpone [: ;              immediate restrict
+: ]TS  postpone ;] toggle-state postpone new ;
                                              immediate restrict
 : ]N ;                                       immediate
 : ]TERM ;                                    immediate
 
 \ other simplifications                                05mar07py
 : C[ ;                                       immediate restrict
-: ]SC  postpone ]: scale-do postpone new ;   immediate restrict
-: ]SL  postpone ]: slider-do postpone new ;  immediate restrict
+: ]SC  postpone ;] scale-do postpone new ;   immediate restrict
+: ]SL  postpone ;] slider-do postpone new ;  immediate restrict
 : TV[  ;                                     immediate restrict
 : TB[  ;                                     immediate restrict
 : TN[  ;                                     immediate restrict
-: ]TV  postpone ]: toggle-var postpone new ; immediate restrict
-: ]TB  postpone ]: toggle-bit postpone new ; immediate restrict
-: ]TN  postpone ]: toggle-num postpone new ; immediate restrict
+: ]TV  postpone ;] toggle-var postpone new ; immediate restrict
+: ]TB  postpone ;] toggle-bit postpone new ; immediate restrict
+: ]TN  postpone ;] toggle-num postpone new ; immediate restrict
 : DF[ postpone dup postpone >o ;             immediate restrict
 : ]DF postpone o> ;                          immediate restrict
 

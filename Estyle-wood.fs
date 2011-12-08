@@ -422,7 +422,7 @@ hslider implements
     : part0b  xN 0 ;
     : init ( callback -- )  >callback
         ^ R[ lstep ]R 0 slidetri new \ 1 ^ habox new fixbox
-        ^ R[ lpage ]R :[ part1 part0 drop 2/ 0 p+ ]: ['] part0
+        ^ R[ lpage ]R [: part1 part0 drop 2/ 0 p+ ;] ['] part0
           hslider-pl hslider-pms hslider-fl hslider-dl Eleft new
         ^ M[ slide ]M ['] part2' ['] part0 hslider-fls hslider-dls Erule new
           arule with $02000003 assign ^ endwith
@@ -430,7 +430,7 @@ hslider implements
           arule with $01000003 assign ^ endwith
         ^ M[ slide ]M ['] part2' ['] part0 hslider-frs hslider-dls Erule new
           arule with $02000003 assign ^ endwith
-        ^ R[ rpage ]R :[ part3 part0 drop 2/ 0 p+ ]: ['] part0
+        ^ R[ rpage ]R [: part3 part0 drop 2/ 0 p+ ;] ['] part0
           hslider-pr hslider-pms hslider-fr hslider-dr Eright new
         ^ R[ rstep ]R 2 slidetri new \ 1 ^ habox new fixbox
         7 super init ;
@@ -447,7 +447,7 @@ hscaler implements
     : part4' ( -- glue )  part4 swap xM xS 2* - 2/ - 1 max swap ;
     : init ( callback -- )  >callback
         ^ M[ slide ]M ['] part0a ['] part5 arule new
-        ^ R[ lpage ]R :[ part1 part0c drop 2/ 0 p+ ]: ['] part0c
+        ^ R[ lpage ]R [: part1 part0c drop 2/ 0 p+ ;] ['] part0c
         hslider-pl hslider-pms hslider-fl hslider-dl Eleft new
         arule with $01000003 assign ^ endwith
           ^ M[ slide ]M ['] part4' ['] part0c hslider-fls hslider-dls Erule new
@@ -457,7 +457,7 @@ hscaler implements
           ^ M[ slide ]M ['] part4' ['] part0c hslider-frs hslider-drs Erule new
           arule with $01000003 assign ^ endwith
         3 hbox new
-        ^ R[ rpage ]R :[ part3 part0c drop 2/ 0 p+ ]: ['] part0c
+        ^ R[ rpage ]R [: part3 part0c drop 2/ 0 p+ ;] ['] part0c
         hslider-pr hslider-pms hslider-fr hslider-dr Eright new
         arule with $01000003 assign ^ endwith
         3 hbox new
@@ -470,7 +470,7 @@ vscaler implements
     : part4'v ( -- glue )  part4 swap xM xS 2* - 2/ - 1 max swap ;
     : init ( callback -- )  >callback
         ^ M[ slide ]M ['] part5 ['] part0a arule new
-        ^ R[ rpage ]R ['] part0cv :[ part3 part0cv drop 2/ 0 p+ ]:
+        ^ R[ rpage ]R ['] part0cv [: part3 part0cv drop 2/ 0 p+ ;]
         vslider-pt vslider-pms vslider-ft vslider-dt Etop new
         arule with $01000003 assign ^ endwith
           ^ M[ slide ]M ['] part0cv ['] part4'v vslider-fts vslider-dts Erule new
@@ -480,7 +480,7 @@ vscaler implements
           ^ M[ slide ]M ['] part0cv ['] part4'v vslider-fbs vslider-dbs Erule new
           arule with $01000003 assign ^ endwith
         3 vbox new
-        ^ R[ lpage ]R ['] part0cv :[ part1 part0cv drop 2/ 0 p+ ]:
+        ^ R[ lpage ]R ['] part0cv [: part1 part0cv drop 2/ 0 p+ ;]
         vslider-pb vslider-pms vslider-fb vslider-db Ebot new
         arule with $01000003 assign ^ endwith
         3 vbox new
@@ -493,7 +493,7 @@ vslider implements
     : part0bv  xN 0 ;
     : init ( callback -- )  >callback
         ^ R[ lstep ]R 1 slidetri new \ 1 ^ habox new fixbox
-        ^ R[ lpage ]R ['] part0 :[ part1 part0 drop 2/ 0 p+ ]:
+        ^ R[ lpage ]R ['] part0 [: part1 part0 drop 2/ 0 p+ ;]
           vslider-pt vslider-pms vslider-ft vslider-dt Etop new
         ^ M[ slide ]M ['] part0 ['] part2'v vslider-fts vslider-dts Erule new
           arule with $02000003 assign ^ endwith
@@ -501,7 +501,7 @@ vslider implements
           arule with $02000003 assign ^ endwith
         ^ M[ slide ]M ['] part0 ['] part2'v vslider-fbs vslider-dbs Erule new
           arule with $02000003 assign ^ endwith
-        ^ R[ rpage ]R ['] part0 :[ part3 part0 drop 2/ 0 p+ ]:
+        ^ R[ rpage ]R ['] part0 [: part3 part0 drop 2/ 0 p+ ;]
           vslider-pb vslider-pms vslider-fb vslider-db Ebot new
         ^ R[ rstep ]R 3 slidetri new \ 1 ^ habox new fixbox
         7 super init ;

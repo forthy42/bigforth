@@ -740,17 +740,17 @@ Variable reenter
   4 vabox new ;
 
 : box-detail ( -- o )
-      0 :[ cur +hskip ! ?cur-box
-           cur +hskip @ cur box hskip c! cur box resized ]:
-        :[ ?cur-box:0 cur box hskip c@ dup cur +hskip ! ]:
+      0 [: cur +hskip ! ?cur-box
+           cur +hskip @ cur box hskip c! cur box resized ;]
+        [: ?cur-box:0 cur box hskip c@ dup cur +hskip ! ;]
         9 scale-act new   TT" hskip"        hscaler new
-      0 :[ cur +vskip ! ?cur-box
-           cur +vskip @ cur box vskip c! cur box resized ]:
-        :[ ?cur-box:0 cur box vskip c@ dup cur +vskip ! ]:
+      0 [: cur +vskip ! ?cur-box
+           cur +vskip @ cur box vskip c! cur box resized ;]
+        [: ?cur-box:0 cur box vskip c@ dup cur +vskip ! ;]
         9 scale-act new   TT" vskip"        hscaler new
-      0 :[ cur +borderw ! ?cur-box
-           cur +borderw @ cur box borderw c! cur box resized ]:
-        :[ ?cur-box:0 cur box borderw cx@ dup cur +borderw ! ]:
+      0 [: cur +borderw ! ?cur-box
+           cur +borderw @ cur box borderw c! cur box resized ;]
+        [: ?cur-box:0 cur box borderw cx@ dup cur +borderw ! ;]
         #18 scale-act new TT" border"       hscaler new
         hscaler with  #-9 offset !  ^ endwith
         0 1 *fill 2dup glue new
@@ -961,71 +961,71 @@ Variable #entities
 : entity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-entity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-entity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : font-entity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-font-entity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-font-entity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : ref-entity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-ref-entity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-ref-entity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : edit-entity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-edit-entity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-edit-entity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : component-entity ( -- )
     postpone 0
-    postpone :[  postpone make-component-entity
-    postpone ]:  postpone (entity
+    postpone [:  postpone make-component-entity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : dentity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-dentity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-dentity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : ventity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-ventity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-ventity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : hsentity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-hsentity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-hsentity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
 : vsentity ( -- )
     postpone AHEAD  entity, >r  lastdes-reset postpone THEN
     postpone 0
-    postpone :[  r> postpone ALiteral postpone make-vsentity
-    postpone ]:  postpone (entity
+    postpone [:  r> postpone ALiteral postpone make-vsentity
+    postpone ;]  postpone (entity
     1 #entities +!
 ; immediate
 
@@ -1073,7 +1073,7 @@ s" Vscaler"         font-entity vscaler     scaler-des scaler-code
 endgroup
 
 group labels:
-0 :[ hvline dup *hvglue with 4 hmin ! endwith +object ]: simple new s" Line"
+0 [: hvline dup *hvglue with 4 hmin ! endwith +object ;] simple new s" Line"
      button new [ 1 #entities +! ]
 s" Label"
   font-entity text-label       string-des
@@ -1097,7 +1097,7 @@ s" Menu-Title"  font-entity menu-title       menu-des string-des
 s" Info-Menu"   font-entity info-menu        menu-des string-des
 s" Sub-Menu"    font-entity sub-menu         menu-des string-des
 s" Menu-Entry"  font-entity menu-entry       action-des string-des
-0 :[ hvline dup *hvglue with 4 hmin ! endwith +object ]: simple new s" Line"
+0 [: hvline dup *hvglue with 4 hmin ! endwith +object ;] simple new s" Line"
      button new [ 1 #entities +! ]
 endgroup
 
@@ -1467,7 +1467,7 @@ Variable auto-save-file
 
 : try-save ( -- )
     s" +" cur file-name $+!
-    :[ cur file-name $@ dump-file ]: catch
+    [: cur file-name $@ dump-file ;] catch
     cur file-name $@len 1- cur file-name $!len
     0= IF
 	cur file-name $@ rename-old

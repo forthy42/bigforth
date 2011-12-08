@@ -1004,12 +1004,12 @@ set-current
 
 \ *** Stephen: check if this is complete ***
 
-: :[ ( compile-time: -- orig colon-sys )
+: [: ( compile-time: -- orig colon-sys )
     state @ IF  <headerless> @ last @
 	POSTPONE AHEAD  true  ELSE  false  THEN
      postpone [ :noname ; immediate
 
-: ]: ( compile-time: orig colon-sys -- ; run-time: -- xt )
+: ;] ( compile-time: orig colon-sys -- ; run-time: -- xt )
     discard-sinline  POSTPONE ; >r
     IF ]  POSTPONE THEN  r> POSTPONE Literal
 	last ! <headerless> !  discard-sinline

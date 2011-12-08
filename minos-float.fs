@@ -23,21 +23,21 @@ class;
         endwith
     endwith ;
 
-: ]#f ( key sys ) postpone ]: (textfield postpone endwith
+: ]#f ( key sys ) postpone ;] (textfield postpone endwith
   & float-action >o float-action bind-key o> ;      immediate
 '-' #[ sp@ 1 ins drop 1 c ]#F
 '.' #[ sp@ 1 ins drop 1 c ]#F
 ',' #[ sp@ 1 ins drop 1 c ]#F
 'e' #[ sp@ 1 ins drop 1 c ]#F
 'E' #[ sp@ 1 ins drop 1 c ]#F
-: ]SF postpone ]: float-action postpone new ;
+: ]SF postpone ;] float-action postpone new ;
 [defined] DoNotSin [IF] DoNotSin [THEN]
                                              immediate restrict
 [defined] alias [IF]
-' :[ alias SF[                               immediate restrict
+' [: alias SF[                               immediate restrict
 ' noop alias ]F 
 [ELSE]
-    synonym SF[ :[
+    synonym SF[ [:
     synonym ]F noop
 [THEN]
 

@@ -33,7 +33,7 @@
 [ELSE]
 \needs {        include locals.fs
 \needs object   include oof.fb
-\needs :[       include lambda.fs
+\needs [:       include lambda.fs
 include sincos.fs
 \needs >xyxy    include points.fs
 \needs sort     include qsort.fs

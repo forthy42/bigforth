@@ -285,11 +285,11 @@ class;
 
 previous previous
 
-: GL[  postpone :[ glcanvas postpone with ;        immediate
-: ]GL  glcanvas postpone endwith  postpone ]: ;    immediate
+: GL[  postpone [: glcanvas postpone with ;        immediate
+: ]GL  glcanvas postpone endwith  postpone ;] ;    immediate
 
-: CV[  postpone :[ canvas postpone with ;        immediate
-: ]CV  canvas postpone endwith  postpone ]: ;    immediate
+: CV[  postpone [: canvas postpone with ;        immediate
+: ]CV  canvas postpone endwith  postpone ;] ;    immediate
 
 \ helper words for Theseus                             21sep07py
 

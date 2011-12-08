@@ -356,8 +356,8 @@ hscaler implements
     : subbox ( -- )
         ^ M[ slide ]M ['] part0a ['] part5 arule new
         ^ R[ lpage ]R ['] part1 ['] part0b hslider-p Eside new
-        ^ M[ slide ]M :[ part4 swap 2* xS + swap ]:
-                      :[ part0a swap xS 2* + swap ]:
+        ^ M[ slide ]M [: part4 swap 2* xS + swap ;]
+                      [: part0a swap xS 2* + swap ;]
                       hslider-f hslider-d Erule new
         arule with $01000003 assign ^ endwith
         ^ R[ rpage ]R ['] part3 ['] part0b hslider-p Eside new
@@ -369,8 +369,8 @@ vscaler implements
     : subbox ( -- )
         ^ M[ slide ]M ['] part5 ['] part0a arule new
         ^ R[ rpage ]R ['] part0b ['] part3 vslider-p Eside new
-        ^ M[ slide ]M :[ part0a swap xS 2* + swap ]:
-                      :[ part4 swap 2* xS + swap ]:
+        ^ M[ slide ]M [: part0a swap xS 2* + swap ;]
+                      [: part4 swap 2* xS + swap ;]
                       vslider-f vslider-d Erule new
         arule with $01000003 assign ^ endwith
         ^ R[ lpage ]R ['] part0b ['] part1 vslider-p Eside new

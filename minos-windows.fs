@@ -387,11 +387,11 @@ how:    \ init ( act addr len -- )
 \ menu-entry                                           12dec99py
 
         : hglue  text $@ menu-sep scan nip
-          IF    0 text menu-sep :[ fnt size drop 1 *fil
+          IF    0 text menu-sep [: fnt size drop 1 *fil
                                2 pick parent with
                                    dup >r 1- combined tab@ p+
                                    r> combined tab!
-                               endwith  1+ ]: $iter
+                               endwith  1+ ;] $iter
                 1- parent with combined tab@ endwith
                 xM xS + 1+ 0 p+
           ELSE  textwh @ xM + xS + 1+ 1 *fil  THEN ;
@@ -685,11 +685,11 @@ how:    : assign ( addr u -- ) text assign ;
           0 text edit ds !
             ^ M[ clicked ]M :down tributton new bind tri
             info self 1 habox new hfixbox  text self
-            ^ S[ ]S :[ text childs vglue ]: :[ xS 0 ]: arule new
+            ^ S[ ]S [: text childs vglue ;] [: xS 0 ;] arule new
                tri self
-            ^ S[ ]S :[ text childs vglue ]: :[ xS 0 ]: arule new
+            ^ S[ ]S [: text childs vglue ;] [: xS 0 ;] arule new
             3 vbox new hfixbox 2 hbox new
-            ^ S[ ]S :[ callw hglue ]: :[ 0 0 ]: arule new
+            ^ S[ ]S [: callw hglue ;] [: 0 0 ;] arule new
           2 vbox new  +fill 3 super init drop ;
         : dpy!  dup callw dpy!  super dpy! ;
         : !resized  super !resized  callw !resized ;

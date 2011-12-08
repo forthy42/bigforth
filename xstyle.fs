@@ -38,9 +38,9 @@ menu-entry implements
           r@ 1 and  IF  shadow xS xywh drawshadow  THEN
           text $@ menu-sep scan nip
           IF  xM r> 2 = 1 and -1 text menu-sep
-              :[ rot >r 2over
+              [: rot >r 2over
                  r@ parent with combined tab@ endwith drop 0 p+
-                 textleft r> 1+ ]: $iter  drop 2drop  EXIT  THEN
+                 textleft r> 1+ ;] $iter  drop 2drop  EXIT  THEN
           text $@ xM r> 2 = 1 and textleft ;
 class;
 

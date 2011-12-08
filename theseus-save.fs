@@ -71,20 +71,20 @@ Defer do-bug
 Variable stubs
 
 : dump-box ( o -- )
-    :[ descriptors with dump endwith ]: IS do-dump
-    :[ >r cr indent @ spaces
+    [: descriptors with dump endwith ;] IS do-dump
+    [: >r cr indent @ spaces
        .d r@ >class" lctype ."  new"
        r@ dump-bind
        r@ dump-vars
-       r> dump-link ]: IS do-boxdump
-    :[ cr indent @ spaces nip widget with
+       r> dump-link ;] IS do-boxdump
+    [: cr indent @ spaces nip widget with
        & hvrule @ class? IF  .' hvline'
        ELSE  .' cross new ( this is a stub )' 1 stubs +!  THEN
-       endwith ]: IS do-bug
+       endwith ;] IS do-bug
     (dump-box ;
 
 : dispose-box ( o -- )
-    :[ descriptors with dispose endwith ]: IS do-dump
+    [: descriptors with dispose endwith ;] IS do-dump
     ['] 2drop IS do-boxdump
     ['] 2drop IS do-bug
     (dump-box ;

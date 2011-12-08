@@ -112,10 +112,10 @@ simple class drag
 how:    : click  toggle ;
 class;
 
-synonym R[ :[
-synonym M[ :[
-: ]R  postpone ]: rep    postpone new ;      immediate restrict
-: ]M  postpone ]: drag   postpone new ;      immediate restrict
+synonym R[ [:
+synonym M[ [:
+: ]R  postpone ;] rep    postpone new ;      immediate restrict
+: ]M  postpone ;] drag   postpone new ;      immediate restrict
 
 \ Icon                                                 21mar04py
 include pixmap.fs
