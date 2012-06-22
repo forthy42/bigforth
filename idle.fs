@@ -32,7 +32,7 @@ Create fds here $400 8 / dup allot erase
 also DOS also
 
 Create >timeout 0 , 0 ,
-: unix-wait ( n -- ) >us &1000000 um/mod
+: unix-wait ( n -- ) 0 max >us &1000000 um/mod
     ( swap  &9980 + &10000 / &10000 * swap ) >timeout 2!
     >timeout 0 0 fds [ $400 8 / ] Literal
     0 -skip 3 << select drop ;

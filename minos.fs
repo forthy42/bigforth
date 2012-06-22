@@ -58,6 +58,9 @@ include sincos.fs
     Synonym /modf /mod
     Synonym /f /
     Synonym modf mod
+
+\    : till  postpone timer@ postpone over postpone - postpone ~~
+\	postpone drop postpone till postpone ~~ ; immediate
 [THEN]      
 \ class utility                                        01jan00py
 [defined] >class" 0= [IF]
