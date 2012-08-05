@@ -110,7 +110,7 @@ bigforth.fi: forthker-$(ARCH).fi $(SYSSRC) Makefile
 	-@$(MV) $@ $@~
 	env LIBDIR=$(libdir) SRC=$(srcdir) ./forthker-$(ARCH) -e "$(WARNING) include startup.fb $(SAVE) bigforth $(BYE)"
 
-xbigforth.fi: bigforth.fi xconst.fm glconst.fm float.fm $(XSRC) $(INI)
+xbigforth.fi: bigforth.fi xconst.fm glconst.fm $(XSRC) $(INI)
 	-@$(MV) $@ $@~
 	./bigforth -e "$(WARNING) use x.fs use glconst.fs use float.fb include startx.fs $(XSAVE) xbigforth $(BYE)"
 
