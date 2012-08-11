@@ -10,12 +10,12 @@ CREDITS file if you change something and redistribute.
 
 You can get the official distributions from
 
-http://www.jwdt.com/~paysan/bigforth.html
+http://bernd-paysan.de/bigforth.html
 http://bigforth.sourceforge.net/
 
 If you want to get bigFORTH/MINOS for Linux, get
 
-http://www.jwdt.com/~paysan/bigforth-<version>.tar.bz2
+http://bernd-paysan.de/bigforth-<version>.tar.bz2
 
 or one of the mirrors at Sourceforge
 
@@ -42,7 +42,7 @@ generated. You can ignore these errors.
 
 If you want to run MINOS on Windows 2k/XP, get
 
-http://www.jwdt.com/~paysan/bigforth-<version>.exe
+http://bernd-paysan.de/bigforth-<version>.exe
 
 or one of the mirrors at Sourceforge
 
@@ -52,7 +52,7 @@ installs as other Windows programs.
 
 If you have a Debian system, you can also get
 
-http://www.jwdt.com/~paysan/bigforth-<version>.deb
+http://bernd-paysan.de/bigforth-<version>.deb
 
 and install it with dpkg.
 
@@ -86,4 +86,4 @@ dialog window, or "include gears.m gears open".
 
 More informations about MINOS can be found in the article
 
-http://www.jwdt.com/~paysan/minos-eng.ps.gz
+http://bernd-paysan.de/minos-eng.ps.gz
