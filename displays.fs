@@ -839,7 +839,7 @@ private:
         :noname ( lparam wparam msg win -- ) ?grab moved!
           2drop >mshift $FF and mb ! >lohi mxy! 0 ;
                                          WM_MOUSEMOVE Handler@ !
-        :noname  opointed self
+        :noname  pointed self
           IF  pointed leave 0 bind pointed  THEN
           DefWindowProc ;              WM_NCMOUSEMOVE Handler@ !
 
