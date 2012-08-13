@@ -2,7 +2,6 @@ dln this is a really minimal autoconf file
 
 AC_INIT([bigforth],[2.5.0],[http://sourceforge.net/tracker/?atid=101028&group_id=1028&func=browse])
 AC_CANONICAL_HOST
-AC_PROG_CC
 AC_PATH_PROG(BASH, bash)
 
 WINDOWS=""
@@ -37,6 +36,8 @@ case "$host_os" in
 		ARCH="linux" # default to Linux
 		;;
 esac
+
+AC_PROG_CC
 
 case "$host_cpu" in
 	*x86_64*)
