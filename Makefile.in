@@ -61,9 +61,9 @@ XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 	  resources.fs minos-float.fs convert-m.sh float.fb theseus*.fs \
 	  win32.fs win32ex.fs w95style.fs
 BUILDSRC	= configure.in config.sub config.guess Makefile.in install-sh
-EXTRAS = gpl-about.m menu.fs adjust.m adjust-path.m fft.fb complex.fb fileop.fb
+EXTRAS = gpl-about.m menu.fs adjust.m adjust-path.fs fft.fb complex.fb fileop.fb
 SRC	= $(SOURCE) $(KERNSRC) $(SYSSRC) $(XCSRC) $(XSRC) $(BUILDSRC) $(XINI) $(XINI:%=%.in) $(INI) $(INI:%=%.in) $(EXTRAS)
-MINIICONS = bigforth/icons/{dot-dir,dotdot-dir,script,dir,file,sym,NOTE,INFO,WARNING,FATAL,QUESTION,ERROR,NONE}.png
+MINIICONS = bigforth/icons/{dot-dir,dotdot-dir,script,dir,file,sym,INFO,WARNING,FATAL,QUESTION,ERROR,NONE}.png
 
 all:	build ok
 

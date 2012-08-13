@@ -421,6 +421,7 @@ Variable icon-base
     IF  nip nip  true  ELSE  drop false  THEN ;
 
 : (read-icon ( addr u -- pixmap1 pixmap2 w h )
+    \ ." try read icon " 2dup type cr
 [defined] read-png [IF]
     s" .png" suffix? IF  read-png  EXIT  THEN
 [THEN]
