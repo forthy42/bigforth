@@ -51,16 +51,19 @@ SYSSRC	= assem486.fb stream.fb errore.fs hash.fs fileint.fb output.fb \
 	  forth200x.fs
 XCSRC	= x.fs glconst.fs
 XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
-	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb \
+	  ediwind.fs edit.fs opengl.fs xstyle.fs status.fb splines.fb \
 	  pipes.fb ptty.fs login.fs pixmap.fs png.fs browser.fs \
 	  points.fs qsort.fs string.fs sincos.fs utf-8.fs xrender.fs \
 	  $(XINI) xft-font.fs imlib.fs Estyle.fs substitute.fs i18n.fs i18n-months.fs \
 	  minos-base.fs displays.fs minos-fonts.fs vdisplays.fs \
 	  actors.fs widgets.fs minos-boxes.fs minos-buttons.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
-	  resources.fs minos-float.fs convert-m.sh float.fb theseus*.fs
+	  resources.fs minos-float.fs convert-m.sh float.fb theseus*.fs \
+	  win32.fs win32ex.fs w95style.fs
 BUILDSRC	= configure.in config.sub config.guess Makefile.in install-sh
-SRC	= $(SOURCE) $(KERNSRC) $(SYSSRC) $(XCSRC) $(XSRC) $(BUILDSRC) $(XINI) $(XINI:%=%.in) $(INI) $(INI:%=%.in)
+EXTRAS = gpl-about.m menu.fs adjust.m adjust-path.m fft.fb complex.fb fileop.fb
+SRC	= $(SOURCE) $(KERNSRC) $(SYSSRC) $(XCSRC) $(XSRC) $(BUILDSRC) $(XINI) $(XINI:%=%.in) $(INI) $(INI:%=%.in) $(EXTRAS)
+MINIICONS = bigforth/icons/{dot-dir,dotdot-dir,script,dir,file,sym,NOTE,INFO,WARNING,FATAL,QUESTION,ERROR,NONE}.png
 
 all:	build ok
 
@@ -163,7 +166,7 @@ srcdist:
 	cd ..; $(TAR) bigforth/bigforth-"$(SRCREV)".tar$(COMPSUB) $(SRCDIST) $(CPYDIST) $(EXAMPLEDIST)
 
 minidist:
-	cd ..; $(TAR) bigforth/bigforth-mini-"$(SRCREV)".tar$(COMPSUB) $(MINISRCDIST) $(CPYDIST) $(DOSDIST)
+	cd ..; $(TAR) bigforth/bigforth-mini-"$(SRCREV)".tar$(COMPSUB) $(MINISRCDIST) $(CPYDIST) $(DOSDIST) $(MINIICONS)
 
 patdist:	all
 	cd ..; $(TAR) bigforth/bigforth-pattern-"$(PATREV)".tar$(COMPSUB) $(PATDIST)
@@ -180,7 +183,7 @@ dist-files:
 	@echo $(SRCDIST) $(DOCDIST) $(CPYDIST) $(DOSDIST) $(EXAMPLEDIST)
 
 minidist-files:
-	@echo $(MINISRCDIST) $(CPYDIST) $(DOSDIST)
+	@echo $(MINISRCDIST) $(CPYDIST) $(DOSDIST) $(MINIICONS)
 
 INSTDIRS = pattern icons help src Estyle Estyle/wood Estyle/ShinyMetal
 
