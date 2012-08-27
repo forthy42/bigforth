@@ -96,7 +96,7 @@ FVariable rho   0e rho  f!
 	THEN
   LOOP ;
 
-: phis ( n m -- )
+: phis ( n m -- ) \ print mm/s
     dup negate 1+ ?DO
 	pi I I' 1- fm*/ phi0 f!
 	dup integrate phi0 f@ pi f/ 180e f* f.

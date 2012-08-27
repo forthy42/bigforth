@@ -1,5 +1,7 @@
 \ helper words for VFX Forth
 
+s" /usr/share/doc/VfxForth/Lib" s" Lib" replaces
+
 \ =============
 \ *! vfxharness
 \ *T Portability layer for VFX Forth
@@ -58,7 +60,7 @@ ans-float
 \ *G Convert a floating point number to ASCII text. This
 \ ** still needs furthr processing according to the required
 \ ** presentation mode to insert a decimal point and so on.
-  pad dup f>ascii ;
+  precision (f.) ;
 
 Code f>r	\ F: f -- ; R: -- f
 \ *G Transfer a float to the return stack.

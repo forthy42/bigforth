@@ -220,8 +220,8 @@ how:
         1 and IF  swap-id  THEN
         w id @ dup XftFont ascent @ swap XftFont descent @ + ;
     : draw ( addr u x y dpy -- ) { addr u x y dpy }
-	x -$8000 $7FFF within
-	y -$8000 $7FFF within and IF
+	x $-8000 $7FFF within
+	y $-8000 $7FFF within and IF
 	    color @ $FF and dpy set-color
 	    dpy displays with
 	    xft-draw @ 0= IF
