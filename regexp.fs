@@ -11,9 +11,11 @@
 
 \ bulk-postponing
 
+[IFUNDEF] ]]
 : [[ ; \ token to end bulk-postponing
 : ]] BEGIN  >in @ ' ['] [[ <> WHILE  >in ! postpone postpone  REPEAT
     drop ; immediate
+[THEN]
 
 \ Charclasses
 
