@@ -23,7 +23,7 @@ Create .green .5e sf, .8e sf, .4e  sf, 1e  sf,
              dup .03e fm* dup .1e fm* 6 segment
              over 1 ?DO
                 #1000 random rd-val <
-                IF  2pi I I' fm*/ { f: di |
+                IF  tau I I' fm*/ { f: di |
                     >turtle
                        di roll-left pi 5 fm/ right di roll-right
                        2dup 1- (tree

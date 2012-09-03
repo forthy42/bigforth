@@ -100,7 +100,7 @@ forward tree-branch
              [ pi 0.2e f* ] Fliteral roll-left
              dup 1 2e color-cylinder
              over 0 ?DO
-                 2pi I I' fm*/ to di
+                 tau I I' fm*/ to di
                  >turtle
                      di roll-left pi 3 fm/ right
                      pi f2/ roll-right

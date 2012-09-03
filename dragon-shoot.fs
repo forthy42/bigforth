@@ -30,10 +30,10 @@ Create .sky   .3e sf, .6e sf, .8e sf, 1e  sf,
   IF  .text  ELSE  drop  THEN ;
 
 Variable tail-time
-: time' ( -- 0..2pi )
+: time' ( -- 0..tau )
   tail-time @ [ #24 #60 #30 * * ] Literal um* drop
   0 d>f [ !$2'-8 pi f* ] FLiteral f* ;
-: time-pos ( -- 0..2pi )
+: time-pos ( -- 0..tau )
   tail-time @ [ #24 #60 #5 * * ] Literal um* drop
   0 d>f [ !$2'-8 pi f* ] FLiteral f* ;
 : tail-wag ( n -- f )
@@ -46,7 +46,7 @@ Variable tail-time
         ro set-r
         ri .1e set-rp  dphi sf@ phi sf@ f+ phi sf!
         1 DO  ri set-r  LOOP
-        2pi phi sf! ro set-r
+        tau phi sf! ro set-r
         0e phi sf! } ;
   F : tail-compensate ( n -- f )  0e
       0 DO  I 2+ tail-wag f+ [ 1.1e 1/f ] Fliteral f*  LOOP

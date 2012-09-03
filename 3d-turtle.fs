@@ -169,8 +169,8 @@ IS dummy-canvas
 [THEN]
 
 1e f>fs Constant #1.
-pi f2* FConstant 2pi
-2pi 1/f FConstant 1/2pi
+pi f2* FConstant tau
+tau 1/f FConstant 1/tau
 
 \ : .matrix ( addr -- )
 \   &12 sfloats bounds
@@ -488,7 +488,7 @@ class;
 
     : phi>xy ( f -- f1 f2 )
       rot-mode sf@ f* fsincos 1e f- 1e f+ ;
-    : degrees ( f -- )  1/2pi f* rot-mode ! ;
+    : degrees ( f -- )  1/tau f* rot-mode ! ;
 
     : left ( f -- )       phi>xy  trans-2,0 trans-3,0 do-turn ;
     : down ( f -- )       phi>xy  trans-1,0 trans-3,0 do-turn ;
@@ -695,10 +695,10 @@ class;
     : >texture  ( addr f -- )
       IS do-texture y-text sf! 0e z-off sf! ;
     : xy-texture    ['] do-xy-text    1e    >texture ;
-    : zphi-texture  ['] do-zphi-text  1/2pi >texture ;
-    : zphi2-texture ['] do-zphi2-text 1/2pi >texture ;
+    : zphi-texture  ['] do-zphi-text  1/tau >texture ;
+    : zphi2-texture ['] do-zphi2-text 1/tau >texture ;
     : zp-texture    ['] do-zp-text    1e    >texture ;
-    : rphi-texture  ['] do-rphi-text  1/2pi >texture ;
+    : rphi-texture  ['] do-rphi-text  1/tau >texture ;
     : no-texture    ['] noop          1e    >texture ;
 
 \ texture loading (ppm)                                31jan99py
@@ -1117,7 +1117,7 @@ class;
       LOOP  f2* forward
       drop end-path ;
     : cylinder ( r1 r2 d n -- ) { f: r1 f: r2 f: d }
-      2pi dup fm/ set-dphi
+      tau dup fm/ set-dphi
       dup start-path
       r1 .01e f* 0e dup segment  \ ugly workaround
       r1 0e dup segment

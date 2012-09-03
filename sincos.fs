@@ -39,9 +39,9 @@ base @ hex
 
 base !
 
-$6487F Constant 2pi
-2pi 1 + 4 / Constant pi/2
-2pi 3 + 8 / Constant pi/4
+$6487F Constant tau
+tau 1 + 4 / Constant pi/2
+tau 3 + 8 / Constant pi/4
  $B505 Constant sqrt.5
 
 | : (sini ( n -- sin[n] ) 2* sintab + w@ ;
