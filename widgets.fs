@@ -324,7 +324,7 @@ how:    : init ( xt ac w w+ h h+ -- )  super init ^^ bind outer
         : dto ( x y -- )  dnegate sh 2@ d* dy+
                              -rot sw 2@ d* dx+ pixel, ;
         : to ( x y -- )  swap extend rot extend dto ;
-        : rt ( n -- ) 2pi 2* coord @ */f 1+ 2/ angle +! ;
+        : rt ( n -- ) tau 2* coord @ */f 1+ 2/ angle +! ;
         : bk ( n -- ) negate fd ;
         : lt ( n -- ) negate rt ;
 
