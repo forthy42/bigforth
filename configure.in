@@ -48,7 +48,7 @@ esac
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 exec_prefix=$prefix
 libdir=${libdir/64/}
-libdirpath=${libdir}
+libdirpath=`eval echo ${libdir}`
 
 AC_CHECK_LIB(dl,dlopen)
 AC_SUBST(EXTFLAGS)
