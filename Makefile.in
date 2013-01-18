@@ -191,7 +191,7 @@ install:	build
 	@install -d $(DESTDIR)$(BININSTDIR)
 	@install -d $(DESTDIR)$(INSTDIR)
 	@for i in $(INSTDIRS); do install -d $(DESTDIR)$(INSTDIR)/$$i; done
-	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {float,glconst,xconst}.fm $(DESTDIR)$(INSTDIR)
+	@install -m 644 {forthker-$(ARCH),bigforth,xbigforth}.fi {glconst,xconst}.fm $(DESTDIR)$(INSTDIR)
 	@install -m 644 $(INI) $(DESTDIR)$(INSTDIR)
 	@install -m 644 $(XINI) $(DESTDIR)$(INSTDIR)
 	@install -m 755 {forthker-$(ARCH),bigforth,xbigforth}$(EXE) convert-m.sh $(DESTDIR)$(BININSTDIR)
