@@ -44,6 +44,7 @@ library: libpng12.so.0
 	[ELSE]
 	    s" libpng12.so.0" getlib 0<> Value newpng
 	    true Value png3
+	    false Value png14
 	    
 	    newpng [IF]
 		library libpng libpng12.so.0
@@ -58,10 +59,16 @@ library: libpng12.so.0
 	    
 	    : init-png-lib ( -- )
 		& libpng cell+ @ ?EXIT
-		true to png3 s" libpng12.so.0" getlib 0<> to newpng
-		newpng IF  s" libpng12.so.0"
-		ELSE  s" libpng.so.3" getlib 0<> to png3
-		    png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
+\		true to png3 s" libpng14.so.14" getlib 0<> to png14
+\		png14 IF
+\		    s" libpng14.so.14" true to newpng
+\		ELSE
+		    true to png3 s" libpng12.so.0" getlib 0<> to newpng
+		    newpng IF  s" libpng12.so.0"
+		    ELSE  s" libpng.so.3" getlib 0<> to png3
+			png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN  THEN
+\		THEN
+		2dup getlib 0= IF  display ." Failed to load PNGlib " type cr bye  THEN
 		& libpng 4 cells + place ;
 	[THEN]
     [THEN]
