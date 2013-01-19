@@ -45,6 +45,7 @@ library: libpng12.so.0
 	    s" libpng12.so.0" getlib 0<> Value newpng
 	    true Value png3
 	    false Value png14
+	    false Value png15
 	    
 	    newpng [IF]
 		library libpng libpng12.so.0
@@ -59,19 +60,24 @@ library: libpng12.so.0
 	    
 	    : init-png-lib ( -- )
 		& libpng cell+ @ ?EXIT  true to png3
-		s" libpng14.so.14" getlib 0<> to png14
-		png14 IF
-		    s" libpng14.so.14" true to newpng
+		s" libpng15.so.15" getlib 0<> to png15
+		png15 IF
+		    s" libpng15.so.15" true to newpng
 		ELSE
-		    true to png3 s" libpng12.so.0" getlib 0<> to newpng
-		    newpng IF  s" libpng12.so.0"
-		    ELSE  s" libpng.so.3" getlib 0<> to png3
-			png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN
+		    s" libpng14.so.14" getlib 0<> to png14
+		    png14 IF
+			s" libpng14.so.14" true to newpng
+		    ELSE
+			true to png3 s" libpng12.so.0" getlib 0<> to newpng
+			newpng IF  s" libpng12.so.0"
+			ELSE  s" libpng.so.3" getlib 0<> to png3
+			    png3  IF  s" libpng.so.3"  ELSE  s" libpng.so.2"  THEN
+			THEN
 		    THEN
 		THEN
 		2dup getlib 0= IF  display ." Failed to load PNGlib " type cr bye  THEN
 		& libpng 4 cells + place ;
-	[THEN]
+	    [THEN]
     [THEN]
     
     legacy off
@@ -101,9 +107,11 @@ Variable user_error_ptr
 
 : init-png ( -- infostruc readstruc )
     init-png-lib
-    png14 IF  0" 1.4.0"  ELSE
-	png3 IF  0" 1.2.0"
-	ELSE  0" 1.0.5"  THEN
+    png15 IF  0" 1.5.0"  ELSE
+	png14 IF  0" 1.4.0"  ELSE
+	    png3 IF  0" 1.2.0"
+	    ELSE  0" 1.0.5"  THEN
+	THEN
     THEN
     user_error_ptr ['] noop dup png_create_read_struct
     dup 0= abort" PNG: no read structure"
