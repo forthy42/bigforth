@@ -24,3 +24,10 @@ User span
 
 \needs environment? include environ.fs
 \needs locals| include locals.fs
+
+: synonym ( newname oldname -- )  lastcfa push
+  Header -2 allot last @ dup  c@ $20 and
+  0= IF  0 A, $20 flag!  THEN
+  bl word find  dup 0> IF  immediate  THEN
+  1 and 0= IF  restrict  THEN
+  swap (name> ! reveal ;
