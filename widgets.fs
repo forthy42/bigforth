@@ -25,13 +25,13 @@ how:    : >callback ( cb -- )
 
 \ widget                                               28aug99py
 
-        : DOPRESS  ( dx dy -- dx dy x y )
-          BEGIN  BEGIN  dpy click? 0=  WHILE  dpy moved?
-                        IF    2dup dpy mouse drop r@ execute
-                              dpy sync
-                        THEN  dpy invoke dpy do-idle
-                 REPEAT dpy click nip 1 and  WHILE
-          2drop  REPEAT  dpy moved! ;
+        : DOPRESS  ( dx dy -- dx dy x y )  dpy with
+          BEGIN  BEGIN  click? 0=  WHILE  moved?
+                        IF    2dup mouse endwith drop r@ execute
+                              dpy with sync
+                        THEN  invoke do-idle
+                 REPEAT  click nip 1 and  WHILE
+          2drop  REPEAT  moved! endwith ;
 [defined] doNotSin [IF] doNotSin [THEN]
 
 \ widget                                               01mar98py
