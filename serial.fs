@@ -64,8 +64,8 @@
     Create t_buf  sizeof DCB allot
     Create tout_buf  sizeof COMMTIMEOUTS allot
     
-    : fileno ( file -- fd )  filehandle @ ;
-    : set-baud ( baud file -- )  fileno >r
+    : file# ( file -- fd )  filehandle @ ;
+    : set-baud ( baud file -- )  file# >r
         r@ t_old GetCommState drop
         1 t_old DCB flags !
         r@ tout_buf GetCommTimeouts drop
@@ -80,7 +80,7 @@
         8 t_buf DCB ByteSize c!
         r> t_buf SetCommState drop ;
     : reset-baud ( file -- )
-	fileno t_old SetCommState drop ;
+	file# t_old SetCommState drop ;
 [ELSE]
     also DOS also
     legacy on
@@ -198,8 +198,8 @@
     $541B Constant FIONREAD
     [THEN]
     
-    : fileno ( file -- fd )  filehandle @ ;
-    : set-baud ( baud fd -- )  fileno >r
+    : file# ( file -- fd )  filehandle @ ;
+    : set-baud ( baud fd -- )  file# >r
         t_old r@ tcgetattr drop
         t_old t_buf sizeof termios move
         \  t_buf sizeof termios erase
@@ -217,9 +217,9 @@
         t_buf 1 r> tcsetattr drop ;
     
     : reset-baud ( fd -- )
-	fileno t_old 1 rot tcsetattr drop ;
+	file# t_old 1 rot tcsetattr drop ;
 
-    : check-read ( fd -- n )  fileno >r
+    : check-read ( fd -- n )  file# >r
         0 sp@ FIONREAD r> ioctl drop ;
     
     previous previous
