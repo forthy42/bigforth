@@ -19,6 +19,8 @@ library: libpng12.so.0
 
     : init-png-lib ; \ not supported in VFX Forth
     true value png3
+    false Value png14
+    false Value png15
 [ELSE]
     also DOS
     
