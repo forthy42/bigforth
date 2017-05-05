@@ -1,0 +1,222 @@
+<HTML>
+<HEAD><TITLE>Widget Classes</TITLE></HEAD>
+<BODY>
+<A HREF="minos-1.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<A HREF="minos-3.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="minos.html#toc2"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+
+<H1><A NAME="s2">2. Widget Classes</A></H1>
+
+<P>The primary classes of MINOS are gadgets (widgets and displays),
+actors, and resources (xresource and font).</P>
+
+<P>Resources just provide system-specific data like window handles,
+display pointers, font informations, etc., they are critical for
+system-specific parts of display implementations.</P>
+
+<P>Widgets are the central objects represented on screen. Widgets draw
+through displays, such as windows, viewports, etc. Since many displays
+can be embedded into a bigger window, they also have all widget
+functionality. Widgets are composed in boxes (horizontal and
+vertical), and automatically layouted. Boxes certainly are widgets
+themselves, and some of the more complicated widgets such as sliders
+or textboxes are derived from boxes to layout the inner parts easily.</P>
+
+<P>Actors are bound to associated actions when operating a widget
+(i.e. clicking on it, pointing on it, or entering text). Actors
+provide the way to script actions.</P>
+
+<H2><A NAME="ss2.1">2.1 Actors</A></H2>
+
+<DL>
+<DT><B>ACTOR</B>
+<DD><P>All Actors have the following methods in common:
+<UL>
+<LI><B>called</B> This variable points to the object that is being called
+<LI><B>caller</B> This variable points to the object that is
+calling (the widget).
+<LI><B>set</B> ( -- ) sets the flag
+<LI><B>reset</B> ( -- ) resets the flag
+<LI><B>toggle</B> ( -- ) toggles the flag
+<LI><B>fetch</B> ( -- x1 .. xn ) queries the value(s)
+<LI><B>store</B> ( x1 .. xn -- ) changes the value(s)
+<LI><B>click</B> ( x y b n -- ) performs the action for a click
+<LI><B>key</B> ( key sh -- ) performs the action for a keystroke
+<LI><B>enter</B> ( -- ) performs the action for entering the widget
+<LI><B>leave</B> ( -- ) performs the action for leaving the widget
+<LI><B>assign</B> ( x1 .. xn -- ) initially assigns the state
+<LI><B>set-called</B> ( o -- ) sets the called object
+</UL>
+The stack effect you see below is the stack effect of the init method.</P>
+<DD><DL><DT><B>KEY-ACTOR</B> This is an actor for keyboard macros. It
+inserts keystrokes into the called widget.
+<DT><B>TOOLTIP</B> ( actor tip -- ) A tooltip is a nested actor; it shows
+the widget tip some time after entering with the mouse, and forwards the other
+messages to actor
+<DT><B>EDIT-ACTION</B> ( o xt -- ) This actor handles text input field key
+events, and does all the editing stuff. After each keystroke and each click,
+it calls xt ( -- ).
+<DD><DL><DT><B>NUMBER-ACTION</B> ( o xt -- ) Same as EDIT-ACTION, but filters
+out digits only
+</DL></DL><DD><DL><DT><B>SCALE-VAR</B> ( o pos max -- ) Scaler actor,
+keeps position and maximum value in own variables.
+<DD><DL><DT><B>SCALE-DO</B> ( o pos max xt -- ) Same as SCALE-VAR, but executes
+xt ( pos -- ) on changes
+<DT><B>SLIDER-VAR</B> ( o pos max step -- ) Slider actor, keeps position,
+step, and maximum value in own variables
+<DD><DL><DT><B>SLIDER-DO</B> ( o pos max step xt -- ) Same as SLIDER-VAR,
+but executes xt ( -- ) on changes
+</DL></DL><DT><B>SIMPLE</B> ( o xt -- ) xt is executed at every store (no
+state maintained)
+<DD><DL><DT><B>DRAG</B> ( o xt -- ) Calls toggle on each click event
+<DT><B>REP</B> ( o xt -- ) Calls toggle repeatedly while the user holds down
+the mouse button
+</DL><DT><B>TOGGLE-STATE</B> ( o xtstore xtfetch -- ) allows generic fetch
+and store functions
+<DD><DL><DT><B>SCALE-ACT</B> ( o do-store do-fetch max -- ) Generic slider
+actor (maximum slider position provided)
+<DD><DL><DT><B>SLIDER-ACT</B> ( o do-store do-fetch max -- ) Generic scaler
+actor (maximum scaler position provided)
+</DL></DL><DT><B>TOGGLE-VAR</B> ( o addr xt -- ) keeps the flag in addr,
+and executes xt on changes
+<DD><B>TOGGLE-NUM</B> ( o n addr xt -- ) is responsible for state n in addr
+(sets addr to n when set), and executes xt on changes
+<DT><B>TOGGLE</B> ( o state xtset xtreset -- ) models a flag with
+initial state and two functions for each state
+</DL></DL>
+
+<H2><A NAME="ss2.2">2.2 Resources</A></H2>
+
+<DL>
+<DT><B>XRESOURCE</B>
+<DT><B>FONT</B>
+<DD><B>X-FONT</B>
+</DL>
+
+<H2><A NAME="ss2.3">2.3 Widgets</A></H2>
+
+<DL>
+<DT><B>GADGET</B>
+<DD><DL><DT><B>WIDGET</B>
+<DD><DL><DT><B>TERMINAL</B>
+<DD><DL><DT><B>SCREDIT</B>
+<DD><B>STREDIT</B></DL>
+<DT><B>ARULE</B>
+<DD><DL><DT><B>BOXCHAR</B>
+<DD><DL><DT><B>HRTSIZER</B>
+<DD><B>HXRTSIZER</B>
+<DD><B>HSIZER</B></DL>
+<DT><B>VRTSIZER</B>
+<DD><B>VXRTSIZER</B>
+<DD><B>VSIZER</B>
+<DT><B>BUTTON</B>
+<DD><B>ALERTBUTTON</B>
+<DD><DL><DT><B>MENU-ENTRY</B>
+<DD><B>EDIMENU-ENTRY</B>
+<DD><DL><DT><B>MENU-TITLE</B>
+<DD><B>SUB-MENU</B></DL></DL>
+<DD><B>(TEXTFIELD</B>
+<DD><DL><DT><B>ICON-BUTTON</B>
+<DD><B>BIG-ICON</B>
+<DD><B>ICON-BUT</B></DL>
+<DT><B>LBUTTON</B>
+<DD><B>FILE-WIDGET</B>
+<DD><DL><DT><B>TEXT-LABEL</B>
+<DD><B>MENU-LABEL</B></DL></DL>
+<DT><B>TOGGLECHAR</B>
+<DD><B>FLIPICON</B>
+<DD><B>TOGGLEICON</B>
+<DD><DL><DT><B>TBUTTON</B>
+<DD><B>TICONBUTTON</B>
+<DD><B>TOGGLEBUTTON</B>
+<DD><B>TOPINDEX</B>
+<DD><B>FLIPBUTTON</B>
+<DD><B>RBUTTON</B></DL>
+<DT><B>TRIBUTTON</B>
+<DD><B>SLIDETRI</B>
+</DL></DL></DL>
+
+<H2><A NAME="ss2.4">2.4 Boxes</A></H2>
+
+<!--
+COMBINED                  44  E4  40139938
+  VBOX                    44  E4  4013B15C
+    SLIDERVIEW            4C  E8  40146360
+      ASLIDERVIEW         4C  E8  40146C2C
+    VSLIDER               44  E8  401423B4
+      VSCALER             50  EC  401434F4
+      VSLIDER0            44  E8  40142B74
+    VRBOX                 44  E4  40140E74
+    VTBOX                 44  E4  4013C59C
+      VRTBOX              44  E4  4014163C
+      VATBOX              44  E4  4013CB70
+        VARTBOX           44  E4  40141760
+    COMPONENT             44  E4  4013BC8C
+      VASBOX              4C  E8  40147340
+      VRESIZE             44  E4  40146FF0
+      MODAL               48  E4  401418AC
+      VARBOX              44  E4  40141058
+  HBOX                    44  E4  4013A84C
+    INFO-MENU             54  E4  4014CA70
+    HSLIDER               44  E8  40141D94
+      HSCALER             50  EC  40142E98
+      HSLIDER0            44  E8  4014292C
+    HRBOX                 44  E4  401411B8
+    HTBOX                 44  E4  4013C0E8
+      HRTBOX              44  E4  401413F8
+      HATBOX              44  E4  4013CA50
+        HARTBOX           44  E4  4014151C
+    HABOX                 44  E4  4013BFC8
+      HASBOX              4C  E8  40147558
+      HRESIZE             44  E4  40147138
+      HARBOX              44  E4  401412D8
+      TEXTFIELD           48  E4  40140A08
+        INFOTEXTFIELD     4C  E4  40140C38
+(NIL                      24  C8  40137B80
+GLUE                      34  C8  401379F8
+  GLCANVAS                58  CC  4014B670
+  RULE                    38  C8  40138458
+    CANVAS                78 118  40138FCC
+    MFILL                 38  C8  40138A48
+    MSKIP                 38  C8  40138908
+      SSKIP               40  C8  40146178
+    VRULE                 38  C8  40138734
+    HRULE                 38  C8  40138618
+  VGLUE                   34  C8  40138308
+  HGLUE                   34  C8  401381EC
+    TOPGLUE               34  C8  4013E908
+ICON                      28  C8  401377E4
+ICON-PIXMAP               2C  CC  4013761C
+-->
+
+<H2><A NAME="ss2.5">2.5 Displays</A></H2>
+
+<!--
+DISPLAYS                    90 178  4012FC60
+  WINDOW                    A4 194  40148B18
+    FILE-SELECTOR           C4 198  40151AB8
+    MENU-WINDOW             A4 194  4014D09C
+    FRAME                   A8 1A4  4014A698
+      MENU-FRAME            A8 1A4  4014C0D0
+      FRAME-TIP             AC 1A4  4014AD94
+    WINDOW-STUB             A4 194  4014A2C0
+  (NILSCREEN                90 178  40137D00
+  BACKING                   A8 17C  40131DD0
+    VIEWPORT                E0 190  40143EB4
+      SCRVIEWPORT           E0 190  40123590
+      HVIEWPORT             E8 190  40145F14
+      VVIEWPORT             E8 190  40145CC4
+    BEAMER                  B8 180  401330F8
+    DOUBLEBUFFER            A8 17C  40132DB0 ok
+-->
+
+<HR>
+<A HREF="minos-1.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<A HREF="minos-3.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="minos.html#toc2"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+09feb1999, 21jul1999<BR>
+</ADDRESS>
+</BODY>
+</HTML>

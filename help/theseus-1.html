@@ -1,0 +1,73 @@
+<HTML>
+<HEAD><TITLE>Theseus Documentation: Introduction</TITLE></HEAD>
+<BODY>
+<IMG SRC="previous.jpg" ALT="Previous" Border=2>
+<A HREF="theseus-2.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="theseus.html#toc1"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<HR>
+<H2><A NAME="s1">1. Introduction</A></H2>
+
+<P><B>Theseus</B> is designed to create <B>MINOS</B> dialogs. Each
+dialog is derived form a window class. You can create dialogs by
+composing boxes (layout managers) and widgets together, glue actions
+to the widgets, add variables and methods to the derived window
+classes, and so on.</P>
+
+<P>This is the help system, called ``Ariadne'', since it is the red
+line that leads you through the labyrinth of MINOS. This chapter will
+give some informations about the philosophy behind MINOS and Theseus,
+so you understand what you are doing.</P>
+
+<P>MINOS has four sets of classes:
+<UL>
+
+<LI><B>Widgets:</B> ``window gadgets'', these are the basic objects
+like buttons, labels, icons and text fields.
+
+<LI><B>Displays:</B> these widgets are the drawing area of other
+widgets. They know how to draw to X or to the parent display. It's
+also possible to create new displays that e.g. draw into an OpenGL
+widget or send drawing events over the network, to copy drawing
+messages to more than one parent display and so on.
+
+<LI><B>Boxes:</B> or layout managers. Although each object in MINOS
+has coordinates and size, it's formating is done by a surrounding
+layout manager. These either form horizontal boxes, and align their
+contents from left to right, or vertical boxes, and align their
+contents from top to bottom. Each widget has a horizontal and a
+vertical glue, these glue values are used to compute a nice look of
+the widgets.
+
+<LI><B>Actions:</B> these are the objects that link data and widgets
+together. An action knows in which state it is, and what to do when
+the state changes. There are several types of actions, for simpe
+buttons, toggle buttons, text fields, and sliders.
+</UL></P>
+
+<P>Each dialog is hierarchically composed out of widgets, boxes, and
+displays (e.g. viewports). Each active object, thus each button,
+toggle button, slider, and text field has an associated action, a
+name, and other attributes.</P>
+
+<P>The next chapter will describe how to use Theseus, and which
+classes and messages are available.</P>
+
+<HR>
+
+<P>I hope you will find this program somehow useful and I would
+appreciate any suggestions and comments.</P>
+
+<P><A HREF="mailto:bernd.paysan@gmx.de">Bernd Paysan
+&lt;bernd.paysan@gmx.de&gt;</A>.</P>
+
+
+<HR>
+<IMG SRC="previous.jpg" ALT="Previous" Border=2>
+<A HREF="theseus-2.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="theseus.html#toc1"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+1997-09-14, 1998-01-25<BR>
+</ADDRESS>
+</BODY>
+</HTML>

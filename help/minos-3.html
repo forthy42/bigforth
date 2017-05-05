@@ -1,0 +1,214 @@
+<HTML>
+<HEAD><TITLE>Support Classes</TITLE></HEAD>
+<BODY>
+<A HREF="minos-2.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<IMG SRC="next.jpg" ALT="Next" Border=2>
+<A HREF="minos.html#toc3"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+
+<H1><A NAME="s2">3. Support Classes</A></H1>
+
+<H2><A NAME="ss3.1">3.1 3D Turtle Graphics - ``Dragon Graphics''</A></H2>
+
+<P>To support OpenGL drawing and make it much easier than plain
+OpenGL, there is a 3D turtle graphics, also called ``dragon
+graphics''. The basic principle of turtle graphics is the ``turtle'',
+a directed point in the coordinate space that can move around and
+leaves a trail on its way.</P>
+
+<P>For 2D turtle graphics, there are not much settings to choose. You
+can set the color and the width of the line you stroke, or choose to
+fill your path, but that's it. 3D objects have much more aspects than
+simple lines or flat surfaces. Therefore, a 3D turtle graphics demands
+other features to define the trail it leaves.</P>
+
+<P>First, the turtle flies through space, and is therefore called
+``dragon''. This increases the degree of freedom - a 2D turtle can
+only turn left or right, a 3D dragon can turn left, right, up, and
+down. Additionally, it can roll to the left or right.</P>
+
+<P>Then you have to define the vertex points of your trail yourself. You
+can define points around the current position of the dragon, which are
+connected to points around the previous stop of the dragon. These
+rounds around the dragon are knit together, forming the ``trail'' of
+the dragon. You can add or drop vertex points, but if you drop point,
+make sure that they are at least on a straight line (or better all on
+the same location).</P>
+
+<P>There are several groups of operation, let's start with the
+navigation of the dragon. The angles used are radians by default.
+<UL>
+<LI><B>left</B> ( f -- ) turns the dragon's head left
+<LI><B>right</B> ( f -- ) turns the dragon's head right
+<LI><B>up</B> ( f -- ) turns the dragon's head up
+<LI><B>down</B> ( f -- ) turns the dragon's head down
+<LI><B>roll-left</B> ( f -- ) rolls the dragon's head left
+<LI><B>roll-right</B> ( f -- ) rolls the dragon's head right
+<LI><B>x-left</B> ( f -- ) rotate the dragon left around the x axis
+<LI><B>x-right</B> ( f -- ) rotate the dragon right around the x axis
+<LI><B>y-left</B> ( f -- ) rotate the dragon left around the y axis
+<LI><B>y-right</B> ( f -- ) rotate the dragon right around the y axis
+<LI><B>z-left</B> ( f -- ) rotate the dragon left around the z axis
+<LI><B>z-right</B> ( f -- ) rotate the dragon right around the z axis
+<LI><B>forward</B> ( f -- ) move the dragon in z direction
+<LI><B>forward-xyz</B> ( fx fy fz -- ) move the dragon
+<LI><B>degrees</B> ( f -- ) steps per circle. Common cases: 2pi for
+radians, 360 for deg, 64 for asian degrees, or whatever you find
+suits your application best.
+<LI><B>scale</B> ( f -- ) scales the dragon's step width by the factor f
+<LI><B>scale-xyz</B> ( fx fy fz -- ) scale the dragon's step width in
+x, y, and z direction
+<LI><B>flip-clock</B> ( -- ) change default coordinate from left hand
+to right or the other way round. Use that after scale-xyz with an odd
+number of negative scale factors.
+</UL></P>
+
+<P>There are some functions to save and restore the turtle's state,
+and to use the turtle matrix stack for matrix multiplications, so that
+you can create arbitrary synthetic transformations with one step.
+<UL>
+<LI><B>&gt;matrix</B> ( -- ) push turtle matrix on the matrix stack
+<LI><B>matrix&gt;</B> ( -- ) pop turtle matrix from the matrix stack
+<LI><B>matrix@</B> ( -- ) copy turtle matrix from the stack
+<LI><B>1matrix</B> ( -- ) initialize turtle state with the identity matrix
+<LI><B>matrix*</B> ( -- ) multiply current transformation matrix with
+the one on the top of the matrix stack (and pop that one)
+<LI><B>clone</B> ( -- o ) create a clone of the turtle
+<LI><B>&gt;turtle</B> ( -- ) clone the turtle and use it as current object
+<LI><B>turtle&gt;</B> ( -- ) destroy current turtle and pop previos
+incarnation
+</UL></P>
+
+<P>Then there are the operations to create pathes. A path is
+partitioned in ``rounds'', where each point in one round is connected
+to the corresponding point in the previous round. Rounds can add
+points or drop points from the previous round (dropped points are not
+connected, and therefore should be at least in a line with those
+points that are connected). The first round in a path has to be
+defined immediately after open-path, the other rounds must be enclosed
+in open-round and close-round.
+<UL>
+<LI><B>open-path</B> ( n -- ) opens a path with n points in the first
+round
+<LI><B>close-path</B> ( -- ) closes a path and performs the final
+rendering action
+<LI><B>next-round</B> ( -- ) closes a round and opens the next one
+<LI><B>open-round</B> ( n -- ) opens a round with n points (obsolete)
+<LI><B>close-round</B> ( -- ) closes a round (by copying the first
+point as last point) and performs the per-round rendering action (obsolete)
+<LI><B>finish-round</B> ( -- ) performs the per-round rendering
+action without closing the round first (this is for open objects) (obsolete)
+<LI><B>add-xyz</B> ( fx fy fz -- ) adds the point at the
+x,y,z-coordinates relative to the turtle. x is up from the turtle, y
+right, z before. The point is connected to the same point of the
+previous round as the point before.
+<LI><B>set-xyz</B> ( fx fy fz -- ) sets a point with
+x,y,z-coordinates. The point is connected to the next point of the
+previous round as the point before.
+<LI><B>drop-point</B> ( -- ) skips one point, set-xyz is equal to
+add-xyz drop-point
+<LI><B>set-rpz</B> ( fr fphi fz -- ) set with cylinder coordinates
+<LI><B>set-xy</B> ( fx fy -- ) set-xyz with z=0
+<LI><B>set-rp</B> ( fr fphi -- ) set with cylinder coordinates, z=0
+<LI><B>set-r</B> ( fr -- ) set with cylinder coordinates, z=0,
+phi=current_phi, current_phi+=dphi
+<LI><B>set</B> ( -- ) set at current dragon location
+<LI><B>add-rpz</B> ( fr fphi fz -- ) add with cylinder coordinates
+<LI><B>add-xy</B> ( fx fy -- ) add-xyz with z=0
+<LI><B>add-rp</B> ( fr fphi -- ) add with cylinder coordinates, z=0
+<LI><B>add-r</B> ( fr -- ) add with cylinder coordinates, z=0,
+phi=current_phi, current_phi+=dphi
+<LI><B>add</B> ( -- ) add at current dragon location
+<LI><B>set-dphi</B> ( fdphi -- ) sets dphi
+</UL></P>
+
+<P>The turtle graphics supports several drawing modes: points,
+wire-frame, solid, and textured.
+<UL>
+<LI><B>points</B> ( -- ) draw only vertex points
+<LI><B>lines</B> ( -- ) draw a wire frame
+<LI><B>triangles</B> ( -- ) draw solid triangles
+<LI><B>textured</B> ( -- ) draw textured triangles
+<LI><B>smooth</B> ( -- ) variable: set on for smooth normals when
+rendering textured, set off for non-smooth rendering
+<LI><B>xy-texture</B> ( -- ) texture mapping based on x and y
+coordinates
+<LI><B>zphi-texture</B> ( -- ) texture mapping based on z and phi
+coordinates
+<LI><B>rphi-texture</B> ( -- ) texture mapping based on r and phi
+coordinates
+<LI><B>zp-texture</B> ( -- ) texture mapping based on z and the point
+number coordinates
+<LI><B>load-texture</B> ( addr u -- t ) loads a ppm file with the
+name <B>addr u</B> and returns the texture index <B>t</B>
+<LI><B>set-light</B> ( par1..4 par n -- ) Set light source n
+</UL></P>
+
+<H2><A NAME="ss3.2">3.2 SQL Interface</A></H2>
+
+<P>The SQL interface allows to interface with a database using the
+structured query language SQL. It now has only an interface to
+PostgreSQL, because noone wrote one to other databases.</P>
+
+<P>The database interface has a simple foundation. You can send an SQL
+query string and get the result back as a table.
+<UL>
+<LI><B>database new</B> ( addr u -- ) opens the database specified by
+name
+<LI><B>exec</B> ( addr u -- ) the query string
+<LI><B>fields</B> ( -- n ) the number of fields per result
+<LI><B>tuples</B> ( -- n ) the number of tuples (results)
+<LI><B>field@</B> ( i -- addr u ) obtains the field name
+<LI><B>tuple@</B> ( i j -- addr u ) obtains a tuple entry
+<LI><B>clear</B> ( -- ) clears the result buffer
+</UL></P>
+
+<P>There are also some output functions to display the result of a
+query or to create a table containing the entries
+<UL>
+<LI><B>.heads</B> ( -- ) displays the field names
+<LI><B>.entry</B> ( i -- ) displays an entry line
+<LI><B>.entries</B> ( -- ) displays all results including names
+<LI><B>entry-box</B> ( -- o ) creates a MINOS object with the query results
+</UL></P>
+
+<P>A set of methods facilitates the creations of new tables
+<UL>
+<LI><B>create(</B> ( addr u -- ) starts creation of a named table
+<LI><B>:string</B> ( addr u n -- ) a <TT>varchar</TT> array with n
+chars max
+<LI><B>:int</B> ( addr u -- ) an integer
+<LI><B>:float</B> ( addr u -- ) a floating point number
+<LI><B>:date</B> ( addr u -- ) a date
+<LI><B>:time</B> ( addr u -- ) a time
+<LI><B>inherits</B> ( addr u -- ) inherit mechanism of PostgreSQL,
+must be last (there may be multiple inherits statements)
+<LI><B>)</B> ( -- ) ends the creation o a table
+<LI><B>drop</B> ( addr u -- ) drops a table
+</UL></P>
+
+<P>There are also ways to construct a query string
+<UL>
+<LI><B>select</B> ( addr u -- ) starts a select query, the argument is
+the selection; there can be several selections per query
+<LI><B>select-distinct</B> ( addr u -- ) starts a select distinct
+query
+<LI><B>select-as</B> ( addr1 u1 addr2 u2 -- ) argument 1 is the
+selection, argument 2 is the name it is assigned to
+<LI><B>from</B> ( addr u -- ) specifies the table(s) to select from
+<LI><B>where</B> ( addr u -- ) specify where clauses (several combined
+with AND)
+<LI><B>group</B> ( addr u -- ) grouped by argument
+<LI><B>order</B> ( addr u -- ) specifies the ordering argument
+<LI><B>order-using</B> ( addr u -- ) specifies order and ordering
+operation
+</UL></P>
+
+<A HREF="minos-2.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<IMG SRC="next.jpg" ALT="Next" Border=2>
+<A HREF="minos.html#toc3"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+09feb1999, 04apr1999<BR>
+</ADDRESS>
+</BODY>
+</HTML>

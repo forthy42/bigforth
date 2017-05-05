@@ -1,0 +1,187 @@
+<HTML>
+<HEAD><TITLE>Theseus Manual: Onscreen Fundamentals</TITLE></HEAD>
+<BODY>
+<A HREF="theseus-1.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<A HREF="theseus-3.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="theseus.html#toc2"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<HR>
+<H1><A NAME="s2">2. Onscreen Fundamentals</A></H1>
+
+<H2><A NAME="ss2.1">2.1 Menu</A></H2>
+
+<IMG SRC="menu.gif" ALT="Menu bar">
+
+<P>The menu bar contains a file menu, an edit menu and a help menu.</P>
+
+<H2><A NAME="ss2.2">2.2 Widget bar</A></H2>
+
+<IMG SRC="widget.gif" ALT="Widget bar">
+
+<P>The widget bar contains groups of widgets. To insert a widget into
+a dialog, select the group and click on a button. The corresponding
+widget is inserted in the current position (affected by the mode
+switches).</P>
+
+<H2><A NAME="ss2.3">2.3 Editing modes</A></H2>
+
+<P>
+The editing modes are separated into four groups:
+</P>
+
+<table width=100%>
+<tr><td><IMG SRC="modes.gif" ALT="Editing modes"></td>
+<td>
+<UL><LI>Click modes:
+
+<UL><LI>Edit mode: clicking opens the inspector of that object, with
+focus on the text/code/name field (left/middle/right mouse button).
+
+<LI>Cut&amp;Paste mode: clicking left cuts the object to the cut stack,
+clicking middle or right pastes from the cut stack.
+
+<LI>Try mode: clicking makes the object react as in the dialog, but
+without executing code.
+</UL>
+
+<LI>Insert modes:
+
+<UL><LI>Add object first in current box
+
+<LI>Add object last in current box
+
+<LI>Add object before current box
+
+<LI>Add object after current box
+
+</UL>
+
+<LI>Navigation, selects the active box. Note that there is an active
+widget (which you can select with the mouse pointer).
+
+<UL><LI>Move one box up in hierarchy
+
+<LI>Move one box to the left/up
+
+<LI>Move one box to the right/down
+
+<LI>Move to the first child
+
+</UL>
+
+<LI>Short cuts:
+
+<UL><LI>Load dialog
+
+<LI>Save dialog
+
+<LI>Try dialog
+
+<LI>Save as module
+
+</UL>
+
+</UL>
+</td></tr></table>
+
+<H2><A NAME="ss2.4">2.4 Dialog editor</A></H2>
+
+<IMG SRC="dialog.gif" ALT="Dialog editor">
+
+<P>The dialog editor shows a navigation bar for each dialog to
+edit. The dialog itself is resizable with the split bar below and on
+the side, to see how it looks resized.</P>
+
+<P>The navigation bar consists of an icon to open/hide the dialog, to
+open/hide the declarations field, to open/hide the code field, to
+select whether to show the dialog, a dialog menu, a dialog title and a
+dialog name. It is important to give every dialog a name, since
+dialogs without names can't be saved. The dialog name is the name of
+the derived class, you can refer to this class in your code.</P>
+
+<P>The declaration field contains variable and method declarations of
+the dialog class.</P>
+
+<P>The code field contains method definitions.</P>
+
+<P>The dialog edit field itself contains the dialog itself.</P>
+
+<H2><A NAME="ss2.5">2.5 Box creator</A></H2>
+
+<table width=100%><tr><td>
+<IMG SRC="newbox.gif" ALT="Box creator"></td>
+
+<td><P>The box creator has two buttons to create horizontal and vertical
+boxes. Boxes are simple layout managers, that arrange containing
+objects one after the other. Boxes are created as normal objects, so
+they go to the same places where a normal object would go. They
+inherent the settings of the parent object, so these settings have to
+be changed using the box inspector.</P></td></tr></table>
+
+<H2><A NAME="ss2.6">2.6 Box inspector</A></H2>
+
+<P>The properties of the current box can be changed in the box inspector:</P>
+
+<table width=100%><tr><td>
+<IMG SRC="box.gif" ALT="Box inspector"></td>
+
+<td><UL><LI>The <B>horizontal</B> switch changes the direction of the box
+
+<LI>The <B>active</B> switch changes the selection behavior: active
+boxes contain one single active object, navigation with
+<CODE>tab</CODE> is possible.
+
+<LI>The <B>radio</B> switch activates deselection on click, thus only
+one switch inside such a box may be active at a time.
+
+<LI>The <B>tabbing</B> switch changes the layout: all objects except
+glues in tabbed boxes have the same size.
+
+<LI>The <B>hfixbox</B> shrinks the box to the minimal size, no growing
+is possible in horizontal direction
+
+<LI>The <B>vfixbox</B> shrinks the box to the minimal size, no growing
+is possible in vertical direction
+
+<LI>The <B>flipbox</B> hides the box when active
+
+<LI>The <B>hskip</B> box or slider (with <B>Details</B> activated)
+adds horizontal skips between objects
+
+<LI>The <B>vskip</B> box or slider (with <B>Details</B> activated)
+adds vertical skips between objects
+
+<LI>The <B>border</B> box or slider (with <B>Details</B> activated)
+adds a shadow to the box (raised or sunken).
+
+</UL></td></tr></table>
+
+<H2><A NAME="ss2.7">2.7 Object inspector</A></H2>
+
+<IMG SRC="inspector.gif" ALT="Object inspector">
+
+<P>The object inspector contains the informations of the current
+object. The fields depend on the class of the object, however, some
+fields are common between objects.
+
+<UL><LI>The <B>name</B> field selects the name of the object, this
+name is used in code to refer to this object
+
+<LI>The <B>string</B> field is the string the object displays
+
+<LI>The <B>code</B> field is the code that is executed on clicks
+
+<LI>The <B>tooltip</B> field is the tooltip that is shown when the
+mouse is over the object (an empty string means no tooltip)
+</UL>
+There are many other fields, for other properties of the widget.</P>
+
+<HR>
+<A HREF="theseus-1.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<A HREF="theseus-3.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="theseus.html#toc2"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+1997-05-21, 1997-09-14<BR>
+</ADDRESS>
+</BODY>
+</HTML>

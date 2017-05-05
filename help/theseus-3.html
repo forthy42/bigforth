@@ -1,0 +1,90 @@
+<HTML>
+<HEAD><TITLE>Theseus Manual: Step by Step Example</TITLE></HEAD>
+<BODY>
+<A HREF="theseus-2.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<IMG SRC="next.jpg" ALT="Next" Border=2>
+<A HREF="theseus.html#toc3"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<HR>
+<H1><A NAME="s2">3. Step by Step Example</A></H1>
+
+<P>How do you edit such a user interface? Formating buttons and text
+fields is done by the system, therefore not the task of the programmer,
+who only has to fix the logical arrangement.</P>
+
+<P>The project therefore is hierarchically arranged. The topmost hierarchy
+are the dialog windows. These windows understand two additional methods,
+<TT>open</TT> and <TT>modal-open</TT> which allows to create both
+non-modal and modal dialogs. The user then creates a framework of
+horizontal and vertical boxes inside the dialog. These boxes are filled
+with contents and glues then.</P>
+
+<P>A examples will show how to use Theseus. The first creates a small
+calculator operating on integers. Create a "New Dialog" with the
+"Edit" menu. This is the dialog bar at the start of the project:</P>
+
+<IMG SRC="step1.gif">
+
+<P>First put the three <TT>infonumberfields</TT> inside the starting
+box, they will be put under each other.</P>
+
+<IMG SRC="step2.gif">
+
+<P>Beneath the two input fields the operation buttons should be
+arranged one aside each other. A horizontal box (<TT>hbox</TT>) does
+the job, with four buttons in it. First click to <IMG
+SRC="add-before.gif" ALT="A before current object">, and then to
+<TT>hbox</TT>. Then set again to <IMG SRC="add-last.gif" ALT="Add last
+in box">. Click into the newly created box. Click off the vskip
+button: that makes it nicer. Hit four times on "Button". Now these
+objects need a useful text. Therefore you left-click each object (in
+edit mode), and type in the text. Hit Esc to clear the text field
+first.</P>
+
+<IMG SRC="step3.gif">
+
+<P>To reference the input field, each one must have an internal name.
+Choose edit mode, right-click to the fields and enter the name
+(<TT>a#</TT>, <TT>b#</TT>, and <TT>c#</TT>). Now you can insert code,
+i.e. for the operation <TT>+</TT>. Corresponding to the example below,
+the other code is inserted, too. Middle-click on the operation buttons
+and enter the code</P>
+
+<IMG SRC="step4.gif">
+
+<P>The code looks as follows, for +, -, *, and /:
+
+<PRE>
+a# get b# get d+ c# assign
+a# get b# get d- c# assign
+a# get b# get d* c# assign
+a# get b# get drop ud/mod c# assign drop
+</PRE>
+
+But stop! Maybe it's useful to take the result and copy it to one
+of the input buttons for reuse. Thus two additional buttons are required,
+and to make it nice, all buttons should have the same size (with ``tabbing''
+box style). The window must have a title, and a name, too.</P>
+
+<IMG SRC="step5.gif">
+
+<P>The added code is for &gt;A and &gt;B
+<PRE>
+c# get a# assign
+c# get b# assign
+</PRE></P>
+
+<P>Now you can try the result by pressing the <IMG
+SRC="run.gif"> icon. Theseus generates the code and starts a
+new invocation of bigFORTH which compiles it and starts the
+application.</P>
+
+<HR>
+<A HREF="theseus-2.html"><IMG SRC="previous.jpg" ALT="Previous"></A>
+<IMG SRC="next.jpg" ALT="Next" Border=2>
+<A HREF="theseus.html#toc3"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+1998-01-18, 1998-01-18<BR>
+</ADDRESS>
+</BODY>
+</HTML>

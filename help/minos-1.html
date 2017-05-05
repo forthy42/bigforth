@@ -1,0 +1,181 @@
+<HTML>
+<HEAD><TITLE>Minos Documentation</TITLE></HEAD>
+<BODY>
+
+<IMG SRC="previous.jpg" ALT="Previous" Border=2>
+<A HREF="minos-2.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="minos.html#toc1"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+
+<H1><A NAME="s1">1. Introduction</H1>
+
+<H2>What's MINOS?</H2>
+
+<P>MINOS is the answer to the question ``Is there something like
+Visual BASIC (Microsoft) or Delphi (Inprise) in Forth?'' - and the
+answer is ``yes''.</P>
+
+<P>Basically, these GUI RADs contain two components: a library with a
+wide variety of elements for a graphical user interface; e.g. windows,
+buttons, edit-controls, drawing areas, etc.; and an editor to combine
+the elements with the mouse by drag&amp;drop or click&amp;point
+actions. Missing code then is inserted to add actions when buttons are
+pressed.</P>
+
+<P>Typical applications are often related to data base
+access. Therefore, many of these systems already contain a data base
+engine or at least a standardized interface to a data base, such as
+ODBC.</P>
+
+<P>Another aspect are complex components. With some of these toolkits,
+you can create a web browser with some mouse clicks and a few
+keystrokes. However, these components hide their details, a shrink
+wrapped web browser application is not necessarily worse.</P>
+
+<P>The interactivity of these tools usually is not very high. You
+create your form, write your actions as code and compile it more
+(Delphi) or less (Visual Age for C++) fast. Trying it usually isn't
+possible before the compiler run.</P>
+
+
+<H2>Why Visual?</H2>
+
+<P>It isn't really necessary to brush graphical user interfaces
+together, as it isn't to edit texts WYSIWYG. Many typesetting
+functions are more semantically than visual, e.g. a text is a headline
+or emphasized instead of written in bold 18 point Garamond or 11 point
+Roman italics. All this is true for user interfaces, to some extend
+much more. It's not the programmer that decides which font and size to
+use for the UI - that's up to the user. As is color of buttons and
+texts.</P>
+
+<P>Also to layout individual widgets, more abstraction than defining
+position, width and height makes sense. Typically buttons are arranged
+horizontally or vertically, perhaps with a bit distance between
+them. The size of buttons must follow the containing strings, and
+should conform to aesthetics (e.g. each button in a row has the same
+width).</P>
+
+<P>Such an abstract model, related to TeX's boxes&amp;glues, programs
+quite good even without a visual editor. The programmer isn't
+responsible for ``typesetting'' the buttons and boxes. This approach
+is quite usual in Unix. Motif and Tcl/Tk use neighborhood relations,
+Interviews uses boxes&amp;glues. I decided for boxes&amp;glues, since it's a
+fast and intuitive solution, although it needs more objects to get the
+same result.</P>
+
+<P>These concepts contradict somehow with a graphical editing process,
+since the editors I know don't provide abstract concepts (``place left
+of an object'' or ``place in a row''), but positions.</P>
+
+
+<H2>Visual Forth?</H2>
+
+<P>One point makes me think: the packets that allow real visual form
+programming have many years of programming invested in. Microsoft,
+Borland, and IBM may hire hundreds of programmers just for one such
+project. This man-power isn't available for any Forth project. But
+stop:</P>
+
+<OL>
+<LI> Forth claims that good programmers can work much more
+efficient with Forth
+
+<LI> A team of 300 (wo)men blocks itself. If the boss partitions the
+work, the programmers need to document functions, and to read
+documents from other programmer related to other functions and must
+understand them, or ask questions to figure things out. Everybody
+knows that documenting takes much longer than writing the code, and
+explaining is even worse. Thus at a certain project complexity level,
+no time is left for the programming task; all time is used to specify
+planned functions and read the specification from other
+programmers. Or the programmers just chat before the door holes of the
+much too small and noisy cubicles.
+
+<LI> A good programmer reportedly works 20 times as fast as a bad,
+even though he can't type in more key strokes per time. The resulting
+program is either up to 20 times shorter or has 20 times less bugs (or
+both) - with more functionality at the same time. Teamwork however
+prevents good programmers from work, since they are frustrated by bad
+programmers surrounding them, from their inability to produce required
+information in time; and the bad programmers are frustrated by the
+good ones, which makes them even worse.
+
+<LI> Therefore, even in large projects, the real work is (or should
+be) done by a small ``core team''. Then the Dilbert rule applies: what
+can be done with two people, can be done with one at half of the
+costs.
+
+</OL>
+
+Furthermore, bigFORTH-DOS already contains a ``Text-GUI'', without
+graphical editor, but with an abstract boxes&amp;glue concept, which, as
+claimed above, hinders the use of such an editor.</P>
+
+<P>Finally I wanted to get rid of DOS, and port bigFORTH to a real
+operating system (Linux). In contrast to Windows and OS/2, user
+interface and screen access are separated there. Drawing on the screen
+uses the X Window System (short X), the actual user interface is
+implemented in a library. This is the reason, why there is no common
+interface, but a lot of different libraries, such as Athena Widgets,
+Motif, Tcl/Tk, xforms, Qt, gtk, and others. The ``look and feel'' from
+Motif-like buttons is quite common, even Windows and MacOS resemble
+it.</P>
+
+<P>All these libraries have disadvantages. The Athena Widgets are
+hopelessly outdated.  Motif is commercial, even if a free clone
+(Lesstif) is in creation. It's slow and a memory hog. Tcl/Tk consumes
+less memory, but it's <EM>even</EM> slower.  How do you explain your
+users that drawing a window takes seconds, while Quake renders
+animated 3D-graphic on the same machine? Qt is fast, but it's written
+in C++ and doesn't have a foreign language interface now. gtk, the
+GIMP toolkit, has more foreign language interfaces, and it's free, but
+it wasn't available until recently.</P>
+
+<P>Therefore I decided to port the widget classes from bigFORTH-DOS
+to X, and write an editor for it. Such classes written in Forth
+naturally fit in an development environment and are - from the Forth
+point of view - easier to maintain.  There are not such many widget
+libraries in C, because it's a task written in an afternoon, but
+because the available didn't fit the requests, and a modification
+looked desperate.</P>
+
+
+<H2>The Name - Why MINOS?</H2>
+
+<P>``Visual XXX'' is an all day's name, and it's too much of a
+microsoftism for me. ``Forth'' is a no-word, especially since the
+future market consists of one billion Chinese, and for them four is a
+number of unluck (because ``se'' (four) sounds much like ``se''
+(death)). However, even Borland doesn't call their system ``Visual
+TurboPascal'', but ``Delphi''.</P>
+
+<P>Greek is good, anyway, since this library relates to the
+boxes&amp;glues model of TeX, which is pronounced Greek, too. Compared
+with Motif, the library is quite copact (MINimal), and since it's
+mainly for Linux, the phonetic distance is small... I pronounce it
+Greek: ``meenoz''.</P>
+
+
+<H2>Port to Windows</H2>
+
+<P>I ported MINOS to Windows 95/NT, on the demand of some potential
+users. It doesn't run near as stable as under Linux/X, since there are
+a hideous number of subtle bugs in Windows, and I don't have the time
+to work around all of them. Drawing polygons doesn't work as well as
+on X, and all the bugs that are in the memory drawing device can drive
+me nuts. The Windows port of MINOS looks more like the ``modern
+Forth'' Claus Vogt portrayed in <A
+HREF="news:de.comp.lang.forth">de.comp.lang.forth</A>: it shows random
+general protection faults. Well, just like any other Windows
+program.</P>
+
+<HR>
+<IMG SRC="previous.jpg" ALT="Previous" Border=2>
+<A HREF="minos-2.html"><IMG SRC="next.jpg" ALT="Next"></A>
+<A HREF="minos.html#toc1"><IMG SRC="toc.jpg" ALT="Table of Contents"></A>
+<ADDRESS><hr size=5>
+<A HREF="http://www.jwdt.com/~paysan/">Bernd Paysan</A>,
+09feb1999, 09feb1999<BR>
+</ADDRESS>
+</BODY>
+</HTML>
