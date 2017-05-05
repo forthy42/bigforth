@@ -233,7 +233,7 @@ doc/bigforth.ps:	doc/bigforth.dvi
 doc/bigforth.info doc/bigforth.info-*: doc/bigforth.texi
 		-cd doc; $(MAKEINFO) bigforth.texi
 
-doc/bigforth.txt:	bigforth.texi
+doc/bigforth.txt:	doc/bigforth.texi
 		-cd doc; $(MAKEINFO) --no-headers --no-split bigforth.texi >bigforth.txt
 
 info:		doc/bigforth.info
