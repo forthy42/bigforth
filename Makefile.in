@@ -60,7 +60,7 @@ XSRC	= startx.fs minos.fs oof.fb x11.fs xpm.fs locals.fs editor.fs \
 	  minos-viewport.fs minos-windows.fs minos-complex.fs \
 	  resources.fs minos-float.fs convert-m.sh float.fb theseus*.fs \
 	  win32.fs win32ex.fs w95style.fs
-BUILDSRC	= configure.in config.sub config.guess Makefile.in install-sh
+BUILDSRC	= configure.ac config.sub config.guess Makefile.in install-sh
 EXTRAS = gpl-about.m menu.fs adjust.m adjust-path.fs fft.fb complex.fb fileop.fb
 SRC	= $(SOURCE) $(KERNSRC) $(SYSSRC) $(XCSRC) $(XSRC) $(BUILDSRC) $(XINI) $(XINI:%=%.in) $(INI) $(INI:%=%.in) $(EXTRAS)
 MINIICONS = bigforth/icons/{dot-dir,dotdot-dir,script,dir,diropen,file,sym,INFO,WARNING,FATAL,QUESTION,ERROR,NONE}.png
@@ -139,7 +139,7 @@ EXAMPLEDIST = bigforth/3dskull/{*.fs,*.m,*.dat} $(DRAGONDIST)
 
 ICONDIST = bigforth/icons/*.png bigforth/icons/minos1+.icn
 
-SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,{Makefile,configure,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,bigforth.c,scr2str.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn,convert-m.sh} $(ICONDIST)
+SRCDIST = bigforth/{BUGS,ToDo,config.guess,config.sub,install-sh,configure{,.ac},{Makefile,$(INI),$(XINI)}{,.in},[^E]*.f[sb],Estyle.fs,*.m,bigforth.c,scr2str.c,*.S,iss.sh,tips.txt,forthker-*.fi,xpmtoicn,convert-m.sh} $(ICONDIST)
 
 MINISRCDIST = $(SRC:%=bigforth/%)
 
@@ -205,7 +205,7 @@ install:	build
 	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(DESTDIR)$(INSTDIR)/Estyle/wood; fi
 	@if [ -d Estyle/ShinyMetal ]; then install -m 644 Estyle/ShinyMetal/* $(DESTDIR)$(INSTDIR)/Estyle/ShinyMetal; fi
 
-configure:	configure.in
+configure:	configure.ac
 		autoconf
 
 config.status:	configure
@@ -224,13 +224,13 @@ $(INI):	$(INI).in config.status
 
 # This is the documentation part, and is not ready yet
 
-doc/bigforth.dvi doc/bigforth.fns:	bigforth.texi
+doc/bigforth.dvi doc/bigforth.fns:	doc/bigforth.texi
 		cd doc; $(TEXI2DVI) bigforth.texi
 
 doc/bigforth.ps:	doc/bigforth.dvi
 		$(DVI2PS) doc/bigforth.dvi -o $@
 
-doc/bigforth.info doc/bigforth.info-*: bigforth.texi
+doc/bigforth.info doc/bigforth.info-*: doc/bigforth.texi
 		-cd doc; $(MAKEINFO) bigforth.texi
 
 doc/bigforth.txt:	bigforth.texi

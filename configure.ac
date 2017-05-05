@@ -12,8 +12,8 @@ EXTFLAGS=""
 
 case "$host_os" in
 	*win32|cygwin)
-		EXTFLAGS="-mno-cygwin"
-		CC="${CC-i686-pc-mingw32-gcc}"
+		#EXTFLAGS="-mno-cygwin"
+		CC="${CC-i686-w64-mingw32-gcc}"
 		WINDOWS="-mwindows"
 		ARCHFLAGS=""
 		INI="bigforth.ini"

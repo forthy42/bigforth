@@ -24,6 +24,9 @@ InfoBeforeFile=COPYING
 Compression=bzip
 DisableStartupPrompt=yes
 OutputBaseFilename=bigforth-$(eval echo $(cat version.h))
+AppPublisher=Bernd Paysan
+AppPublisherURL=http://bernd-paysan.de/bigforth.html
+SignTool=signtool sign /fd SHA256 /tr http://timestamp.comodoca.com/authenticode /td SHA256 \$f
 
 [Messages]
 WizardInfoBefore=License Agreement
