@@ -506,8 +506,8 @@ how:    : dispose  clicks HandleOff
 \ Display                                              05aug99py
 
         : in-time? ( time flag -- flag )
-          lasttime @ rot - swap lastclick @ =
-          IF  sameclick  ELSE  twoclicks  THEN  < ;
+          lasttime @ rot - negate swap lastclick @ =
+          IF  sameclick  ELSE  twoclicks  THEN < ;
         : samepos? ( event -- flag )  flags #pending bit@
           IF    XButtonEvent x @+ @  click^ w@+ w@ p-
                 dup * swap dup * + samepos <
@@ -752,7 +752,7 @@ private:
 
 \ Display                                              19jan00py
         : in-time? ( time flag -- flag )
-          lasttime @ rot swap - lastclick @ =
+          lasttime @ rot - negate swap lastclick @ =
           IF  sameclick  ELSE  twoclicks  THEN  < ;
         : samepos? ( event -- flag )  flags #pending bit@
           IF    MSG lparam lohi@ ( swap ) click^ w@+ w@ p-
