@@ -37,7 +37,7 @@ Table: (Ftast
   path  free? flush noop  decimal hex [
 
 | : .names $30 bounds DO  i @ >name count $1F and under type
-                          8 swap - 0 max spaces  cell +LOOP ;
+                          8 swap - spaces  cell +LOOP ;
 
 : help ( -- ) FORTHstart 2+
   5 0 DO cr count 2dup cols over - 2/ spaces type + LOOP drop
