@@ -50,8 +50,8 @@ calc implements
           ^^ S[ ['] d+ IS do-op re-calc ]S ( MINOS ) X" +" button new 
           ^^ S[ ['] d- IS do-op re-calc ]S ( MINOS ) X" -" button new 
           ^^ S[ ['] d* IS do-op re-calc ]S ( MINOS ) X" *" button new 
-          ^^ S[ :[ drop ud/mod rot drop ]: IS do-op re-calc ]S ( MINOS ) X" /" button new 
-          ^^ S[ :[ 1. 2swap drop 0 ?DO 2over d* LOOP 2swap 2drop ]: IS do-op
+          ^^ S[ [: drop ud/mod rot drop ;] IS do-op re-calc ]S ( MINOS ) X" /" button new 
+          ^^ S[ [: 1. 2swap drop 0 ?DO 2over d* LOOP 2swap 2drop ;] IS do-op
    re-calc ]S ( MINOS ) X" ^" button new 
           ^^ S[ r# get a# assign re-calc ]S ( MINOS ) X" >A" button new 
           ^^ S[ r# get b# assign re-calc ]S ( MINOS ) X" >B" button new 

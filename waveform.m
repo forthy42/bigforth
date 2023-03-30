@@ -149,7 +149,7 @@ wave-form implements
   file-name @  IF  file-name HandleOff  THEN
   forget-waves  super dispose ;
 : step-act ( -- actor )
-  ^ 0 #30 :[ step-x ! !resized resized ]:
+  ^ 0 #30 [: step-x ! !resized resized ;]
   scale-do new scale-do with  4 pos ! ^ endwith ;
 : show-waves ( -- )  ^>^^
   0 BEGIN  dup waves @ <  WHILE
