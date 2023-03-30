@@ -153,11 +153,9 @@ EDIST1 =	bigforth/Estyle/wood/{Makefile,*.inc} \
 
 EDIST2 =	bigforth/Estyle/ShinyMetal/* bigforth/Estyle-ShinyMetal.fs
 
-COMPRESS = j
-COMPSUB = .bz2
+COMPRESS = J
 TAR = tar -$(COMPRESS)chf
-#COMPRESS = z
-#COMPSUB = .gz
+COMPSUB = .xz
 
 docdist:	all
 	cd ..; $(TAR) bigforth/bigforth-doc-"$(DOCREV)".tar$(COMPSUB) $(DOCDIST)
@@ -201,7 +199,7 @@ install:	build
 	@install -m 644 icons/*.png $(DESTDIR)$(INSTDIR)/icons
 	@install -m 644 pattern/dragon{,-back,-claw,-head,-wing}.png pattern/bark.png $(DESTDIR)$(INSTDIR)/pattern
 	@if [ -d help ]; then install -m 644 help/{*.html,[a-z]*.gif,*.jpg,*.sh} $(DESTDIR)$(INSTDIR)/help; fi
-	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm pattern/dragon.ppm $(DESTDIR)$(INSTDIR)/pattern; fi
+	@if [ -f pattern/back-p.ppm ]; then install -m 644 pattern/{back,backtext,dark,focus,light,normal}{-c,-h,-p,-w,-w1,-m,-d,}.ppm $(DESTDIR)$(INSTDIR)/pattern; fi
 	@if [ -d Estyle/wood ]; then install -m 644 Estyle/wood/{button,arrow,[hv]slider,[rt]button}-[dfps][blmrt]*.png $(DESTDIR)$(INSTDIR)/Estyle/wood; fi
 	@if [ -d Estyle/ShinyMetal ]; then install -m 644 Estyle/ShinyMetal/* $(DESTDIR)$(INSTDIR)/Estyle/ShinyMetal; fi
 
